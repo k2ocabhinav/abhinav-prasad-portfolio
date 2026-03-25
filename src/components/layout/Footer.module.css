@@ -1,0 +1,13 @@
+.footer {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid rgba(107, 127, 120, 0.05);
+}
+
+.copyright {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(107, 127, 120, 0.4);
+}

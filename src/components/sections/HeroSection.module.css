@@ -1,0 +1,244 @@
+/* ─── Hero Layout ────────────────────────────────────── */
+
+.heroContent {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.heroText {
+  z-index: 10;
+}
+
+/* ─── Role Label ─────────────────────────────────────── */
+
+.roleLabel {
+  font-family: var(--font-label);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--color-primary-brand);
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+/* ─── Name ───────────────────────────────────────────── */
+
+.heroName {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 6rem;
+  line-height: 0.85;
+  color: var(--color-on-surface);
+  letter-spacing: -0.03em;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: color 0.5s ease;
+}
+
+.heroName:hover {
+  color: var(--color-primary-brand);
+}
+
+.heroName:focus-visible {
+  outline: 2px solid var(--color-primary-brand);
+  outline-offset: 4px;
+}
+
+@media (min-width: 768px) {
+  .heroName {
+    font-size: 8rem;
+  }
+}
+
+/* ─── Image ──────────────────────────────────────────── */
+
+.imageWrapper {
+  position: relative;
+  margin-top: 6rem;
+  width: fit-content;
+}
+
+@media (min-width: 1024px) {
+  .imageWrapper {
+    margin-left: 3rem;
+  }
+}
+
+.imageContainer {
+  position: relative;
+  width: 12rem;
+  height: 12rem;
+  overflow: visible;
+}
+
+@media (min-width: 768px) {
+  .imageContainer {
+    width: 14rem;
+    height: 14rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .imageContainer {
+    width: 18rem;
+    height: 18rem;
+  }
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+  filter: grayscale(100%);
+}
+
+/* ─── Annotations ────────────────────────────────────── */
+
+.annotation {
+  position: absolute;
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: none;
+  z-index: 20;
+}
+
+@media (min-width: 640px) {
+  .annotation {
+    display: flex;
+  }
+}
+
+.annotation_top_right {
+  top: 2rem;
+  right: -9rem;
+}
+
+.annotation_bottom_right {
+  bottom: 3rem;
+  right: -8rem;
+}
+
+.annotation_left {
+  top: 50%;
+  left: -9rem;
+  transform: translateY(-50%);
+}
+
+@media (min-width: 768px) {
+  .annotation_top_right { right: -12rem; }
+  .annotation_bottom_right { right: -11rem; }
+  .annotation_left { left: -12rem; }
+}
+
+.annotationLine {
+  width: 2rem;
+  height: 1px;
+  background: rgba(107, 127, 120, 0.3);
+}
+
+@media (min-width: 768px) {
+  .annotationLine {
+    width: 4rem;
+  }
+}
+
+.annotationLabel {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  color: rgba(107, 127, 120, 0.8);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .annotationLabel {
+    font-size: 0.875rem;
+  }
+}
+
+/* ─── Tagline & Subtitle ────────────────────────────── */
+
+.taglineBlock {
+  max-width: 42rem;
+  margin-top: 2rem;
+}
+
+.tagline {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 1.25rem;
+  color: var(--color-secondary-text);
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .tagline {
+    font-size: 1.5rem;
+  }
+}
+
+.subtitle {
+  margin-top: 1.5rem;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: rgba(122, 122, 122, 0.8);
+  max-width: 28rem;
+  line-height: 1.6;
+}
+
+/* ─── Easter Egg Overlay ─────────────────────────────── */
+
+.easterEgg {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-on-surface);
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.easterEggClose {
+  position: absolute;
+  top: 3rem;
+  right: 3rem;
+  color: var(--color-sage);
+  transition: opacity 0.3s ease;
+}
+
+.easterEggClose:hover {
+  opacity: 0.6;
+}
+
+.easterEggTitle {
+  font-family: var(--font-headline);
+  font-style: italic;
+  color: var(--color-sage);
+  font-size: 3.75rem;
+}
+
+@media (min-width: 768px) {
+  .easterEggTitle {
+    font-size: 6rem;
+  }
+}
+
+.easterEggText {
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--color-sage);
+  margin-top: 2rem;
+  max-width: 28rem;
+}

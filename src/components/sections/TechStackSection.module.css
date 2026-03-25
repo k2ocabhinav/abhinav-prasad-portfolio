@@ -1,0 +1,65 @@
+.headerGrid {
+  margin-bottom: 5rem;
+}
+
+.heading {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 3rem;
+  color: var(--color-primary-brand);
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cardsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.card {
+  padding: 2rem;
+  border: 1px solid rgba(107, 127, 120, 0.1);
+  border-radius: 0.5rem;
+  cursor: default;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
+  background: transparent;
+}
+
+.card:hover {
+  border-color: rgba(107, 127, 120, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+.cardIcon {
+  margin-bottom: 1.5rem;
+  opacity: 0.6;
+  color: var(--color-primary-brand);
+}
+
+.cardLabel {
+  font-family: var(--font-label);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary-brand);
+  margin-bottom: 1.5rem;
+}
+
+.cardContent {
+  font-size: 0.875rem;
+  font-weight: 300;
+  color: var(--color-secondary-text);
+  line-height: 1.6;
+}

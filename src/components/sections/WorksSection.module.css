@@ -1,0 +1,156 @@
+.sectionHeader {
+  margin-bottom: 5rem;
+}
+
+.heading {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 3rem;
+  color: var(--color-on-surface);
+}
+
+.projectsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8rem;
+}
+
+/* ─── Work Card Grid ─────────────────────────────────── */
+
+.workCard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .workCard {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+/* ─── Visual Panel ───────────────────────────────────── */
+
+.visualPanel {
+  aspect-ratio: 16 / 9;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.7s ease;
+  grid-column: span 1;
+}
+
+@media (min-width: 768px) {
+  .visualPanel {
+    grid-column: span 7;
+  }
+}
+
+.visualPanel:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.visualReversed {
+  order: 1;
+}
+
+@media (min-width: 768px) {
+  .visualReversed {
+    order: 2;
+  }
+}
+
+.dotOverlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  transition: opacity 0.7s ease;
+}
+
+.visualPanel:hover .dotOverlay {
+  opacity: 0.2;
+}
+
+.iconWrapper {
+  position: relative;
+  z-index: 10;
+}
+
+/* ─── Content Panel ──────────────────────────────────── */
+
+.contentPanel {
+  grid-column: span 1;
+}
+
+@media (min-width: 768px) {
+  .contentPanel {
+    grid-column: span 5;
+  }
+}
+
+.contentReversed {
+  order: 2;
+}
+
+@media (min-width: 768px) {
+  .contentReversed {
+    order: 1;
+  }
+}
+
+.caseNumber {
+  font-family: var(--font-label);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-primary-brand);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.projectTitle {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 2.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.projectDesc {
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--color-secondary-text);
+  line-height: 1.6;
+}
+
+.projectTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.caseStudyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding-bottom: 0.25rem;
+  color: #6B7F78;
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.caseStudyLink:hover {
+  opacity: 1;
+}

@@ -1,0 +1,142 @@
+/* ─── Desktop Rail ───────────────────────────────────── */
+
+.desktopRail {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: var(--z-nav);
+  display: none;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+
+@media (min-width: 768px) {
+  .desktopRail {
+    display: flex;
+  }
+}
+
+.railItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.railLabel {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateX(1rem);
+  pointer-events: none;
+  color: var(--color-secondary-text);
+  transition: all 0.3s ease;
+}
+
+.railItem:hover .railLabel {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.railLabelActive {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--color-primary-brand);
+}
+
+.railDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(184, 201, 193, 0.4);
+  transition: all 0.5s ease;
+}
+
+.railItem:hover .railDot {
+  background-color: var(--color-sage);
+  width: 6px;
+  height: 6px;
+}
+
+.railDotActive {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary-brand);
+}
+
+/* ─── Mobile Hamburger ───────────────────────────────── */
+
+.mobileHamburger {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: var(--z-mobile-hamburger);
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .mobileHamburger {
+    display: none;
+  }
+}
+
+.hamburgerButton {
+  padding: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(250, 247, 242, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(184, 201, 193, 0.2);
+  color: var(--color-primary-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Mobile Slide-out Menu ──────────────────────────── */
+
+.mobileMenu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 16rem;
+  background: rgba(250, 247, 242, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: var(--z-mobile-menu);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  border-left: 1px solid rgba(184, 201, 193, 0.1);
+}
+
+@media (min-width: 768px) {
+  .mobileMenu {
+    display: none;
+  }
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mobileNavItem {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-secondary-text);
+  transition: color 0.3s ease;
+}
+
+.mobileNavItemActive {
+  color: var(--color-primary-brand);
+}

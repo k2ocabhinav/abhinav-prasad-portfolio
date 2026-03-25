@@ -1,0 +1,32 @@
+.aboutGrid {
+  align-items: start;
+}
+
+.heading {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 3rem;
+  color: var(--color-primary-brand);
+}
+
+.contentCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.philosophyText {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: #4A4A4A;
+  max-width: 42rem;
+}
+
+@media (min-width: 768px) {
+  .philosophyText {
+    font-size: 1.25rem;
+  }
+}
