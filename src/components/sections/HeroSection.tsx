@@ -31,10 +31,20 @@ export default function HeroSection() {
             className={styles.heroText}
           >
             {/* Role Label */}
-            <span className={styles.roleLabel}>{personal.title}</span>
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0 }}
+              className={styles.roleLabel}
+            >
+              {personal.title}
+            </motion.span>
 
             {/* Name — Easter Egg trigger */}
-            <h1
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
               onClick={() => setIsEasterEggOpen(true)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -48,7 +58,7 @@ export default function HeroSection() {
               className={styles.heroName}
             >
               {personal.name}
-            </h1>
+            </motion.h1>
 
             {/* Image with annotations */}
             <div className={styles.imageWrapper}>
@@ -93,9 +103,9 @@ export default function HeroSection() {
 
           {/* Tagline & Subtitle */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.45, ease: "easeOut" }}
             className={styles.taglineBlock}
           >
             <p className={styles.tagline}>{personal.tagline}</p>

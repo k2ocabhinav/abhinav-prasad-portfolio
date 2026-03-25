@@ -1,8 +1,10 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import { personal } from "@/data/personal";
 import { fadeInLeft, fadeInUp } from "@/lib/animations";
+import { useSectionInView } from "@/hooks/useSectionInView";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import styles from "./AboutSection.module.css";
 
@@ -11,15 +13,23 @@ import styles from "./AboutSection.module.css";
 // =============================================================================
 
 export default function AboutSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const { ref: _, isInView } = useSectionInView(sectionRef);
+
   return (
     <SectionWrapper id="about">
-      <div className={`grid-12 ${styles.aboutGrid}`}>
+      <div ref={sectionRef} className={`grid-12 ${styles.aboutGrid}`}>
         <div className="col-4">
           <motion.h2
-            variants={fadeInLeft}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            style={{ y: headingY }}
             className={styles.heading}
           >
             Philosophy
@@ -27,10 +37,9 @@ export default function AboutSection() {
         </div>
         <div className={`col-8 ${styles.contentCol}`}>
           <motion.div
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
           >
             <p className={styles.philosophyText}>{personal.philosophy}</p>
           </motion.div>

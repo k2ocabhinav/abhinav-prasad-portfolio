@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
 import { projects } from "@/data/projects";
 import { useCardTilt } from "@/hooks/useCardTilt";
@@ -15,10 +16,22 @@ import styles from "./WorksSection.module.css";
 // =============================================================================
 
 export default function WorksSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+
   return (
     <SectionWrapper id="work">
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.heading}>Selected Works</h2>
+      <div ref={sectionRef} className={styles.sectionHeader}>
+        <motion.h2
+          style={{ y: headingY }}
+          className={styles.heading}
+        >
+          Selected Works
+        </motion.h2>
       </div>
 
       <motion.div
@@ -48,6 +61,7 @@ function WorkCard({ project }: { project: (typeof projects)[number] }) {
       <motion.div
         ref={tiltRef}
         animate={{ rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
+        whileHover={{ scale: 1.02 }}
         transition={tiltSpring}
         style={{ transformPerspective: 800 }}
         className={cn(

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import { Mail } from "lucide-react";
 import { personal } from "@/data/personal";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -38,16 +39,25 @@ const socialIcons: Record<string, React.ReactNode> = {
 };
 
 export default function ContactSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+
   return (
     <SectionWrapper id="contact" fullHeight centered>
-      <motion.h2
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        className={styles.heading}
-      >
-        Let&apos;s build.
-      </motion.h2>
+      <div ref={sectionRef}>
+        <motion.h2
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          style={{ y: headingY }}
+          className={styles.heading}
+        >
+          Let&apos;s build.
+        </motion.h2>
 
       <div className={styles.ctaContainer}>
         <MagneticButton href="/resume.pdf" download>
@@ -83,6 +93,7 @@ export default function ContactSection() {
       {/* Footer tagline */}
       <div className={styles.footerTagline}>
         <p className={styles.taglineText}>{personal.footerTagline}</p>
+      </div>
       </div>
     </SectionWrapper>
   );

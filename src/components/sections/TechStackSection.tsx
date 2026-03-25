@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import { techCategories } from "@/data/techStack";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
@@ -13,11 +14,23 @@ import styles from "./TechStackSection.module.css";
 // =============================================================================
 
 export default function TechStackSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+
   return (
     <SectionWrapper id="stack">
-      <div className={`grid-12 ${styles.headerGrid}`}>
+      <div ref={sectionRef} className={`grid-12 ${styles.headerGrid}`}>
         <div className="col-4">
-          <h2 className={styles.heading}>Technical Voice</h2>
+          <motion.h2
+            style={{ y: headingY }}
+            className={styles.heading}
+          >
+            Technical Voice
+          </motion.h2>
         </div>
       </div>
 
@@ -56,6 +69,7 @@ function TechCard({
       className={styles.card}
       whileHover={{
         y: -5,
+        scale: 1.02,
         backgroundColor: "rgba(107, 127, 120, 0.05)",
         backdropFilter: "blur(12px)",
       }}

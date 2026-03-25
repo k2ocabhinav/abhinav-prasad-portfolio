@@ -39,7 +39,7 @@
 
 .card:hover {
   border-color: rgba(107, 127, 120, 0.3);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(107, 127, 120, 0.06), 0 25px 50px -12px rgba(0, 0, 0, 0.08);
 }
 
 .cardIcon {

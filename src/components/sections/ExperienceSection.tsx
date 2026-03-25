@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import { experiences } from "@/data/experience";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 import Tag from "@/components/ui/Tag";
@@ -12,11 +13,23 @@ import styles from "./ExperienceSection.module.css";
 // =============================================================================
 
 export default function ExperienceSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+
   return (
     <SectionWrapper id="experience">
-      <div className={`grid-12 ${styles.experienceGrid}`}>
+      <div ref={sectionRef} className={`grid-12 ${styles.experienceGrid}`}>
         <div className="col-4">
-          <h2 className={styles.heading}>Chronicle</h2>
+          <motion.h2
+            style={{ y: headingY }}
+            className={styles.heading}
+          >
+            Chronicle
+          </motion.h2>
         </div>
         <div className={`col-8 ${styles.timelineCol}`}>
           {/* Timeline line */}
