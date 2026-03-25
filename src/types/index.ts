@@ -30,6 +30,9 @@ export interface PersonalData {
   tagline: string;
   subtitle: string;
   heroAnnotations: HeroAnnotation[];
+  heroSlides: HeroSlide[];
+  heroSlideInterval: number;
+  heroOverlayOpacity: number;
   location: Location;
   email: string;
   socials: SocialLink[];
@@ -42,6 +45,12 @@ export interface PersonalData {
 export interface HeroAnnotation {
   label: string;
   position: "top-right" | "bottom-right" | "left";
+}
+
+/** Hero carousel slide */
+export interface HeroSlide {
+  image: string;
+  alt: string;
 }
 
 /** Work experience entry */
@@ -90,4 +99,27 @@ export interface SEOData {
   author: string;
   url: string;
   ogImage: string;
+}
+
+/** Floating artifact definition for theme system */
+export interface ArtifactDef {
+  id: string;
+  svgPath: string;
+  viewBox?: string;
+  fill: string;
+  size: number;
+  opacity: number;
+  x: number;
+  y: number;
+  scrollRange: [number, number];
+  bobAmplitude: number;
+  bobDuration: number;
+  rotationSwing: number;
+}
+
+/** Theme containing floating artifacts */
+export interface Theme {
+  id: string;
+  name: string;
+  artifacts: ArtifactDef[];
 }

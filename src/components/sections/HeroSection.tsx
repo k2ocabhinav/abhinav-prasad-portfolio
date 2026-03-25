@@ -1,40 +1,87 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
-import { useState, useRef } from "react";
-import { AnimatePresence } from "motion/react";
-import { X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { useState, useCallback } from "react";
 import { personal } from "@/data/personal";
-import { scaleIn, overlaySpring } from "@/lib/animations";
-import SectionWrapper from "@/components/ui/SectionWrapper";
+import { useHeroSlideshow } from "@/hooks/useHeroSlideshow";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { X } from "lucide-react";
+import { overlaySpring } from "@/lib/animations";
 import styles from "./HeroSection.module.css";
 
 // =============================================================================
-// HeroSection — Full-height hero with parallax, easter egg, and annotations
+// HeroSection — Full-screen rotating carousel with glass text panel
 // =============================================================================
 
 export default function HeroSection() {
   const [isEasterEggOpen, setIsEasterEggOpen] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
-  const { scrollY } = useScroll();
-  const heroTextY = useTransform(scrollY, [0, 500], [0, 100]);
-  const heroImgY = useTransform(scrollY, [0, 500], [0, -50]);
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+  const { currentSlide } = useHeroSlideshow({
+    slides: personal.heroSlides,
+    interval: personal.heroSlideInterval,
+    crossfadeDuration: 1000,
+    autoPlay: !prefersReducedMotion,
+  });
+
+  const handleSlideClick = useCallback(() => {
+    setIsEasterEggOpen(true);
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setIsEasterEggOpen(true);
+      }
+    },
+    []
+  );
 
   return (
     <>
-      <SectionWrapper id="hero" fullHeight>
-        <div ref={sectionRef} className={styles.heroContent}>
+      <section id="hero" className={styles.hero}>
+        {/* Full-screen image carousel */}
+        <div className={styles.carousel}>
+          <AnimatePresence mode="sync">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1, ease: "easeInOut" }}
+              className={styles.slide}
+            >
+              <img
+                src={personal.heroSlides[currentSlide].image}
+                alt={personal.heroSlides[currentSlide].alt}
+                className={styles.slideImage}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Sage overlay */}
+          <div
+            className={styles.overlay}
+            style={{
+              backgroundColor: `rgba(107, 127, 120, ${personal.heroOverlayOpacity})`,
+            }}
+          />
+        </div>
+
+        {/* Glass text panel */}
+        <div className={styles.panel}>
           <motion.div
-            style={{ y: heroTextY, opacity: heroOpacity }}
-            className={styles.heroText}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className={styles.panelContent}
           >
             {/* Role Label */}
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className={styles.roleLabel}
             >
               {personal.title}
@@ -44,14 +91,9 @@ export default function HeroSection() {
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-              onClick={() => setIsEasterEggOpen(true)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setIsEasterEggOpen(true);
-                }
-              }}
+              transition={{ duration: 0.6, delay: 0.35, ease: "easeOut" }}
+              onClick={handleSlideClick}
+              onKeyDown={handleKeyDown}
               tabIndex={0}
               role="button"
               aria-label={`${personal.name} — click for a surprise`}
@@ -60,59 +102,59 @@ export default function HeroSection() {
               {personal.name}
             </motion.h1>
 
-            {/* Image with annotations */}
-            <div className={styles.imageWrapper}>
-              <motion.div
-                style={{ y: heroImgY }}
-                className={styles.imageContainer}
-              >
-                <motion.img
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 0.9 }}
-                  transition={{ duration: 1, delay: 0.2 }}
-                  alt={`${personal.name} — Systems Architect`}
-                  className={styles.heroImage}
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop&crop=face"
-                />
+            {/* Tagline */}
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+              className={styles.tagline}
+            >
+              {personal.tagline}
+            </motion.p>
 
-                {/* Annotations */}
-                {personal.heroAnnotations.map((anno, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{
-                      opacity: 0,
-                      x: anno.position === "left" ? 20 : -20,
-                    }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.5 + i * 0.1 }}
-                    className={`${styles.annotation} ${styles[`annotation_${anno.position.replace("-", "_")}`]}`}
-                  >
-                    {anno.position !== "left" && (
-                      <div className={styles.annotationLine} />
-                    )}
-                    <span className={styles.annotationLabel}>{anno.label}</span>
-                    {anno.position === "left" && (
-                      <div className={styles.annotationLine} />
-                    )}
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
-          </motion.div>
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.65, ease: "easeOut" }}
+              className={styles.subtitle}
+            >
+              {personal.subtitle}
+            </motion.p>
 
-          {/* Tagline & Subtitle */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.45, ease: "easeOut" }}
-            className={styles.taglineBlock}
-          >
-            <p className={styles.tagline}>{personal.tagline}</p>
-            <p className={styles.subtitle}>{personal.subtitle}</p>
+            {/* Social Links */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
+              className={styles.socials}
+            >
+              {personal.socials.map((social) => (
+                <a
+                  key={social.platform}
+                  href={social.href}
+                  className={styles.socialLink}
+                  aria-label={social.label}
+                >
+                  {social.label}
+                </a>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
-      </SectionWrapper>
+
+        {/* Slide indicators */}
+        <div className={styles.indicators}>
+          {personal.heroSlides.map((_, index) => (
+            <div
+              key={index}
+              className={`${styles.indicator} ${
+                index === currentSlide ? styles.indicatorActive : ""
+              }`}
+            />
+          ))}
+        </div>
+      </section>
 
       {/* Easter Egg Overlay */}
       <AnimatePresence>

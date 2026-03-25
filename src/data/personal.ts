@@ -20,6 +20,28 @@ export const personal: PersonalData = {
     { label: "Intentional Craft", position: "left" },
   ],
 
+  heroSlides: [
+    {
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&h=1080&fit=crop",
+      alt: "Systems architect at work",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop",
+      alt: "Global distributed architecture",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&h=1080&fit=crop",
+      alt: "Cloud infrastructure and circuits",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1920&h=1080&fit=crop",
+      alt: "Data center architecture",
+    },
+  ],
+
+  heroSlideInterval: 4000,
+  heroOverlayOpacity: 0.3,
+
   location: {
     city: "Badlapur",
     country: "India",

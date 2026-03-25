@@ -6,6 +6,7 @@ import ScrollProgress from "@/components/layout/ScrollProgress";
 import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";
 import AnimatedDivider from "@/components/ui/AnimatedDivider";
+import FloatingArtifacts from "@/components/artifacts/FloatingArtifacts";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ExperienceSection from "@/components/sections/ExperienceSection";
@@ -21,32 +22,39 @@ import ContactSection from "@/components/sections/ContactSection";
 export default function Home() {
   return (
     <MotionConfig reducedMotion="user">
-      <div className="snap-container" style={{ position: "relative" }}>
-        {/* Global UI */}
-        <SageOrb />
-        <ScrollProgress />
-        <Navigation />
+      {/* Hero section - full-screen carousel with glass panel */}
+      <HeroSection />
 
-        {/* Main Content */}
-        <main className="content-container">
-          <HeroSection />
-          <AnimatedDivider />
-          <AboutSection />
-          <AnimatedDivider />
-          <ExperienceSection />
-          <AnimatedDivider />
-          <WorksSection />
-          <AnimatedDivider />
-          <TechStackSection />
-          <AnimatedDivider />
-          <PresenceSection />
-          <AnimatedDivider />
-          <ContactSection />
-        </main>
+      {/* Global UI */}
+      <SageOrb />
+      <ScrollProgress />
+      <Navigation />
+      <FloatingArtifacts />
+
+      {/* Main scrollable content */}
+      <main
+        className="content-container"
+        style={{
+          position: "relative",
+          backgroundColor: "var(--color-surface)",
+        }}
+      >
+        <AnimatedDivider />
+        <AboutSection />
+        <AnimatedDivider />
+        <ExperienceSection />
+        <AnimatedDivider />
+        <WorksSection />
+        <AnimatedDivider />
+        <TechStackSection />
+        <AnimatedDivider />
+        <PresenceSection />
+        <AnimatedDivider />
+        <ContactSection />
 
         {/* Footer */}
         <Footer />
-      </div>
+      </main>
     </MotionConfig>
   );
 }
