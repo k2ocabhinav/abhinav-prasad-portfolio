@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+import Image from "next/image";
 import { personal } from "@/data/personal";
 import { useHeroSlideshow } from "@/hooks/useHeroSlideshow";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -10,12 +11,17 @@ import { overlaySpring } from "@/lib/animations";
 import styles from "./HeroSection.module.css";
 
 // =============================================================================
-// HeroSection — Full-screen rotating carousel with glass text panel
+// HeroSection — Two-part landing:
+//   Part 1 · Full-screen rotating carousel with glass text panel
+//            (NOTE: This carousel is a placeholder. A UI designer will replace
+//             it with a fully custom, high-fidelity design in a future iteration.)
+//   Part 2 · Profile reveal — personal photo, annotations, tagline + subtitle
 // =============================================================================
 
 export default function HeroSection() {
   const [isEasterEggOpen, setIsEasterEggOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const { currentSlide } = useHeroSlideshow({
     slides: personal.heroSlides,
@@ -24,11 +30,11 @@ export default function HeroSection() {
     autoPlay: !prefersReducedMotion,
   });
 
-  const handleSlideClick = useCallback(() => {
+  const handleNameClick = useCallback(() => {
     setIsEasterEggOpen(true);
   }, []);
 
-  const handleKeyDown = useCallback(
+  const handleNameKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
@@ -40,6 +46,7 @@ export default function HeroSection() {
 
   return (
     <>
+      {/* ── Part 1: Carousel ─────────────────────────────────────────── */}
       <section id="hero" className={styles.hero}>
         {/* Full-screen image carousel */}
         <div className={styles.carousel}>
@@ -92,8 +99,8 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.35, ease: "easeOut" }}
-              onClick={handleSlideClick}
-              onKeyDown={handleKeyDown}
+              onClick={handleNameClick}
+              onKeyDown={handleNameKeyDown}
               tabIndex={0}
               role="button"
               aria-label={`${personal.name} — click for a surprise`}
@@ -156,7 +163,75 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* Easter Egg Overlay */}
+      {/* ── Part 2: Profile Section ───────────────────────────────────── */}
+      <section className={styles.profileSection}>
+        <div ref={profileRef} className={`content-container ${styles.profileContent}`}>
+          {/* Role Label */}
+          <span className={styles.profileRoleLabel}>{personal.title}</span>
+
+          {/* Image with annotations — shown from sm breakpoint upward */}
+          <div className={styles.imageWrapper}>
+            <motion.div
+              className={styles.imageContainer}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 0.9 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.2 }}
+              >
+                <Image
+                  src={personal.heroPhoto}
+                  alt={`${personal.name} — Systems Architect`}
+                  width={288}
+                  height={288}
+                  className={styles.heroImage}
+                  priority={false}
+                />
+              </motion.div>
+
+              {/* Annotations (sm+ only — hidden on mobile per design spec) */}
+              {personal.heroAnnotations.map((anno, i) => (
+                <motion.div
+                  key={i}
+                  initial={{
+                    opacity: 0,
+                    x: anno.position === "left" ? 20 : -20,
+                  }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 + i * 0.1 }}
+                  className={`${styles.annotation} ${
+                    styles[`annotation_${anno.position.replace("-", "_")}`]
+                  }`}
+                >
+                  {anno.position !== "left" && (
+                    <div className={styles.annotationLine} />
+                  )}
+                  <span className={styles.annotationLabel}>{anno.label}</span>
+                  {anno.position === "left" && (
+                    <div className={styles.annotationLine} />
+                  )}
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Tagline & Subtitle */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.8 }}
+            className={styles.taglineBlock}
+          >
+            <p className={styles.profileTagline}>{personal.tagline}</p>
+            <p className={styles.profileSubtitle}>{personal.subtitle}</p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Easter Egg Overlay ─────────────────────────────────────────── */}
       <AnimatePresence>
         {isEasterEggOpen && (
           <motion.div

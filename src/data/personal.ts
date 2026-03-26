@@ -20,6 +20,10 @@ export const personal: PersonalData = {
     { label: "Intentional Craft", position: "left" },
   ],
 
+  // Placeholder portrait — replace with the actual personal photo (grayscale applied via CSS)
+  heroPhoto:
+    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop&crop=face",
+
   heroSlides: [
     {
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&h=1080&fit=crop",
