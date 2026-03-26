@@ -6,6 +6,7 @@
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
+  scroll-snap-align: start;
 }
 
 /* ─── Carousel ───────────────────────────────────────── */
@@ -273,4 +274,167 @@
   color: var(--color-sage);
   margin-top: 2rem;
   max-width: 28rem;
+}
+
+/* ─── Profile Section (Part 2, below carousel) ───────── */
+
+.profileSection {
+  background-color: var(--color-surface);
+  padding-top: var(--section-padding-y);
+  padding-bottom: var(--section-padding-y);
+  scroll-snap-align: start;
+}
+
+.profileContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* ─── Profile Role Label ─────────────────────────────── */
+
+.profileRoleLabel {
+  font-family: var(--font-label);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--color-primary-brand);
+  text-transform: uppercase;
+  font-size: 11px;
+  margin-bottom: 1rem;
+}
+
+/* ─── Profile Image ──────────────────────────────────── */
+
+.imageWrapper {
+  position: relative;
+  margin-top: 3rem;
+  width: fit-content;
+}
+
+@media (min-width: 1024px) {
+  .imageWrapper {
+    margin-left: 3rem;
+  }
+}
+
+.imageContainer {
+  position: relative;
+  width: 12rem;
+  height: 12rem;
+  overflow: visible;
+}
+
+@media (min-width: 768px) {
+  .imageContainer {
+    width: 14rem;
+    height: 14rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .imageContainer {
+    width: 18rem;
+    height: 18rem;
+  }
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+  filter: grayscale(100%);
+}
+
+/* ─── Annotations ────────────────────────────────────── */
+
+.annotation {
+  position: absolute;
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: none;
+  z-index: 20;
+}
+
+@media (min-width: 640px) {
+  .annotation {
+    display: flex;
+  }
+}
+
+.annotation_top_right {
+  top: 2rem;
+  right: -9rem;
+}
+
+.annotation_bottom_right {
+  bottom: 3rem;
+  right: -8rem;
+}
+
+.annotation_left {
+  top: 50%;
+  left: -9rem;
+  transform: translateY(-50%);
+}
+
+@media (min-width: 768px) {
+  .annotation_top_right { right: -12rem; }
+  .annotation_bottom_right { right: -11rem; }
+  .annotation_left { left: -12rem; }
+}
+
+.annotationLine {
+  width: 2rem;
+  height: 1px;
+  background: rgba(107, 127, 120, 0.3);
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .annotationLine {
+    width: 4rem;
+  }
+}
+
+.annotationLabel {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  font-weight: 400;
+  color: rgba(107, 127, 120, 0.8);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ─── Profile Tagline & Subtitle ─────────────────────── */
+
+.taglineBlock {
+  max-width: 42rem;
+  margin-top: 5rem;
+}
+
+.profileTagline {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 1.25rem;
+  color: var(--color-secondary-text);
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .profileTagline {
+    font-size: 1.5rem;
+  }
+}
+
+.profileSubtitle {
+  margin-top: 1.5rem;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 0.875rem;
+  color: rgba(122, 122, 122, 0.8);
+  max-width: 28rem;
+  line-height: 1.6;
 }
