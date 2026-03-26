@@ -1,42 +1,9 @@
 // =============================================================================
 // Theme System — Floating Artifact Definitions
+// ArtifactDef and Theme types are defined in @/types/index.ts
 // =============================================================================
 
-export interface ArtifactDef {
-  id: string;
-  /** SVG path data — any valid SVG path */
-  svgPath: string;
-  /** SVG viewBox height for aspect ratio */
-  viewBox?: string;
-  /** Fill color (CSS color value) */
-  fill: string;
-  /** Stroke color (for outlined shapes) */
-  stroke?: string;
-  /** Stroke width in px */
-  strokeWidth?: number;
-  /** Size in px */
-  size: number;
-  /** Opacity 0-1 */
-  opacity: number;
-  /** X position: % from left edge (5-20 for left zone, 80-95 for right zone) */
-  x: number;
-  /** Y position: % from top of page */
-  y: number;
-  /** Scroll range: [startPct, endPct] of total page height */
-  scrollRange: [number, number];
-  /** Bobbing amplitude in px */
-  bobAmplitude: number;
-  /** Bobbing duration in seconds */
-  bobDuration: number;
-  /** Rotation swing in degrees */
-  rotationSwing: number;
-}
-
-export interface Theme {
-  id: string;
-  name: string;
-  artifacts: ArtifactDef[];
-}
+import type { ArtifactDef, Theme } from "@/types";
 
 // SVG path data for thin-stroke organic artifacts
 const SVG_PATHS = {

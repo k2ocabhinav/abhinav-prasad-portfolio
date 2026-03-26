@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion, useScroll, useTransform, useMotionValue, animate, useSpring } from "motion/react";
-import { ArtifactDef } from "@/data/themes";
+import type { ArtifactDef } from "@/types";
 
 // Shared mouse position using plain object (no hooks at module level)
 const sharedMouse = { x: -1000, y: -1000 };

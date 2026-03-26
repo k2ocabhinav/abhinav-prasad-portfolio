@@ -30,6 +30,8 @@ export interface PersonalData {
   tagline: string;
   subtitle: string;
   heroAnnotations: HeroAnnotation[];
+  /** Personal portrait image URL — grayscale filter applied via CSS */
+  heroPhoto: string;
   heroSlides: HeroSlide[];
   heroSlideInterval: number;
   heroOverlayOpacity: number;
@@ -107,6 +109,10 @@ export interface ArtifactDef {
   svgPath: string;
   viewBox?: string;
   fill: string;
+  /** Optional stroke color for outlined SVG shapes */
+  stroke?: string;
+  /** Optional stroke width in px */
+  strokeWidth?: number;
   size: number;
   opacity: number;
   x: number;

@@ -1,4 +1,5 @@
-import { THEMES, activeThemeId, ArtifactDef } from "@/data/themes";
+import { THEMES, activeThemeId } from "@/data/themes";
+import type { ArtifactDef } from "@/types";
 import Artifact from "./Artifact";
 import styles from "./FloatingArtifacts.module.css";
 
