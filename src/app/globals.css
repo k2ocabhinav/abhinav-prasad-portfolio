@@ -1,9 +1,8 @@
 /* =============================================================================
    Portfolio — Global Styles & Design Tokens
    All design decisions are defined here as CSS custom properties.
+   Fonts are loaded via next/font in layout.tsx (self-hosted, no CLS).
    ============================================================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,600&family=Plus+Jakarta+Sans:wght@300;500&family=DM+Sans:wght@400;500&display=swap');
 
 /* ─── Design Tokens ──────────────────────────────────────────────── */
 
@@ -16,9 +15,12 @@
   --color-sage: #B8C9C1;
   --color-accent-brown: #4A3B32;
 
-  /* Typography */
+  /* Typography — next/font in layout.tsx injects the optimised font-family
+     string via a class on <html>, overriding these :root values at runtime.
+     These serve as pre-load fallbacks only. Plus Jakarta Sans must be listed
+     first in --font-body so it is the primary font when next/font kicks in. */
   --font-headline: "Cormorant Garamond", serif;
-  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-body: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-label: "DM Sans", sans-serif;
 
   /* Spacing */
@@ -33,6 +35,7 @@
   --glass-shadow: 0 8px 32px rgba(107, 127, 120, 0.08);
 
   /* Z-index scale */
+  --z-artifact: 75;
   --z-orb: 100;
   --z-progress: 110;
   --z-nav: 50;
@@ -65,6 +68,7 @@ body {
   background-color: var(--color-surface);
   overflow-x: hidden;
   line-height: 1.6;
+  scroll-snap-type: y proximity;
 }
 
 ::selection {
