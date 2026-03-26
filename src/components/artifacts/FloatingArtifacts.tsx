@@ -1,3 +1,5 @@
+"use client";
+
 import { THEMES, activeThemeId } from "@/data/themes";
 import type { ArtifactDef } from "@/types";
 import Artifact from "./Artifact";
