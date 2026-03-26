@@ -3,7 +3,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { personal } from "@/data/personal";
-import { fadeInLeft, fadeInUp } from "@/lib/animations";
 import { useSectionInView } from "@/hooks/useSectionInView";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import styles from "./AboutSection.module.css";
@@ -19,7 +18,7 @@ export default function AboutSection() {
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
-  const { ref: _, isInView } = useSectionInView(sectionRef);
+  const { isInView } = useSectionInView(sectionRef);
 
   return (
     <SectionWrapper id="about">

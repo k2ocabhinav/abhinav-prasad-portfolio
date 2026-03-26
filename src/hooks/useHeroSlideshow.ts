@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import type { HeroSlide } from "@/types";
 
-export interface HeroSlide {
-  image: string;
-  alt: string;
-}
+// =============================================================================
+// useHeroSlideshow — Auto-cycling slideshow with crossfade support
+// Respects prefers-reduced-motion via the autoPlay prop.
+// =============================================================================
 
 interface UseHeroSlideshowOptions {
   slides: HeroSlide[];
@@ -17,7 +18,6 @@ interface UseHeroSlideshowOptions {
 interface UseHeroSlideshowReturn {
   currentSlide: number;
   nextSlide: number;
-  progress: number;
   isTransitioning: boolean;
 }
 
@@ -28,36 +28,29 @@ export function useHeroSlideshow({
   autoPlay = true,
 }: UseHeroSlideshowOptions): UseHeroSlideshowReturn {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [progress, setProgress] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const nextSlide = (currentSlide + 1) % slides.length;
 
-  const clearTimers = useCallback(() => {
+  const clearTimer = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
-    }
-    if (progressRef.current) {
-      clearInterval(progressRef.current);
-      progressRef.current = null;
     }
   }, []);
 
   const goToSlide = useCallback(
     (index: number) => {
-      clearTimers();
+      clearTimer();
       setIsTransitioning(true);
       setCurrentSlide(index);
-      setProgress(0);
 
       setTimeout(() => {
         setIsTransitioning(false);
       }, crossfadeDuration);
     },
-    [clearTimers, crossfadeDuration]
+    [clearTimer, crossfadeDuration]
   );
 
   const advance = useCallback(() => {
@@ -66,30 +59,20 @@ export function useHeroSlideshow({
 
   useEffect(() => {
     if (!autoPlay || slides.length <= 1) {
-      clearTimers();
+      clearTimer();
       return;
     }
 
-    // Progress tracker
-    progressRef.current = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) return 0;
-        return prev + (100 / (interval - crossfadeDuration)) * 100;
-      });
-    }, 100);
-
-    // Slide advancement
     intervalRef.current = setInterval(() => {
       advance();
     }, interval);
 
-    return clearTimers;
-  }, [autoPlay, slides.length, interval, crossfadeDuration, advance, clearTimers]);
+    return clearTimer;
+  }, [autoPlay, slides.length, interval, advance, clearTimer]);
 
   return {
     currentSlide,
     nextSlide,
-    progress,
     isTransitioning,
   };
 }
