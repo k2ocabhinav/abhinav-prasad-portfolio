@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 // =============================================================================
 // useScrollSpy — Tracks which section is currently in viewport

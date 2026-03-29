@@ -3,7 +3,7 @@
 // ArtifactDef and Theme types are defined in @/types/index.ts
 // =============================================================================
 
-import type { ArtifactDef, Theme } from "@/types";
+import type { Theme } from "@/types";
 
 // SVG path data for thin-stroke organic artifacts
 const SVG_PATHS = {

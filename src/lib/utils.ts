@@ -2,6 +2,7 @@
 // Utility Functions
 // =============================================================================
 
+import { createElement } from "react";
 import {
   Cloud,
   Database,
@@ -9,6 +10,7 @@ import {
   Sparkles,
   Cpu,
   type LucideIcon,
+  type LucideProps,
 } from "lucide-react";
 
 /**
@@ -25,6 +27,13 @@ const iconMap: Record<string, LucideIcon> = {
 
 export function resolveIcon(key: string): LucideIcon {
   return iconMap[key] ?? Terminal;
+}
+
+/**
+ * Render an icon from a string key without creating a new component type inside render.
+ */
+export function renderIcon(key: string, props?: LucideProps) {
+  return createElement(resolveIcon(key), props);
 }
 
 /**

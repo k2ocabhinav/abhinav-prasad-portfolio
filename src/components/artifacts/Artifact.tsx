@@ -11,13 +11,28 @@ interface ArtifactProps {
   artifact: ArtifactDef;
 }
 
+function getStableDelay(seed: string): number {
+  let hash = 0;
+
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash * 31 + seed.charCodeAt(index)) >>> 0;
+  }
+
+  return (hash % 2000) / 1000;
+}
+
 export function Artifact({ artifact }: ArtifactProps) {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Random initial delay for bob animation (0-2 seconds)
-  const initialDelay = Math.random() * 2;
+  // Stable per-artifact delay so motion feels organic without impure render work.
+  const initialDelay = getStableDelay(artifact.id);
 
   // Scroll-based parallax - use percentage-based scroll range
   const { scrollYProgress } = useScroll();
@@ -34,9 +49,7 @@ export function Artifact({ artifact }: ArtifactProps) {
 
   // Check reduced motion preference on mount (client-side only)
   useEffect(() => {
-    setMounted(true);
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
 
     const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handler);
@@ -60,7 +73,7 @@ export function Artifact({ artifact }: ArtifactProps) {
 
   // Calculate mouse repulsion when mouse is near artifact
   useEffect(() => {
-    if (!mounted || prefersReducedMotion) {
+    if (prefersReducedMotion) {
       repulsionX.set(0);
       repulsionY.set(0);
       return;
@@ -108,11 +121,11 @@ export function Artifact({ artifact }: ArtifactProps) {
     animationId = requestAnimationFrame(loop);
 
     return () => cancelAnimationFrame(animationId);
-  }, [mounted, prefersReducedMotion, repulsionX, repulsionY]);
+  }, [prefersReducedMotion, repulsionX, repulsionY]);
 
   // Bobbing animation
   useEffect(() => {
-    if (!mounted || prefersReducedMotion) return;
+    if (prefersReducedMotion) return;
 
     const controls = animate(yMotion, [0, -artifact.bobAmplitude, 0], {
       duration: artifact.bobDuration,
@@ -123,11 +136,11 @@ export function Artifact({ artifact }: ArtifactProps) {
     });
 
     return () => controls.stop();
-  }, [mounted, prefersReducedMotion, yMotion, artifact.bobAmplitude, artifact.bobDuration, initialDelay]);
+  }, [prefersReducedMotion, yMotion, artifact.bobAmplitude, artifact.bobDuration, initialDelay]);
 
   // Rotation animation
   useEffect(() => {
-    if (!mounted || prefersReducedMotion) return;
+    if (prefersReducedMotion) return;
 
     const controls = animate(
       rotateMotion,
@@ -142,7 +155,7 @@ export function Artifact({ artifact }: ArtifactProps) {
     );
 
     return () => controls.stop();
-  }, [mounted, prefersReducedMotion, rotateMotion, artifact.rotationSwing, artifact.bobDuration, initialDelay]);
+  }, [prefersReducedMotion, rotateMotion, artifact.rotationSwing, artifact.bobDuration, initialDelay]);
 
   return (
     <div

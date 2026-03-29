@@ -116,7 +116,18 @@
   border-left: 1px solid rgba(184, 201, 193, 0.1);
 }
 
+.mobileBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 28, 28, 0.16);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 0;
+  z-index: calc(var(--z-mobile-menu) - 1);
+}
+
 @media (min-width: 768px) {
+  .mobileBackdrop,
   .mobileMenu {
     display: none;
   }

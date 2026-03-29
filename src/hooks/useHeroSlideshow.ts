@@ -19,6 +19,7 @@ interface UseHeroSlideshowReturn {
   currentSlide: number;
   nextSlide: number;
   isTransitioning: boolean;
+  goToSlide: (index: number) => void;
 }
 
 export function useHeroSlideshow({
@@ -74,5 +75,6 @@ export function useHeroSlideshow({
     currentSlide,
     nextSlide,
     isTransitioning,
+    goToSlide,
   };
 }

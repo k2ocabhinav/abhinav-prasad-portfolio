@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { techCategories } from "@/data/techStack";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
-import { resolveIcon } from "@/lib/utils";
+import { renderIcon } from "@/lib/utils";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import styles from "./TechStackSection.module.css";
 
@@ -57,7 +57,6 @@ function TechCard({
   item: (typeof techCategories)[number];
 }) {
   const { ref: tiltRef, tilt } = useCardTilt();
-  const IconComponent = resolveIcon(item.icon);
 
   return (
     <motion.div
@@ -75,7 +74,7 @@ function TechCard({
       }}
     >
       <div className={styles.cardIcon}>
-        <IconComponent size={20} />
+        {renderIcon(item.icon, { size: 20 })}
       </div>
       <h4 className={styles.cardLabel}>{item.label}</h4>
       <p className={styles.cardContent}>{item.content}</p>

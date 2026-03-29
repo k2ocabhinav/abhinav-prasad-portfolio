@@ -54,6 +54,7 @@ export const personal: PersonalData = {
   },
 
   email: "abhinav@abhinav.dev",
+  resumeHref: null,
 
   socials: [
     {

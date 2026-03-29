@@ -45,6 +45,9 @@ export default function ContactSection() {
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const primaryCtaHref =
+    personal.resumeHref ?? `mailto:${personal.email}?subject=Request%20Resume`;
+  const primaryCtaLabel = personal.resumeHref ? "Download Resume" : "Request Resume";
 
   return (
     <SectionWrapper id="contact" fullHeight centered>
@@ -59,41 +62,44 @@ export default function ContactSection() {
           Let&apos;s build.
         </motion.h2>
 
-      <div className={styles.ctaContainer}>
-        <MagneticButton href="/resume.pdf" download>
-          Download Resume
-        </MagneticButton>
+        <div className={styles.ctaContainer}>
+          <MagneticButton
+            href={primaryCtaHref}
+            download={Boolean(personal.resumeHref)}
+          >
+            {primaryCtaLabel}
+          </MagneticButton>
 
-        <div className={styles.contactLinks}>
-          <a href={`mailto:${personal.email}`} className={styles.emailLink}>
-            {personal.email}
-          </a>
-          <div className={styles.socials}>
-            {personal.socials.map((social, i) => (
-              <motion.a
-                key={i}
-                href={social.href}
-                target={social.href.startsWith("http") ? "_blank" : undefined}
-                rel={
-                  social.href.startsWith("http")
-                    ? "noopener noreferrer"
-                    : undefined
-                }
-                whileHover={{ y: -5 }}
-                aria-label={social.label}
-                className={styles.socialIcon}
-              >
-                {socialIcons[social.platform]}
-              </motion.a>
-            ))}
+          <div className={styles.contactLinks}>
+            <a href={`mailto:${personal.email}`} className={styles.emailLink}>
+              {personal.email}
+            </a>
+            <div className={styles.socials}>
+              {personal.socials.map((social, i) => (
+                <motion.a
+                  key={i}
+                  href={social.href}
+                  target={social.href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    social.href.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
+                  whileHover={{ y: -5 }}
+                  aria-label={social.label}
+                  className={styles.socialIcon}
+                >
+                  {socialIcons[social.platform]}
+                </motion.a>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Footer tagline */}
-      <div className={styles.footerTagline}>
-        <p className={styles.taglineText}>{personal.footerTagline}</p>
-      </div>
+        {/* Footer tagline */}
+        <div className={styles.footerTagline}>
+          <p className={styles.taglineText}>{personal.footerTagline}</p>
+        </div>
       </div>
     </SectionWrapper>
   );

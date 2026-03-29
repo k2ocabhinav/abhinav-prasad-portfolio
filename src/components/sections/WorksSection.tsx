@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { projects } from "@/data/projects";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
-import { resolveIcon, cn } from "@/lib/utils";
+import { renderIcon, cn } from "@/lib/utils";
 import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import styles from "./WorksSection.module.css";
@@ -53,7 +53,6 @@ export default function WorksSection() {
 
 function WorkCard({ project }: { project: (typeof projects)[number] }) {
   const { ref: tiltRef, tilt } = useCardTilt();
-  const IconComponent = resolveIcon(project.icon);
 
   return (
     <motion.div variants={staggerItem} className={styles.workCard}>
@@ -75,10 +74,10 @@ function WorkCard({ project }: { project: (typeof projects)[number] }) {
           whileHover={{ scale: 1.1, rotate: 5 }}
           className={styles.iconWrapper}
         >
-          <IconComponent
-            size={48}
-            style={{ color: "rgba(107, 127, 120, 0.4)" }}
-          />
+          {renderIcon(project.icon, {
+            size: 48,
+            style: { color: "rgba(107, 127, 120, 0.4)" },
+          })}
         </motion.div>
       </motion.div>
 

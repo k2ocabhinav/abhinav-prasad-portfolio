@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { personal } from "@/data/personal";
 import { useHeroSlideshow } from "@/hooks/useHeroSlideshow";
@@ -23,7 +23,7 @@ export default function HeroSection() {
   const prefersReducedMotion = useReducedMotion();
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const { currentSlide } = useHeroSlideshow({
+  const { currentSlide, goToSlide } = useHeroSlideshow({
     slides: personal.heroSlides,
     interval: personal.heroSlideInterval,
     crossfadeDuration: 1000,
@@ -44,6 +44,27 @@ export default function HeroSection() {
     []
   );
 
+  useEffect(() => {
+    if (!isEasterEggOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsEasterEggOpen(false);
+      }
+    };
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isEasterEggOpen]);
+
   return (
     <>
       {/* ── Part 1: Carousel ─────────────────────────────────────────── */}
@@ -56,12 +77,15 @@ export default function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-              className={styles.slide}
-            >
-              <img
+            transition={{ duration: 1, ease: "easeInOut" }}
+            className={styles.slide}
+          >
+              <Image
                 src={personal.heroSlides[currentSlide].image}
                 alt={personal.heroSlides[currentSlide].alt}
+                fill
+                priority={currentSlide === 0}
+                sizes="100vw"
                 className={styles.slideImage}
               />
             </motion.div>
@@ -140,6 +164,12 @@ export default function HeroSection() {
                 <a
                   key={social.platform}
                   href={social.href}
+                  target={social.href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    social.href.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
                   className={styles.socialLink}
                   aria-label={social.label}
                 >
@@ -153,11 +183,15 @@ export default function HeroSection() {
         {/* Slide indicators */}
         <div className={styles.indicators}>
           {personal.heroSlides.map((_, index) => (
-            <div
+            <button
               key={index}
+              type="button"
+              aria-label={`Show hero slide ${index + 1}`}
+              aria-pressed={index === currentSlide}
               className={`${styles.indicator} ${
                 index === currentSlide ? styles.indicatorActive : ""
               }`}
+              onClick={() => goToSlide(index)}
             />
           ))}
         </div>
@@ -215,6 +249,14 @@ export default function HeroSection() {
                 </motion.div>
               ))}
             </motion.div>
+          </div>
+
+          <div className={styles.mobileAnnotationList} aria-label="Core strengths">
+            {personal.heroAnnotations.map((annotation) => (
+              <span key={annotation.label} className={styles.mobileAnnotation}>
+                {annotation.label}
+              </span>
+            ))}
           </div>
 
           {/* Tagline & Subtitle */}

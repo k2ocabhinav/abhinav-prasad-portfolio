@@ -37,6 +37,7 @@ export interface PersonalData {
   heroOverlayOpacity: number;
   location: Location;
   email: string;
+  resumeHref?: string | null;
   socials: SocialLink[];
   philosophy: string;
   presenceDescription: string;

@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { X, Menu } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { sections } from "@/data/navigation";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { scrollToSection, cn } from "@/lib/utils";
@@ -25,6 +25,27 @@ export default function Navigation() {
     },
     []
   );
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <>
@@ -73,32 +94,43 @@ export default function Navigation() {
       {/* Mobile Slide-out Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={panelSpring}
-            className={styles.mobileMenu}
-          >
-            <nav className={styles.mobileNav} aria-label="Mobile navigation">
-              {sections.map(({ id, label }) => (
-                <a
-                  key={id}
-                  href={`#${id}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(id);
-                  }}
-                  className={cn(
-                    styles.mobileNavItem,
-                    activeSection === id && styles.mobileNavItemActive
-                  )}
-                >
-                  {label}
-                </a>
-              ))}
-            </nav>
-          </motion.div>
+          <>
+            <motion.button
+              type="button"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              aria-label="Close navigation menu"
+              className={styles.mobileBackdrop}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={panelSpring}
+              className={styles.mobileMenu}
+            >
+              <nav className={styles.mobileNav} aria-label="Mobile navigation">
+                {sections.map(({ id, label }) => (
+                  <a
+                    key={id}
+                    href={`#${id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(id);
+                    }}
+                    className={cn(
+                      styles.mobileNavItem,
+                      activeSection === id && styles.mobileNavItemActive
+                    )}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </nav>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
