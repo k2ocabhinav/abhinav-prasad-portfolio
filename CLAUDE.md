@@ -57,7 +57,7 @@ Design tokens live in `globals.css` as CSS custom properties. Key tokens:
 
 **Adding a section**: Add the section ID to `data/navigation.ts`, create the component in `components/sections/`, and import it in `app/page.tsx`.
 
-**Icon resolution**: Icons stored as string keys in data (e.g., `"terminal"`, `"cloud"`), resolved at render time via `resolveIcon()` in `lib/utils.ts`. Keeps data files free of JSX imports.
+**Icon resolution**: Icons stored as string keys in data (e.g., `"terminal"`, `"cloud"`), resolved at render time via `resolveIcon()` or rendered safely via `renderIcon()` in `lib/utils.ts`. Keeps data files free of JSX imports and avoids creating component types during render.
 
 **Animation variants**: Centralized in `lib/animations.ts` — `fadeInUp`, `fadeInLeft`, `scaleIn`, `staggerContainer()`, plus spring presets (`orbSpring`, `magneticSpring`, `tiltSpring`, `panelSpring`, `overlaySpring`).
 
@@ -74,9 +74,33 @@ Design tokens live in `globals.css` as CSS custom properties. Key tokens:
 `HeroSection.tsx` renders two distinct sections:
 
 1. **Part 1 — Carousel** (`id="hero"`, `section.hero`): Full-screen rotating image carousel with a glass-morphism text panel. Auto-cycles via `useHeroSlideshow`. Managed by `personal.heroSlides`, `personal.heroSlideInterval`, `personal.heroOverlayOpacity`.
+   - Carousel slides render with `next/image`.
+   - Slide indicators are interactive buttons.
    > **Note:** The carousel is a placeholder — a UI designer is creating a custom high-fidelity redesign for a future iteration.
 
 2. **Part 2 — Profile** (`section.profileSection`): Grayscale personal photo with annotation lines + tagline + subtitle. Uses `next/image` for the photo. Photo URL stored in `personal.heroPhoto`. Annotations in `personal.heroAnnotations`.
+   - On mobile, annotations collapse into compact chips below the image instead of disappearing completely.
+
+### Contact CTA
+
+- `personal.resumeHref` is optional.
+- The current default points to `/resume/abhinav-resume.pdf`.
+- Editable resume source lives in `resume/abhinav-resume.txt`.
+- If `resumeHref` is present, the primary CTA downloads that file.
+- If `resumeHref` is `null`, the CTA falls back to a mailto-based "Request Resume" action.
+
+### Interaction Notes
+
+- The mobile navigation panel includes a backdrop, closes on outside click, handles `Escape`, and locks body scrolling while open.
+- The hero easter egg overlay also handles `Escape` and locks body scrolling while open.
+- `Artifact.tsx` uses deterministic animation delay values derived from the artifact ID instead of `Math.random()` during render.
+
+### Verification
+
+- The initialized repo should pass:
+  - `npm run lint`
+  - `npm run build`
+- In restricted environments, `npm run build` may require network access because `next/font/google` fetches the configured Google fonts during the build step.
 
 ### Floating Artifacts System
 
@@ -90,4 +114,8 @@ Ambient SVG decorative elements in the page margins. Mouse-reactive (repulsion s
 ### Commit Conventions
 
 - Use clear, concise commit messages with a short prefix: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`.
+- Always start work on a branch instead of working directly on `main`.
+- Prefer micro commits that isolate one logical change at a time so reverts stay precise.
+- When behavior changes, update the relevant documentation before wrapping up the branch.
 - Do NOT include Co-Authored-By lines in commit messages.
+- See `docs/workflow/AGENT_WORKFLOW.md` for the standing workflow rules.
