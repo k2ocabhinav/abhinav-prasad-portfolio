@@ -116,8 +116,8 @@ Ambient SVG decorative elements in the page margins. Mouse-reactive (repulsion s
 A motion-rich landing page rebrand is underway on branch `feat/landing-page-rebrand`.
 
 - **PRD + Plan:** `../Design/Landing page update/` (PRD.md, IMPLEMENTATION_PLAN.md, PROGRESS.md)
-- **Progress:** ~15% complete — Phases 1-3 done (font, tokens, types, data, animation variants, hooks)
-- **Next step:** Phase 4 — create `src/components/landing/` with 12 component pairs
+- **Progress:** Phase 4 components are now implemented on this branch; next step is Phase 5 navigation enhancement
+- **Landing components available:** `src/components/landing/` now contains Frame 1 hero, Frame 2 work stack, Frame 3 services, blend, profile extraction, and `LandingExperience`
 - **DO NOT** delete `src/components/sections/HeroSection.tsx` — still active, replaced in Phase 6
 - **New tokens available:** `--font-display` (Syne), `--landing-glass-*`, `--motion-*`, `--color-*-rgb`
 - **New exports in `lib/animations.ts`:** `titleMaskReveal`, `landingFadeInUp`, `landingVisualIn`, `workCardActive`, `landingStagger()`, `visual3DSpring`, `workStackSpring`
