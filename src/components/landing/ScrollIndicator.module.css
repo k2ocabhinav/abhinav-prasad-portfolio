@@ -1,0 +1,30 @@
+.scrollIndicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.line {
+  position: relative;
+  width: 1px;
+  height: 40px;
+  background: rgba(var(--color-primary-brand-rgb), 0.3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.dot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-primary-brand);
+}

@@ -1,0 +1,89 @@
+.textColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.displayTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3.25rem, 8vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--color-on-surface);
+}
+
+.displayTitleLine {
+  display: block;
+  overflow: hidden;
+}
+
+.nameLabel {
+  width: fit-content;
+  font-family: var(--font-label);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--color-primary-brand);
+  text-transform: uppercase;
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.nameLabel:hover {
+  color: var(--color-on-surface);
+}
+
+.nameLabel:focus-visible {
+  outline: 2px solid var(--color-primary-brand);
+  outline-offset: 4px;
+}
+
+.accentLine {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 3.5vw, 3rem);
+  color: var(--color-secondary-text);
+  letter-spacing: -0.02em;
+}
+
+.supportingCopy {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(0.9375rem, 1.5vw, 1.125rem);
+  color: var(--color-secondary-text);
+  line-height: 1.6;
+  max-width: 32rem;
+}
+
+.ctaGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 767px) {
+  .textColumn {
+    text-align: center;
+    align-items: center;
+  }
+
+  .displayTitle {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+
+  .supportingCopy {
+    text-align: center;
+  }
+
+  .ctaGroup {
+    justify-content: center;
+  }
+}

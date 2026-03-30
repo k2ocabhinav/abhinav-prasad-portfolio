@@ -1,0 +1,89 @@
+.visualContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+
+.composition {
+  position: relative;
+  width: clamp(280px, 80%, 500px);
+  height: clamp(320px, 70%, 560px);
+  transform-style: preserve-3d;
+}
+
+.panel {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--landing-glass-radius);
+  border: 1px solid var(--landing-glass-border);
+}
+
+.panelBack {
+  transform: translateZ(-60px);
+  background: rgba(var(--color-primary-brand-rgb), 0.15);
+  border-radius: 24px;
+}
+
+.panelMiddle {
+  transform: translateZ(-30px) rotateY(3deg);
+  background: rgba(var(--color-surface-rgb), 0.2);
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
+}
+
+.panelFront {
+  transform: translateZ(0);
+  background: var(--landing-glass-bg);
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
+  border-color: var(--landing-glass-border-active);
+  overflow: hidden;
+}
+
+.dotOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: radial-gradient(var(--color-primary-brand) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.06;
+}
+
+.frontHighlight {
+  position: absolute;
+  inset: 12%;
+  border-radius: calc(var(--landing-glass-radius) - 4px);
+  background:
+    linear-gradient(135deg, rgba(var(--color-surface-rgb), 0.2), transparent 60%),
+    linear-gradient(180deg, rgba(var(--color-primary-brand-rgb), 0.12), transparent 70%);
+}
+
+.floatingAccent {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(74, 59, 50, 0.15);
+  transform: translateZ(30px);
+  top: 15%;
+  right: -10%;
+  box-shadow: 0 0 24px rgba(74, 59, 50, 0.12);
+}
+
+@media (max-width: 767px) {
+  .visualContainer {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .panelBack,
+  .floatingAccent {
+    display: none;
+  }
+}
