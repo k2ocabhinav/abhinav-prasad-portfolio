@@ -151,3 +151,40 @@
 .mobileNavItemActive {
   color: var(--color-primary-brand);
 }
+
+/* ─── Landing Hero Mode ─────────────────────────────── */
+
+.desktopRailTransparent {
+  padding: 0.875rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(250, 247, 242, 0.52);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(107, 127, 120, 0.08);
+  box-shadow: 0 14px 32px rgba(107, 127, 120, 0.08);
+}
+
+.desktopRailTransparent .railLabel {
+  color: rgba(74, 59, 50, 0.62);
+}
+
+.desktopRailTransparent .railLabelActive {
+  color: var(--color-primary-brand);
+}
+
+.desktopRailTransparent .railDot {
+  background-color: rgba(107, 127, 120, 0.28);
+}
+
+.desktopRailTransparent .railDotActive {
+  background-color: var(--color-primary-brand);
+}
+
+.hamburgerButtonTransparent {
+  background: rgba(250, 247, 242, 0.68);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(107, 127, 120, 0.14);
+  box-shadow: 0 10px 24px rgba(107, 127, 120, 0.08);
+  color: var(--color-primary-brand);
+}

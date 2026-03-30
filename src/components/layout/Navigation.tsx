@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Menu } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
 import { sections } from "@/data/navigation";
+import { useLandingNavMode } from "@/hooks/useLandingNavMode";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { scrollToSection, cn } from "@/lib/utils";
 import { panelSpring } from "@/lib/animations";
@@ -16,6 +17,7 @@ import styles from "./Navigation.module.css";
 export default function Navigation() {
   const sectionIds = sections.map((s) => s.id);
   const activeSection = useScrollSpy(sectionIds);
+  const navMode = useLandingNavMode(80);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleNavClick = useCallback(
@@ -50,7 +52,13 @@ export default function Navigation() {
   return (
     <>
       {/* Desktop Rail Navigation */}
-      <nav className={styles.desktopRail} aria-label="Section navigation">
+      <nav
+        className={cn(
+          styles.desktopRail,
+          navMode === "transparent" && styles.desktopRailTransparent
+        )}
+        aria-label="Section navigation"
+      >
         {sections.map(({ id, label }) => (
           <a
             key={id}
@@ -85,7 +93,10 @@ export default function Navigation() {
         <button
           onClick={() => setIsMobileMenuOpen((v) => !v)}
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          className={styles.hamburgerButton}
+          className={cn(
+            styles.hamburgerButton,
+            navMode === "transparent" && styles.hamburgerButtonTransparent
+          )}
         >
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
