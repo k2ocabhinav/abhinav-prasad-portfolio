@@ -116,14 +116,16 @@ Ambient SVG decorative elements in the page margins. Mouse-reactive (repulsion s
 A motion-rich landing page rebrand is underway on branch `feat/landing-page-rebrand`.
 
 - **PRD + Plan:** `../Design/Landing page update/` (PRD.md, IMPLEMENTATION_PLAN.md, PROGRESS.md)
-- **Progress:** Phases 1-7 are complete on this branch
+- **Progress:** Phases 1-11 are complete on this branch, including the post-launch enhancement track
 - **Active homepage entrypoint:** `src/app/page.tsx` now renders `LandingExperience`
-- **Landing components available:** `src/components/landing/` contains Frame 1 hero, Frame 2 work stack, Frame 3 services, blend, profile extraction, and `LandingExperience`
+- **Landing components available:** `src/components/landing/` contains Frame 1 hero, the Frame 2 story-vignette work stack, Frame 3 services, blend, profile extraction, and `LandingExperience`
 - **Hero anchor semantics:** Keep `id="hero"` on the first landing frame section, not on the full landing wrapper, so nav and scroll-spy continue to behave correctly
-- **Reduced-motion safety:** `LandingExperience` renders a static selected-work section in reduced-motion mode so the primary CTA target remains valid without sticky scroll behavior
+- **Reduced-motion safety:** `LandingExperience` renders a static story-vignette section in reduced-motion mode so the primary CTA target remains valid without sticky scroll behavior
 - **Navigation treatment:** landing nav mode uses cream-friendly sage/dark glass styling rather than white transparent dots because the hero background is light
+- **Warm editorial accent system:** pastel accents are limited to atmospheric washes, halos, and glass highlights in the landing frames; do not use them for primary body text or critical interactive labels
+- **Story frame semantics:** the upper motion-heavy section is conceptual story content, not duplicate portfolio work and not implied shipped client case studies
 - **DO NOT** delete `src/components/sections/HeroSection.tsx` — it is no longer active in `page.tsx`, but it remains as dormant reference for the previous carousel hero
-- **New tokens available:** `--font-display` (Syne), `--landing-glass-*`, `--motion-*`, `--color-*-rgb`
+- **New tokens available:** `--font-display` (Syne), `--landing-glass-*`, `--motion-*`, `--color-*-rgb`, and restrained pastel accent tokens for peach, sky, and sand
 - **New exports in `lib/animations.ts`:** `titleMaskReveal`, `landingFadeInUp`, `landingVisualIn`, `workCardActive`, `landingStagger()`, `visual3DSpring`, `workStackSpring`
 - **New hooks:** `useScrollLinkedIndex`, `useLandingNavMode`
 - **New data:** `data/services.ts`, `data/landing.ts`
