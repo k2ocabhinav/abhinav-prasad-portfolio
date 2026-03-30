@@ -70,12 +70,15 @@ Each theme contains:
 
 ## Artifact Positioning
 
-Artifacts are positioned in the **outer 15%** of viewport width:
+Artifacts should primarily live in the outer gutters, but a few can drift into
+safe whitespace nearer the content band when the layout needs more visual density.
 
-- **Left zone**: 5-20% from left edge
-- **Right zone**: 80-95% from left edge
+- **Outer left zone**: 5-20% from left edge
+- **Outer right zone**: 80-95% from left edge
+- **Inner whitespace accents**: roughly 22-30% and 70-78% when they do not sit
+  behind dense text or interactive UI
 
-This avoids the central content zone (max-width 1440px with large margins).
+Avoid placing many artifacts directly behind headings, cards, or form controls.
 
 ## Animation System
 
@@ -93,7 +96,7 @@ All animations are disabled when `prefers-reduced-motion: reduce` is active.
 - `z-index: 75` — between nav rail (50) and cursor orb (100)
 - Desktop-only — hidden below 768px
 - Max artifact size: 48px
-- Artifacts in outer 15% of viewport only
+- Keep opacity subtle enough that artifacts remain atmospheric, not foreground UI
 
 ## Future Enhancements
 
