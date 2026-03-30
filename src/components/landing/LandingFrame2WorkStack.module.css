@@ -1,0 +1,130 @@
+.workStackOuter {
+  position: relative;
+  width: 100%;
+  scroll-snap-align: none;
+}
+
+.workStackSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--content-padding-x);
+  overflow: hidden;
+}
+
+.sectionLabel {
+  font-family: var(--font-label);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--color-primary-brand);
+  text-transform: uppercase;
+  font-size: 11px;
+  padding-top: 3rem;
+  padding-bottom: 1rem;
+}
+
+.workStackGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  flex: 1;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  width: 100%;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .workStackGrid {
+    grid-template-columns: 40fr 60fr;
+    gap: 4rem;
+  }
+}
+
+.progressBar {
+  width: 100%;
+  height: 2px;
+  background: rgba(var(--color-primary-brand-rgb), 0.1);
+  margin-bottom: 2rem;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-primary-brand);
+  transform-origin: left;
+}
+
+.mobileList {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: var(--section-padding-y) var(--content-padding-x);
+}
+
+.mobileCard {
+  background: var(--landing-glass-bg);
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
+  border: 1px solid var(--landing-glass-border);
+  border-radius: var(--landing-glass-radius);
+  padding: 2rem;
+}
+
+.mobileCaseLabel {
+  display: inline-flex;
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-primary-brand);
+}
+
+.mobileIcon {
+  margin: 1.25rem 0;
+  color: rgba(var(--color-primary-brand-rgb), 0.4);
+}
+
+.mobileTitle {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  color: var(--color-on-surface);
+}
+
+.mobileDescription {
+  margin-top: 1rem;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--color-secondary-text);
+  line-height: 1.6;
+}
+
+.mobileTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 767px) {
+  .workStackOuter {
+    height: auto !important;
+  }
+
+  .workStackSticky {
+    position: relative;
+    height: auto;
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobileList {
+    display: none;
+  }
+}
