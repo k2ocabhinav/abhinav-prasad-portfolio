@@ -120,3 +120,9 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .tile {
+    background: rgba(var(--color-surface-rgb), 0.9);
+  }
+}

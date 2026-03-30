@@ -108,3 +108,13 @@
     display: none;
   }
 }
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .panelMiddle {
+    background: rgba(var(--color-surface-rgb), 0.72);
+  }
+
+  .panelFront {
+    background: rgba(var(--color-surface-rgb), 0.88);
+  }
+}

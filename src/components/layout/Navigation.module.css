@@ -46,6 +46,12 @@
   transform: translateX(0);
 }
 
+.railItem:focus-visible {
+  outline: 2px solid var(--color-primary-brand);
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+
 .railLabelActive {
   opacity: 1;
   transform: translateX(0);
@@ -99,6 +105,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.hamburgerButton:focus-visible,
+.mobileNavItem:focus-visible {
+  outline: 2px solid var(--color-primary-brand);
+  outline-offset: 4px;
 }
 
 /* ─── Mobile Slide-out Menu ──────────────────────────── */
@@ -191,4 +203,14 @@
   border-color: rgba(107, 127, 120, 0.14);
   box-shadow: 0 10px 24px rgba(107, 127, 120, 0.08);
   color: var(--color-primary-brand);
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .desktopRailTransparent {
+    background: rgba(250, 247, 242, 0.92);
+  }
+
+  .hamburgerButtonTransparent {
+    background: rgba(250, 247, 242, 0.94);
+  }
 }

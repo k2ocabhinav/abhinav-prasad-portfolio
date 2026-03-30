@@ -85,3 +85,9 @@
   height: 100%;
   color: rgba(var(--landing-accent-rgb), 0.5);
 }
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .card {
+    background: rgba(var(--color-surface-rgb), 0.82);
+  }
+}
