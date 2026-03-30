@@ -2,7 +2,8 @@
 // Utility Functions
 // =============================================================================
 
-import { createElement } from "react";
+import { createElement, type CSSProperties } from "react";
+import type { LandingAccentKey } from "@/types";
 import {
   Cloud,
   Database,
@@ -48,4 +49,29 @@ export function scrollToSection(id: string): void {
  */
 export function cn(...classes: (string | false | null | undefined)[]): string {
   return classes.filter(Boolean).join(" ");
+}
+
+const landingAccentColorMap: Record<LandingAccentKey, string> = {
+  sage: "var(--color-sage)",
+  peach: "var(--color-accent-peach-soft)",
+  sky: "var(--color-accent-sky-soft)",
+  sand: "var(--color-accent-sand-soft)",
+};
+
+const landingAccentRgbMap: Record<LandingAccentKey, string> = {
+  sage: "var(--color-sage-rgb)",
+  peach: "var(--color-accent-peach-rgb)",
+  sky: "var(--color-accent-sky-rgb)",
+  sand: "var(--color-accent-sand-rgb)",
+};
+
+/**
+ * Provide a consistent CSS-variable contract for landing components that
+ * support restrained accent washes without hardcoding palette values inline.
+ */
+export function getLandingAccentStyle(accent: LandingAccentKey): CSSProperties {
+  return {
+    ["--landing-accent" as string]: landingAccentColorMap[accent],
+    ["--landing-accent-rgb" as string]: landingAccentRgbMap[accent],
+  };
 }

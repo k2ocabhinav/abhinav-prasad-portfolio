@@ -133,6 +133,9 @@ export interface Theme {
 
 // ─── Landing Page Types ──────────────────────────────────────────────────────
 
+/** Accent keys used by the landing enhancement track */
+export type LandingAccentKey = "sage" | "peach" | "sky" | "sand";
+
 /** Service offering displayed in Landing Frame 3 */
 export interface Service {
   id: string;
@@ -140,6 +143,8 @@ export interface Service {
   description: string;
   /** Lucide icon key — resolved via renderIcon() at render time */
   icon: string;
+  /** Optional restrained accent wash for landing-only visual treatments */
+  accent?: LandingAccentKey;
   tags?: string[];
 }
 
@@ -160,4 +165,16 @@ export interface LandingHeroContent {
   supportingCopy: string;
   /** CTA buttons rendered in order */
   ctas: LandingCTA[];
+}
+
+/** Conceptual vignette shown in the landing motion/story frame */
+export interface LandingStory {
+  id: string;
+  eyebrow: string;
+  title: string;
+  summary: string;
+  tags: string[];
+  icon: string;
+  accent: LandingAccentKey;
+  note: string;
 }

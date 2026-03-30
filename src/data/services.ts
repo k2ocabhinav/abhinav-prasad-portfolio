@@ -12,6 +12,7 @@ export const services: Service[] = [
     description:
       "Designing distributed, fault-tolerant systems that scale. From microservices orchestration to event-driven pipelines, building the invisible infrastructure that powers products.",
     icon: "cpu",
+    accent: "sage",
     tags: ["AWS", "Microservices", "Event-Driven"],
   },
   {
@@ -20,6 +21,7 @@ export const services: Service[] = [
     description:
       "Building serverless pipelines and cloud-native platforms on AWS. Infrastructure as code, CI/CD automation, and elastic scaling for data-intensive workloads.",
     icon: "cloud",
+    accent: "sky",
     tags: ["AWS", "Terraform", "CI/CD"],
   },
   {
@@ -28,6 +30,7 @@ export const services: Service[] = [
     description:
       "End-to-end application development with modern frameworks. From interactive frontends to robust APIs, bridging design intent with engineering precision.",
     icon: "terminal",
+    accent: "peach",
     tags: ["React", "Node.js", "TypeScript"],
   },
 ];
