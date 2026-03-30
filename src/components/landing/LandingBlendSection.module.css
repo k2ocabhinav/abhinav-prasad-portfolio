@@ -1,0 +1,14 @@
+.blend {
+  height: clamp(30vh, 40vh, 50vh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-secondary-text);
+}

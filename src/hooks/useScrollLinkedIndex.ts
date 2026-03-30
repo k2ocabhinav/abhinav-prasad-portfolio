@@ -13,7 +13,7 @@ interface UseScrollLinkedIndexOptions {
 }
 
 interface UseScrollLinkedIndexResult {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   activeIndex: number;
   progress: MotionValue<number>;
 }
