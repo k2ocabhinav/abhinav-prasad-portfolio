@@ -7,7 +7,7 @@ import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";
 import AnimatedDivider from "@/components/ui/AnimatedDivider";
 import FloatingArtifacts from "@/components/artifacts/FloatingArtifacts";
-import HeroSection from "@/components/sections/HeroSection";
+import LandingExperience from "@/components/landing/LandingExperience";
 import AboutSection from "@/components/sections/AboutSection";
 import ExperienceSection from "@/components/sections/ExperienceSection";
 import WorksSection from "@/components/sections/WorksSection";
@@ -22,8 +22,8 @@ import ContactSection from "@/components/sections/ContactSection";
 export default function Home() {
   return (
     <MotionConfig reducedMotion="user">
-      {/* Hero section - full-screen carousel with glass panel */}
-      <HeroSection />
+      {/* Landing experience - motion-rich rebrand hero flow */}
+      <LandingExperience />
 
       {/* Global UI */}
       <SageOrb />
