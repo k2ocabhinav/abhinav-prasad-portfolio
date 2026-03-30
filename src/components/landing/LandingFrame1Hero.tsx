@@ -9,10 +9,12 @@ import styles from "./LandingFrame1Hero.module.css";
 
 interface LandingFrame1HeroProps {
   onNameClick: () => void;
+  showScrollIndicator?: boolean;
 }
 
 export default function LandingFrame1Hero({
   onNameClick,
+  showScrollIndicator = true,
 }: LandingFrame1HeroProps) {
   return (
     <motion.div
@@ -25,7 +27,7 @@ export default function LandingFrame1Hero({
         <HeroTextColumn onNameClick={onNameClick} />
         <HeroVisual3D />
       </div>
-      <ScrollIndicator />
+      {showScrollIndicator ? <ScrollIndicator /> : null}
     </motion.div>
   );
 }

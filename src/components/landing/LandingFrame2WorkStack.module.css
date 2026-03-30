@@ -64,6 +64,28 @@
   padding: var(--section-padding-y) var(--content-padding-x);
 }
 
+.staticSection {
+  padding: var(--section-padding-y) 0;
+  scroll-snap-align: start;
+}
+
+.staticContainer {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--content-padding-x);
+}
+
+.staticGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.mobileList .sectionLabel,
+.staticContainer .sectionLabel {
+  padding-top: 0;
+}
+
 .mobileCard {
   background: var(--landing-glass-bg);
   backdrop-filter: var(--landing-glass-blur);
@@ -126,5 +148,15 @@
 @media (min-width: 768px) {
   .mobileList {
     display: none;
+  }
+
+  .staticGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .staticGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

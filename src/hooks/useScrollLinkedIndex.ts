@@ -31,7 +31,9 @@ export function useScrollLinkedIndex({
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     const index = Math.min(Math.floor(progress * itemCount), itemCount - 1);
-    setActiveIndex(index);
+    setActiveIndex((previousIndex) =>
+      previousIndex === index ? previousIndex : index
+    );
   });
 
   return { containerRef, activeIndex, progress: scrollYProgress };

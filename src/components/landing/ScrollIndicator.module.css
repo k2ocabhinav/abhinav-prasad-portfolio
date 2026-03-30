@@ -28,3 +28,9 @@
   border-radius: 50%;
   background: var(--color-primary-brand);
 }
+
+@media (max-width: 767px) {
+  .scrollIndicator {
+    display: none;
+  }
+}

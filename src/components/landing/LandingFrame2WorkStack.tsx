@@ -10,10 +10,55 @@ import WorkStackMeta from "./WorkStackMeta";
 import WorkStackVisual from "./WorkStackVisual";
 import styles from "./LandingFrame2WorkStack.module.css";
 
-export default function LandingFrame2WorkStack() {
+interface LandingFrame2WorkStackProps {
+  staticMode?: boolean;
+}
+
+function ProjectCard({ project }: { project: (typeof landingProjects)[number] }) {
+  return (
+    <>
+      <span className={styles.mobileCaseLabel}>Case {project.id}</span>
+      <div className={styles.mobileIcon}>
+        {renderIcon(project.icon, { size: 44, strokeWidth: 0.9 })}
+      </div>
+      <h3 className={styles.mobileTitle}>{project.title}</h3>
+      <p className={styles.mobileDescription}>{project.shortDescription}</p>
+      <div className={styles.mobileTags}>
+        {project.tags.map((tag) => (
+          <Tag key={tag} label={tag} variant="subtle" />
+        ))}
+      </div>
+    </>
+  );
+}
+
+export default function LandingFrame2WorkStack({
+  staticMode = false,
+}: LandingFrame2WorkStackProps) {
   const { containerRef, activeIndex, progress } = useScrollLinkedIndex({
     itemCount: landingProjects.length,
   });
+
+  if (staticMode) {
+    return (
+      <section
+        id="selected-work"
+        className={styles.staticSection}
+        aria-label="Selected work"
+      >
+        <div className={styles.staticContainer}>
+          <span className={styles.sectionLabel}>Selected Work</span>
+          <div className={styles.staticGrid}>
+            {landingProjects.map((project) => (
+              <article key={project.id} className={styles.mobileCard}>
+                <ProjectCard project={project} />
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -43,29 +88,21 @@ export default function LandingFrame2WorkStack() {
       </div>
 
       <motion.div
+        id="selected-work-mobile"
         className={styles.mobileList}
         variants={staggerContainer(0.12)}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
       >
+        <span className={styles.sectionLabel}>Selected Work</span>
         {landingProjects.map((project) => (
           <motion.div
             key={project.id}
             className={styles.mobileCard}
             variants={staggerItem}
           >
-            <span className={styles.mobileCaseLabel}>Case {project.id}</span>
-            <div className={styles.mobileIcon}>
-              {renderIcon(project.icon, { size: 44, strokeWidth: 0.9 })}
-            </div>
-            <h3 className={styles.mobileTitle}>{project.title}</h3>
-            <p className={styles.mobileDescription}>{project.shortDescription}</p>
-            <div className={styles.mobileTags}>
-              {project.tags.map((tag) => (
-                <Tag key={tag} label={tag} variant="subtle" />
-              ))}
-            </div>
+            <ProjectCard project={project} />
           </motion.div>
         ))}
       </motion.div>

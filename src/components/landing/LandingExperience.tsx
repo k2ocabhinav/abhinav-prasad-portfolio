@@ -43,18 +43,22 @@ export default function LandingExperience() {
 
   return (
     <>
-      <div id="hero" className={styles.landing}>
+      <div className={styles.landing}>
         {prefersReducedMotion ? (
           <>
-            <section className={styles.heroFrame} aria-label="Hero">
-              <LandingFrame1Hero onNameClick={handleNameClick} />
+            <section id="hero" className={styles.heroFrame} aria-label="Hero">
+              <LandingFrame1Hero
+                onNameClick={handleNameClick}
+                showScrollIndicator={false}
+              />
             </section>
+            <LandingFrame2WorkStack staticMode />
             <LandingFrame3Services />
             <ProfileSection />
           </>
         ) : (
           <>
-            <section className={styles.heroFrame} aria-label="Hero">
+            <section id="hero" className={styles.heroFrame} aria-label="Hero">
               <LandingFrame1Hero onNameClick={handleNameClick} />
             </section>
             <LandingFrame2WorkStack />

@@ -23,7 +23,6 @@
 }
 
 .card:hover {
-  transform: translateY(-8px);
   border-color: var(--landing-glass-border-active);
   box-shadow: var(--landing-glass-shadow);
 }

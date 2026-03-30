@@ -31,6 +31,7 @@ export default function WorkStackVisual({
         variants={workCardActive}
         initial="inactive"
         animate="active"
+        whileHover={{ y: -8 }}
         transition={tiltSpring}
         style={{
           rotateX: tilt.rotateX,
