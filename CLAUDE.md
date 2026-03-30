@@ -111,6 +111,19 @@ Ambient SVG decorative elements in the page margins. Mouse-reactive (repulsion s
 - **`data/themes.ts`** — Theme definitions. Change `activeThemeId` to switch themes.
 - See `docs/floating-artifacts/README.md` for full documentation.
 
+### Landing Page Rebrand (In Progress)
+
+A motion-rich landing page rebrand is underway on branch `feat/landing-page-rebrand`.
+
+- **PRD + Plan:** `../Design/Landing page update/` (PRD.md, IMPLEMENTATION_PLAN.md, PROGRESS.md)
+- **Progress:** ~15% complete — Phases 1-3 done (font, tokens, types, data, animation variants, hooks)
+- **Next step:** Phase 4 — create `src/components/landing/` with 12 component pairs
+- **DO NOT** delete `src/components/sections/HeroSection.tsx` — still active, replaced in Phase 6
+- **New tokens available:** `--font-display` (Syne), `--landing-glass-*`, `--motion-*`, `--color-*-rgb`
+- **New exports in `lib/animations.ts`:** `titleMaskReveal`, `landingFadeInUp`, `landingVisualIn`, `workCardActive`, `landingStagger()`, `visual3DSpring`, `workStackSpring`
+- **New hooks:** `useScrollLinkedIndex`, `useLandingNavMode`
+- **New data:** `data/services.ts`, `data/landing.ts`
+
 ### Commit Conventions
 
 - Use clear, concise commit messages with a short prefix: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`.
