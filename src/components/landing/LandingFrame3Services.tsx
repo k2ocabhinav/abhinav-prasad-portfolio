@@ -6,7 +6,30 @@ import { landingStagger, staggerItem } from "@/lib/animations";
 import ServiceTile from "./ServiceTile";
 import styles from "./LandingFrame3Services.module.css";
 
-export default function LandingFrame3Services() {
+interface LandingFrame3ServicesProps {
+  reduceMotion?: boolean;
+}
+
+export default function LandingFrame3Services({
+  reduceMotion = false,
+}: LandingFrame3ServicesProps) {
+  if (reduceMotion) {
+    return (
+      <section className={styles.frame} aria-label="Services">
+        <div className={styles.container}>
+          <span className={styles.sectionLabel}>What I Do</span>
+          <div className={styles.grid}>
+            {services.map((service) => (
+              <div key={service.id}>
+                <ServiceTile service={service} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={styles.frame} aria-label="Services">
       <div className={styles.container}>

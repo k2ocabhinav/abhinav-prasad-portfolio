@@ -50,11 +50,12 @@ export default function LandingExperience() {
               <LandingFrame1Hero
                 onNameClick={handleNameClick}
                 showScrollIndicator={false}
+                reduceMotion
               />
             </section>
             <LandingFrame2WorkStack staticMode />
-            <LandingFrame3Services />
-            <ProfileSection />
+            <LandingFrame3Services reduceMotion />
+            <ProfileSection reduceMotion />
           </>
         ) : (
           <>

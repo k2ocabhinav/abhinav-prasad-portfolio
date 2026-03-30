@@ -9,10 +9,12 @@ import styles from "./HeroTextColumn.module.css";
 
 interface HeroTextColumnProps {
   onNameClick: () => void;
+  reduceMotion?: boolean;
 }
 
 export default function HeroTextColumn({
   onNameClick,
+  reduceMotion = false,
 }: HeroTextColumnProps) {
   const titleLines = landingHero.displayTitle.split("\n");
 
@@ -27,7 +29,7 @@ export default function HeroTextColumn({
     <div className={styles.textColumn}>
       <motion.span
         className={styles.nameLabel}
-        initial="hidden"
+        initial={reduceMotion ? false : "hidden"}
         animate="visible"
         variants={landingFadeInUp}
         onClick={onNameClick}
@@ -42,32 +44,36 @@ export default function HeroTextColumn({
       <motion.div
         className={styles.displayTitle}
         variants={landingStagger(0.08)}
-        initial="hidden"
+        initial={reduceMotion ? false : "hidden"}
         animate="visible"
       >
         {titleLines.map((line) => (
           <span key={line} className={styles.displayTitleLine}>
-            <motion.span variants={titleMaskReveal}>{line}</motion.span>
+            <motion.span
+              variants={reduceMotion ? undefined : titleMaskReveal}
+            >
+              {line}
+            </motion.span>
           </span>
         ))}
       </motion.div>
 
       <motion.p
         className={styles.accentLine}
-        initial="hidden"
+        initial={reduceMotion ? false : "hidden"}
         animate="visible"
         variants={landingFadeInUp}
-        transition={{ delay: 0.2 }}
+        transition={reduceMotion ? undefined : { delay: 0.2 }}
       >
         {landingHero.displayTitleAccent}
       </motion.p>
 
       <motion.p
         className={styles.supportingCopy}
-        initial="hidden"
+        initial={reduceMotion ? false : "hidden"}
         animate="visible"
         variants={landingFadeInUp}
-        transition={{ delay: 0.4 }}
+        transition={reduceMotion ? undefined : { delay: 0.4 }}
       >
         {landingHero.supportingCopy}
       </motion.p>
@@ -75,12 +81,15 @@ export default function HeroTextColumn({
       <motion.div
         className={styles.ctaGroup}
         variants={landingStagger(0.08)}
-        initial="hidden"
+        initial={reduceMotion ? false : "hidden"}
         animate="visible"
-        transition={{ delayChildren: 0.5 }}
+        transition={reduceMotion ? undefined : { delayChildren: 0.5 }}
       >
         {landingHero.ctas.map((cta) => (
-          <motion.div key={cta.label} variants={landingFadeInUp}>
+          <motion.div
+            key={cta.label}
+            variants={reduceMotion ? undefined : landingFadeInUp}
+          >
             <MagneticButton
               href={cta.href}
               variant={cta.variant === "primary" ? "outline" : "ghost"}

@@ -5,7 +5,13 @@ import Image from "next/image";
 import { personal } from "@/data/personal";
 import styles from "./ProfileSection.module.css";
 
-export default function ProfileSection() {
+interface ProfileSectionProps {
+  reduceMotion?: boolean;
+}
+
+export default function ProfileSection({
+  reduceMotion = false,
+}: ProfileSectionProps) {
   return (
     <section className={styles.profileSection}>
       <div className={`content-container ${styles.profileContent}`}>
@@ -14,10 +20,12 @@ export default function ProfileSection() {
         <div className={styles.imageWrapper}>
           <motion.div className={styles.imageContainer}>
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 0.9 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.2 }}
+              initial={reduceMotion ? false : { scale: 0.9, opacity: 0 }}
+              whileInView={
+                reduceMotion ? undefined : { scale: 1, opacity: 0.9 }
+              }
+              viewport={reduceMotion ? undefined : { once: true }}
+              transition={reduceMotion ? undefined : { duration: 1, delay: 0.2 }}
             >
               <Image
                 src={personal.heroPhoto}
@@ -32,10 +40,16 @@ export default function ProfileSection() {
             {personal.heroAnnotations.map((anno, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: anno.position === "left" ? 20 : -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 + index * 0.1 }}
+                initial={
+                  reduceMotion
+                    ? false
+                    : { opacity: 0, x: anno.position === "left" ? 20 : -20 }
+                }
+                whileInView={reduceMotion ? undefined : { opacity: 1, x: 0 }}
+                viewport={reduceMotion ? undefined : { once: true }}
+                transition={
+                  reduceMotion ? undefined : { delay: 0.5 + index * 0.1 }
+                }
                 className={`${styles.annotation} ${
                   styles[`annotation_${anno.position.replace("-", "_")}`]
                 }`}
@@ -61,10 +75,10 @@ export default function ProfileSection() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.8 }}
+          initial={reduceMotion ? false : { opacity: 0 }}
+          whileInView={reduceMotion ? undefined : { opacity: 1 }}
+          viewport={reduceMotion ? undefined : { once: true }}
+          transition={reduceMotion ? undefined : { delay: 0.8 }}
           className={styles.taglineBlock}
         >
           <p className={styles.profileTagline}>{personal.tagline}</p>
