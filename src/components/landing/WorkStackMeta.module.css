@@ -1,5 +1,5 @@
 /* =============================================================================
-   WorkStackMeta — Sticky selected-work copy panel
+   WorkStackMeta — Sticky story-vignette copy panel
    ============================================================================= */
 
 .meta {
@@ -10,6 +10,19 @@
   padding: 2rem 0;
 }
 
+.metaHeading,
+.projectEyebrow,
+.storyNote {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.metaHeading {
+  color: var(--color-primary-brand);
+}
+
 .projectNumber {
   font-family: var(--font-display);
   font-weight: 800;
@@ -18,6 +31,11 @@
   letter-spacing: -0.04em;
   color: rgba(var(--color-primary-brand-rgb), 0.2);
   margin-bottom: 0.5rem;
+}
+
+.projectEyebrow {
+  color: var(--color-primary-brand);
+  margin-bottom: 0.75rem;
 }
 
 .projectTitle {
@@ -46,22 +64,8 @@
   margin-top: 1.5rem;
 }
 
-.caseStudyLink {
+.storyNote {
   display: inline-flex;
   margin-top: 1.5rem;
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--color-primary-brand);
-  text-decoration: none;
-  transition: opacity 0.3s ease;
-}
-
-.caseStudyLink:hover {
-  opacity: 0.7;
-}
-
-.caseStudyDisabled {
-  opacity: 0.5;
-  pointer-events: none;
+  color: var(--color-secondary-text);
 }

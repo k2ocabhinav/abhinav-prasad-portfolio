@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { renderIcon } from "@/lib/utils";
 import { tiltSpring, workCardActive } from "@/lib/animations";
+import type { LandingAccentKey } from "@/types";
 import styles from "./WorkStackVisual.module.css";
 
 // =============================================================================
@@ -11,22 +12,23 @@ import styles from "./WorkStackVisual.module.css";
 // Keeps icon transitions and hover lift inside Motion so transforms compose cleanly.
 // =============================================================================
 
-interface WorkStackVisualProject {
+interface WorkStackVisualStory {
   id: string;
   icon: string;
+  accent: LandingAccentKey;
 }
 
 interface WorkStackVisualProps {
   activeIndex: number;
-  projects: WorkStackVisualProject[];
+  stories: WorkStackVisualStory[];
 }
 
 export default function WorkStackVisual({
   activeIndex,
-  projects,
+  stories,
 }: WorkStackVisualProps) {
   const { ref: tiltRef, tilt } = useCardTilt(8);
-  const project = projects[activeIndex];
+  const story = stories[activeIndex];
 
   return (
     <div className={styles.visual}>
@@ -48,14 +50,14 @@ export default function WorkStackVisual({
         {/* Icon content is the only part that swaps; the glass card stays stable. */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={project.id}
+            key={story.id}
             className={styles.iconWrapper}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            {renderIcon(project.icon, {
+            {renderIcon(story.icon, {
               size: 120,
               strokeWidth: 0.5,
             })}

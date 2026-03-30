@@ -1,5 +1,5 @@
 /* =============================================================================
-   LandingFrame2WorkStack — Sticky selected-work layout plus static fallbacks
+   LandingFrame2WorkStack — Sticky story-vignette layout plus static fallbacks
    ============================================================================= */
 
 .workStackOuter {
@@ -129,6 +129,15 @@
   font-weight: 300;
   color: var(--color-secondary-text);
   line-height: 1.6;
+}
+
+.mobileNote {
+  margin-top: 1.25rem;
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-secondary-text);
 }
 
 .mobileTags {
