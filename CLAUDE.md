@@ -111,16 +111,18 @@ Ambient SVG decorative elements in the page margins. Mouse-reactive (repulsion s
 - **`data/themes.ts`** — Theme definitions. Change `activeThemeId` to switch themes.
 - See `docs/floating-artifacts/README.md` for full documentation.
 
-### Landing Page Rebrand (In Progress)
+### Landing Page Rebrand (Completed On Branch)
 
 A motion-rich landing page rebrand is underway on branch `feat/landing-page-rebrand`.
 
 - **PRD + Plan:** `../Design/Landing page update/` (PRD.md, IMPLEMENTATION_PLAN.md, PROGRESS.md)
-- **Progress:** Phase 4 components are now implemented on this branch; next step is Phase 5 navigation enhancement
-- **Landing components available:** `src/components/landing/` now contains Frame 1 hero, Frame 2 work stack, Frame 3 services, blend, profile extraction, and `LandingExperience`
+- **Progress:** Phases 1-7 are complete on this branch
+- **Active homepage entrypoint:** `src/app/page.tsx` now renders `LandingExperience`
+- **Landing components available:** `src/components/landing/` contains Frame 1 hero, Frame 2 work stack, Frame 3 services, blend, profile extraction, and `LandingExperience`
 - **Hero anchor semantics:** Keep `id="hero"` on the first landing frame section, not on the full landing wrapper, so nav and scroll-spy continue to behave correctly
 - **Reduced-motion safety:** `LandingExperience` renders a static selected-work section in reduced-motion mode so the primary CTA target remains valid without sticky scroll behavior
-- **DO NOT** delete `src/components/sections/HeroSection.tsx` — still active, replaced in Phase 6
+- **Navigation treatment:** landing nav mode uses cream-friendly sage/dark glass styling rather than white transparent dots because the hero background is light
+- **DO NOT** delete `src/components/sections/HeroSection.tsx` — it is no longer active in `page.tsx`, but it remains as dormant reference for the previous carousel hero
 - **New tokens available:** `--font-display` (Syne), `--landing-glass-*`, `--motion-*`, `--color-*-rgb`
 - **New exports in `lib/animations.ts`:** `titleMaskReveal`, `landingFadeInUp`, `landingVisualIn`, `workCardActive`, `landingStagger()`, `visual3DSpring`, `workStackSpring`
 - **New hooks:** `useScrollLinkedIndex`, `useLandingNavMode`
