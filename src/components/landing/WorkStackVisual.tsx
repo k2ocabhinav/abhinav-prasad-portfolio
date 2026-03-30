@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useCardTilt } from "@/hooks/useCardTilt";
-import { renderIcon } from "@/lib/utils";
+import { getLandingAccentStyle, renderIcon } from "@/lib/utils";
 import { tiltSpring, workCardActive } from "@/lib/animations";
 import type { LandingAccentKey } from "@/types";
 import styles from "./WorkStackVisual.module.css";
@@ -35,16 +35,17 @@ export default function WorkStackVisual({
       <motion.div
         ref={tiltRef}
         className={styles.card}
+        style={{
+          ...getLandingAccentStyle(story.accent),
+          rotateX: tilt.rotateX,
+          rotateY: tilt.rotateY,
+          transformPerspective: 1200,
+        }}
         variants={workCardActive}
         initial="inactive"
         animate="active"
         whileHover={{ y: -8 }}
         transition={tiltSpring}
-        style={{
-          rotateX: tilt.rotateX,
-          rotateY: tilt.rotateY,
-          transformPerspective: 1200,
-        }}
       >
         <div className={styles.dotOverlay} />
         {/* Icon content is the only part that swaps; the glass card stays stable. */}

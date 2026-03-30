@@ -7,6 +7,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(var(--color-accent-sand-rgb), 0.18) 0%,
+      rgba(var(--color-surface-rgb), 0) 52%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(var(--color-sage-rgb), 0) 48%,
+      rgba(var(--color-sage-rgb), 0.16) 100%
+    );
 }
 
 .label {

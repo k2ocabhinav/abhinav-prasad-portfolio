@@ -3,30 +3,73 @@
    ============================================================================= */
 
 .tile {
+  position: relative;
   background: var(--landing-glass-bg);
   backdrop-filter: var(--landing-glass-blur);
   -webkit-backdrop-filter: var(--landing-glass-blur);
   border: 1px solid var(--landing-glass-border);
   border-radius: var(--landing-glass-radius);
   padding: 2rem;
+  overflow: hidden;
+  isolation: isolate;
   transition:
     transform var(--motion-duration-short) var(--motion-ease-out),
     background var(--motion-duration-short) var(--motion-ease-out),
-    border-color var(--motion-duration-short) var(--motion-ease-out);
+    border-color var(--motion-duration-short) var(--motion-ease-out),
+    box-shadow var(--motion-duration-short) var(--motion-ease-out);
+}
+
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: auto -22% 52% 48%;
+  height: 10rem;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(var(--landing-accent-rgb), 0.26) 0,
+    rgba(var(--landing-accent-rgb), 0.08) 38%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 .tile:hover {
   transform: translateY(-4px);
-  background: rgba(var(--color-surface-rgb), 0.22);
-  border-color: var(--landing-glass-border-active);
+  background:
+    linear-gradient(180deg, rgba(var(--landing-accent-rgb), 0.08), transparent 38%),
+    rgba(var(--color-surface-rgb), 0.22);
+  border-color: rgba(var(--landing-accent-rgb), 0.48);
+  box-shadow:
+    var(--landing-glass-shadow),
+    0 18px 38px rgba(var(--landing-accent-rgb), 0.14);
 }
 
 .icon {
-  color: var(--color-primary-brand);
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  color: rgba(var(--landing-accent-rgb), 0.92);
   margin-bottom: 1.5rem;
 }
 
+.icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(var(--landing-accent-rgb), 0.2);
+  z-index: -1;
+}
+
 .title {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(1.25rem, 2vw, 1.75rem);
@@ -60,6 +103,8 @@
 }
 
 .description {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-body);
   font-weight: 300;
   font-size: 0.9375rem;
@@ -69,6 +114,8 @@
 }
 
 .tags {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;

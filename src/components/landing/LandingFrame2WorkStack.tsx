@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { useScrollLinkedIndex } from "@/hooks/useScrollLinkedIndex";
 import { landingStories } from "@/data/landing";
 import { staggerContainer, staggerItem } from "@/lib/animations";
-import { renderIcon } from "@/lib/utils";
+import { getLandingAccentStyle, renderIcon } from "@/lib/utils";
 import Tag from "@/components/ui/Tag";
 import WorkStackMeta from "./WorkStackMeta";
 import WorkStackVisual from "./WorkStackVisual";
@@ -59,7 +59,11 @@ export default function LandingFrame2WorkStack({
           <span className={styles.sectionLabel}>Story Vignettes</span>
           <div className={styles.staticGrid}>
             {landingStories.map((story) => (
-              <article key={story.id} className={styles.mobileCard}>
+              <article
+                key={story.id}
+                className={styles.mobileCard}
+                style={getLandingAccentStyle(story.accent)}
+              >
                 <StoryCard story={story} />
               </article>
             ))}
@@ -109,6 +113,7 @@ export default function LandingFrame2WorkStack({
             key={story.id}
             className={styles.mobileCard}
             variants={staggerItem}
+            style={getLandingAccentStyle(story.accent)}
           >
             <StoryCard story={story} />
           </motion.div>

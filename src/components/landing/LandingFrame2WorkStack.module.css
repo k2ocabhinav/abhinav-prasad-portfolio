@@ -92,15 +92,34 @@
 }
 
 .mobileCard {
+  position: relative;
   background: var(--landing-glass-bg);
   backdrop-filter: var(--landing-glass-blur);
   -webkit-backdrop-filter: var(--landing-glass-blur);
   border: 1px solid var(--landing-glass-border);
   border-radius: var(--landing-glass-radius);
   padding: 2rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.mobileCard::before {
+  content: "";
+  position: absolute;
+  inset: -12% 44% 50% -12%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--landing-accent-rgb), 0.18) 0,
+    rgba(var(--landing-accent-rgb), 0.06) 42%,
+    transparent 74%
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 .mobileCaseLabel {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   font-family: var(--font-label);
   font-weight: 500;
@@ -111,11 +130,15 @@
 }
 
 .mobileIcon {
+  position: relative;
+  z-index: 1;
   margin: 1.25rem 0;
-  color: rgba(var(--color-primary-brand-rgb), 0.4);
+  color: rgba(var(--landing-accent-rgb), 0.52);
 }
 
 .mobileTitle {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-headline);
   font-style: italic;
   font-weight: 300;
@@ -124,6 +147,8 @@
 }
 
 .mobileDescription {
+  position: relative;
+  z-index: 1;
   margin-top: 1rem;
   font-family: var(--font-body);
   font-weight: 300;
@@ -132,6 +157,8 @@
 }
 
 .mobileNote {
+  position: relative;
+  z-index: 1;
   margin-top: 1.25rem;
   font-family: var(--font-label);
   font-size: 11px;
@@ -141,6 +168,8 @@
 }
 
 .mobileTags {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
