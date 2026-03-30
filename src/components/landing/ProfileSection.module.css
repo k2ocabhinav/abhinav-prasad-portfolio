@@ -1,3 +1,7 @@
+/* =============================================================================
+   ProfileSection — Extracted portrait, annotations, and supporting copy
+   ============================================================================= */
+
 .profileSection {
   background-color: var(--color-surface);
   padding-top: var(--section-padding-y);
@@ -156,6 +160,7 @@
   color: rgba(107, 127, 120, 0.9);
 }
 
+/* Supporting copy block below the portrait cluster. */
 .taglineBlock {
   max-width: 42rem;
   margin-top: 5rem;

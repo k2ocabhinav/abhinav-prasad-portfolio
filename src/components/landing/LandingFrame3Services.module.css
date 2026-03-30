@@ -1,3 +1,7 @@
+/* =============================================================================
+   LandingFrame3Services — Responsive services grid
+   ============================================================================= */
+
 .frame {
   padding: var(--section-padding-y) 0;
   scroll-snap-align: start;

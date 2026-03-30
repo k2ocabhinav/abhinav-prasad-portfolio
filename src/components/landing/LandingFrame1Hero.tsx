@@ -7,6 +7,11 @@ import ScrollIndicator from "./ScrollIndicator";
 import { landingStagger } from "@/lib/animations";
 import styles from "./LandingFrame1Hero.module.css";
 
+// =============================================================================
+// LandingFrame1Hero — Frame 1 wrapper.
+// Couples the editorial copy column with the decorative 3D visual.
+// =============================================================================
+
 interface LandingFrame1HeroProps {
   onNameClick: () => void;
   showScrollIndicator?: boolean;
@@ -29,6 +34,7 @@ export default function LandingFrame1Hero({
         <HeroTextColumn onNameClick={onNameClick} reduceMotion={reduceMotion} />
         <HeroVisual3D reduceMotion={reduceMotion} />
       </div>
+      {/* The hint is suppressed in reduced motion and can also be disabled by the orchestrator. */}
       {showScrollIndicator ? <ScrollIndicator /> : null}
     </motion.div>
   );

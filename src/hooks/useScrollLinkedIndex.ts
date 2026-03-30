@@ -31,6 +31,8 @@ export function useScrollLinkedIndex({
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     const index = Math.min(Math.floor(progress * itemCount), itemCount - 1);
+    // Guard repeated updates from the same bucket so sticky scroll does not
+    // trigger unnecessary rerenders while the user is still within one segment.
     setActiveIndex((previousIndex) =>
       previousIndex === index ? previousIndex : index
     );

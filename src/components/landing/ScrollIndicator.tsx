@@ -27,6 +27,8 @@ export default function ScrollIndicator() {
   const y = useTransform(scrollY, [0, viewportHeight * 0.2], [0, 10]);
 
   return (
+    // Decorative only — hidden from assistive tech and fades out as the user
+    // begins exploring the landing sequence so it never competes with content.
     <motion.div
       className={styles.scrollIndicator}
       style={{ opacity, y }}

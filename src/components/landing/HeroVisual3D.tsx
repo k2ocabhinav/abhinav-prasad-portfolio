@@ -6,6 +6,11 @@ import { landingVisualIn, tiltSpring } from "@/lib/animations";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import styles from "./HeroVisual3D.module.css";
 
+// =============================================================================
+// HeroVisual3D — Pure CSS / Motion composition for the landing hero.
+// This stays decorative and intentionally avoids external 3D dependencies.
+// =============================================================================
+
 interface HeroVisual3DProps {
   reduceMotion?: boolean;
 }
@@ -31,6 +36,8 @@ export default function HeroVisual3D({
   return (
     <div className={styles.visualContainer} aria-hidden="true">
       <motion.div
+        // Pointer tilt is only meaningful on larger screens and is disabled in
+        // reduced-motion mode so the visual settles into a static composition.
         ref={reduceMotion ? undefined : tiltRef}
         className={styles.composition}
         variants={reduceMotion ? undefined : landingVisualIn}
@@ -47,6 +54,7 @@ export default function HeroVisual3D({
         }
         transition={tiltSpring}
       >
+        {/* Layered panels create depth without loading images or canvas assets. */}
         <motion.div
           className={`${styles.panel} ${styles.panelBack}`}
           animate={reduceMotion ? undefined : { rotateY: [-3, 3, -3] }}

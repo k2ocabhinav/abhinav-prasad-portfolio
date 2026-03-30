@@ -13,6 +13,8 @@ export function useLandingNavMode(threshold = 80): "transparent" | "glass" {
 
   useEffect(() => {
     const handleScroll = () => {
+      // The threshold is intentionally simple: the nav only needs a hero/top-of-page
+      // distinction, not per-section awareness.
       setMode(window.scrollY > threshold ? "glass" : "transparent");
     };
     handleScroll();

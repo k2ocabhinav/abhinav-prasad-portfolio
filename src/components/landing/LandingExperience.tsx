@@ -12,6 +12,11 @@ import LandingBlendSection from "./LandingBlendSection";
 import ProfileSection from "./ProfileSection";
 import styles from "./LandingExperience.module.css";
 
+// =============================================================================
+// LandingExperience — Active homepage hero flow.
+// Coordinates reduced-motion branching and preserves the easter egg overlay.
+// =============================================================================
+
 export default function LandingExperience() {
   const prefersReducedMotion = useReducedMotion();
   const [isEasterEggOpen, setIsEasterEggOpen] = useState(false);
@@ -46,6 +51,7 @@ export default function LandingExperience() {
       <div className={styles.landing}>
         {prefersReducedMotion ? (
           <>
+            {/* Reduced motion shows the same information without scroll-driven choreography. */}
             <section id="hero" className={styles.heroFrame} aria-label="Hero">
               <LandingFrame1Hero
                 onNameClick={handleNameClick}
@@ -59,6 +65,7 @@ export default function LandingExperience() {
           </>
         ) : (
           <>
+            {/* Interactive path preserves the full frame-by-frame landing sequence. */}
             <section id="hero" className={styles.heroFrame} aria-label="Hero">
               <LandingFrame1Hero onNameClick={handleNameClick} />
             </section>

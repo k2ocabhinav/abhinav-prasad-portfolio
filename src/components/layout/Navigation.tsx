@@ -17,6 +17,8 @@ import styles from "./Navigation.module.css";
 export default function Navigation() {
   const sectionIds = sections.map((s) => s.id);
   const activeSection = useScrollSpy(sectionIds);
+  // The landing hero is light, so the "transparent" mode still uses sage/dark
+  // chrome rather than the white-on-dark treatment from the generic reference.
   const navMode = useLandingNavMode(80);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

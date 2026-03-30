@@ -1,3 +1,7 @@
+/* =============================================================================
+   ScrollIndicator — Decorative hint line and traveling dot
+   ============================================================================= */
+
 .scrollIndicator {
   position: absolute;
   bottom: 2rem;
@@ -30,6 +34,7 @@
 }
 
 @media (max-width: 767px) {
+  /* Mobile keeps the landing CTA area cleaner without an extra scroll hint. */
   .scrollIndicator {
     display: none;
   }

@@ -5,6 +5,11 @@ import Image from "next/image";
 import { personal } from "@/data/personal";
 import styles from "./ProfileSection.module.css";
 
+// =============================================================================
+// ProfileSection — Extracted from the legacy HeroSection profile reveal.
+// This keeps the original portrait/annotation block reusable in the new landing.
+// =============================================================================
+
 interface ProfileSectionProps {
   reduceMotion?: boolean;
 }

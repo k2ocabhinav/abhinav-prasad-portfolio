@@ -4,6 +4,11 @@ import { AnimatePresence, motion } from "motion/react";
 import Tag from "@/components/ui/Tag";
 import styles from "./WorkStackMeta.module.css";
 
+// =============================================================================
+// WorkStackMeta — Content panel for the sticky selected-work frame.
+// Swaps the active project details as scroll-linked state changes.
+// =============================================================================
+
 interface WorkStackMetaProject {
   id: string;
   title: string;
@@ -25,6 +30,7 @@ export default function WorkStackMeta({
 
   return (
     <div className={styles.meta}>
+      {/* Wait mode prevents outgoing/incoming project copy from overlapping. */}
       <AnimatePresence mode="wait">
         <motion.div
           key={project.id}

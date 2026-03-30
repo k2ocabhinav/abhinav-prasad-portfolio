@@ -1,3 +1,7 @@
+/* =============================================================================
+   HeroVisual3D — Layered glass panels for the decorative hero composition
+   ============================================================================= */
+
 .visualContainer {
   position: relative;
   width: 100%;
@@ -76,12 +80,14 @@
 }
 
 @media (max-width: 767px) {
+  /* The composition is decorative, so it drops out completely on small screens. */
   .visualContainer {
     display: none;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet keeps the glass stack simpler to reduce visual noise. */
   .panelBack,
   .floatingAccent {
     display: none;

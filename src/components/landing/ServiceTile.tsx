@@ -5,6 +5,11 @@ import type { Service } from "@/types";
 import Tag from "@/components/ui/Tag";
 import styles from "./ServiceTile.module.css";
 
+// =============================================================================
+// ServiceTile — Informational glass card for service offerings.
+// Intentionally non-interactive; hover only adds tactile polish.
+// =============================================================================
+
 interface ServiceTileProps {
   service: Service;
 }

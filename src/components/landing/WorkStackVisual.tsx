@@ -6,6 +6,11 @@ import { renderIcon } from "@/lib/utils";
 import { tiltSpring, workCardActive } from "@/lib/animations";
 import styles from "./WorkStackVisual.module.css";
 
+// =============================================================================
+// WorkStackVisual — Visual counterpart to WorkStackMeta.
+// Keeps icon transitions and hover lift inside Motion so transforms compose cleanly.
+// =============================================================================
+
 interface WorkStackVisualProject {
   id: string;
   icon: string;
@@ -40,6 +45,7 @@ export default function WorkStackVisual({
         }}
       >
         <div className={styles.dotOverlay} />
+        {/* Icon content is the only part that swaps; the glass card stays stable. */}
         <AnimatePresence mode="wait">
           <motion.div
             key={project.id}

@@ -10,6 +10,12 @@ import WorkStackMeta from "./WorkStackMeta";
 import WorkStackVisual from "./WorkStackVisual";
 import styles from "./LandingFrame2WorkStack.module.css";
 
+// =============================================================================
+// LandingFrame2WorkStack — Selected-work frame.
+// Uses sticky scroll on motion-capable layouts and a static card grid fallback
+// when reduced motion is requested.
+// =============================================================================
+
 interface LandingFrame2WorkStackProps {
   staticMode?: boolean;
 }
@@ -41,6 +47,8 @@ export default function LandingFrame2WorkStack({
 
   if (staticMode) {
     return (
+      // Static mode preserves the same content and anchor target without any
+      // sticky-scroll dependency, which keeps reduced-motion behavior reliable.
       <section
         id="selected-work"
         className={styles.staticSection}
@@ -62,6 +70,7 @@ export default function LandingFrame2WorkStack({
 
   return (
     <>
+      {/* Desktop/tablet sticky experience. The outer height creates scroll room. */}
       <div
         ref={containerRef}
         id="selected-work"
@@ -87,6 +96,7 @@ export default function LandingFrame2WorkStack({
         </div>
       </div>
 
+      {/* Mobile keeps the same project content but avoids sticky scroll entirely. */}
       <motion.div
         id="selected-work-mobile"
         className={styles.mobileList}

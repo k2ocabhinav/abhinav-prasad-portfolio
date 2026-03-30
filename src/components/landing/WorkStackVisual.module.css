@@ -1,3 +1,7 @@
+/* =============================================================================
+   WorkStackVisual — Glass card visual for the active selected-work item
+   ============================================================================= */
+
 .visual {
   display: flex;
   align-items: center;

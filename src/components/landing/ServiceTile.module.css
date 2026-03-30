@@ -1,3 +1,7 @@
+/* =============================================================================
+   ServiceTile — Informational glass tile styling
+   ============================================================================= */
+
 .tile {
   background: var(--landing-glass-bg);
   backdrop-filter: var(--landing-glass-blur);

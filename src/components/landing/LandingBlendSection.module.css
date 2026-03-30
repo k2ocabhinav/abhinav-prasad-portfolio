@@ -1,3 +1,7 @@
+/* =============================================================================
+   LandingBlendSection — Decorative bridge into the legacy portfolio sections
+   ============================================================================= */
+
 .blend {
   height: clamp(30vh, 40vh, 50vh);
   display: flex;

@@ -7,6 +7,11 @@ import { landingFadeInUp, landingStagger, titleMaskReveal } from "@/lib/animatio
 import MagneticButton from "@/components/ui/MagneticButton";
 import styles from "./HeroTextColumn.module.css";
 
+// =============================================================================
+// HeroTextColumn — Editorial copy block for the landing hero.
+// Handles the easter-egg trigger, title reveals, and CTA grouping.
+// =============================================================================
+
 interface HeroTextColumnProps {
   onNameClick: () => void;
   reduceMotion?: boolean;
@@ -16,6 +21,8 @@ export default function HeroTextColumn({
   onNameClick,
   reduceMotion = false,
 }: HeroTextColumnProps) {
+  // The data keeps the title as a single string so copy stays centralized.
+  // The hero splits it here to animate each line independently.
   const titleLines = landingHero.displayTitle.split("\n");
 
   const handleNameKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
@@ -49,6 +56,7 @@ export default function HeroTextColumn({
       >
         {titleLines.map((line) => (
           <span key={line} className={styles.displayTitleLine}>
+            {/* Title lines reveal independently on motion-capable layouts. */}
             <motion.span
               variants={reduceMotion ? undefined : titleMaskReveal}
             >
@@ -86,6 +94,8 @@ export default function HeroTextColumn({
         transition={reduceMotion ? undefined : { delayChildren: 0.5 }}
       >
         {landingHero.ctas.map((cta) => (
+          // CTA wiring stays data-driven so the landing copy can evolve without
+          // changing component structure.
           <motion.div
             key={cta.label}
             variants={reduceMotion ? undefined : landingFadeInUp}

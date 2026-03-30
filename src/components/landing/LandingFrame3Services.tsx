@@ -6,6 +6,12 @@ import { landingStagger, staggerItem } from "@/lib/animations";
 import ServiceTile from "./ServiceTile";
 import styles from "./LandingFrame3Services.module.css";
 
+// =============================================================================
+// LandingFrame3Services — Service grid frame.
+// Uses motion staggering only on the interactive path; reduced motion renders
+// the same content statically.
+// =============================================================================
+
 interface LandingFrame3ServicesProps {
   reduceMotion?: boolean;
 }
