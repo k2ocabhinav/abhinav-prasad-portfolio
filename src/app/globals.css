@@ -34,6 +34,38 @@
   --glass-blur: 16px;
   --glass-shadow: 0 8px 32px rgba(107, 127, 120, 0.08);
 
+  /* Display Font — loaded via next/font, variable injected on <html> */
+  --font-display: "Syne", sans-serif;
+
+  /* ─── Motion Tokens (Landing Page) ────────────────────────────── */
+  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-duration-micro: 150ms;
+  --motion-duration-short: 280ms;
+  --motion-duration-medium: 480ms;
+  --motion-duration-long: 700ms;
+  --motion-duration-extra-long: 1000ms;
+  --motion-stagger-base: 80ms;
+
+  /* ─── Landing Page Glassmorphism ────────────────────────────────
+     These extend the existing --glass-* tokens with landing-specific
+     opacity levels (higher opacity = more readable over hero visuals) */
+  --landing-glass-bg: rgba(250, 247, 242, 0.12);
+  --landing-glass-blur: blur(12px) saturate(1.4);
+  --landing-glass-border: rgba(107, 127, 120, 0.20);
+  --landing-glass-border-active: rgba(107, 127, 120, 0.45);
+  --landing-glass-shadow: 0 8px 32px rgba(107, 127, 120, 0.15);
+  --landing-glass-radius: 16px;
+
+  /* ─── RGB Channels ───────────────────────────────────────────────
+     Needed so CSS Modules can build rgba() with opacity overrides
+     without hardcoding hex values. */
+  --color-surface-rgb: 250, 247, 242;
+  --color-primary-brand-rgb: 107, 127, 120;
+  --color-on-surface-rgb: 28, 28, 28;
+  --color-sage-rgb: 184, 201, 193;
+
   /* Z-index scale */
   --z-artifact: 75;
   --z-orb: 100;

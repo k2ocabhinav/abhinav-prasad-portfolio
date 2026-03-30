@@ -136,3 +136,99 @@ export const heroOpacityFade = {
   inputRange: [0, 300],
   outputRange: [1, 0],
 };
+
+// ─── Landing Page Variants ───────────────────────────────────────────────────
+// Used exclusively by components in src/components/landing/
+
+/**
+ * Title mask reveal via clipPath.
+ * Apply to each title line individually so they reveal sequentially via stagger.
+ * The parent container must have overflow: hidden for the clip to work.
+ */
+export const titleMaskReveal: Variants = {
+  hidden: { clipPath: "inset(0 100% 0 0)", opacity: 0 },
+  visible: {
+    clipPath: "inset(0 0% 0 0)",
+    opacity: 1,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+/**
+ * Landing-specific fade-in from below.
+ * Shorter and snappier than the global fadeInUp (30px vs 24px, 480ms vs 600ms).
+ */
+export const landingFadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.48, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+/**
+ * Hero visual (CSS 3D composition) entrance.
+ * Slight scale + rotation creates a "settling into place" feel.
+ */
+export const landingVisualIn: Variants = {
+  hidden: { opacity: 0, scale: 0.92, rotateY: -3 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotateY: 0,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+/**
+ * Work stack card morphing variants.
+ * Used with animate prop (not whileInView) since the active state
+ * is driven by scroll progress, not viewport intersection.
+ */
+export const workCardActive: Variants = {
+  inactive: {
+    scale: 0.92,
+    opacity: 0.4,
+    filter: "blur(4px)",
+    transition: { duration: 0.3, ease: [0.65, 0, 0.35, 1] },
+  },
+  active: {
+    scale: 1,
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.48, ease: [0.65, 0, 0.35, 1] },
+  },
+};
+
+/**
+ * Landing stagger container.
+ * Uses 80ms base (--motion-stagger-base) vs the global 120ms default.
+ * delayChildren adds a slight pause before the first child animates.
+ */
+export function landingStagger(staggerDelay = 0.08): Variants {
+  return {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: staggerDelay,
+        delayChildren: 0.1,
+      },
+    },
+  };
+}
+
+/** Spring for the CSS 3D visual idle oscillation */
+export const visual3DSpring: Transition = {
+  type: "spring",
+  damping: 30,
+  stiffness: 120,
+  mass: 1,
+};
+
+/** Spring for work stack project card transitions */
+export const workStackSpring: Transition = {
+  type: "spring",
+  damping: 25,
+  stiffness: 200,
+};

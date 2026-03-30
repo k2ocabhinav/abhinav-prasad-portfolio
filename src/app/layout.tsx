@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
+import { Cormorant_Garamond, Plus_Jakarta_Sans, DM_Sans, Syne } from "next/font/google";
 import { seo } from "@/data/seo";
 import "./globals.css";
 
@@ -26,6 +26,14 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-label",
+  display: "swap",
+});
+
+// Landing page display font — geometric, ultra-bold for hero typography
+const syne = Syne({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -57,7 +65,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable}`}
+      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable}`}
     >
       <body>{children}</body>
     </html>
