@@ -65,6 +65,22 @@ export interface Experience {
 }
 
 /** Portfolio project */
+export interface ProjectVisual {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+export interface ProjectTechBucket {
+  label: string;
+  items: string[];
+}
+
+export interface ProjectLink {
+  label: string;
+  href?: string | null;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -76,6 +92,42 @@ export interface Project {
   caseStudySlug: string | null;
   /** Reversed layout in grid */
   reversed?: boolean;
+  /** Optional hero/support visuals for richer project storytelling */
+  screenshots?: ProjectVisual[];
+  /** Optional architecture callouts shown as concise bullets */
+  architectureHighlights?: string[];
+  /** Optional grouped stack coverage for architecture depth */
+  techBuckets?: ProjectTechBucket[];
+  /** Optional external CTA links */
+  links?: ProjectLink[];
+  /** Optional scope summary line for product framing */
+  scopeSummary?: string;
+  /** Optional internal deep-dive route slug */
+  detailSlug?: string;
+  /** Optional narrative CTA label for deep-dive teaser cards */
+  detailCtaLabel?: string;
+  /** Optional microcopy shown below deep-dive CTA */
+  detailCtaSubline?: string;
+}
+
+export interface ProjectDetailSection {
+  title: string;
+  description: string;
+  points: string[];
+}
+
+export interface ProjectDetail {
+  slug: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  scopeSummary: string;
+  heroImage: ProjectVisual;
+  gallery: ProjectVisual[];
+  architectureSections: ProjectDetailSection[];
+  stackBuckets: ProjectTechBucket[];
+  qualityHighlights: string[];
+  references?: ProjectLink[];
 }
 
 /** Tech stack category */

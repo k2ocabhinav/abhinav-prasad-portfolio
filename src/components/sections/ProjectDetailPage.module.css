@@ -1,0 +1,322 @@
+.pageShell {
+  min-height: 100vh;
+  background: var(--color-surface);
+}
+
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  border-bottom: 1px solid rgba(107, 127, 120, 0.14);
+  background: rgba(250, 247, 242, 0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.chromeInner {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backLink {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary-brand);
+  border-bottom: 1px solid rgba(107, 127, 120, 0.26);
+  padding-bottom: 0.2rem;
+}
+
+.chromeLabel {
+  font-family: var(--font-label);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(74, 59, 50, 0.62);
+}
+
+.main {
+  padding-top: clamp(2.25rem, 3vw, 3.6rem);
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    grid-template-columns: 1fr 1.05fr;
+    gap: 2.8rem;
+    align-items: center;
+  }
+}
+
+.heroCopy {
+  max-width: 760px;
+}
+
+.eyebrow {
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary-brand);
+  margin-bottom: 0.8rem;
+}
+
+.title {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 3.8vw, 3.45rem);
+  line-height: 1.08;
+  color: var(--color-on-surface);
+}
+
+.subtitle {
+  margin-top: 1rem;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--color-secondary-text);
+  line-height: 1.65;
+  max-width: 68ch;
+}
+
+.scopeSummary {
+  margin-top: 1.05rem;
+  border-left: 2px solid rgba(107, 127, 120, 0.34);
+  padding-left: 0.85rem;
+  color: rgba(50, 70, 64, 0.92);
+  line-height: 1.65;
+}
+
+.heroMedia {
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  min-height: clamp(280px, 46vw, 480px);
+  border: 1px solid rgba(107, 127, 120, 0.2);
+  box-shadow: 0 20px 40px rgba(29, 39, 36, 0.16);
+}
+
+.heroImage {
+  object-fit: cover;
+}
+
+.heroCaption {
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  color: rgba(243, 249, 246, 0.96);
+  background: linear-gradient(135deg, rgba(20, 27, 25, 0.9), rgba(35, 47, 43, 0.8));
+  border: 1px solid rgba(135, 159, 150, 0.34);
+  border-radius: 0.45rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.section {
+  margin-top: clamp(3.4rem, 6vw, 5.2rem);
+}
+
+.sectionTitle {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.6rem, 2.9vw, 2.4rem);
+  margin-bottom: 1.25rem;
+  color: var(--color-on-surface);
+}
+
+.galleryShell {
+  width: 100%;
+  max-width: min(1120px, 100%);
+  margin: 0 auto;
+  padding-inline: clamp(0.2rem, 1.2vw, 1rem);
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .galleryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .galleryTile01 {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1200px) {
+  .galleryGrid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .galleryTile01 {
+    grid-column: 3 / span 8;
+  }
+
+  .galleryTile02 {
+    grid-column: 1 / span 6;
+  }
+
+  .galleryTile03 {
+    grid-column: 7 / span 6;
+  }
+
+  .galleryTile04 {
+    grid-column: 1 / span 4;
+  }
+
+  .galleryTile05 {
+    grid-column: 5 / span 4;
+  }
+
+  .galleryTile06 {
+    grid-column: 9 / span 4;
+  }
+}
+
+.galleryTile {
+  border: 1px solid rgba(107, 127, 120, 0.2);
+  border-radius: 0.72rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: 0 10px 20px rgba(29, 39, 36, 0.08);
+}
+
+.galleryImageWrap {
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+
+.galleryImage {
+  object-fit: cover;
+}
+
+.galleryCaption {
+  position: absolute;
+  left: 0.65rem;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  color: rgba(244, 250, 247, 0.97);
+  background: linear-gradient(135deg, rgba(18, 26, 23, 0.9), rgba(38, 52, 48, 0.82));
+  border: 1px solid rgba(136, 160, 151, 0.36);
+  border-radius: 0.45rem;
+  padding: 0.42rem 0.58rem;
+}
+
+.architectureGrid,
+.stackGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.95rem;
+}
+
+@media (min-width: 1024px) {
+  .architectureGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stackGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.architectureCard,
+.stackCard,
+.qualityCard {
+  border: 1px solid rgba(107, 127, 120, 0.2);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.48);
+  padding: 1rem;
+}
+
+.qualityCard {
+  margin-top: 0.95rem;
+}
+
+.cardTitle {
+  font-family: var(--font-label);
+  font-size: 0.74rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(64, 86, 79, 0.96);
+  margin: 0;
+}
+
+.cardDescription {
+  margin-top: 0.7rem;
+  color: var(--color-secondary-text);
+  line-height: 1.52;
+}
+
+.cardList {
+  margin-top: 0.72rem;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.48rem;
+  line-height: 1.5;
+  color: rgba(62, 80, 74, 0.96);
+}
+
+.chipList {
+  margin-top: 0.72rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+.chip {
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.52rem;
+  border-radius: 999px;
+  background: rgba(107, 127, 120, 0.1);
+  border: 1px solid rgba(107, 127, 120, 0.22);
+  color: rgba(38, 57, 52, 0.95);
+}
+
+.referenceLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.referenceLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.38rem 0.82rem;
+  border: 1px solid rgba(107, 127, 120, 0.34);
+  background: rgba(255, 255, 255, 0.68);
+  color: rgba(42, 61, 56, 0.95);
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.referenceLinkDisabled {
+  opacity: 0.56;
+  pointer-events: none;
+}
