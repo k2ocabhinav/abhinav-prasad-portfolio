@@ -13,6 +13,7 @@ export const projects: Project[] = [
     scopeSummary:
       "Built end-to-end: multi-tenant backend architecture, real-time dispatch, and production-grade quality gates.",
     icon: "cpu",
+    links: [{ label: "GitHub", href: "https://github.com/k2ocabhinav/Velo" }],
     tags: [
       "Spring Boot",
       "PostgreSQL + PostGIS",

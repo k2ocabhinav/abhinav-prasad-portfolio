@@ -65,7 +65,7 @@ export const personal: PersonalData = {
     {
       platform: "linkedin",
       label: "LinkedIn",
-      href: "https://linkedin.com/in/abhinav",
+      href: "https://www.linkedin.com/in/k2ocabhinav22",
     },
     {
       platform: "email",
