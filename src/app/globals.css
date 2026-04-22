@@ -295,20 +295,20 @@ button {
   position: relative;
   width: 100%;
   height: clamp(5rem, 11vw, 8rem);
+  margin-top: -1px;
+  margin-bottom: -1px;
   overflow: hidden;
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--tone-from) 88%, var(--tone-to) 12%) 0%,
-      color-mix(in srgb, var(--tone-from) 48%, var(--tone-to) 52%) 54%,
+      color-mix(in srgb, var(--tone-from) 92%, var(--tone-to) 8%) 0%,
+      color-mix(in srgb, var(--tone-from) 52%, var(--tone-to) 48%) 54%,
       var(--tone-to) 100%
     );
-  border-top: 1px solid rgba(var(--color-primary-brand-rgb), 0.22);
-  border-bottom: 1px solid rgba(var(--color-primary-brand-rgb), 0.2);
   transform-origin: left;
   box-shadow:
-    inset 0 12px 26px rgba(var(--color-on-surface-rgb), 0.12),
-    inset 0 -12px 24px rgba(var(--color-on-surface-rgb), 0.14);
+    inset 0 12px 24px rgba(var(--color-on-surface-rgb), 0.1),
+    inset 0 -12px 22px rgba(var(--color-on-surface-rgb), 0.12);
 }
 
 .section-transition-band::before {

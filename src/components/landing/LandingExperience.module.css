@@ -46,9 +46,10 @@
 
 .landing::after {
   inset: 0;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(244, 246, 248, 0.02) 0px, rgba(244, 246, 248, 0.02) 1px, transparent 1px, transparent 76px);
-  opacity: 0.44;
+  background:
+    radial-gradient(ellipse at 18% 78%, rgba(244, 246, 248, 0.06) 0%, transparent 44%),
+    radial-gradient(ellipse at 84% 34%, rgba(251, 255, 62, 0.08) 0%, transparent 48%);
+  opacity: 0.62;
 }
 
 .heroFrame {

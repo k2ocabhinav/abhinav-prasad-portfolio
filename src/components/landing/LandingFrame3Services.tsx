@@ -26,7 +26,7 @@ export default function LandingFrame3Services({
           <span className={styles.sectionLabel}>What I Do</span>
           <div className={styles.grid}>
             {services.map((service) => (
-              <div key={service.id}>
+              <div key={service.id} className={styles.gridItem}>
                 <ServiceTile service={service} />
               </div>
             ))}
@@ -48,7 +48,7 @@ export default function LandingFrame3Services({
           viewport={{ once: true, amount: 0.2 }}
         >
           {services.map((service) => (
-            <motion.div key={service.id} variants={staggerItem}>
+            <motion.div key={service.id} variants={staggerItem} className={styles.gridItem}>
               <ServiceTile service={service} />
             </motion.div>
           ))}

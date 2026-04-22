@@ -3,7 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
-import type { SectionTone } from "@/types";
+import type { SectionTexture, SectionTone } from "@/types";
 import { cn } from "@/lib/utils";
 import styles from "./SectionWrapper.module.css";
 
@@ -20,6 +20,8 @@ interface SectionWrapperProps {
   centered?: boolean;
   /** Optional pastel surface tone used by long-scroll sections */
   tone?: SectionTone;
+  /** Optional section texture treatment */
+  texture?: SectionTexture;
   className?: string;
 }
 
@@ -38,6 +40,7 @@ export default function SectionWrapper({
   fullHeight = false,
   centered = false,
   tone,
+  texture = "none",
   className = "",
 }: SectionWrapperProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -59,6 +62,7 @@ export default function SectionWrapper({
       className={cn(
         styles.section,
         tone ? toneClassMap[tone] : undefined,
+        texture === "ruled" && styles.textureRuled,
         fullHeight && styles.fullHeight,
         centered && styles.centered,
         className

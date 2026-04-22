@@ -28,6 +28,11 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
+  align-items: stretch;
+}
+
+.gridItem {
+  height: 100%;
 }
 
 @media (min-width: 640px) {

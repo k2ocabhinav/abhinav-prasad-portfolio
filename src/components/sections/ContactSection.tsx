@@ -55,7 +55,7 @@ export default function ContactSection({ tone }: ContactSectionProps) {
   const primaryCtaLabel = personal.resumeHref ? "Download Resume" : "Request Resume";
 
   return (
-    <SectionWrapper id="contact" tone={tone} fullHeight centered>
+    <SectionWrapper id="contact" tone={tone} texture="ruled" fullHeight centered>
       <div ref={sectionRef}>
         <motion.h2
           initial={{ opacity: 0, scale: 0.9 }}

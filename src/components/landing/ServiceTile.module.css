@@ -4,6 +4,10 @@
 
 .tile {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: clamp(20rem, 28vw, 23rem);
   background:
     linear-gradient(180deg, rgba(var(--color-surface-rgb), 0.2), rgba(var(--color-surface-rgb), 0.08)),
     var(--landing-glass-bg);
@@ -121,6 +125,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  margin-top: auto;
 }
 
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {

@@ -30,6 +30,9 @@ export type SectionTone =
   | "pastel-mint"
   | "pastel-cream";
 
+/** Optional section texture treatment */
+export type SectionTexture = "none" | "ruled";
+
 /** Social media link */
 export interface SocialLink {
   platform: "github" | "linkedin" | "email";
@@ -51,6 +54,7 @@ export interface PersonalData {
   title: string;
   tagline: string;
   subtitle: string;
+  hintCopy?: string;
   heroAnnotations: HeroAnnotation[];
   /** Personal portrait image URL — grayscale filter applied via CSS */
   heroPhoto: string;

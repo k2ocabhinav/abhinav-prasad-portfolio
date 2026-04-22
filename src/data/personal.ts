@@ -14,11 +14,9 @@ export const personal: PersonalData = {
   subtitle:
     "Building the invisible architecture that powers digital ecosystems with precision and craft.",
 
-  heroAnnotations: [
-    { label: "Systemic Depth", position: "top-right" },
-    { label: "Scalable Logic", position: "bottom-right" },
-    { label: "Intentional Craft", position: "left" },
-  ],
+  hintCopy: "Psst… click Abhinav above to explore beyond the terminal.",
+
+  heroAnnotations: [],
 
   // Placeholder portrait — replace with the actual personal photo (grayscale applied via CSS)
   heroPhoto:
@@ -53,7 +51,7 @@ export const personal: PersonalData = {
     timezone: "Asia/Kolkata",
   },
 
-  email: "abhinav@abhinav.dev",
+  email: "abhinavp0304@gmail.com",
   resumeHref: "/resume/abhinav-resume.pdf",
 
   socials: [
@@ -70,7 +68,7 @@ export const personal: PersonalData = {
     {
       platform: "email",
       label: "Send Email",
-      href: "mailto:abhinav@abhinav.dev",
+      href: "mailto:abhinavp0304@gmail.com",
     },
   ],
 

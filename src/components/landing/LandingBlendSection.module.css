@@ -4,6 +4,7 @@
 
 .blend {
   height: clamp(32vh, 42vh, 52vh);
+  margin-bottom: -1px;
   display: flex;
   align-items: center;
   justify-content: center;

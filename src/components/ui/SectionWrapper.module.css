@@ -27,6 +27,13 @@
   position: absolute;
   inset: 0;
   background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 34%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.textureRuled::after {
+  background-image:
     linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 34%),
     repeating-linear-gradient(
       0deg,
@@ -35,8 +42,6 @@
       transparent 1px,
       transparent 74px
     );
-  pointer-events: none;
-  z-index: 0;
 }
 
 .inner {
