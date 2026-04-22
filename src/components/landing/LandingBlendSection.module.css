@@ -1,23 +1,20 @@
 /* =============================================================================
-   LandingBlendSection — Decorative bridge into the legacy portfolio sections
+   LandingBlendSection — Visual bridge from dark indigo landing to cream portfolio
    ============================================================================= */
 
 .blend {
-  height: clamp(30vh, 40vh, 50vh);
+  height: clamp(32vh, 42vh, 52vh);
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(var(--color-accent-sand-rgb), 0.18) 0%,
-      rgba(var(--color-surface-rgb), 0) 52%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(var(--color-sage-rgb), 0) 48%,
-      rgba(var(--color-sage-rgb), 0.16) 100%
-    );
+  background: linear-gradient(
+    180deg,
+    #0C0C18 0%,
+    rgba(12, 12, 24, 0.88) 18%,
+    rgba(40, 32, 60, 0.55) 42%,
+    rgba(250, 247, 242, 0.72) 72%,
+    #FAF7F2 100%
+  );
 }
 
 .label {
@@ -25,5 +22,6 @@
   font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--color-secondary-text);
+  /* Mid-blend: use a neutral colour visible on both dark and light */
+  color: rgba(196, 184, 232, 0.7);
 }

@@ -1,0 +1,63 @@
+/* =============================================================================
+   AnimatedName — Per-letter interactive hero typography
+   ============================================================================= */
+
+.nameRow {
+  display: flex;
+  align-items: baseline;
+  /* Negative margin compensates for letter-spacing at the outer edges */
+  margin-left: -0.02em;
+  margin-right: -0.02em;
+}
+
+.letterWrapper {
+  display: inline-block;
+  /* Overflow visible so decorations can escape the bounding box */
+  overflow: visible;
+}
+
+.letter {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(4.5rem, 18vw, 16rem);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  display: inline-block;
+  position: relative;
+  cursor: default;
+  /* Will-change enables GPU compositing for smooth hover transitions */
+  will-change: transform, color;
+  user-select: none;
+}
+
+/* SVG decoration — floats above the letter, centred on it */
+.decoration {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
+  /* Small padding so decorations don't clip at the exact baseline */
+  padding-bottom: 0.15em;
+}
+
+/* Reduced-motion / SSR fallback — plain text, no split */
+.nameStatic {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(4.5rem, 18vw, 16rem);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  color: var(--color-on-surface);
+}
+
+/* ─── Mobile ─────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .letter,
+  .nameStatic {
+    font-size: clamp(3.25rem, 18vw, 5.5rem);
+    letter-spacing: -0.03em;
+  }
+}

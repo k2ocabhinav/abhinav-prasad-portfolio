@@ -5,10 +5,11 @@ import type { LandingHeroContent, LandingStory } from "@/types";
 // =============================================================================
 
 export const landingHero: LandingHeroContent = {
-  // Rendered at Syne 800, clamp(3.25rem, 8vw, 8rem). The \n creates a
-  // line-break between words — each line animates in separately via mask reveal.
-  displayTitle: "Software\nArchitect",
+  // Single oversized name rendered at Syne 800, clamp(4rem, 18vw, 16rem).
+  // Per-letter hover animations handled by AnimatedName component.
+  displayTitle: "ABHINAV",
   displayTitleAccent: "& Creative Technologist",
+  roleCycleWords: ["Developer", "Architect", "Cloud Engineer", "AI Systems Builder"],
   supportingCopy:
     "Building the invisible architecture that powers digital ecosystems. Distributed systems, cloud platforms, and AI-driven experiences — engineered with precision and craft.",
   ctas: [

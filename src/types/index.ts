@@ -222,10 +222,12 @@ export interface LandingCTA {
 
 /** Content for the Landing Frame 1 hero section */
 export interface LandingHeroContent {
-  /** Main display title rendered in Syne 800 — may include \n for line breaks */
+  /** Main display title rendered in Syne 800 via AnimatedName */
   displayTitle: string;
-  /** Accent line in Cormorant italic below the title */
+  /** Accent line in Cormorant italic below the role cycler */
   displayTitleAccent: string;
+  /** Words cycled after "Software " every 2.6 s */
+  roleCycleWords?: string[];
   /** 1–2 sentence supporting copy */
   supportingCopy: string;
   /** CTA buttons rendered in order */

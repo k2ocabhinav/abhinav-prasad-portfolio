@@ -7,16 +7,21 @@
 /* ─── Design Tokens ──────────────────────────────────────────────── */
 
 :root {
-  /* Colors */
+  /* Colors — updated 2026: muted violet replaces sage green throughout */
   --color-surface: #FAF7F2;
   --color-on-surface: #1C1C1C;
   --color-secondary-text: #7A7A7A;
-  --color-primary-brand: #6B7F78;
-  --color-sage: #B8C9C1;
+  --color-primary-brand: #7B6FA0;   /* muted violet (was sage #6B7F78) */
+  --color-sage: #C4B8E8;            /* lavender (was sage #B8C9C1) */
   --color-accent-brown: #4A3B32;
   --color-accent-peach-soft: #F4DDCF;
   --color-accent-sky-soft: #DDECF5;
   --color-accent-sand-soft: #E9E0D2;
+  /* Pastel accent family — used across landing hover states */
+  --color-accent-gold: #D4A849;
+  --color-accent-lavender: #B8A9F0;
+  --color-accent-rose: #E8A0B4;
+  --color-accent-sky: #8BC4E8;
 
   /* Typography — next/font in layout.tsx injects the optimised font-family
      string via a class on <html>, overriding these :root values at runtime.
@@ -65,9 +70,9 @@
      Needed so CSS Modules can build rgba() with opacity overrides
      without hardcoding hex values. */
   --color-surface-rgb: 250, 247, 242;
-  --color-primary-brand-rgb: 107, 127, 120;
+  --color-primary-brand-rgb: 123, 111, 160;   /* muted violet */
   --color-on-surface-rgb: 28, 28, 28;
-  --color-sage-rgb: 184, 201, 193;
+  --color-sage-rgb: 196, 184, 232;            /* lavender */
   --color-accent-peach-rgb: 244, 221, 207;
   --color-accent-sky-rgb: 221, 236, 245;
   --color-accent-sand-rgb: 233, 224, 210;
@@ -110,7 +115,7 @@ body {
 }
 
 ::selection {
-  background-color: rgba(184, 201, 193, 0.3); /* sage/30 */
+  background-color: rgba(184, 169, 240, 0.25); /* lavender/25 */
 }
 
 img {

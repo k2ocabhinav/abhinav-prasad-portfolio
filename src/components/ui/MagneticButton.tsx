@@ -15,7 +15,7 @@ interface MagneticButtonProps {
   href?: string;
   download?: boolean;
   className?: string;
-  variant?: "outline" | "ghost";
+  variant?: "outline" | "ghost" | "glow";
 }
 
 export default function MagneticButton({

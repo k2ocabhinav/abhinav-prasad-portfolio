@@ -2,14 +2,14 @@
 
 import { motion } from "motion/react";
 import HeroTextColumn from "./HeroTextColumn";
-import HeroVisual3D from "./HeroVisual3D";
 import ScrollIndicator from "./ScrollIndicator";
 import { landingStagger } from "@/lib/animations";
 import styles from "./LandingFrame1Hero.module.css";
 
 // =============================================================================
-// LandingFrame1Hero — Frame 1 wrapper.
-// Couples the editorial copy column with the decorative 3D visual.
+// LandingFrame1Hero — Full-viewport centered hero frame.
+// Single-column layout: AnimatedName + role cycler + CTAs.
+// HeroVisual3D has been retired (dormant). DoodleEngine was removed.
 // =============================================================================
 
 interface LandingFrame1HeroProps {
@@ -28,11 +28,10 @@ export default function LandingFrame1Hero({
       initial={reduceMotion ? false : "hidden"}
       animate="visible"
     >
-      <div className={styles.grid}>
+      <div className={styles.content}>
         <HeroTextColumn reduceMotion={reduceMotion} />
-        <HeroVisual3D reduceMotion={reduceMotion} />
       </div>
-      {/* The hint is suppressed in reduced motion and can also be disabled by the orchestrator. */}
+
       {showScrollIndicator ? <ScrollIndicator /> : null}
     </motion.div>
   );

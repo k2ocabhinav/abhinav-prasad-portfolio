@@ -1,11 +1,32 @@
 /* =============================================================================
-   LandingExperience — Active hero wrapper and shared easter-egg overlay
+   LandingExperience — Dark hero wrapper
+   Background: deep indigo-black. Pastel accents via CSS custom property cascade.
    ============================================================================= */
 
 .landing {
   position: relative;
   z-index: 6;
-  background-color: var(--color-surface);
+  background-color: #0C0C18;
+
+  /* Cascade dark tokens to all landing children via CSS custom property
+     override. Components using var(--color-*) automatically get the dark
+     palette without individual file changes. */
+  --color-surface: #0C0C18;
+  --color-surface-rgb: 12, 12, 24;
+  --color-on-surface: #F0EAF9;
+  --color-on-surface-rgb: 240, 234, 249;
+  --color-secondary-text: #8080A8;
+  /* Lavender as primary accent — replaces sage/mint */
+  --color-primary-brand: #B8A9F0;
+  --color-primary-brand-rgb: 184, 169, 240;
+  --color-sage: #B8A9F0;
+  --color-sage-rgb: 184, 169, 240;
+  --color-accent-brown: #F0EAF9;
+  /* Glass tokens tuned for dark indigo background */
+  --landing-glass-bg: rgba(255, 255, 255, 0.04);
+  --landing-glass-border: rgba(255, 255, 255, 0.07);
+  --landing-glass-border-active: rgba(184, 169, 240, 0.3);
+  --landing-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 .heroFrame {
