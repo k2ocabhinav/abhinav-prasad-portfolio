@@ -5,12 +5,10 @@ import type { LandingHeroContent, LandingStory } from "@/types";
 // =============================================================================
 
 export const landingHero: LandingHeroContent = {
-  // Rendered at Syne 800, clamp(4rem, 15vw, 14rem). Single oversized name.
+  // Single oversized name rendered at Syne 800, clamp(4rem, 18vw, 16rem).
+  // Per-letter hover animations handled by AnimatedName component.
   displayTitle: "ABHINAV",
-  // Static accent line shown below the cycling role rotator.
   displayTitleAccent: "& Creative Technologist",
-  // Cycling words shown as "Software [word]". Starts with Developer first
-  // since that is the most accurate current title — Architect follows.
   roleCycleWords: ["Developer", "Architect", "Cloud Engineer", "AI Systems Builder"],
   supportingCopy:
     "Building the invisible architecture that powers digital ecosystems. Distributed systems, cloud platforms, and AI-driven experiences — engineered with precision and craft.",

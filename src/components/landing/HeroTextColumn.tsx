@@ -2,76 +2,54 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import AnimatedName from "./AnimatedName";
 import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
 import MagneticButton from "@/components/ui/MagneticButton";
 import { landingHero } from "@/data/landing";
-import { personal } from "@/data/personal";
-import { landingFadeInUp, landingStagger, nameReveal } from "@/lib/animations";
+import { landingFadeInUp, landingStagger } from "@/lib/animations";
 import styles from "./HeroTextColumn.module.css";
 
+// =============================================================================
+// HeroTextColumn — Hero content stack.
+//
+// Layout (top → bottom):
+//   ABHINAV         ← AnimatedName: 18vw Syne 800, per-letter hover animations
+//   Software [word] ← cycling role rotator (slides every 2.6s)
+//   & Creative …    ← static accent line
+//   Supporting copy
+//   [Explore] [Contact] [Beyond Terminal →]
+// =============================================================================
+
 const DEFAULT_ROLES = ["Developer", "Architect", "Cloud Engineer", "AI Systems Builder"];
-const ROLE_CYCLE_INTERVAL = 2600;
+const ROLE_CYCLE_MS = 2600;
 
-interface HeroTextColumnProps {
-  reduceMotion?: boolean;
-}
-
-export default function HeroTextColumn({
-  reduceMotion = false,
-}: HeroTextColumnProps) {
+export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?: boolean }) {
   const roles = landingHero.roleCycleWords ?? DEFAULT_ROLES;
   const tickRef = useRef(0);
   const [roleIndex, setRoleIndex] = useState(0);
 
   useEffect(() => {
     if (reduceMotion) return;
-
     const timer = setInterval(() => {
       tickRef.current += 1;
       setRoleIndex(tickRef.current % roles.length);
-    }, ROLE_CYCLE_INTERVAL);
-
+    }, ROLE_CYCLE_MS);
     return () => clearInterval(timer);
   }, [roles.length, reduceMotion]);
 
   return (
     <div className={styles.textColumn}>
-      <motion.div
-        initial={reduceMotion ? false : "hidden"}
-        animate="visible"
-        variants={landingFadeInUp}
-        transition={reduceMotion ? undefined : { delay: 0.18 }}
-      >
-        <PortalEntryTrigger
-          href="/beyond-terminal"
-          source="easter-egg"
-          variant="portal-bloom"
-          skin="beyond-pastel-mist"
-          className={styles.nameLabel}
-          aria-label={`${personal.name} — open Beyond the Terminal`}
-        >
-          <span className={styles.nameLabelInner}>
-            <span className={styles.nameLabelBadge}>Beyond</span>
-            <span className={styles.nameLabelName}>{personal.name}</span>
-          </span>
-        </PortalEntryTrigger>
-      </motion.div>
 
-      <motion.div
-        className={styles.displayTitle}
-        variants={reduceMotion ? undefined : nameReveal}
-        initial={reduceMotion ? false : "hidden"}
-        animate="visible"
-      >
-        {personal.name}
-      </motion.div>
+      {/* ── Oversized animated name ───────────────────────────────── */}
+      <AnimatedName name="ABHINAV" reduceMotion={reduceMotion} />
 
+      {/* ── Cycling role line ────────────────────────────────────── */}
       <motion.div
         className={styles.roleLine}
+        variants={landingFadeInUp}
         initial={reduceMotion ? false : "hidden"}
         animate="visible"
-        variants={landingFadeInUp}
-        transition={reduceMotion ? undefined : { delay: 0.4 }}
+        transition={reduceMotion ? undefined : { delay: 0.55 }}
       >
         <span className={styles.rolePrefix}>Software</span>
 
@@ -83,10 +61,10 @@ export default function HeroTextColumn({
               <motion.span
                 key={roles[roleIndex]}
                 className={styles.cyclerWord}
-                initial={{ y: "100%", opacity: 0 }}
+                initial={{ y: "105%", opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                exit={{ y: "-100%", opacity: 0 }}
-                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                exit={{ y: "-105%", opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               >
                 {roles[roleIndex]}
               </motion.span>
@@ -95,38 +73,38 @@ export default function HeroTextColumn({
         )}
       </motion.div>
 
+      {/* ── Static accent ────────────────────────────────────────── */}
       <motion.p
         className={styles.accentLine}
+        variants={landingFadeInUp}
         initial={reduceMotion ? false : "hidden"}
         animate="visible"
-        variants={landingFadeInUp}
-        transition={reduceMotion ? undefined : { delay: 0.52 }}
+        transition={reduceMotion ? undefined : { delay: 0.68 }}
       >
         {landingHero.displayTitleAccent}
       </motion.p>
 
+      {/* ── Supporting copy ──────────────────────────────────────── */}
       <motion.p
         className={styles.supportingCopy}
+        variants={landingFadeInUp}
         initial={reduceMotion ? false : "hidden"}
         animate="visible"
-        variants={landingFadeInUp}
-        transition={reduceMotion ? undefined : { delay: 0.64 }}
+        transition={reduceMotion ? undefined : { delay: 0.8 }}
       >
         {landingHero.supportingCopy}
       </motion.p>
 
+      {/* ── CTAs ─────────────────────────────────────────────────── */}
       <motion.div
         className={styles.ctaGroup}
-        variants={landingStagger(0.08)}
+        variants={landingStagger(0.1)}
         initial={reduceMotion ? false : "hidden"}
         animate="visible"
-        transition={reduceMotion ? undefined : { delayChildren: 0.76 }}
+        transition={reduceMotion ? undefined : { delayChildren: 0.92 }}
       >
         {landingHero.ctas.map((cta) => (
-          <motion.div
-            key={cta.label}
-            variants={reduceMotion ? undefined : landingFadeInUp}
-          >
+          <motion.div key={cta.label} variants={reduceMotion ? undefined : landingFadeInUp}>
             <MagneticButton
               href={cta.href}
               variant={cta.variant === "primary" ? "glow" : "ghost"}
@@ -135,6 +113,20 @@ export default function HeroTextColumn({
             </MagneticButton>
           </motion.div>
         ))}
+
+        {/* Beyond Terminal — portal entry as a subtle tertiary CTA */}
+        <motion.div variants={reduceMotion ? undefined : landingFadeInUp}>
+          <PortalEntryTrigger
+            href="/beyond-terminal"
+            source="easter-egg"
+            variant="portal-bloom"
+            skin="beyond-pastel-mist"
+            className={styles.beyondLink}
+            aria-label="Open Beyond the Terminal — a personal side route"
+          >
+            Beyond the Terminal →
+          </PortalEntryTrigger>
+        </motion.div>
       </motion.div>
     </div>
   );

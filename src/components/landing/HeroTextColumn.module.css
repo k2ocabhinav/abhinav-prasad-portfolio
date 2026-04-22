@@ -1,74 +1,18 @@
+/* =============================================================================
+   HeroTextColumn — Centered editorial stack with oversized name and role cycler
+   ============================================================================= */
+
 .textColumn {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.75rem;
   padding: 2rem 0;
   text-align: center;
 }
 
-.nameLabel {
-  width: fit-content;
-  border: 1px solid rgba(203, 194, 230, 0.2);
-  background:
-    linear-gradient(180deg, rgba(18, 20, 27, 0.82), rgba(10, 10, 14, 0.76)),
-    radial-gradient(circle at 0% 50%, rgba(201, 218, 242, 0.16), transparent 34%);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.24);
-  cursor: pointer;
-  transition:
-    color 0.3s ease,
-    transform 0.3s ease,
-    border-color 0.3s ease;
-}
-
-.nameLabel:hover {
-  transform: translateY(-1px);
-  border-color: rgba(203, 194, 230, 0.34);
-}
-
-.nameLabel:focus-visible {
-  outline: 2px solid rgba(201, 218, 242, 0.46);
-  outline-offset: 4px;
-}
-
-.nameLabelInner {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.72rem 0.95rem;
-}
-
-.nameLabelBadge,
-.nameLabelName {
-  font-family: var(--font-label);
-  font-size: 11px;
-  text-transform: uppercase;
-}
-
-.nameLabelBadge {
-  padding: 0.35rem 0.5rem;
-  border: 1px solid rgba(203, 194, 230, 0.16);
-  letter-spacing: 0.28em;
-  color: rgba(233, 228, 243, 0.74);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.nameLabelName {
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  color: rgba(240, 237, 232, 0.88);
-}
-
-.displayTitle {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(4rem, 15vw, 14rem);
-  line-height: 0.88;
-  letter-spacing: -0.04em;
-  color: var(--color-on-surface);
-  text-transform: uppercase;
-}
+/* ─── Cycling Role Line ──────────────────────────────────────────
+   "Software [word]" — [word] slides vertically, clipped by cyclerOuter. */
 
 .roleLine {
   display: flex;
@@ -110,6 +54,8 @@
   font-weight: 600;
 }
 
+/* ─── Secondary Accent ─────────────────────────────────────────── */
+
 .accentLine {
   font-family: var(--font-headline);
   font-style: italic;
@@ -120,31 +66,54 @@
   opacity: 0.6;
 }
 
+/* ─── Supporting Copy ──────────────────────────────────────────── */
+
 .supportingCopy {
   font-family: var(--font-body);
   font-weight: 300;
   font-size: clamp(0.875rem, 1.2vw, 1rem);
   color: var(--color-secondary-text);
-  line-height: 1.7;
-  max-width: 36rem;
+  line-height: 1.75;
+  max-width: 38rem;
   opacity: 0.75;
 }
+
+/* ─── CTA Group ────────────────────────────────────────────────── */
 
 .ctaGroup {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 1rem;
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
   justify-content: center;
 }
 
-@media (max-width: 767px) {
-  .displayTitle {
-    font-size: clamp(3rem, 18vw, 5.5rem);
-  }
+/* ─── Beyond Terminal tertiary link ─────────────────────────────
+   Subtle text-style CTA that preserves the portal transition. */
 
+.beyondLink {
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary-text);
+  opacity: 0.55;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.beyondLink:hover {
+  opacity: 0.9;
+  color: var(--color-primary-brand);
+}
+
+/* ─── Mobile ─────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
   .roleLine {
-    font-size: clamp(1rem, 4vw, 1.5rem);
+    font-size: clamp(1rem, 4.5vw, 1.5rem);
     flex-wrap: wrap;
     justify-content: center;
   }
@@ -156,5 +125,9 @@
   .supportingCopy {
     font-size: 0.875rem;
     padding: 0 0.5rem;
+  }
+
+  .ctaGroup {
+    gap: 0.75rem;
   }
 }

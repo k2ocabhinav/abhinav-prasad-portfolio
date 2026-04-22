@@ -1,11 +1,16 @@
 "use client";
 
 import { motion } from "motion/react";
-import { landingStagger } from "@/lib/animations";
-import DoodleEngine from "./DoodleEngine";
 import HeroTextColumn from "./HeroTextColumn";
 import ScrollIndicator from "./ScrollIndicator";
+import { landingStagger } from "@/lib/animations";
 import styles from "./LandingFrame1Hero.module.css";
+
+// =============================================================================
+// LandingFrame1Hero — Full-viewport centered hero frame.
+// Single-column layout: AnimatedName + role cycler + CTAs.
+// HeroVisual3D has been retired (dormant). DoodleEngine was removed.
+// =============================================================================
 
 interface LandingFrame1HeroProps {
   showScrollIndicator?: boolean;
@@ -23,8 +28,6 @@ export default function LandingFrame1Hero({
       initial={reduceMotion ? false : "hidden"}
       animate="visible"
     >
-      <DoodleEngine />
-
       <div className={styles.content}>
         <HeroTextColumn reduceMotion={reduceMotion} />
       </div>

@@ -220,23 +220,22 @@ export interface LandingCTA {
   variant: "primary" | "secondary";
 }
 
-/** Hand-drawn SVG doodle accent for the hero doodle engine */
+/** Hand-drawn SVG doodle accent (kept for reference; DoodleEngine currently inactive) */
 export interface DoodleAsset {
   id: string;
   svgPath: string;
   viewBox: string;
   size: number;
-  /** CSS class suffix used for absolute positioning in the hero frame */
   anchorHint: "topLeft" | "topRight" | "bottomLeft" | "bottomRight" | "inlineLeft" | "inlineRight";
 }
 
 /** Content for the Landing Frame 1 hero section */
 export interface LandingHeroContent {
-  /** Main display title rendered in Syne 800 */
+  /** Main display title rendered in Syne 800 via AnimatedName */
   displayTitle: string;
-  /** Static secondary accent line in Cormorant italic below the cycling role */
+  /** Accent line in Cormorant italic below the role cycler */
   displayTitleAccent: string;
-  /** Words cycled in the animated role rotator — shown as "Software [word]" */
+  /** Words cycled after "Software " every 2.6 s */
   roleCycleWords?: string[];
   /** 1–2 sentence supporting copy */
   supportingCopy: string;

@@ -1,21 +1,18 @@
 /* =============================================================================
-   LandingBlendSection — Decorative bridge from dark landing into cream portfolio
+   LandingBlendSection — Visual bridge from dark indigo landing to cream portfolio
    ============================================================================= */
 
 .blend {
-  height: clamp(30vh, 45vh, 55vh);
+  height: clamp(32vh, 42vh, 52vh);
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Hardcoded transition: dark landing (#0A0A0A) → cream portfolio (#FAF7F2).
-     Cannot use CSS variables here because both values are needed simultaneously
-     and the cascade is already overriding --color-surface to dark inside .landing. */
   background: linear-gradient(
     180deg,
-    #0A0A0A 0%,
-    rgba(10, 10, 10, 0.9) 20%,
-    rgba(40, 35, 30, 0.5) 50%,
-    rgba(250, 247, 242, 0.8) 78%,
+    #0C0C18 0%,
+    rgba(12, 12, 24, 0.88) 18%,
+    rgba(40, 32, 60, 0.55) 42%,
+    rgba(250, 247, 242, 0.72) 72%,
     #FAF7F2 100%
   );
 }
@@ -25,6 +22,6 @@
   font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  /* Off-white so it's readable in the mid-gradient transition zone */
-  color: rgba(240, 237, 232, 0.35);
+  /* Mid-blend: use a neutral colour visible on both dark and light */
+  color: rgba(196, 184, 232, 0.7);
 }
