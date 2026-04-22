@@ -1,7 +1,3 @@
-/* =============================================================================
-   HeroTextColumn — Centered editorial stack with oversized name and role cycler
-   ============================================================================= */
-
 .textColumn {
   display: flex;
   flex-direction: column;
@@ -12,9 +8,57 @@
   text-align: center;
 }
 
-/* ─── Display Name ───────────────────────────────────────────────
-   The name is the dominant visual element. text-transform: uppercase
-   ensures all-caps regardless of the data casing ("Abhinav" → "ABHINAV"). */
+.nameLabel {
+  width: fit-content;
+  border: 1px solid rgba(203, 194, 230, 0.2);
+  background:
+    linear-gradient(180deg, rgba(18, 20, 27, 0.82), rgba(10, 10, 14, 0.76)),
+    radial-gradient(circle at 0% 50%, rgba(201, 218, 242, 0.16), transparent 34%);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.nameLabel:hover {
+  transform: translateY(-1px);
+  border-color: rgba(203, 194, 230, 0.34);
+}
+
+.nameLabel:focus-visible {
+  outline: 2px solid rgba(201, 218, 242, 0.46);
+  outline-offset: 4px;
+}
+
+.nameLabelInner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.72rem 0.95rem;
+}
+
+.nameLabelBadge,
+.nameLabelName {
+  font-family: var(--font-label);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.nameLabelBadge {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgba(203, 194, 230, 0.16);
+  letter-spacing: 0.28em;
+  color: rgba(233, 228, 243, 0.74);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nameLabelName {
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: rgba(240, 237, 232, 0.88);
+}
 
 .displayTitle {
   font-family: var(--font-display);
@@ -25,10 +69,6 @@
   color: var(--color-on-surface);
   text-transform: uppercase;
 }
-
-/* ─── Cycling Role Line ──────────────────────────────────────────
-   "Software [word]" — [word] cycles with a vertical slide animation.
-   cyclerOuter clips the slide so words appear and disappear cleanly. */
 
 .roleLine {
   display: flex;
@@ -51,7 +91,6 @@
 .cyclerOuter {
   display: inline-block;
   overflow: hidden;
-  /* Height matches one cap-height line of the italic Cormorant at this size */
   height: 1.15em;
   vertical-align: bottom;
   position: relative;
@@ -59,22 +98,17 @@
 
 .cyclerWord {
   display: inline-block;
-  /* Mint accent so the cycling word pops against the muted italic prefix */
   color: var(--color-primary-brand);
   font-style: normal;
   font-weight: 600;
   white-space: nowrap;
 }
 
-/* Shown instead of the cycler when prefers-reduced-motion is active */
 .cyclerWordStatic {
   color: var(--color-primary-brand);
   font-style: normal;
   font-weight: 600;
 }
-
-/* ─── Secondary Accent ───────────────────────────────────────────
-   "& Creative Technologist" — static complement below the cycler. */
 
 .accentLine {
   font-family: var(--font-headline);
@@ -86,8 +120,6 @@
   opacity: 0.6;
 }
 
-/* ─── Supporting Copy ─────────────────────────────────────────── */
-
 .supportingCopy {
   font-family: var(--font-body);
   font-weight: 300;
@@ -98,8 +130,6 @@
   opacity: 0.75;
 }
 
-/* ─── CTA Group ──────────────────────────────────────────────── */
-
 .ctaGroup {
   display: flex;
   flex-wrap: wrap;
@@ -107,8 +137,6 @@
   margin-top: 0.75rem;
   justify-content: center;
 }
-
-/* ─── Mobile ─────────────────────────────────────────────────── */
 
 @media (max-width: 767px) {
   .displayTitle {

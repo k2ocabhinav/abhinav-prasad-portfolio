@@ -1,0 +1,39 @@
+.archive {
+  display: grid;
+  gap: clamp(1.2rem, 2.6vw, 1.8rem);
+}
+
+.hero {
+  display: grid;
+  gap: 0.8rem;
+  max-width: 36rem;
+}
+
+.eyebrow {
+  font-family: var(--font-beyond-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--beyond-text-muted);
+}
+
+.title {
+  max-width: 10ch;
+  font-family: var(--font-beyond-display);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.07em;
+}
+
+.deck {
+  max-width: 30rem;
+  font-family: var(--font-beyond-body);
+  line-height: 1.72;
+  color: var(--beyond-text-soft);
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}

@@ -1,7 +1,12 @@
 "use client";
 
 import { useRef, useState, type RefObject } from "react";
-import { useScroll, useMotionValueEvent, type MotionValue } from "motion/react";
+import {
+  useMotionValue,
+  useMotionValueEvent,
+  useScroll,
+  type MotionValue,
+} from "motion/react";
 
 // =============================================================================
 // useScrollLinkedIndex — Maps scroll progress of a container to an integer index
@@ -10,6 +15,7 @@ import { useScroll, useMotionValueEvent, type MotionValue } from "motion/react";
 
 interface UseScrollLinkedIndexOptions {
   itemCount: number;
+  disabled?: boolean;
 }
 
 interface UseScrollLinkedIndexResult {
@@ -20,16 +26,22 @@ interface UseScrollLinkedIndexResult {
 
 export function useScrollLinkedIndex({
   itemCount,
+  disabled = false,
 }: UseScrollLinkedIndexOptions): UseScrollLinkedIndexResult {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const staticProgress = useMotionValue(0);
 
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: disabled ? undefined : containerRef,
     offset: ["start start", "end end"],
   });
 
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+  useMotionValueEvent(disabled ? staticProgress : scrollYProgress, "change", (progress) => {
+    if (disabled) {
+      return;
+    }
+
     const index = Math.min(Math.floor(progress * itemCount), itemCount - 1);
     // Guard repeated updates from the same bucket so sticky scroll does not
     // trigger unnecessary rerenders while the user is still within one segment.
@@ -38,5 +50,9 @@ export function useScrollLinkedIndex({
     );
   });
 
-  return { containerRef, activeIndex, progress: scrollYProgress };
+  return {
+    containerRef,
+    activeIndex,
+    progress: disabled ? staticProgress : scrollYProgress,
+  };
 }

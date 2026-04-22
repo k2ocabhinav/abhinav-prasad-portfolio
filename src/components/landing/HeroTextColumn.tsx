@@ -2,22 +2,12 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
+import MagneticButton from "@/components/ui/MagneticButton";
 import { landingHero } from "@/data/landing";
 import { personal } from "@/data/personal";
-import { nameReveal, landingFadeInUp, landingStagger } from "@/lib/animations";
-import MagneticButton from "@/components/ui/MagneticButton";
+import { landingFadeInUp, landingStagger, nameReveal } from "@/lib/animations";
 import styles from "./HeroTextColumn.module.css";
-
-// =============================================================================
-// HeroTextColumn — Oversized name hero with animated role cycler.
-//
-// Layout:
-//   ABHINAV                       ← dominant name
-//   Software [Developer/...]      ← cycling role (mint word pops)
-//   & Creative Technologist       ← static secondary accent
-//   Building the invisible...     ← supporting copy
-//   [Explore Stories] [Get in Touch]
-// =============================================================================
 
 const DEFAULT_ROLES = ["Developer", "Architect", "Cloud Engineer", "AI Systems Builder"];
 const ROLE_CYCLE_INTERVAL = 2600;
@@ -33,8 +23,6 @@ export default function HeroTextColumn({
   const tickRef = useRef(0);
   const [roleIndex, setRoleIndex] = useState(0);
 
-  // Cycle the role word on a stable interval. tickRef avoids stale-closure
-  // issues and keeps the effect dependency array minimal.
   useEffect(() => {
     if (reduceMotion) return;
 
@@ -48,8 +36,27 @@ export default function HeroTextColumn({
 
   return (
     <div className={styles.textColumn}>
+      <motion.div
+        initial={reduceMotion ? false : "hidden"}
+        animate="visible"
+        variants={landingFadeInUp}
+        transition={reduceMotion ? undefined : { delay: 0.18 }}
+      >
+        <PortalEntryTrigger
+          href="/beyond-terminal"
+          source="easter-egg"
+          variant="portal-bloom"
+          skin="beyond-pastel-mist"
+          className={styles.nameLabel}
+          aria-label={`${personal.name} — open Beyond the Terminal`}
+        >
+          <span className={styles.nameLabelInner}>
+            <span className={styles.nameLabelBadge}>Beyond</span>
+            <span className={styles.nameLabelName}>{personal.name}</span>
+          </span>
+        </PortalEntryTrigger>
+      </motion.div>
 
-      {/* Oversized name — dominant identity */}
       <motion.div
         className={styles.displayTitle}
         variants={reduceMotion ? undefined : nameReveal}
@@ -59,7 +66,6 @@ export default function HeroTextColumn({
         {personal.name}
       </motion.div>
 
-      {/* Cycling role line: "Software [Developer / Architect / ...]" */}
       <motion.div
         className={styles.roleLine}
         initial={reduceMotion ? false : "hidden"}
@@ -70,10 +76,8 @@ export default function HeroTextColumn({
         <span className={styles.rolePrefix}>Software</span>
 
         {reduceMotion ? (
-          // Static fallback: show first role only, no animation
           <span className={styles.cyclerWordStatic}>{roles[0]}</span>
         ) : (
-          // Animated: words slide up from below and exit to the top, clipped by cyclerOuter
           <span className={styles.cyclerOuter}>
             <AnimatePresence mode="wait">
               <motion.span
@@ -91,7 +95,6 @@ export default function HeroTextColumn({
         )}
       </motion.div>
 
-      {/* Static secondary accent — always visible */}
       <motion.p
         className={styles.accentLine}
         initial={reduceMotion ? false : "hidden"}

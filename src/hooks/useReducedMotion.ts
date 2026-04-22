@@ -1,30 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 // =============================================================================
 // useReducedMotion — Detects user prefers-reduced-motion preference
 // =============================================================================
 
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribe(callback: () => void) {
+  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+
+  mediaQuery.addEventListener("change", callback);
+  return () => mediaQuery.removeEventListener("change", callback);
+}
+
+function getSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
 export function useReducedMotion(): boolean {
-  const [prefersReduced, setPrefersReduced] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  });
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    const handler = (e: MediaQueryListEvent) => {
-      setPrefersReduced(e.matches);
-    };
-
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  return prefersReduced;
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
 }

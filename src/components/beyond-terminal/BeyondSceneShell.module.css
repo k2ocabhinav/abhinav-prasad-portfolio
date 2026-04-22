@@ -1,0 +1,49 @@
+.section {
+  position: relative;
+  display: grid;
+  gap: clamp(1rem, 2.2vw, 1.4rem);
+  padding-block: clamp(1.8rem, 5vw, 3.4rem);
+  border-top: 1px solid rgba(214, 220, 233, 0.08);
+}
+
+.sectionHero {
+  min-height: min(74vh, 48rem);
+  align-content: start;
+  border-top: 0;
+}
+
+.header {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 34rem;
+}
+
+.eyebrow {
+  font-family: var(--font-beyond-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--beyond-text-muted);
+}
+
+.title {
+  font-family: var(--font-beyond-display);
+  font-size: clamp(1.45rem, 2.4vw, 2.05rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--beyond-text);
+}
+
+.deck {
+  max-width: 30rem;
+  font-family: var(--font-beyond-body);
+  font-size: clamp(0.96rem, 1.4vw, 1.04rem);
+  line-height: 1.7;
+  color: var(--beyond-text-soft);
+}
+
+.body {
+  display: grid;
+  gap: clamp(0.9rem, 2vw, 1.2rem);
+}
