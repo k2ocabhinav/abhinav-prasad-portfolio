@@ -232,3 +232,49 @@ export const workStackSpring: Transition = {
   damping: 25,
   stiffness: 200,
 };
+
+// ─── PRD Motion Tokens ───────────────────────────────────────────────────────
+
+/** Fast entrance — 220ms easeOut (enterFast from PRD) */
+export const enterFast: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.22, ease: "easeOut" },
+  },
+};
+
+/** Base entrance — 350ms easeOut (enterBase from PRD) */
+export const enterBase: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: "easeOut" },
+  },
+};
+
+/**
+ * Oversized name reveal.
+ * Scale + opacity + y translation for a "settling into place" feel.
+ * Designed for large display text where blur would be too expensive.
+ */
+export const nameReveal: Variants = {
+  hidden: { opacity: 0, scale: 0.96, y: 16 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+/**
+ * Micro-jitter loop — low-amplitude idle animation for decorative elements.
+ * Apply as: animate={microJitterLoop.animate} transition={microJitterLoop.transition}
+ */
+export const microJitterLoop = {
+  animate: { x: [0, 2, -1, 0], y: [0, -1, 2, 0], rotate: [0, 0.5, -0.5, 0] },
+  transition: { duration: 2, repeat: Infinity, ease: "easeInOut" as const },
+};

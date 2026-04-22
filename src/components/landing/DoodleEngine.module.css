@@ -1,0 +1,64 @@
+/* =============================================================================
+   DoodleEngine — Absolute overlay with positional anchor classes for each doodle
+   ============================================================================= */
+
+.container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* z-index 1 keeps doodles above the background but below the text (z-index 2) */
+  z-index: 1;
+}
+
+.doodle {
+  position: absolute;
+  /* Inherits mint accent from the dark landing token cascade */
+  color: var(--color-primary-brand);
+}
+
+/* ─── Position Anchors ────────────────────────────────────────────
+   Positions are tuned for the centered hero layout so doodles float
+   near the edges of the large name without overlapping it. */
+
+.topLeft {
+  top: 12%;
+  left: 8%;
+}
+
+.topRight {
+  top: 14%;
+  right: 10%;
+}
+
+.bottomLeft {
+  bottom: 22%;
+  left: 7%;
+}
+
+.bottomRight {
+  bottom: 24%;
+  right: 9%;
+}
+
+.inlineLeft {
+  top: 50%;
+  transform: translateY(-50%);
+  left: 5%;
+}
+
+.inlineRight {
+  top: 50%;
+  transform: translateY(-50%);
+  right: 5%;
+}
+
+@media (max-width: 767px) {
+  .topLeft   { top: 6%;  left: 4%; }
+  .topRight  { top: 6%;  right: 4%; }
+  .bottomLeft  { bottom: 10%; left: 3%; }
+  .bottomRight { bottom: 10%; right: 3%; }
+  /* Inline anchors are too close to the centered text on mobile */
+  .inlineLeft,
+  .inlineRight { display: none; }
+}

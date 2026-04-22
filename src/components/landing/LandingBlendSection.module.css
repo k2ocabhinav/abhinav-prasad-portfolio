@@ -1,23 +1,23 @@
 /* =============================================================================
-   LandingBlendSection — Decorative bridge into the legacy portfolio sections
+   LandingBlendSection — Decorative bridge from dark landing into cream portfolio
    ============================================================================= */
 
 .blend {
-  height: clamp(30vh, 40vh, 50vh);
+  height: clamp(30vh, 45vh, 55vh);
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(var(--color-accent-sand-rgb), 0.18) 0%,
-      rgba(var(--color-surface-rgb), 0) 52%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(var(--color-sage-rgb), 0) 48%,
-      rgba(var(--color-sage-rgb), 0.16) 100%
-    );
+  /* Hardcoded transition: dark landing (#0A0A0A) → cream portfolio (#FAF7F2).
+     Cannot use CSS variables here because both values are needed simultaneously
+     and the cascade is already overriding --color-surface to dark inside .landing. */
+  background: linear-gradient(
+    180deg,
+    #0A0A0A 0%,
+    rgba(10, 10, 10, 0.9) 20%,
+    rgba(40, 35, 30, 0.5) 50%,
+    rgba(250, 247, 242, 0.8) 78%,
+    #FAF7F2 100%
+  );
 }
 
 .label {
@@ -25,5 +25,6 @@
   font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--color-secondary-text);
+  /* Off-white so it's readable in the mid-gradient transition zone */
+  color: rgba(240, 237, 232, 0.35);
 }

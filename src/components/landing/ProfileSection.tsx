@@ -20,8 +20,6 @@ export default function ProfileSection({
   return (
     <section className={styles.profileSection}>
       <div className={`content-container ${styles.profileContent}`}>
-        <span className={styles.profileRoleLabel}>{personal.title}</span>
-
         <div className={styles.imageWrapper}>
           <motion.div className={styles.imageContainer}>
             <motion.div

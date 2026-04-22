@@ -34,3 +34,23 @@
   background-color: rgba(107, 127, 120, 0.1);
   border-radius: 8px;
 }
+
+/* Glow variant — mint neon for use on dark landing backgrounds */
+.glow {
+  padding: 1.25rem 4rem;
+  border: 1px solid rgba(0, 229, 160, 0.45);
+  border-radius: 9999px;
+  color: #00E5A0;
+  background: transparent;
+  animation: glowBreathe 3s ease-in-out infinite;
+}
+
+.glow:hover {
+  background-color: rgba(0, 229, 160, 0.06);
+  box-shadow: 0 0 40px rgba(0, 229, 160, 0.25);
+}
+
+@keyframes glowBreathe {
+  0%, 100% { box-shadow: 0 0 14px rgba(0, 229, 160, 0.12); }
+  50%       { box-shadow: 0 0 28px rgba(0, 229, 160, 0.28); }
+}

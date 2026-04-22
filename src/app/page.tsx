@@ -1,7 +1,6 @@
 "use client";
 
 import { MotionConfig } from "motion/react";
-import Navigation from "@/components/layout/Navigation";
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";
@@ -28,7 +27,6 @@ export default function Home() {
       {/* Global UI */}
       <SageOrb />
       <ScrollProgress />
-      <Navigation />
       <FloatingArtifacts />
 
       {/* Main scrollable content */}

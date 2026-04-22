@@ -8,8 +8,11 @@
   border-radius: 50%;
   z-index: var(--z-orb);
   pointer-events: none;
-  mix-blend-mode: multiply;
-  box-shadow: 0 0 30px rgba(184, 201, 193, 0.5);
+  /* exclusion blend mode is visible on both dark and light backgrounds:
+     on dark (#0A0A0A) it renders light; on cream (#FAF7F2) it renders a
+     contrasting tone. Replaces multiply which was invisible on dark. */
+  mix-blend-mode: exclusion;
+  box-shadow: 0 0 30px rgba(184, 201, 193, 0.4);
   display: none;
 }
 

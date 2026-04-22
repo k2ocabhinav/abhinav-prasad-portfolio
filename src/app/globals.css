@@ -50,6 +50,22 @@
   --motion-duration-long: 700ms;
   --motion-duration-extra-long: 1000ms;
   --motion-stagger-base: 80ms;
+  /* PRD motion tokens */
+  --motion-enter-fast: 220ms;
+  --motion-enter-base: 350ms;
+  --motion-section-shift: 550ms;
+  --motion-jitter-duration: 2s;
+
+  /* ─── Dark Landing Palette & Mint Accent ────────────────────────
+     These are referenced directly by LandingExperience.module.css
+     to scope the dark theme inside .landing without touching globals */
+  --color-surface-dark: #0A0A0A;
+  --color-surface-dark-rgb: 10, 10, 10;
+  --color-on-surface-dark: #F0EDE8;
+  --color-on-surface-dark-rgb: 240, 237, 232;
+  --color-secondary-text-dark: #8A8A8A;
+  --color-accent-mint: #00E5A0;
+  --color-accent-mint-rgb: 0, 229, 160;
 
   /* ─── Landing Page Glassmorphism ────────────────────────────────
      These extend the existing --glass-* tokens with landing-specific

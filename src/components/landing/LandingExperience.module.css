@@ -5,18 +5,38 @@
 .landing {
   position: relative;
   z-index: 6;
-  background-color: var(--color-surface);
+  background-color: #0A0A0A;
+
+  /* Cascade dark tokens to all landing children via CSS custom property
+     override. Components that already use var(--color-*) automatically
+     inherit the dark palette without individual file changes. */
+  --color-surface: #0A0A0A;
+  --color-surface-rgb: 10, 10, 10;
+  --color-on-surface: #F0EDE8;
+  --color-on-surface-rgb: 240, 237, 232;
+  --color-secondary-text: #8A8A8A;
+  --color-primary-brand: #00E5A0;
+  --color-primary-brand-rgb: 0, 229, 160;
+  --color-sage: #00E5A0;
+  --color-sage-rgb: 0, 229, 160;
+  --color-accent-brown: #F0EDE8;
+  --landing-glass-bg: rgba(255, 255, 255, 0.04);
+  --landing-glass-border: rgba(255, 255, 255, 0.08);
+  --landing-glass-border-active: rgba(0, 229, 160, 0.25);
+  --landing-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .heroFrame {
   scroll-snap-align: start;
 }
 
-/* Preserved from the original hero so the easter egg feels unchanged. */
+/* Easter egg overlay — fixed so it covers the full viewport regardless of
+   scroll position. Uses the original dark palette hardcoded so the overlay
+   always contrasts against the now-dark landing background. */
 .easterEgg {
   position: fixed;
   inset: 0;
-  background-color: var(--color-on-surface);
+  background-color: #F0EDE8;
   z-index: var(--z-overlay);
   display: flex;
   flex-direction: column;
@@ -30,18 +50,18 @@
   position: absolute;
   top: 3rem;
   right: 3rem;
-  color: var(--color-sage);
+  color: #0A0A0A;
   transition: opacity 0.3s ease;
 }
 
 .easterEggClose:hover {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .easterEggTitle {
   font-family: var(--font-headline);
   font-style: italic;
-  color: var(--color-sage);
+  color: #0A0A0A;
   font-size: 3.75rem;
 }
 
@@ -54,7 +74,8 @@
 .easterEggText {
   font-family: var(--font-body);
   font-weight: 300;
-  color: var(--color-sage);
+  color: #1C1C1C;
   margin-top: 2rem;
   max-width: 28rem;
+  opacity: 0.5;
 }
