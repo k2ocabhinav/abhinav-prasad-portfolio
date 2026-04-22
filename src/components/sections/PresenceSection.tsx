@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import type { SectionTone } from "@/types";
+import type { SectionBlendStyle, SectionTone } from "@/types";
 import { personal } from "@/data/personal";
 import { presenceNodes } from "@/data/presence";
 import LiveClock from "@/components/ui/LiveClock";
@@ -14,11 +14,25 @@ import styles from "./PresenceSection.module.css";
 
 interface PresenceSectionProps {
   tone?: SectionTone;
+  blendTopFrom?: SectionTone;
+  blendBottomTo?: SectionTone;
+  blendStyle?: SectionBlendStyle;
 }
 
-export default function PresenceSection({ tone }: PresenceSectionProps) {
+export default function PresenceSection({
+  tone,
+  blendTopFrom,
+  blendBottomTo,
+  blendStyle,
+}: PresenceSectionProps) {
   return (
-    <SectionWrapper id="presence" tone={tone}>
+    <SectionWrapper
+      id="presence"
+      tone={tone}
+      blendTopFrom={blendTopFrom}
+      blendBottomTo={blendBottomTo}
+      blendStyle={blendStyle}
+    >
       <div className="grid-12">
         <div className="col-4">
           <h2 className={styles.heading}>Presence</h2>

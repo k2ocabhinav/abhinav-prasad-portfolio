@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
-import type { SectionTone } from "@/types";
+import type { SectionBlendStyle, SectionTone } from "@/types";
 import { projects } from "@/data/projects";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
@@ -20,9 +20,17 @@ import styles from "./WorksSection.module.css";
 
 interface WorksSectionProps {
   tone?: SectionTone;
+  blendTopFrom?: SectionTone;
+  blendBottomTo?: SectionTone;
+  blendStyle?: SectionBlendStyle;
 }
 
-export default function WorksSection({ tone }: WorksSectionProps) {
+export default function WorksSection({
+  tone,
+  blendTopFrom,
+  blendBottomTo,
+  blendStyle,
+}: WorksSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -31,7 +39,13 @@ export default function WorksSection({ tone }: WorksSectionProps) {
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   return (
-    <SectionWrapper id="work" tone={tone}>
+    <SectionWrapper
+      id="work"
+      tone={tone}
+      blendTopFrom={blendTopFrom}
+      blendBottomTo={blendBottomTo}
+      blendStyle={blendStyle}
+    >
       <div ref={sectionRef} className={styles.sectionHeader}>
         <motion.h2
           style={{ y: headingY }}

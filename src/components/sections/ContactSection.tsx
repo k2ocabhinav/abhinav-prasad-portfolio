@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Mail } from "lucide-react";
-import type { SectionTone } from "@/types";
+import type { SectionBlendStyle, SectionTone } from "@/types";
 import { personal } from "@/data/personal";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -41,9 +41,17 @@ const socialIcons: Record<string, React.ReactNode> = {
 
 interface ContactSectionProps {
   tone?: SectionTone;
+  blendTopFrom?: SectionTone;
+  blendBottomTo?: SectionTone;
+  blendStyle?: SectionBlendStyle;
 }
 
-export default function ContactSection({ tone }: ContactSectionProps) {
+export default function ContactSection({
+  tone,
+  blendTopFrom,
+  blendBottomTo,
+  blendStyle,
+}: ContactSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -55,7 +63,16 @@ export default function ContactSection({ tone }: ContactSectionProps) {
   const primaryCtaLabel = personal.resumeHref ? "Download Resume" : "Request Resume";
 
   return (
-    <SectionWrapper id="contact" tone={tone} texture="ruled" fullHeight centered>
+    <SectionWrapper
+      id="contact"
+      tone={tone}
+      texture="ruled"
+      blendTopFrom={blendTopFrom}
+      blendBottomTo={blendBottomTo}
+      blendStyle={blendStyle}
+      fullHeight
+      centered
+    >
       <div ref={sectionRef}>
         <motion.h2
           initial={{ opacity: 0, scale: 0.9 }}

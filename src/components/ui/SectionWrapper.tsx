@@ -3,7 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
-import type { SectionTexture, SectionTone } from "@/types";
+import type { SectionBlendStyle, SectionTexture, SectionTone } from "@/types";
 import { cn } from "@/lib/utils";
 import styles from "./SectionWrapper.module.css";
 
@@ -22,6 +22,12 @@ interface SectionWrapperProps {
   tone?: SectionTone;
   /** Optional section texture treatment */
   texture?: SectionTexture;
+  /** Optional top-edge blend from previous section tone */
+  blendTopFrom?: SectionTone;
+  /** Optional bottom-edge blend to next section tone */
+  blendBottomTo?: SectionTone;
+  /** Controls handoff intensity */
+  blendStyle?: SectionBlendStyle;
   className?: string;
 }
 
@@ -34,6 +40,15 @@ const toneClassMap: Record<SectionTone, string> = {
   "pastel-cream": styles.tonePastelCream,
 };
 
+const toneSurfaceMap: Record<SectionTone, string> = {
+  "hero-light": "var(--surface-tone-hero-light)",
+  "pastel-blue": "var(--surface-tone-pastel-blue)",
+  "pastel-blush": "var(--surface-tone-pastel-blush)",
+  "pastel-peach": "var(--surface-tone-pastel-peach)",
+  "pastel-mint": "var(--surface-tone-pastel-mint)",
+  "pastel-cream": "var(--surface-tone-pastel-cream)",
+};
+
 export default function SectionWrapper({
   id,
   children,
@@ -41,6 +56,9 @@ export default function SectionWrapper({
   centered = false,
   tone,
   texture = "none",
+  blendTopFrom,
+  blendBottomTo,
+  blendStyle = "soft",
   className = "",
 }: SectionWrapperProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -49,6 +67,7 @@ export default function SectionWrapper({
     offset: ["start end", "end start"],
   });
   const drift = useTransform(scrollYProgress, [0, 0.5, 1], [-16, 0, 16]);
+  const surface = tone ? toneSurfaceMap[tone] : "var(--section-bg, var(--color-surface))";
 
   return (
     <motion.section
@@ -63,11 +82,36 @@ export default function SectionWrapper({
         styles.section,
         tone ? toneClassMap[tone] : undefined,
         texture === "ruled" && styles.textureRuled,
+        blendStyle === "bold" ? styles.blendBold : styles.blendSoft,
         fullHeight && styles.fullHeight,
         centered && styles.centered,
         className
       )}
     >
+      {blendTopFrom ? (
+        <span
+          aria-hidden="true"
+          className={cn(styles.edgeBlend, styles.edgeBlendTop)}
+          style={
+            {
+              ["--edge-from" as string]: toneSurfaceMap[blendTopFrom],
+              ["--edge-to" as string]: surface,
+            } as CSSProperties
+          }
+        />
+      ) : null}
+      {blendBottomTo ? (
+        <span
+          aria-hidden="true"
+          className={cn(styles.edgeBlend, styles.edgeBlendBottom)}
+          style={
+            {
+              ["--edge-from" as string]: surface,
+              ["--edge-to" as string]: toneSurfaceMap[blendBottomTo],
+            } as CSSProperties
+          }
+        />
+      ) : null}
       <div className={cn("content-container", styles.inner)}>
         {children}
       </div>

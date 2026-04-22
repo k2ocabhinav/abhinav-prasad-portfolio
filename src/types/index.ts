@@ -33,6 +33,9 @@ export type SectionTone =
 /** Optional section texture treatment */
 export type SectionTexture = "none" | "ruled";
 
+/** Optional section edge handoff treatment */
+export type SectionBlendStyle = "soft" | "bold";
+
 /** Social media link */
 export interface SocialLink {
   platform: "github" | "linkedin" | "email";

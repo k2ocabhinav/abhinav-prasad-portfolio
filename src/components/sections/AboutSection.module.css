@@ -10,6 +10,14 @@
   color: var(--color-primary-brand);
 }
 
+.headingFlip {
+  display: inline-block;
+}
+
+.headingFlipToken {
+  display: inline-block;
+}
+
 .contentCol {
   display: flex;
   flex-direction: column;

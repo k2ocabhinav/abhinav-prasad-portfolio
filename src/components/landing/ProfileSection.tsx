@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { personal } from "@/data/personal";
+import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./ProfileSection.module.css";
 
 // =============================================================================
@@ -21,24 +22,54 @@ export default function ProfileSection({
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 85%", "end 25%"],
+    offset: ["start 86%", "end 22%"],
   });
-  const portraitScale = useTransform(scrollYProgress, [0, 0.26, 0.6, 0.86, 1], [0.8, 0.88, 1, 1.08, 1.12]);
-  const portraitOpacity = useTransform(scrollYProgress, [0, 0.18, 0.52, 1], [0.42, 0.68, 0.95, 1]);
-  const portraitY = useTransform(scrollYProgress, [0, 0.32, 0.7, 1], [36, 18, 0, -14]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.14, 0.3, 0.54, 0.72, 1], [0, 0.76, 1, 0.72, 0, 0]);
-  const hintY = useTransform(scrollYProgress, [0, 0.34, 0.7, 1], [26, 0, -18, -32]);
-  const hintScale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.96, 1, 0.98, 0.94]);
+  const portraitScale = useTransform(scrollYProgress, [0, 0.3, 0.62, 1], [0.82, 0.9, 1.04, 1.1]);
+  const portraitOpacity = useTransform(scrollYProgress, [0, 0.22, 0.55, 1], [0.38, 0.72, 0.95, 1]);
+  const portraitY = useTransform(scrollYProgress, [0, 0.36, 0.74, 1], [42, 16, -2, -14]);
+  const portraitX = useTransform(scrollYProgress, [0, 0.6, 1], [20, 0, -10]);
+  const hintOpacity = useTransform(scrollYProgress, [0, 0.18, 0.42, 0.7, 1], [0, 1, 1, 0.24, 0]);
+  const hintY = useTransform(scrollYProgress, [0, 0.36, 0.7, 1], [28, 0, -24, -36]);
   const hintCopy =
     personal.hintCopy ??
     "Psst... click Abhinav above to explore beyond the terminal.";
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const root = document.documentElement;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
+          root.dataset.profileFocus = "true";
+          return;
+        }
+
+        delete root.dataset.profileFocus;
+      },
+      { threshold: [0, 0.3, 0.55, 0.8] }
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+      delete root.dataset.profileFocus;
+    };
+  }, []);
+
   return (
-    <section ref={sectionRef} className={styles.profileSection}>
+    <section
+      ref={sectionRef}
+      className={styles.profileSection}
+      data-home-profile-stage="true"
+    >
+      <div className={styles.profileStageWash} aria-hidden="true" />
       <div className={`content-container ${styles.profileContent}`}>
         <div className={styles.storyGrid}>
           <motion.div
-            className={styles.portraitStage}
+            className={styles.portraitColumn}
             style={
               reduceMotion
                 ? undefined
@@ -46,6 +77,7 @@ export default function ProfileSection({
                     scale: portraitScale,
                     opacity: portraitOpacity,
                     y: portraitY,
+                    x: portraitX,
                   }
             }
           >
@@ -56,8 +88,8 @@ export default function ProfileSection({
                 reduceMotion ? undefined : { scale: 1, opacity: 1 }
               }
               viewport={reduceMotion ? undefined : { once: true }}
-              transition={reduceMotion ? undefined : { duration: 0.9, delay: 0.1 }}
-              className={styles.imageContainer}
+              transition={reduceMotion ? undefined : { duration: 0.82, delay: 0.08 }}
+              className={styles.imageFrame}
             >
               <Image
                 src={personal.heroPhoto}
@@ -70,21 +102,34 @@ export default function ProfileSection({
             </motion.div>
           </motion.div>
 
-          <motion.div
-            className={styles.hintStage}
-            style={
-              reduceMotion
-                ? undefined
-                : {
-                    opacity: hintOpacity,
-                    y: hintY,
-                    scale: hintScale,
-                  }
-            }
-          >
-            <span className={styles.hintEyebrow}>Beyond The Terminal</span>
-            <p className={styles.hintCopy}>{hintCopy}</p>
-          </motion.div>
+          <div className={styles.copyColumn}>
+            <motion.span
+              className={styles.hintEyebrow}
+              style={reduceMotion ? undefined : { opacity: hintOpacity, y: hintY }}
+            >
+              <FlipRevealText
+                text="Beyond The Terminal"
+                mode="word"
+                triggerRange={[0.24, 0.44]}
+                stagger={0.035}
+                perspective={960}
+                reduceMotion={reduceMotion}
+              />
+            </motion.span>
+            <motion.div
+              className={styles.hintCopy}
+              style={reduceMotion ? undefined : { opacity: hintOpacity, y: hintY }}
+            >
+              <FlipRevealText
+                text={hintCopy}
+                mode="word"
+                triggerRange={[0.26, 0.5]}
+                stagger={0.022}
+                perspective={980}
+                reduceMotion={reduceMotion}
+              />
+            </motion.div>
+          </div>
         </div>
 
         <motion.div

@@ -3,7 +3,6 @@
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";
-import AnimatedDivider from "@/components/ui/AnimatedDivider";
 import FloatingArtifacts from "@/components/artifacts/FloatingArtifacts";
 import LandingExperience from "@/components/landing/LandingExperience";
 import AboutSection from "@/components/sections/AboutSection";
@@ -36,18 +35,41 @@ export default function Home() {
           backgroundColor: "transparent",
         }}
       >
-        <AnimatedDivider fromTone="hero-light" toTone="pastel-cream" />
-        <AboutSection tone="pastel-cream" />
-        <AnimatedDivider fromTone="pastel-cream" toTone="pastel-blue" />
-        <ExperienceSection tone="pastel-blue" />
-        <AnimatedDivider fromTone="pastel-blue" toTone="pastel-blush" />
-        <WorksSection tone="pastel-blush" />
-        <AnimatedDivider fromTone="pastel-blush" toTone="pastel-peach" />
-        <TechStackSection tone="pastel-peach" />
-        <AnimatedDivider fromTone="pastel-peach" toTone="pastel-mint" />
-        <PresenceSection tone="pastel-mint" />
-        <AnimatedDivider fromTone="pastel-mint" toTone="hero-light" />
-        <ContactSection tone="hero-light" />
+        <AboutSection
+          tone="pastel-cream"
+          blendTopFrom="hero-light"
+          blendBottomTo="pastel-blue"
+          blendStyle="soft"
+        />
+        <ExperienceSection
+          tone="pastel-blue"
+          blendTopFrom="pastel-cream"
+          blendBottomTo="pastel-blush"
+          blendStyle="soft"
+        />
+        <WorksSection
+          tone="pastel-blush"
+          blendTopFrom="pastel-blue"
+          blendBottomTo="pastel-peach"
+          blendStyle="soft"
+        />
+        <TechStackSection
+          tone="pastel-peach"
+          blendTopFrom="pastel-blush"
+          blendBottomTo="pastel-mint"
+          blendStyle="soft"
+        />
+        <PresenceSection
+          tone="pastel-mint"
+          blendTopFrom="pastel-peach"
+          blendBottomTo="hero-light"
+          blendStyle="soft"
+        />
+        <ContactSection
+          tone="hero-light"
+          blendTopFrom="pastel-mint"
+          blendStyle="soft"
+        />
 
         {/* Footer */}
         <Footer />

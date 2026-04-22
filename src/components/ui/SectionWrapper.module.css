@@ -49,6 +49,37 @@
   z-index: 1;
 }
 
+.edgeBlend {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(4.5rem, 11vw, 8.5rem);
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    var(--edge-from) 0%,
+    color-mix(in srgb, var(--edge-from) 55%, var(--edge-to) 45%) 54%,
+    var(--edge-to) 100%
+  );
+}
+
+.edgeBlendTop {
+  top: -1px;
+}
+
+.edgeBlendBottom {
+  bottom: -1px;
+}
+
+.blendSoft .edgeBlend {
+  opacity: 0.82;
+}
+
+.blendBold .edgeBlend {
+  opacity: 0.94;
+}
+
 .toneHeroLight {
   --section-bg: var(--surface-tone-hero-light);
   --tone-text: #1C1456;

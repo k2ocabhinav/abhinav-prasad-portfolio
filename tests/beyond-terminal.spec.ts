@@ -233,6 +233,72 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
   expect(widths.documentWidth).toBeLessThanOrEqual(widths.windowWidth);
 });
 
+test("desktop section handoff into Philosophy stays seam-free", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+  await page.evaluate(() => {
+    document.getElementById("about")?.scrollIntoView({ block: "start" });
+  });
+  await page.waitForTimeout(420);
+
+  const about = page.locator("#about").first();
+  await expect(about).toBeVisible();
+  const screenshot = await about.screenshot({
+    animations: "disabled",
+  });
+
+  expect(screenshot).toMatchSnapshot("home-about-handoff-desktop.png", {
+    maxDiffPixelRatio: 0.02,
+  });
+});
+
+test("profile stage keeps premium composition on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+
+  const profileStage = page.locator('[data-home-profile-stage="true"]');
+  await page.evaluate(() => {
+    document
+      .querySelector('[data-home-profile-stage="true"]')
+      ?.scrollIntoView({ block: "center" });
+  });
+  await page.waitForTimeout(420);
+  await expect(profileStage).toBeVisible();
+
+  const screenshot = await profileStage.screenshot({
+    animations: "disabled",
+  });
+
+  expect(screenshot).toMatchSnapshot("home-profile-stage-desktop.png", {
+    maxDiffPixelRatio: 0.025,
+  });
+});
+
+test("profile stage keeps premium composition on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+
+  const profileStage = page.locator('[data-home-profile-stage="true"]');
+  await page.evaluate(() => {
+    document
+      .querySelector('[data-home-profile-stage="true"]')
+      ?.scrollIntoView({ block: "start" });
+  });
+  await page.waitForTimeout(420);
+  await expect(profileStage).toBeVisible();
+
+  const screenshot = await profileStage.screenshot({
+    animations: "disabled",
+  });
+
+  expect(screenshot).toMatchSnapshot("home-profile-stage-mobile.png", {
+    maxDiffPixelRatio: 0.025,
+  });
+});
+
 test("desktop home hero wordmark keeps the editorial look", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");

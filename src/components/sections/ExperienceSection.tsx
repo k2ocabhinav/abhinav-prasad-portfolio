@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import type { SectionTone } from "@/types";
+import type { SectionBlendStyle, SectionTone } from "@/types";
 import { experiences } from "@/data/experience";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 import Tag from "@/components/ui/Tag";
@@ -15,9 +15,17 @@ import styles from "./ExperienceSection.module.css";
 
 interface ExperienceSectionProps {
   tone?: SectionTone;
+  blendTopFrom?: SectionTone;
+  blendBottomTo?: SectionTone;
+  blendStyle?: SectionBlendStyle;
 }
 
-export default function ExperienceSection({ tone }: ExperienceSectionProps) {
+export default function ExperienceSection({
+  tone,
+  blendTopFrom,
+  blendBottomTo,
+  blendStyle,
+}: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -26,7 +34,13 @@ export default function ExperienceSection({ tone }: ExperienceSectionProps) {
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   return (
-    <SectionWrapper id="experience" tone={tone}>
+    <SectionWrapper
+      id="experience"
+      tone={tone}
+      blendTopFrom={blendTopFrom}
+      blendBottomTo={blendBottomTo}
+      blendStyle={blendStyle}
+    >
       <div ref={sectionRef} className={`grid-12 ${styles.experienceGrid}`}>
         <div className="col-4">
           <motion.h2

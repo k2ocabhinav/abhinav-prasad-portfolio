@@ -33,6 +33,18 @@
   );
 }
 
+:global(html[data-profile-focus="true"]) .floatingArtifactsContainer {
+  opacity: 0.42;
+}
+
+:global(html[data-profile-focus="true"]) .floatingArtifactsContainer::before {
+  opacity: 0.32;
+}
+
+:global(html[data-profile-focus="true"]) .floatingArtifactsContainer::after {
+  opacity: 0.26;
+}
+
 @media (max-width: 767px) {
   .floatingArtifactsContainer {
     display: none;

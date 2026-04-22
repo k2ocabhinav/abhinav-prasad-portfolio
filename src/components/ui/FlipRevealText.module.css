@@ -1,0 +1,19 @@
+.root {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  perspective: var(--flip-perspective, 920px);
+  transform-style: preserve-3d;
+}
+
+.clip {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: baseline;
+}
+
+.token {
+  display: inline-block;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}

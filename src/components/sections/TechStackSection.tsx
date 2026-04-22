@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import type { SectionTone } from "@/types";
+import type { SectionBlendStyle, SectionTone } from "@/types";
 import { techCategories } from "@/data/techStack";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
@@ -16,9 +16,17 @@ import styles from "./TechStackSection.module.css";
 
 interface TechStackSectionProps {
   tone?: SectionTone;
+  blendTopFrom?: SectionTone;
+  blendBottomTo?: SectionTone;
+  blendStyle?: SectionBlendStyle;
 }
 
-export default function TechStackSection({ tone }: TechStackSectionProps) {
+export default function TechStackSection({
+  tone,
+  blendTopFrom,
+  blendBottomTo,
+  blendStyle,
+}: TechStackSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -27,7 +35,13 @@ export default function TechStackSection({ tone }: TechStackSectionProps) {
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   return (
-    <SectionWrapper id="stack" tone={tone}>
+    <SectionWrapper
+      id="stack"
+      tone={tone}
+      blendTopFrom={blendTopFrom}
+      blendBottomTo={blendBottomTo}
+      blendStyle={blendStyle}
+    >
       <div ref={sectionRef} className={`grid-12 ${styles.headerGrid}`}>
         <div className="col-4">
           <motion.h2
