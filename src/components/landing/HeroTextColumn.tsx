@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import AnimatedName from "./AnimatedName";
-import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
 import MagneticButton from "@/components/ui/MagneticButton";
 import { landingHero } from "@/data/landing";
 import { landingFadeInUp, landingStagger } from "@/lib/animations";
@@ -13,11 +12,11 @@ import styles from "./HeroTextColumn.module.css";
 // HeroTextColumn — Hero content stack.
 //
 // Layout (top → bottom):
-//   ABHINAV         ← AnimatedName: 18vw Syne 800, per-letter hover animations
+//   Abhinav         ← Editorial wordmark with layered hover transformations
 //   Software [word] ← cycling role rotator (slides every 2.6s)
 //   & Creative …    ← static accent line
 //   Supporting copy
-//   [Explore] [Contact] [Beyond Terminal →]
+//   [Explore] [Contact]
 // =============================================================================
 
 const DEFAULT_ROLES = ["Developer", "Architect", "Cloud Engineer", "AI Systems Builder"];
@@ -38,10 +37,19 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
   }, [roles.length, reduceMotion]);
 
   return (
-    <div className={styles.textColumn}>
+    <div className={styles.textColumn} data-home-hero-text="true">
 
-      {/* ── Oversized animated name ───────────────────────────────── */}
-      <AnimatedName name="ABHINAV" reduceMotion={reduceMotion} />
+      {/* ── Oversized editorial wordmark ─────────────────────────── */}
+      <AnimatedName
+        name="Abhinav"
+        reduceMotion={reduceMotion}
+        portalTrigger={{
+          href: "/beyond-terminal",
+          source: "easter-egg",
+          variant: "portal-bloom",
+          skin: "beyond-pastel-mist",
+        }}
+      />
 
       {/* ── Cycling role line ────────────────────────────────────── */}
       <motion.div
@@ -113,20 +121,6 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
             </MagneticButton>
           </motion.div>
         ))}
-
-        {/* Beyond Terminal — portal entry as a subtle tertiary CTA */}
-        <motion.div variants={reduceMotion ? undefined : landingFadeInUp}>
-          <PortalEntryTrigger
-            href="/beyond-terminal"
-            source="easter-egg"
-            variant="portal-bloom"
-            skin="beyond-pastel-mist"
-            className={styles.beyondLink}
-            aria-label="Open Beyond the Terminal — a personal side route"
-          >
-            Beyond the Terminal →
-          </PortalEntryTrigger>
-        </motion.div>
       </motion.div>
     </div>
   );

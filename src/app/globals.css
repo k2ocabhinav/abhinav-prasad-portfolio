@@ -44,6 +44,8 @@
 
   /* Display Font — loaded via next/font, variable injected on <html> */
   --font-display: "Syne", sans-serif;
+  --font-hero-display: "Bodoni Moda", serif;
+  --font-hero-script: "Corinthia", cursive;
 
   /* ─── Motion Tokens (Landing Page) ────────────────────────────── */
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);

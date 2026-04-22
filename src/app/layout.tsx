@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans, DM_Sans, Syne } from "next/font/google";
+import {
+  Bodoni_Moda,
+  Corinthia,
+  Cormorant_Garamond,
+  DM_Sans,
+  Plus_Jakarta_Sans,
+  Syne,
+} from "next/font/google";
 import AppProviders from "@/components/providers/AppProviders";
 import { seo } from "@/data/seo";
 import "./globals.css";
@@ -38,6 +45,20 @@ const syne = Syne({
   display: "swap",
 });
 
+const bodoniModa = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: "700",
+  variable: "--font-hero-display",
+  display: "swap",
+});
+
+const corinthia = Corinthia({
+  subsets: ["latin"],
+  weight: "700",
+  variable: "--font-hero-script",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: seo.title,
   description: seo.description,
@@ -67,7 +88,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable}`}
+      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable} ${bodoniModa.variable} ${corinthia.variable}`}
     >
       <body>
         <AppProviders>{children}</AppProviders>

@@ -2,14 +2,6 @@ import type { NavigationItem, NavSection } from "@/types";
 
 export const navigationItems: NavigationItem[] = [
   { kind: "section", id: "hero", label: "Hero" },
-  {
-    kind: "route",
-    href: "/beyond-terminal",
-    label: "Beyond",
-    source: "navigation",
-    variant: "portal-bloom",
-    skin: "beyond-pastel-mist",
-  },
   { kind: "section", id: "about", label: "About" },
   { kind: "section", id: "experience", label: "Chronicle" },
   { kind: "section", id: "work", label: "Works" },

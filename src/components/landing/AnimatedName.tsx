@@ -1,7 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import type { CSSProperties } from "react";
 import { useState } from "react";
+import { useIsFirefox } from "@/hooks/useIsFirefox";
+import { usePortalNavigation } from "@/hooks/usePortalNavigation";
+import type { PortalTransitionIntent } from "@/types";
 import styles from "./AnimatedName.module.css";
 
 // =============================================================================
@@ -23,6 +27,16 @@ const HOVER_COLORS = [
   "#B8A9F0", // A → lavender
   "#D4A849", // V → gold
 ];
+
+const SCRIPT_OFFSETS = [
+  { x: "-0.04em", y: "0.01em", scale: 1.08 },
+  { x: "-0.02em", y: "0.02em", scale: 1.1 },
+  { x: "-0.01em", y: "0.01em", scale: 1.08 },
+  { x: "0em", y: "0.02em", scale: 1.06 },
+  { x: "0.01em", y: "0.01em", scale: 1.08 },
+  { x: "-0.02em", y: "0.02em", scale: 1.08 },
+  { x: "0.02em", y: "0em", scale: 1.08 },
+] as const;
 
 // Unique SVG decorations per letter index — appear on hover above each character
 function LetterDecoration({ index }: { index: number }) {
@@ -113,55 +127,257 @@ const letterEnterVariants = {
   },
 };
 
+const performanceLetterEnterVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.52, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  },
+};
+
+function HoverAura({
+  hoverColor,
+  reducedEffects = false,
+}: {
+  hoverColor: string;
+  reducedEffects?: boolean;
+}) {
+  const effectStyle = {
+    ["--letter-glow" as string]: hoverColor,
+  } as CSSProperties;
+
+  return (
+    <motion.span
+      className={styles.hoverAura}
+      style={effectStyle}
+      initial={{ opacity: 0, scale: 0.72 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.14 }}
+      transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+      aria-hidden="true"
+    >
+      <motion.span
+        className={styles.hoverBloom}
+        initial={{ opacity: 0, scale: 0.65 }}
+        animate={{ opacity: reducedEffects ? 0.62 : 0.92, scale: 1 }}
+        exit={{ opacity: 0, scale: 1.15 }}
+        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+      />
+      {reducedEffects ? null : (
+        <>
+          <motion.span
+            className={styles.hoverSweep}
+            initial={{ opacity: 0, x: "-28%", rotate: -12 }}
+            animate={{ opacity: 0.65, x: "24%", rotate: 8 }}
+            exit={{ opacity: 0, x: "34%", rotate: 16 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          />
+          <motion.span
+            className={`${styles.sparkleDot} ${styles.sparkleDotUpper}`}
+            initial={{ opacity: 0, scale: 0.4, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.3, y: -8 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: 0.06 }}
+          />
+          <motion.span
+            className={`${styles.sparkleDot} ${styles.sparkleDotLower}`}
+            initial={{ opacity: 0, scale: 0.35, x: -8 }}
+            animate={{ opacity: 0.95, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.25, x: 10 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          />
+        </>
+      )}
+    </motion.span>
+  );
+}
+
 interface AnimatedNameProps {
   name: string;
   reduceMotion?: boolean;
+  portalTrigger?: {
+    href: string;
+    source: PortalTransitionIntent["source"];
+    variant?: PortalTransitionIntent["variant"];
+    skin?: PortalTransitionIntent["skin"];
+  };
 }
 
-export default function AnimatedName({ name, reduceMotion = false }: AnimatedNameProps) {
+export default function AnimatedName({
+  name,
+  reduceMotion = false,
+  portalTrigger,
+}: AnimatedNameProps) {
   const systemReducedMotion = useReducedMotion();
-  const skip = reduceMotion || systemReducedMotion;
-  const letters = name.toUpperCase().split("");
+  const isFirefox = useIsFirefox();
+  const prefersReducedMotion = reduceMotion || systemReducedMotion;
+  const usePerformanceMode = prefersReducedMotion || isFirefox;
+  const letters = name.split("");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { getTriggerProps, isTransitioning } = usePortalNavigation();
+  const triggerProps = portalTrigger ? getTriggerProps(portalTrigger) : null;
 
-  if (skip) {
-    return (
-      <div className={styles.nameStatic} aria-label={name}>
-        {name.toUpperCase()}
-      </div>
-    );
-  }
-
-  return (
-    <motion.div
-      className={styles.nameRow}
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      aria-label={name}
-    >
+  const nameMarkup = prefersReducedMotion ? (
+    <span className={styles.nameStatic} data-home-hero-wordmark="true">
       {letters.map((letter, i) => {
         const isHovered = hoveredIndex === i;
         const hoverColor = HOVER_COLORS[i] ?? "#D4A849";
+        const scriptOffset = SCRIPT_OFFSETS[i] ?? SCRIPT_OFFSETS[0];
+        const stageStyle = {
+          ["--script-offset-x" as string]: scriptOffset.x,
+          ["--script-offset-y" as string]: scriptOffset.y,
+          ["--letter-color" as string]: hoverColor,
+        } as CSSProperties;
 
         return (
-          <motion.span
-            key={i}
+          <span
+            key={`${letter}-${i}`}
             className={styles.letterWrapper}
-            variants={letterEnterVariants}
           >
             <motion.span
-              className={styles.letter}
+              className={styles.letterStage}
+              style={stageStyle}
+              data-animated-letter-index={i}
+              data-hovered={isHovered ? "true" : "false"}
               onHoverStart={() => setHoveredIndex(i)}
               onHoverEnd={() => setHoveredIndex(null)}
               animate={{
                 color: isHovered ? hoverColor : "var(--color-on-surface)",
-                scale: isHovered ? 1.1 : 1,
-                y: isHovered ? "-0.06em" : "0em",
+                scale: isHovered ? 1.04 : 1,
               }}
-              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
             >
-              {letter}
+              <motion.span
+                className={`${styles.glyph} ${styles.editorialGlyph}`}
+                data-letter-layer="editorial"
+                data-visible={isHovered ? "false" : "true"}
+                animate={{
+                  opacity: isHovered ? 0.18 : 1,
+                  filter: "none",
+                  scaleX: isHovered ? 0.96 : 1,
+                }}
+                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {letter}
+              </motion.span>
+
+              <span className={styles.scriptPositioner} aria-hidden="true">
+                <motion.span
+                  className={`${styles.glyph} ${styles.scriptGlyph}`}
+                  data-letter-layer="script"
+                  data-visible={isHovered ? "true" : "false"}
+                  animate={{
+                    opacity: isHovered ? 1 : 0,
+                    filter: "none",
+                    y: isHovered ? "-0.02em" : "0.04em",
+                    scale: isHovered ? scriptOffset.scale : scriptOffset.scale * 0.94,
+                  }}
+                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {letter}
+                </motion.span>
+              </span>
+
+              <AnimatePresence>
+                {isHovered && (
+                  <motion.span
+                    className={styles.decoration}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.88 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <LetterDecoration index={i} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.span>
+          </span>
+        );
+      })}
+    </span>
+  ) : (
+    <motion.span
+      className={styles.nameRow}
+      variants={containerVariants}
+      initial={false}
+      animate="visible"
+      data-home-hero-wordmark="true"
+    >
+      {letters.map((letter, i) => {
+        const isHovered = hoveredIndex === i;
+        const hoverColor = HOVER_COLORS[i] ?? "#D4A849";
+        const scriptOffset = SCRIPT_OFFSETS[i] ?? SCRIPT_OFFSETS[0];
+        const stageStyle = {
+          ["--script-offset-x" as string]: scriptOffset.x,
+          ["--script-offset-y" as string]: scriptOffset.y,
+          ["--letter-color" as string]: hoverColor,
+        } as CSSProperties;
+
+        return (
+          <motion.span
+            key={`${letter}-${i}`}
+            className={styles.letterWrapper}
+            variants={usePerformanceMode ? performanceLetterEnterVariants : letterEnterVariants}
+          >
+            <motion.span
+              className={styles.letterStage}
+              style={stageStyle}
+              data-animated-letter-index={i}
+              data-hovered={isHovered ? "true" : "false"}
+              onHoverStart={() => setHoveredIndex(i)}
+              onHoverEnd={() => setHoveredIndex(null)}
+              animate={{
+                color: isHovered ? hoverColor : "var(--color-on-surface)",
+                scale: isHovered ? (usePerformanceMode ? 1.04 : 1.08) : 1,
+                y: isHovered ? (usePerformanceMode ? "-0.045em" : "-0.08em") : "0em",
+              }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <AnimatePresence>
+                {isHovered ? (
+                  <HoverAura
+                    hoverColor={hoverColor}
+                    reducedEffects={usePerformanceMode}
+                  />
+                ) : null}
+              </AnimatePresence>
+
+              <motion.span
+                className={`${styles.glyph} ${styles.editorialGlyph}`}
+                data-letter-layer="editorial"
+                data-visible={isHovered ? "false" : "true"}
+                animate={{
+                  opacity: isHovered ? 0.18 : 1,
+                  filter:
+                    isHovered && !usePerformanceMode ? "blur(8px)" : "none",
+                  scaleX: isHovered ? 0.94 : 1,
+                  scaleY: isHovered ? 0.98 : 1,
+                }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {letter}
+              </motion.span>
+
+              <span className={styles.scriptPositioner} aria-hidden="true">
+                <motion.span
+                  className={`${styles.glyph} ${styles.scriptGlyph}`}
+                  data-letter-layer="script"
+                  data-visible={isHovered ? "true" : "false"}
+                  animate={{
+                    opacity: isHovered ? 1 : 0,
+                    filter:
+                      isHovered || usePerformanceMode ? "none" : "blur(10px)",
+                    y: isHovered ? (usePerformanceMode ? "-0.02em" : "-0.04em") : "0.08em",
+                    scale: isHovered ? scriptOffset.scale : scriptOffset.scale * (usePerformanceMode ? 0.95 : 0.9),
+                    rotate: isHovered || usePerformanceMode ? 0 : -1.5,
+                  }}
+                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {letter}
+                </motion.span>
+              </span>
 
               {/* SVG decoration — appears above the letter on hover */}
               <AnimatePresence>
@@ -171,7 +387,7 @@ export default function AnimatedName({ name, reduceMotion = false }: AnimatedNam
                     initial={{ opacity: 0, scale: 0.4, y: 10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.3, y: 6 }}
-                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <LetterDecoration index={i} />
                   </motion.span>
@@ -181,6 +397,29 @@ export default function AnimatedName({ name, reduceMotion = false }: AnimatedNam
           </motion.span>
         );
       })}
-    </motion.div>
+    </motion.span>
+  );
+
+  if (!portalTrigger || triggerProps === null) {
+    return (
+      <span className={styles.nameShell} aria-label={name}>
+        {nameMarkup}
+      </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className={`${styles.nameShell} ${styles.nameTrigger}`}
+      aria-label={name}
+      data-animated-name="hero-trigger"
+      onPointerDown={triggerProps.onPointerDown}
+      onKeyDown={triggerProps.onKeyDown}
+      onClick={triggerProps.onClick}
+      disabled={isTransitioning}
+    >
+      {nameMarkup}
+    </button>
   );
 }

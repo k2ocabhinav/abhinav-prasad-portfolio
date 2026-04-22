@@ -2,12 +2,39 @@
    AnimatedName — Per-letter interactive hero typography
    ============================================================================= */
 
+.nameShell {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  overflow: visible;
+  container-type: inline-size;
+}
+
+.nameTrigger {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: center;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+.nameTrigger:focus-visible {
+  outline: 2px solid rgba(var(--color-on-surface-rgb), 0.34);
+  outline-offset: 0.45rem;
+  border-radius: 1rem;
+}
+
 .nameRow {
   display: flex;
-  align-items: baseline;
-  /* Negative margin compensates for letter-spacing at the outer edges */
-  margin-left: -0.02em;
-  margin-right: -0.02em;
+  align-items: flex-end;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  position: relative;
 }
 
 .letterWrapper {
@@ -16,18 +43,115 @@
   overflow: visible;
 }
 
-.letter {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(4.5rem, 18vw, 16rem);
-  line-height: 0.88;
-  letter-spacing: -0.04em;
+.letterStage {
   display: inline-block;
   position: relative;
-  cursor: default;
-  /* Will-change enables GPU compositing for smooth hover transitions */
-  will-change: transform, color;
+  isolation: isolate;
+  will-change: transform, color, filter;
+  transform-origin: 50% 86%;
+  padding-inline: 0.005em;
   user-select: none;
+  color: var(--color-on-surface);
+}
+
+.glyph {
+  display: inline-block;
+  line-height: 0.9;
+  white-space: nowrap;
+  color: currentColor;
+  transform-origin: 50% 86%;
+}
+
+.editorialGlyph {
+  font-family: var(--font-hero-display);
+  font-weight: 700;
+  font-size: clamp(4.4rem, 23.8cqw, 19rem);
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  text-shadow:
+    0 0 0.015em rgba(240, 234, 249, 0.4),
+    0 0 0.1em rgba(184, 169, 240, 0.08);
+  backface-visibility: hidden;
+}
+
+.scriptPositioner {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(
+    calc(-50% + var(--script-offset-x, 0em)),
+    var(--script-offset-y, 0em)
+  );
+  pointer-events: none;
+}
+
+.scriptGlyph {
+  font-family: var(--font-hero-script);
+  font-weight: 700;
+  font-size: calc(clamp(4.4rem, 23.8cqw, 19rem) * 1.14);
+  line-height: 0.8;
+  letter-spacing: -0.09em;
+  text-shadow:
+    0 0 0.14em rgba(184, 169, 240, 0.34),
+    0 0 0.28em rgba(232, 160, 180, 0.22);
+  opacity: 0;
+  backface-visibility: hidden;
+}
+
+.hoverAura {
+  position: absolute;
+  inset: -0.4em -0.18em -0.16em;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hoverBloom {
+  position: absolute;
+  inset: 22% 12% 8%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--letter-glow) 72%, white 28%) 0%, transparent 58%);
+  filter: blur(22px);
+  opacity: 0.78;
+}
+
+.hoverSweep {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 42%;
+  height: 0.08em;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 15%,
+    color-mix(in srgb, var(--letter-glow) 60%, white 40%) 50%,
+    transparent 100%
+  );
+  filter: blur(1px);
+}
+
+.sparkleDot {
+  position: absolute;
+  display: block;
+  width: 0.08em;
+  height: 0.08em;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--letter-glow) 70%, white 30%);
+  box-shadow:
+    0 0 0.08em color-mix(in srgb, var(--letter-glow) 78%, white 22%),
+    0 0 0.22em rgba(255, 255, 255, 0.28);
+}
+
+.sparkleDotUpper {
+  top: 12%;
+  right: 18%;
+}
+
+.sparkleDotLower {
+  bottom: 14%;
+  left: 14%;
 }
 
 /* SVG decoration — floats above the letter, centred on it */
@@ -44,20 +168,67 @@
 
 /* Reduced-motion / SSR fallback — plain text, no split */
 .nameStatic {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(4.5rem, 18vw, 16rem);
-  line-height: 0.88;
-  letter-spacing: -0.04em;
-  color: var(--color-on-surface);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
 }
 
 /* ─── Mobile ─────────────────────────────────────────────────── */
 
 @media (max-width: 767px) {
-  .letter,
-  .nameStatic {
-    font-size: clamp(3.25rem, 18vw, 5.5rem);
-    letter-spacing: -0.03em;
+  .editorialGlyph {
+    font-size: clamp(4rem, 23.4cqw, 6.6rem);
+    letter-spacing: -0.048em;
+  }
+
+  .scriptGlyph {
+    font-size: calc(clamp(4rem, 23.4cqw, 6.6rem) * 1.12);
+  }
+
+  .hoverAura {
+    inset: -0.34em -0.12em -0.14em;
+  }
+
+  .decoration {
+    transform: translateX(-50%) scale(0.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hoverAura,
+  .hoverSweep,
+  .sparkleDot {
+    display: none;
+  }
+}
+
+@supports (-moz-appearance: none) {
+  .letterStage {
+    will-change: transform, color;
+  }
+
+  .editorialGlyph {
+    text-shadow:
+      0 0 0.012em rgba(240, 234, 249, 0.26),
+      0 0 0.05em rgba(184, 169, 240, 0.04);
+  }
+
+  .scriptGlyph {
+    text-shadow:
+      0 0 0.05em rgba(184, 169, 240, 0.18),
+      0 0 0.12em rgba(232, 160, 180, 0.12);
+  }
+
+  .hoverBloom {
+    filter: blur(12px);
+    opacity: 0.55;
+  }
+
+  .hoverSweep,
+  .sparkleDot {
+    display: none;
   }
 }
