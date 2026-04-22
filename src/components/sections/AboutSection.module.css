@@ -18,10 +18,10 @@
 
 .philosophyText {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 1.125rem;
-  line-height: 1.8;
-  color: #4A4A4A;
+  line-height: 1.9;
+  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
   max-width: 42rem;
 }
 

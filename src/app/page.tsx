@@ -30,24 +30,24 @@ export default function Home() {
 
       {/* Main scrollable content */}
       <main
-        className="content-container deferred-section deferred-section-deep"
+        className="deferred-section deferred-section-deep"
         style={{
           position: "relative",
-          backgroundColor: "var(--color-surface)",
+          backgroundColor: "transparent",
         }}
       >
-        <AnimatedDivider />
-        <AboutSection />
-        <AnimatedDivider />
-        <ExperienceSection />
-        <AnimatedDivider />
-        <WorksSection />
-        <AnimatedDivider />
-        <TechStackSection />
-        <AnimatedDivider />
-        <PresenceSection />
-        <AnimatedDivider />
-        <ContactSection />
+        <AnimatedDivider fromTone="hero-light" toTone="pastel-cream" />
+        <AboutSection tone="pastel-cream" />
+        <AnimatedDivider fromTone="pastel-cream" toTone="pastel-blue" />
+        <ExperienceSection tone="pastel-blue" />
+        <AnimatedDivider fromTone="pastel-blue" toTone="pastel-blush" />
+        <WorksSection tone="pastel-blush" />
+        <AnimatedDivider fromTone="pastel-blush" toTone="pastel-peach" />
+        <TechStackSection tone="pastel-peach" />
+        <AnimatedDivider fromTone="pastel-peach" toTone="pastel-mint" />
+        <PresenceSection tone="pastel-mint" />
+        <AnimatedDivider fromTone="pastel-mint" toTone="hero-light" />
+        <ContactSection tone="hero-light" />
 
         {/* Footer */}
         <Footer />

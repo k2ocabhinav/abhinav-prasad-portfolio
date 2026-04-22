@@ -20,7 +20,7 @@
   top: 0;
   width: 1px;
   height: 100%;
-  background-color: rgba(107, 127, 120, 0.2);
+  background-color: rgba(var(--color-primary-brand-rgb), 0.26);
 }
 
 .entries {
@@ -62,7 +62,7 @@
 }
 
 .company {
-  color: var(--color-secondary-text);
+  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
   margin-bottom: 1.5rem;
 }
 

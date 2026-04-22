@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
+import type { SectionTone } from "@/types";
 import { techCategories } from "@/data/techStack";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
@@ -13,7 +14,11 @@ import styles from "./TechStackSection.module.css";
 // TechStackSection — Tech categories with glassmorphism cards and 3D tilt
 // =============================================================================
 
-export default function TechStackSection() {
+interface TechStackSectionProps {
+  tone?: SectionTone;
+}
+
+export default function TechStackSection({ tone }: TechStackSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -22,7 +27,7 @@ export default function TechStackSection() {
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   return (
-    <SectionWrapper id="stack">
+    <SectionWrapper id="stack" tone={tone}>
       <div ref={sectionRef} className={`grid-12 ${styles.headerGrid}`}>
         <div className="col-4">
           <motion.h2
@@ -69,8 +74,6 @@ function TechCard({
       whileHover={{
         y: -5,
         scale: 1.02,
-        backgroundColor: "rgba(107, 127, 120, 0.05)",
-        backdropFilter: "blur(12px)",
       }}
     >
       <div className={styles.cardIcon}>

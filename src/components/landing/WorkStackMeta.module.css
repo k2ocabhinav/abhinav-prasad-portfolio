@@ -50,10 +50,10 @@
 
 .projectDescription {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 1rem;
-  color: var(--color-secondary-text);
-  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-on-surface) 84%, var(--color-secondary-text) 16%);
+  line-height: 1.72;
   max-width: 28rem;
 }
 

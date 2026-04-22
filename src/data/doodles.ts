@@ -2,7 +2,7 @@ import type { DoodleAsset } from "@/types";
 
 // =============================================================================
 // Doodle Assets — Hand-drawn SVG accent marks for the hero doodle engine.
-// All paths are single-stroke thin lines that render in the mint accent color.
+// All paths are single-stroke thin lines that render in the active accent color.
 // Anchor hints map to absolute CSS positions in DoodleEngine.module.css.
 // =============================================================================
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import type { SectionTone } from "@/types";
 import { personal } from "@/data/personal";
 import { presenceNodes } from "@/data/presence";
 import LiveClock from "@/components/ui/LiveClock";
@@ -11,9 +12,13 @@ import styles from "./PresenceSection.module.css";
 // PresenceSection — Abstract map with pulsing nodes and live clock
 // =============================================================================
 
-export default function PresenceSection() {
+interface PresenceSectionProps {
+  tone?: SectionTone;
+}
+
+export default function PresenceSection({ tone }: PresenceSectionProps) {
   return (
-    <SectionWrapper id="presence">
+    <SectionWrapper id="presence" tone={tone}>
       <div className="grid-12">
         <div className="col-4">
           <h2 className={styles.heading}>Presence</h2>

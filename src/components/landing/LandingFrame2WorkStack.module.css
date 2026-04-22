@@ -151,9 +151,9 @@
   z-index: 1;
   margin-top: 1rem;
   font-family: var(--font-body);
-  font-weight: 300;
-  color: var(--color-secondary-text);
-  line-height: 1.6;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-on-surface) 84%, var(--color-secondary-text) 16%);
+  line-height: 1.72;
 }
 
 .mobileNote {
@@ -164,7 +164,7 @@
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-secondary-text);
+  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
 }
 
 .mobileTags {

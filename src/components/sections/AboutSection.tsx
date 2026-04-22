@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
+import type { SectionTone } from "@/types";
 import { personal } from "@/data/personal";
 import { useSectionInView } from "@/hooks/useSectionInView";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -11,7 +12,11 @@ import styles from "./AboutSection.module.css";
 // AboutSection — Philosophy statement in asymmetric grid
 // =============================================================================
 
-export default function AboutSection() {
+interface AboutSectionProps {
+  tone?: SectionTone;
+}
+
+export default function AboutSection({ tone }: AboutSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -21,7 +26,7 @@ export default function AboutSection() {
   const { isInView } = useSectionInView(sectionRef);
 
   return (
-    <SectionWrapper id="about">
+    <SectionWrapper id="about" tone={tone}>
       <div ref={sectionRef} className={`grid-12 ${styles.aboutGrid}`}>
         <div className="col-4">
           <motion.h2

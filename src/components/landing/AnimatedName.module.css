@@ -58,7 +58,7 @@
 
 .letterStage[data-hovered="true"] {
   transform: translate3d(0, -0.06em, 0) scale(1.04);
-  color: color-mix(in srgb, var(--letter-color) 84%, white 16%);
+  color: color-mix(in srgb, var(--letter-color) 90%, #F4F6F8 10%);
   z-index: 2;
 }
 
@@ -84,9 +84,9 @@
 }
 
 .letterStage[data-hovered="true"] .editorialGlyph {
-  opacity: 0.24;
-  filter: blur(3px);
-  transform: translate3d(0, 0, 0) scale(0.95);
+  opacity: 0.08;
+  filter: blur(1.4px);
+  transform: translate3d(0, 0, 0) scale(0.96);
 }
 
 .hoverAura {
@@ -113,13 +113,13 @@
   bottom: 0.05em;
   left: 10%;
   right: 10%;
-  height: 0.06em;
+  height: 0.075em;
   background: var(--letter-color);
   border-radius: 999px;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 240ms var(--motion-ease-out);
-  opacity: 0.7;
+  opacity: 0.92;
 }
 
 .letterStage[data-hovered="true"] .hoverAccentBar {
@@ -137,12 +137,12 @@
 }
 
 .letterStage[data-hovered="true"] .hoverColorWash {
-  opacity: 0.10;
+  opacity: 0.18;
 }
 
 /* --- Per-letter editorial effects --- */
 
-/* A — gold accent emphasis */
+/* A — amber accent emphasis */
 .letterStage[data-animated-letter-index="0"][data-hovered="true"] {
   transform: translate3d(0, -0.06em, 0) scale(1.05);
 }

@@ -30,21 +30,22 @@
 
 .card {
   padding: 2rem;
-  border: 1px solid rgba(107, 127, 120, 0.1);
+  border: 1px solid var(--section-panel-border);
   border-radius: 0.5rem;
   cursor: default;
-  transition: border-color 0.5s ease, box-shadow 0.5s ease;
-  background: transparent;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+  background: var(--section-panel-bg);
 }
 
 .card:hover {
-  border-color: rgba(107, 127, 120, 0.3);
-  box-shadow: 0 0 20px rgba(107, 127, 120, 0.06), 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+  background: var(--section-panel-bg-strong);
+  border-color: var(--section-chip-border);
+  box-shadow: var(--section-panel-shadow);
 }
 
 .cardIcon {
   margin-bottom: 1.5rem;
-  opacity: 0.6;
+  opacity: 0.84;
   color: var(--color-primary-brand);
 }
 
@@ -59,7 +60,7 @@
 
 .cardContent {
   font-size: 0.875rem;
-  font-weight: 300;
-  color: var(--color-secondary-text);
-  line-height: 1.6;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
+  line-height: 1.72;
 }

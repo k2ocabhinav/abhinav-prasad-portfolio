@@ -7,24 +7,26 @@
   z-index: 6;
   overflow: clip;
   background:
-    radial-gradient(ellipse at 20% 30%, rgba(196, 181, 209, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 60%, rgba(232, 180, 184, 0.04) 0%, transparent 50%),
-    linear-gradient(180deg, #111118 0%, #13131B 50%, #16161E 100%);
+    radial-gradient(ellipse at 12% 16%, rgba(255, 49, 171, 0.22) 0%, transparent 48%),
+    radial-gradient(ellipse at 82% 22%, rgba(255, 183, 40, 0.2) 0%, transparent 46%),
+    radial-gradient(ellipse at 62% 84%, rgba(233, 83, 48, 0.22) 0%, transparent 44%),
+    radial-gradient(ellipse at 24% 80%, rgba(57, 111, 188, 0.24) 0%, transparent 46%),
+    linear-gradient(180deg, #1C1456 0%, #003C74 48%, #29648E 100%);
 
-  --color-surface: #13131B;
-  --color-surface-rgb: 19, 19, 27;
-  --color-on-surface: #F5F0E8;
-  --color-on-surface-rgb: 245, 240, 232;
-  --color-secondary-text: #A09A90;
-  --color-primary-brand: #D8B890;
-  --color-primary-brand-rgb: 216, 184, 144;
-  --color-sage: #D8B890;
-  --color-sage-rgb: 216, 184, 144;
-  --color-accent-brown: #fff5e5;
-  --landing-glass-bg: rgba(255, 255, 255, 0.03);
-  --landing-glass-border: rgba(255, 255, 255, 0.06);
-  --landing-glass-border-active: rgba(216, 184, 144, 0.25);
-  --landing-glass-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+  --color-surface: #1C1456;
+  --color-surface-rgb: 28, 20, 86;
+  --color-on-surface: #F4F6F8;
+  --color-on-surface-rgb: 244, 246, 248;
+  --color-secondary-text: #E4DACD;
+  --color-primary-brand: #FFB728;
+  --color-primary-brand-rgb: 255, 183, 40;
+  --color-sage: #396FBC;
+  --color-sage-rgb: 57, 111, 188;
+  --color-accent-brown: #F4F6F8;
+  --landing-glass-bg: rgba(28, 20, 86, 0.28);
+  --landing-glass-border: rgba(251, 255, 62, 0.2);
+  --landing-glass-border-active: rgba(255, 183, 40, 0.48);
+  --landing-glass-shadow: 0 18px 40px rgba(28, 20, 86, 0.34);
 }
 
 .landing::before,
@@ -37,16 +39,16 @@
 
 .landing::before {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.015) 0%, transparent 30%),
-    radial-gradient(ellipse at 50% 0%, rgba(212, 192, 160, 0.03) 0%, transparent 50%);
+    linear-gradient(180deg, rgba(244, 246, 248, 0.08) 0%, transparent 34%),
+    radial-gradient(ellipse at 50% 0%, rgba(251, 255, 62, 0.16) 0%, transparent 52%);
   opacity: 1;
 }
 
 .landing::after {
   inset: 0;
   background-image:
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.01) 0px, rgba(255, 255, 255, 0.01) 1px, transparent 1px, transparent 80px);
-  opacity: 0.5;
+    repeating-linear-gradient(0deg, rgba(244, 246, 248, 0.02) 0px, rgba(244, 246, 248, 0.02) 1px, transparent 1px, transparent 76px);
+  opacity: 0.44;
 }
 
 .heroFrame {

@@ -4,6 +4,7 @@
   font-weight: 300;
   font-size: 3.75rem;
   margin-bottom: 4rem;
+  color: color-mix(in srgb, var(--color-on-surface) 86%, var(--color-primary-brand) 14%);
 }
 
 @media (min-width: 768px) {
@@ -57,7 +58,7 @@
 
 .footerTagline {
   margin-top: 8rem;
-  opacity: 0.2;
+  opacity: 0.46;
 }
 
 .taglineText {

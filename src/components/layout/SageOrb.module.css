@@ -26,7 +26,7 @@
 /* No glow. Just a dark smudge cast downward, like a real object on a surface */
 .orbHalo {
   inset: 30%;
-  background: rgba(216, 184, 144, 0.24);
+  background: rgba(255, 183, 40, 0.32);
   filter: blur(5px);
   opacity: 1;
   transform: translateY(2px);
@@ -36,14 +36,14 @@
 /* A clean filled circle with a tiny directional shadow for depth */
 .orbCore {
   inset: 30%;
-  background: #D8B890;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.20);
+  background: #FFB728;
+  box-shadow: 0 1px 3px rgba(28, 20, 86, 0.28);
 }
 
 /* Ring: thin precise outline — architectural, like a watch dial */
 .orbRing {
   inset: 0%;
-  border: 1px solid rgba(216, 184, 144, 0.35);
+  border: 1px solid rgba(57, 111, 188, 0.52);
   opacity: 1;
 }
 

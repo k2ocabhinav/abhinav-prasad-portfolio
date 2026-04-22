@@ -9,11 +9,11 @@
   justify-content: center;
   background: linear-gradient(
     180deg,
-    #13131B 0%,
-    rgba(19, 19, 27, 0.88) 18%,
-    rgba(60, 50, 45, 0.4) 42%,
-    rgba(250, 247, 242, 0.72) 72%,
-    #FAF7F2 100%
+    #1C1456 0%,
+    rgba(0, 60, 116, 0.9) 22%,
+    rgba(57, 111, 188, 0.68) 44%,
+    rgba(231, 92, 74, 0.48) 68%,
+    var(--surface-tone-pastel-cream) 100%
   );
 }
 
@@ -22,6 +22,6 @@
   font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  /* Mid-blend: champagne neutral visible on both dark and light */
-  color: rgba(216, 184, 144, 0.6);
+  /* Mid-blend label keeps continuity between dark hero and pastel sections. */
+  color: rgba(251, 255, 62, 0.82);
 }

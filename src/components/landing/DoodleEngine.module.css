@@ -13,7 +13,7 @@
 
 .doodle {
   position: absolute;
-  /* Inherits mint accent from the dark landing token cascade */
+  /* Inherits the active accent token from the landing palette cascade */
   color: var(--color-primary-brand);
 }
 

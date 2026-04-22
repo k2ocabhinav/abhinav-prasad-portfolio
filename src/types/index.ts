@@ -21,6 +21,15 @@ export interface NavRoute {
 
 export type NavigationItem = NavSection | NavRoute;
 
+/** Shared section background tone keys for home surface continuity */
+export type SectionTone =
+  | "hero-light"
+  | "pastel-blue"
+  | "pastel-blush"
+  | "pastel-peach"
+  | "pastel-mint"
+  | "pastel-cream";
+
 /** Social media link */
 export interface SocialLink {
   platform: "github" | "linkedin" | "email";

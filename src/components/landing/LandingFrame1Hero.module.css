@@ -34,8 +34,8 @@
 .auroraPlane {
   border-radius: 50%;
   mix-blend-mode: normal;
-  filter: blur(80px);
-  opacity: 0.30;
+  filter: blur(74px);
+  opacity: 0.38;
   animation: auroraDrift 28s var(--motion-ease-in-out) infinite alternate;
 }
 
@@ -44,7 +44,7 @@
   height: 46vw;
   left: -6vw;
   top: 4vh;
-  background: rgba(192, 176, 212, 0.25);
+  background: rgba(57, 111, 188, 0.32);
   animation-duration: 32s;
 }
 
@@ -53,7 +53,7 @@
   height: 34vw;
   left: 22vw;
   top: 18vh;
-  background: rgba(228, 168, 176, 0.18);
+  background: rgba(255, 49, 171, 0.28);
   animation-duration: 26s;
   animation-delay: -5s;
 }
@@ -63,7 +63,7 @@
   height: 40vw;
   right: -4vw;
   top: 8vh;
-  background: rgba(168, 200, 216, 0.18);
+  background: rgba(231, 92, 74, 0.28);
   animation-duration: 30s;
   animation-delay: -8s;
 }
@@ -73,7 +73,7 @@
   height: 30vw;
   right: 18vw;
   bottom: 10vh;
-  background: rgba(216, 184, 144, 0.18);
+  background: rgba(255, 183, 40, 0.28);
   animation-duration: 34s;
   animation-delay: -11s;
 }
@@ -81,8 +81,9 @@
 .auroraMesh {
   inset: 12% 10%;
   background:
-    radial-gradient(ellipse at 50% 40%, rgba(245, 240, 232, 0.02) 0%, transparent 60%);
-  opacity: 0.5;
+    radial-gradient(ellipse at 50% 40%, rgba(244, 246, 248, 0.05) 0%, transparent 62%),
+    radial-gradient(ellipse at 62% 18%, rgba(251, 255, 62, 0.06) 0%, transparent 58%);
+  opacity: 0.56;
   mix-blend-mode: normal;
   animation: auroraMeshShift 24s linear infinite alternate;
 }

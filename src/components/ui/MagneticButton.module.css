@@ -20,7 +20,7 @@
 }
 
 .outline:hover {
-  background-color: rgba(196, 184, 232, 0.15);
+  background-color: rgba(var(--color-accent-sky-rgb), 0.18);
 }
 
 .ghost {
@@ -31,21 +31,21 @@
 }
 
 .ghost:hover {
-  background-color: rgba(123, 111, 160, 0.1);
+  background-color: rgba(var(--color-primary-brand-rgb), 0.12);
   border-radius: 8px;
 }
 
-/* Glow variant — warm peach border for use on dark landing backgrounds */
+/* Glow variant — pastel blue border for use on dark landing backgrounds */
 .glow {
   padding: 1.25rem 4rem;
-  border: 1px solid rgba(216, 184, 144, 0.4);
+  border: 1px solid rgba(158, 199, 232, 0.45);
   border-radius: 9999px;
-  color: #D8B890;
+  color: #9EC7E8;
   background: transparent;
 }
 
 .glow:hover {
-  background-color: rgba(216, 184, 144, 0.08);
-  border-color: rgba(216, 184, 144, 0.6);
-  box-shadow: 0 4px 20px rgba(216, 184, 144, 0.12);
+  background-color: rgba(158, 199, 232, 0.12);
+  border-color: rgba(158, 199, 232, 0.72);
+  box-shadow: 0 6px 24px rgba(158, 199, 232, 0.16);
 }

@@ -3,5 +3,5 @@
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(107, 127, 120, 0.6);
+  color: rgba(var(--color-primary-brand-rgb), 0.72);
 }

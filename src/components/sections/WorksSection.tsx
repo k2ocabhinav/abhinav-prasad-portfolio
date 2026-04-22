@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
+import type { SectionTone } from "@/types";
 import { projects } from "@/data/projects";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
@@ -17,7 +18,11 @@ import styles from "./WorksSection.module.css";
 // WorksSection — Project showcase with alternating layouts and card tilt
 // =============================================================================
 
-export default function WorksSection() {
+interface WorksSectionProps {
+  tone?: SectionTone;
+}
+
+export default function WorksSection({ tone }: WorksSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -26,7 +31,7 @@ export default function WorksSection() {
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   return (
-    <SectionWrapper id="work">
+    <SectionWrapper id="work" tone={tone}>
       <div ref={sectionRef} className={styles.sectionHeader}>
         <motion.h2
           style={{ y: headingY }}
@@ -121,7 +126,7 @@ function WorkCard({ project }: { project: (typeof projects)[number] }) {
             >
               {renderIcon(project.icon, {
                 size: 48,
-                style: { color: "rgba(107, 127, 120, 0.4)" },
+                style: { color: "rgba(var(--color-primary-brand-rgb), 0.58)" },
               })}
             </motion.div>
           </>

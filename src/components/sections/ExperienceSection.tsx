@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
+import type { SectionTone } from "@/types";
 import { experiences } from "@/data/experience";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 import Tag from "@/components/ui/Tag";
@@ -12,7 +13,11 @@ import styles from "./ExperienceSection.module.css";
 // ExperienceSection — Timeline with staggered entry animations
 // =============================================================================
 
-export default function ExperienceSection() {
+interface ExperienceSectionProps {
+  tone?: SectionTone;
+}
+
+export default function ExperienceSection({ tone }: ExperienceSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -21,7 +26,7 @@ export default function ExperienceSection() {
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   return (
-    <SectionWrapper id="experience">
+    <SectionWrapper id="experience" tone={tone}>
       <div ref={sectionRef} className={`grid-12 ${styles.experienceGrid}`}>
         <div className="col-4">
           <motion.h2

@@ -16,10 +16,11 @@
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: rgba(184, 201, 193, 0.05);
+  background: var(--section-panel-bg);
   border-radius: 0.5rem;
   overflow: hidden;
-  border: 1px solid rgba(184, 201, 193, 0.1);
+  border: 1px solid var(--section-panel-border);
+  box-shadow: var(--section-panel-shadow);
 }
 
 @media (min-width: 768px) {
@@ -70,15 +71,17 @@
 
 @keyframes innerGlow {
   0%, 100% {
-    box-shadow: 0 0 4px rgba(107, 127, 120, 0.3);
+    box-shadow: 0 0 4px rgba(var(--color-primary-brand-rgb), 0.34);
   }
   50% {
-    box-shadow: 0 0 12px rgba(107, 127, 120, 0.6), 0 0 20px rgba(107, 127, 120, 0.2);
+    box-shadow:
+      0 0 12px rgba(var(--color-primary-brand-rgb), 0.58),
+      0 0 20px rgba(var(--color-primary-brand-rgb), 0.24);
   }
 }
 
 .nodeDotInactive {
-  background-color: rgba(107, 127, 120, 0.3);
+  background-color: rgba(var(--color-primary-brand-rgb), 0.36);
 }
 
 .nodeLabels {
@@ -115,7 +118,7 @@
   font-family: var(--font-label);
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: rgba(107, 127, 120, 0.4);
+  color: rgba(var(--color-primary-brand-rgb), 0.56);
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -125,9 +128,9 @@
 .description {
   margin-top: 2rem;
   font-family: var(--font-body);
-  font-weight: 300;
-  color: var(--color-secondary-text);
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
   font-size: 0.875rem;
   max-width: 32rem;
-  line-height: 1.6;
+  line-height: 1.72;
 }

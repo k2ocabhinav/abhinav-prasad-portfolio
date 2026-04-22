@@ -56,7 +56,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background-color: rgba(184, 201, 193, 0.4);
+  background-color: rgba(var(--color-primary-brand-rgb), 0.44);
   transition: all 0.5s ease;
 }
 
@@ -75,12 +75,12 @@
 .railItemRoute {
   gap: 0.75rem;
   padding: 0.72rem 0.88rem;
-  border: 1px solid rgba(203, 194, 230, 0.22);
+  border: 1px solid rgba(var(--color-accent-sky-rgb), 0.3);
   border-radius: 999px;
   background:
-    linear-gradient(180deg, rgba(18, 20, 27, 0.82), rgba(10, 10, 14, 0.76)),
-    radial-gradient(circle at left center, rgba(201, 218, 242, 0.12), transparent 36%);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
+    linear-gradient(180deg, rgba(28, 20, 86, 0.84), rgba(0, 60, 116, 0.74)),
+    radial-gradient(circle at left center, rgba(228, 218, 205, 0.14), transparent 36%);
+  box-shadow: 0 16px 34px rgba(28, 20, 86, 0.28);
 }
 
 .railLabelRoute {
@@ -94,8 +94,8 @@
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 2px;
-  background: linear-gradient(180deg, #d1cae8, #bfd3f0);
-  box-shadow: 0 0 0 4px rgba(201, 218, 242, 0.14);
+  background: linear-gradient(180deg, var(--color-accent-sky), var(--color-primary-brand));
+  box-shadow: 0 0 0 4px rgba(var(--color-accent-sky-rgb), 0.2);
 }
 
 .mobileHamburger {
@@ -118,7 +118,7 @@
   background: rgba(250, 247, 242, 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(184, 201, 193, 0.2);
+  border: 1px solid rgba(var(--color-primary-brand-rgb), 0.26);
   color: var(--color-primary-brand);
   display: flex;
   align-items: center;
@@ -145,13 +145,13 @@
   flex-direction: column;
   justify-content: center;
   padding: 2rem;
-  border-left: 1px solid rgba(184, 201, 193, 0.1);
+  border-left: 1px solid rgba(var(--color-primary-brand-rgb), 0.2);
 }
 
 .mobileBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(28, 28, 28, 0.16);
+  background: rgba(28, 20, 86, 0.2);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border: 0;
@@ -185,17 +185,17 @@
 }
 
 .mobileNavRoute {
-  color: rgba(94, 79, 138, 0.8);
+  color: rgba(var(--color-primary-brand-rgb), 0.82);
 }
 
 .desktopRailTransparent {
   padding: 0.875rem 0.75rem;
   border-radius: 999px;
-  background: rgba(10, 10, 10, 0.7);
+  background: rgba(28, 20, 86, 0.72);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 14px 32px rgba(28, 20, 86, 0.28);
 }
 
 .desktopRailTransparent .railLabel {
@@ -203,7 +203,7 @@
 }
 
 .desktopRailTransparent .railLabelActive {
-  color: #00e5a0;
+  color: var(--color-accent-sky);
 }
 
 .desktopRailTransparent .railDot {
@@ -211,31 +211,31 @@
 }
 
 .desktopRailTransparent .railDotActive {
-  background-color: #00e5a0;
+  background-color: var(--color-accent-sky);
 }
 
 .desktopRailTransparent .railItemRoute {
-  border-color: rgba(203, 194, 230, 0.26);
+  border-color: rgba(var(--color-accent-sky-rgb), 0.32);
   background:
-    linear-gradient(180deg, rgba(18, 20, 27, 0.88), rgba(10, 10, 14, 0.82)),
-    radial-gradient(circle at left center, rgba(201, 218, 242, 0.12), transparent 36%);
+    linear-gradient(180deg, rgba(28, 20, 86, 0.9), rgba(0, 60, 116, 0.82)),
+    radial-gradient(circle at left center, rgba(228, 218, 205, 0.14), transparent 36%);
 }
 
 .hamburgerButtonTransparent {
-  background: rgba(10, 10, 10, 0.78);
+  background: rgba(28, 20, 86, 0.82);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-  color: #00e5a0;
+  box-shadow: 0 10px 24px rgba(28, 20, 86, 0.28);
+  color: var(--color-accent-sky);
 }
 
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
   .desktopRailTransparent {
-    background: rgba(10, 10, 10, 0.94);
+    background: rgba(28, 20, 86, 0.94);
   }
 
   .hamburgerButtonTransparent {
-    background: rgba(10, 10, 10, 0.96);
+    background: rgba(28, 20, 86, 0.96);
   }
 }

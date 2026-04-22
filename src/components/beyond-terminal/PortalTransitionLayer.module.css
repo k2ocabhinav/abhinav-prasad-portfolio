@@ -65,7 +65,7 @@
   border: 1px solid rgba(221, 227, 236, 0.16);
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 0 0 1px rgba(0, 0, 0, 0.16);
+    0 0 0 1px rgba(28, 20, 86, 0.24);
 }
 
 .frame::before,
