@@ -22,8 +22,8 @@ export default function SageOrb() {
     <motion.div
       className={styles.orb}
       animate={{
-        x: mousePos.x - 22,
-        y: mousePos.y - 22,
+        x: mousePos.x - 18,
+        y: mousePos.y - 18,
         scale: isContact ? 2.35 : 1,
         opacity: isContact ? 0.6 : 0.92,
       }}

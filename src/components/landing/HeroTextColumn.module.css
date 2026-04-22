@@ -22,7 +22,7 @@
   font-style: italic;
   font-weight: 300;
   font-size: clamp(1.25rem, 3vw, 2.55rem);
-  color: color-mix(in srgb, var(--color-on-surface) 72%, var(--color-accent-lavender) 28%);
+  color: color-mix(in srgb, var(--color-on-surface) 78%, var(--color-primary-brand) 22%);
   letter-spacing: -0.02em;
   margin-top: 0.1rem;
 }
@@ -47,13 +47,11 @@
   display: inline-flex;
   align-items: center;
   min-height: 1.15em;
-  color: color-mix(in srgb, var(--color-accent-lavender) 72%, white 28%);
+  color: var(--color-primary-brand);
   font-style: normal;
   font-weight: 600;
   white-space: nowrap;
-  text-shadow:
-    0 0 0.22em rgba(184, 169, 240, 0.18),
-    0 0 0.42em rgba(139, 196, 232, 0.08);
+  text-shadow: none;
 }
 
 .accentLine {
@@ -61,7 +59,7 @@
   font-style: italic;
   font-weight: 300;
   font-size: clamp(0.94rem, 1.75vw, 1.54rem);
-  color: color-mix(in srgb, var(--color-secondary-text) 74%, var(--color-accent-rose) 26%);
+  color: color-mix(in srgb, var(--color-secondary-text) 78%, var(--color-primary-brand) 22%);
   letter-spacing: -0.01em;
   opacity: 0.82;
 }

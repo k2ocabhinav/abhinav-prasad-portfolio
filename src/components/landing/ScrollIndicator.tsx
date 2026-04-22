@@ -38,7 +38,7 @@ export default function ScrollIndicator() {
         <motion.span
           className={styles.dot}
           animate={{ y: [0, 28, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
     </motion.div>

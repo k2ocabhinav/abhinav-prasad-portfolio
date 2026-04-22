@@ -18,13 +18,13 @@ import styles from "./AnimatedName.module.css";
 // =============================================================================
 
 const HOVER_COLORS = [
-  "#D4A849",
-  "#B8A9F0",
-  "#E8A0B4",
-  "#D4A849",
-  "#8BC4E8",
-  "#B8A9F0",
-  "#D4A849",
+  "#D4B878",   // A — soft warm gold
+  "#C0B0D4",   // b — warm lavender
+  "#E4A8B0",   // h — soft blush
+  "#D4B878",   // i — soft warm gold
+  "#A8C8D8",   // n — muted warm sky
+  "#C0B0D4",   // a — warm lavender
+  "#D4B878",   // v — soft warm gold
 ] as const;
 
 const SCRIPT_OFFSETS = [
@@ -44,16 +44,16 @@ function LetterDecoration({ index }: { index: number }) {
     case 0:
       return (
         <svg width="72" height="36" viewBox="0 0 72 36" fill="none" aria-hidden="true">
-          <circle cx="36" cy="6" r="3.5" fill="#D4A849" opacity="0.9" />
-          <circle cx="14" cy="18" r="2.5" fill="#D4A849" opacity="0.65" />
-          <circle cx="58" cy="18" r="2.5" fill="#D4A849" opacity="0.65" />
+          <circle cx="36" cy="6" r="3.5" fill="#D4B878" opacity="0.9" />
+          <circle cx="14" cy="18" r="2.5" fill="#D4B878" opacity="0.65" />
+          <circle cx="58" cy="18" r="2.5" fill="#D4B878" opacity="0.65" />
         </svg>
       );
     case 1:
       return (
         <svg width="48" height="52" viewBox="0 0 48 52" fill="none" aria-hidden="true">
-          <circle cx="24" cy="15" r="10" stroke="#B8A9F0" strokeWidth="1.5" opacity="0.8" />
-          <circle cx="24" cy="37" r="12" stroke="#B8A9F0" strokeWidth="1.5" opacity="0.55" />
+          <circle cx="24" cy="15" r="10" stroke="#C0B0D4" strokeWidth="1.5" opacity="0.8" />
+          <circle cx="24" cy="37" r="12" stroke="#C0B0D4" strokeWidth="1.5" opacity="0.55" />
         </svg>
       );
     case 2:
@@ -64,14 +64,14 @@ function LetterDecoration({ index }: { index: number }) {
             y1="11"
             x2="84"
             y2="11"
-            stroke="#E8A0B4"
+            stroke="#E4A8B0"
             strokeWidth="1.5"
             opacity="0.9"
             strokeLinecap="round"
           />
           <polyline
             points="12,4 4,11 12,18"
-            stroke="#E8A0B4"
+            stroke="#E4A8B0"
             strokeWidth="1.5"
             fill="none"
             strokeLinecap="round"
@@ -80,7 +80,7 @@ function LetterDecoration({ index }: { index: number }) {
           />
           <polyline
             points="76,4 84,11 76,18"
-            stroke="#E8A0B4"
+            stroke="#E4A8B0"
             strokeWidth="1.5"
             fill="none"
             strokeLinecap="round"
@@ -97,7 +97,7 @@ function LetterDecoration({ index }: { index: number }) {
             y1="8"
             x2="38"
             y2="8"
-            stroke="#D4A849"
+            stroke="#D4B878"
             strokeWidth="2"
             strokeLinecap="round"
             opacity="0.9"
@@ -107,12 +107,12 @@ function LetterDecoration({ index }: { index: number }) {
             y1="56"
             x2="38"
             y2="56"
-            stroke="#D4A849"
+            stroke="#D4B878"
             strokeWidth="2"
             strokeLinecap="round"
             opacity="0.9"
           />
-          <circle cx="22" cy="32" r="3.5" fill="#D4A849" opacity="0.45" />
+          <circle cx="22" cy="32" r="3.5" fill="#D4B878" opacity="0.45" />
         </svg>
       );
     case 4:
@@ -123,13 +123,13 @@ function LetterDecoration({ index }: { index: number }) {
             y1="48"
             x2="56"
             y2="8"
-            stroke="#8BC4E8"
+            stroke="#A8C8D8"
             strokeWidth="1.5"
             strokeLinecap="round"
             opacity="0.9"
           />
-          <circle cx="56" cy="8" r="3.5" fill="#8BC4E8" opacity="0.85" />
-          <circle cx="8" cy="48" r="2.5" fill="#8BC4E8" opacity="0.55" />
+          <circle cx="56" cy="8" r="3.5" fill="#A8C8D8" opacity="0.85" />
+          <circle cx="8" cy="48" r="2.5" fill="#A8C8D8" opacity="0.55" />
         </svg>
       );
     case 5:
@@ -137,7 +137,7 @@ function LetterDecoration({ index }: { index: number }) {
         <svg width="76" height="40" viewBox="0 0 76 40" fill="none" aria-hidden="true">
           <path
             d="M 4 36 Q 16 6 28 36"
-            stroke="#B8A9F0"
+            stroke="#C0B0D4"
             strokeWidth="1.5"
             fill="none"
             strokeLinecap="round"
@@ -145,7 +145,7 @@ function LetterDecoration({ index }: { index: number }) {
           />
           <path
             d="M 26 36 Q 38 2 50 36"
-            stroke="#B8A9F0"
+            stroke="#C0B0D4"
             strokeWidth="1.5"
             fill="none"
             strokeLinecap="round"
@@ -153,7 +153,7 @@ function LetterDecoration({ index }: { index: number }) {
           />
           <path
             d="M 48 36 Q 60 6 72 36"
-            stroke="#B8A9F0"
+            stroke="#C0B0D4"
             strokeWidth="1.5"
             fill="none"
             strokeLinecap="round"
@@ -166,14 +166,14 @@ function LetterDecoration({ index }: { index: number }) {
         <svg width="68" height="44" viewBox="0 0 68 44" fill="none" aria-hidden="true">
           <polyline
             points="8,8 34,36 60,8"
-            stroke="#D4A849"
+            stroke="#D4B878"
             strokeWidth="2"
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
             opacity="0.9"
           />
-          <circle cx="34" cy="40" r="2.5" fill="#D4A849" opacity="0.7" />
+          <circle cx="34" cy="40" r="2.5" fill="#D4B878" opacity="0.7" />
         </svg>
       );
     default:
@@ -233,8 +233,8 @@ export default function AnimatedName({
           ],
         },
         {
-          delay: 0.05 + index * 0.055,
-          duration: 0.58,
+          delay: 0.08 + index * 0.065,
+          duration: 0.65,
           ease: EASE,
         }
       );
@@ -249,7 +249,7 @@ export default function AnimatedName({
       aria-hidden={triggerProps ? "true" : undefined}
     >
       {letters.map((letter, index) => {
-        const hoverColor = HOVER_COLORS[index] ?? "#D4A849";
+        const hoverColor = HOVER_COLORS[index] ?? "#D4B878";
         const scriptOffset = SCRIPT_OFFSETS[index] ?? SCRIPT_OFFSETS[0];
         const isHovered = hoveredIndex === index;
         const stageStyle = {
@@ -295,17 +295,8 @@ export default function AnimatedName({
                 data-letter-aura="true"
                 aria-hidden="true"
               >
-                <span className={styles.hoverHalo} />
-                <span className={styles.hoverBloom} />
-                {prefersReducedMotion ? null : (
-                  <>
-                    <span className={styles.hoverSweep} />
-                    <span className={styles.hoverSweepSecondary} />
-                    <span className={`${styles.sparkleDot} ${styles.sparkleDotUpper}`} />
-                    <span className={`${styles.sparkleDot} ${styles.sparkleDotMid}`} />
-                    <span className={`${styles.sparkleDot} ${styles.sparkleDotLower}`} />
-                  </>
-                )}
+                <span className={styles.hoverColorWash} />
+                <span className={styles.hoverAccentBar} />
               </span>
 
               <span

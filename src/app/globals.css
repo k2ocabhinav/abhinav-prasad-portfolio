@@ -11,17 +11,17 @@
   --color-surface: #FAF7F2;
   --color-on-surface: #1C1C1C;
   --color-secondary-text: #7A7A7A;
-  --color-primary-brand: #7B6FA0;   /* muted violet (was sage #6B7F78) */
-  --color-sage: #C4B8E8;            /* lavender (was sage #B8C9C1) */
+  --color-primary-brand: #C8A07A;   /* warm peach-brown */
+  --color-sage: #D2C4B0;            /* warm linen */
   --color-accent-brown: #4A3B32;
   --color-accent-peach-soft: #F4DDCF;
   --color-accent-sky-soft: #DDECF5;
   --color-accent-sand-soft: #E9E0D2;
   /* Pastel accent family — used across landing hover states */
-  --color-accent-gold: #D4A849;
-  --color-accent-lavender: #B8A9F0;
-  --color-accent-rose: #E8A0B4;
-  --color-accent-sky: #8BC4E8;
+  --color-accent-gold: #D4B878;
+  --color-accent-lavender: #C0B0D4;
+  --color-accent-rose: #E4A8B0;
+  --color-accent-sky: #A8C8D8;
 
   /* Typography — next/font in layout.tsx injects the optimised font-family
      string via a class on <html>, overriding these :root values at runtime.
@@ -44,7 +44,7 @@
 
   /* Display Font — loaded via next/font, variable injected on <html> */
   --font-display: "Syne", sans-serif;
-  --font-hero-display: "Bodoni Moda", serif;
+  --font-hero-display: "Playfair Display", serif;
   --font-hero-script: "Corinthia", cursive;
 
   /* ─── Motion Tokens (Landing Page) ────────────────────────────── */
@@ -66,31 +66,31 @@
   /* ─── Dark Landing Palette & Mint Accent ────────────────────────
      These are referenced directly by LandingExperience.module.css
      to scope the dark theme inside .landing without touching globals */
-  --color-surface-dark: #0A0A0A;
-  --color-surface-dark-rgb: 10, 10, 10;
-  --color-on-surface-dark: #F0EDE8;
-  --color-on-surface-dark-rgb: 240, 237, 232;
-  --color-secondary-text-dark: #8A8A8A;
-  --color-accent-mint: #00E5A0;
-  --color-accent-mint-rgb: 0, 229, 160;
+  --color-surface-dark: #121218;
+  --color-surface-dark-rgb: 18, 18, 24;
+  --color-on-surface-dark: #F5F0E8;
+  --color-on-surface-dark-rgb: 245, 240, 232;
+  --color-secondary-text-dark: #A09890;
+  --color-accent-mint: #D8B890;
+  --color-accent-mint-rgb: 216, 184, 144;
 
   /* ─── Landing Page Glassmorphism ────────────────────────────────
      These extend the existing --glass-* tokens with landing-specific
      opacity levels (higher opacity = more readable over hero visuals) */
-  --landing-glass-bg: rgba(250, 247, 242, 0.12);
+  --landing-glass-bg: rgba(255, 255, 255, 0.03);
   --landing-glass-blur: blur(12px) saturate(1.4);
-  --landing-glass-border: rgba(107, 127, 120, 0.20);
-  --landing-glass-border-active: rgba(107, 127, 120, 0.45);
-  --landing-glass-shadow: 0 8px 32px rgba(107, 127, 120, 0.15);
+  --landing-glass-border: rgba(255, 255, 255, 0.06);
+  --landing-glass-border-active: rgba(216, 184, 144, 0.25);
+  --landing-glass-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
   --landing-glass-radius: 16px;
 
   /* ─── RGB Channels ───────────────────────────────────────────────
      Needed so CSS Modules can build rgba() with opacity overrides
      without hardcoding hex values. */
   --color-surface-rgb: 250, 247, 242;
-  --color-primary-brand-rgb: 123, 111, 160;   /* muted violet */
+  --color-primary-brand-rgb: 200, 160, 122;   /* warm peach-brown */
   --color-on-surface-rgb: 28, 28, 28;
-  --color-sage-rgb: 196, 184, 232;            /* lavender */
+  --color-sage-rgb: 210, 196, 176;            /* warm linen */
   --color-accent-peach-rgb: 244, 221, 207;
   --color-accent-sky-rgb: 221, 236, 245;
   --color-accent-sand-rgb: 233, 224, 210;
@@ -133,7 +133,7 @@ body {
 }
 
 ::selection {
-  background-color: rgba(184, 169, 240, 0.25); /* lavender/25 */
+  background-color: rgba(200, 160, 122, 0.20);
 }
 
 img {
@@ -294,7 +294,7 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(184, 201, 193, 0.5);
+  background: rgba(212, 197, 169, 0.5);
   border-radius: 9999px;
 }
 

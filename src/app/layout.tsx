@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import {
-  Bodoni_Moda,
   Corinthia,
   Cormorant_Garamond,
   DM_Sans,
+  Playfair_Display,
   Plus_Jakarta_Sans,
   Syne,
 } from "next/font/google";
@@ -45,9 +45,9 @@ const syne = Syne({
   display: "swap",
 });
 
-const bodoniModa = Bodoni_Moda({
+const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
-  weight: "700",
+  weight: ["900"],
   variable: "--font-hero-display",
   display: "swap",
 });
@@ -88,7 +88,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable} ${bodoniModa.variable} ${corinthia.variable}`}
+      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable} ${playfairDisplay.variable} ${corinthia.variable}`}
     >
       <body>
         <AppProviders>{children}</AppProviders>

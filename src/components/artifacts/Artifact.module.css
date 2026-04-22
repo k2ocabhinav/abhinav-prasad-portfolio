@@ -22,8 +22,7 @@
   height: 68%;
   overflow: visible;
   filter:
-    drop-shadow(0 0 8px rgba(255, 255, 255, 0.08))
-    drop-shadow(0 0 18px color-mix(in srgb, var(--artifact-glow) 48%, transparent 52%));
+    drop-shadow(0 0 4px rgba(255, 255, 255, 0.02));
   opacity: 0.92;
 }
 
@@ -48,8 +47,8 @@
   border-radius: 999px;
   background:
     radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--artifact-glow) 84%, white 16%) 0%, transparent 62%);
-  filter: blur(18px);
-  opacity: 0.72;
+  filter: blur(24px);
+  opacity: 0.30;
 }
 
 .core {
@@ -62,8 +61,8 @@
   background:
     radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9) 0%, color-mix(in srgb, var(--artifact-core) 82%, white 18%) 42%, transparent 72%);
   box-shadow:
-    0 0 10px color-mix(in srgb, var(--artifact-core) 50%, transparent 50%),
-    0 0 22px color-mix(in srgb, var(--artifact-glow) 34%, transparent 66%);
+    0 0 5px color-mix(in srgb, var(--artifact-core) 25%, transparent 75%),
+    0 0 11px color-mix(in srgb, var(--artifact-glow) 17%, transparent 83%);
 }
 
 .satellite {
@@ -76,17 +75,17 @@
   border-radius: 50%;
   background: color-mix(in srgb, var(--artifact-satellite) 74%, white 26%);
   box-shadow:
-    0 0 8px color-mix(in srgb, var(--artifact-satellite) 44%, transparent 56%),
-    0 0 18px color-mix(in srgb, var(--artifact-glow) 24%, transparent 76%);
+    0 0 4px color-mix(in srgb, var(--artifact-satellite) 22%, transparent 78%),
+    0 0 9px color-mix(in srgb, var(--artifact-glow) 12%, transparent 88%);
   animation: artifactOrbit var(--artifact-orbit-duration) linear infinite;
 }
 
 [data-artifact-priority="hero"] .halo {
-  opacity: 0.42;
+  opacity: 0.22;
 }
 
 [data-artifact-priority="hero"] .glow {
-  opacity: 0.84;
+  opacity: 0.40;
 }
 
 @keyframes artifactOrbit {
