@@ -44,6 +44,7 @@ export default function LandingFrame2WorkStack({
 }: LandingFrame2WorkStackProps) {
   const { containerRef, activeIndex, progress } = useScrollLinkedIndex({
     itemCount: landingStories.length,
+    disabled: staticMode,
   });
 
   if (staticMode) {

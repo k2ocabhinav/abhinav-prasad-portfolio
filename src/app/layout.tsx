@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Plus_Jakarta_Sans, DM_Sans, Syne } from "next/font/google";
+import AppProviders from "@/components/providers/AppProviders";
 import { seo } from "@/data/seo";
 import "./globals.css";
 
@@ -65,9 +66,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }

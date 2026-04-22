@@ -1,0 +1,129 @@
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  padding: 1rem clamp(1rem, 4vw, 2rem) 0;
+  pointer-events: none;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--beyond-border);
+  background:
+    linear-gradient(180deg, rgba(22, 24, 32, 0.9), rgba(16, 19, 26, 0.82)),
+    radial-gradient(circle at top left, rgba(203, 194, 230, 0.1), transparent 26%),
+    radial-gradient(circle at 92% 12%, rgba(201, 218, 242, 0.08), transparent 24%);
+  box-shadow: 0 22px 64px rgba(4, 6, 10, 0.24);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  pointer-events: auto;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.markWrap {
+  display: grid;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 1px solid var(--beyond-border-strong);
+  background:
+    linear-gradient(180deg, rgba(31, 36, 48, 0.92), rgba(18, 21, 30, 0.86)),
+    radial-gradient(circle at top left, rgba(203, 194, 230, 0.18), transparent 32%);
+}
+
+.mark {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.brandCopy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brandEyebrow,
+.routeLabel,
+.actionPrimary {
+  font-family: var(--font-beyond-mono);
+  font-size: 0.67rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.brandEyebrow {
+  color: var(--beyond-text-muted);
+}
+
+.brandTitle {
+  font-family: var(--font-beyond-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--beyond-text);
+}
+
+.routeLabel {
+  justify-self: center;
+  padding: 0.52rem 0.78rem;
+  border: 1px solid var(--beyond-border);
+  color: var(--beyond-text-muted);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.actionPrimary {
+  padding: 0.7rem 0.95rem;
+  border: 1px solid rgba(221, 227, 236, 0.24);
+  color: var(--beyond-text);
+  background:
+    linear-gradient(180deg, rgba(203, 194, 230, 0.16), rgba(201, 218, 242, 0.08)),
+    rgba(255, 255, 255, 0.02);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.actionPrimary:hover {
+  transform: translateY(-1px);
+  border-color: rgba(221, 227, 236, 0.34);
+}
+
+@media (max-width: 980px) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .brand {
+    grid-column: 1 / 2;
+  }
+
+  .routeLabel {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: 0.25rem;
+  }
+
+  .actions {
+    justify-self: end;
+  }
+}

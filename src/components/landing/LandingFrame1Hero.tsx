@@ -13,13 +13,11 @@ import styles from "./LandingFrame1Hero.module.css";
 // =============================================================================
 
 interface LandingFrame1HeroProps {
-  onNameClick: () => void;
   showScrollIndicator?: boolean;
   reduceMotion?: boolean;
 }
 
 export default function LandingFrame1Hero({
-  onNameClick,
   showScrollIndicator = true,
   reduceMotion = false,
 }: LandingFrame1HeroProps) {
@@ -31,7 +29,7 @@ export default function LandingFrame1Hero({
       animate="visible"
     >
       <div className={styles.grid}>
-        <HeroTextColumn onNameClick={onNameClick} reduceMotion={reduceMotion} />
+        <HeroTextColumn reduceMotion={reduceMotion} />
         <HeroVisual3D reduceMotion={reduceMotion} />
       </div>
       {/* The hint is suppressed in reduced motion and can also be disabled by the orchestrator. */}

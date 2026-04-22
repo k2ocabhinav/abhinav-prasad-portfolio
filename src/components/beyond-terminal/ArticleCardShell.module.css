@@ -1,0 +1,111 @@
+.shell {
+  display: grid;
+}
+
+.paper {
+  display: grid;
+  gap: 2rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid var(--beyond-border);
+  background:
+    linear-gradient(180deg, rgba(23, 27, 37, 0.94), rgba(16, 19, 26, 0.92)),
+    radial-gradient(circle at top left, rgba(221, 227, 236, 0.12), transparent 24%);
+  box-shadow: var(--beyond-card-shadow);
+}
+
+.header {
+  display: grid;
+  gap: 1rem;
+}
+
+.meta,
+.tag {
+  font-family: var(--font-beyond-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  color: var(--beyond-text-muted);
+}
+
+.title {
+  max-width: 11ch;
+  font-family: var(--font-beyond-display);
+  font-size: clamp(3rem, 6vw, 5.4rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.07em;
+  color: var(--beyond-text);
+}
+
+.excerpt {
+  max-width: 42rem;
+  font-family: var(--font-beyond-body);
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  line-height: 1.72;
+  color: var(--beyond-text-soft);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.tag {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--beyond-border);
+  color: var(--beyond-text-soft);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cover {
+  max-width: 72rem;
+}
+
+.prose {
+  width: min(100%, 72ch);
+  margin-inline: auto;
+  padding: clamp(1.7rem, 3vw, 2.5rem);
+  border: 1px solid rgba(26, 31, 40, 0.12);
+  background: linear-gradient(180deg, rgba(247, 243, 239, 0.98), rgba(239, 234, 228, 0.98));
+  color: var(--beyond-ink);
+}
+
+.prose :global(h2),
+.prose :global(h3) {
+  margin-top: 2.2rem;
+  margin-bottom: 0.8rem;
+  font-family: var(--font-beyond-display);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--beyond-ink);
+}
+
+.prose :global(h2) {
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+}
+
+.prose :global(h3) {
+  font-size: clamp(1.25rem, 2.5vw, 1.85rem);
+}
+
+.prose :global(p),
+.prose :global(li) {
+  font-family: var(--font-beyond-body);
+  font-size: 1.05rem;
+  line-height: 1.84;
+  color: rgba(26, 31, 40, 0.88);
+}
+
+.prose :global(p + p),
+.prose :global(ul),
+.prose :global(ol) {
+  margin-top: 1.1rem;
+}

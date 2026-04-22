@@ -1,0 +1,145 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 320;
+  pointer-events: auto;
+}
+
+.rootReduced .cover {
+  background:
+    linear-gradient(180deg, rgba(18, 21, 29, 0.98), rgba(18, 21, 29, 0.94)),
+    radial-gradient(
+      circle at var(--portal-origin-x) var(--portal-origin-y),
+      rgba(203, 194, 230, 0.14),
+      transparent 42%
+    );
+}
+
+.rootRevealing {
+  pointer-events: none;
+}
+
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cover,
+.blur,
+.frame,
+.grain,
+.content {
+  position: absolute;
+  inset: 0;
+}
+
+.cover {
+  inset: -10%;
+  background:
+    radial-gradient(
+      circle at var(--portal-origin-x) var(--portal-origin-y),
+      rgba(203, 194, 230, 0.44),
+      rgba(214, 225, 239, 0.16) 18%,
+      rgba(26, 31, 42, 0.92) 42%,
+      rgba(15, 17, 24, 0.98) 72%
+    ),
+    linear-gradient(135deg, rgba(24, 28, 39, 0.96), rgba(11, 13, 18, 1));
+}
+
+.blur {
+  inset: -12%;
+  background:
+    radial-gradient(
+      circle at var(--portal-origin-x) var(--portal-origin-y),
+      rgba(203, 194, 230, 0.24),
+      rgba(201, 218, 242, 0.18) 18%,
+      transparent 42%
+    );
+  filter: blur(24px);
+}
+
+.frame {
+  inset: clamp(14px, 2vw, 24px);
+  border: 1px solid rgba(221, 227, 236, 0.16);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 0 0 1px rgba(0, 0, 0, 0.16);
+}
+
+.frame::before,
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: clamp(16px, 2.5vw, 32px);
+  border-top: 1px solid rgba(221, 227, 236, 0.14);
+  border-bottom: 1px solid rgba(221, 227, 236, 0.14);
+}
+
+.frame::after {
+  inset: clamp(44px, 7vw, 84px) clamp(24px, 4vw, 56px);
+  border-top-color: rgba(255, 255, 255, 0.06);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.grain {
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 20% 24%, rgba(255, 255, 255, 0.12) 0.5px, transparent 0.6px),
+    radial-gradient(circle at 72% 62%, rgba(255, 255, 255, 0.08) 0.5px, transparent 0.6px);
+  background-size: 12px 12px, 12px 12px, 160px 160px, 220px 220px;
+  mix-blend-mode: soft-light;
+}
+
+.content {
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-beyond-mono, var(--font-label));
+  font-size: 0.72rem;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: rgba(221, 227, 236, 0.74);
+}
+
+.title {
+  max-width: 13ch;
+  margin: 0 auto;
+  font-family: var(--font-beyond-display, var(--font-display));
+  font-size: clamp(3.4rem, 8vw, 6rem);
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+  color: #f4f0ea;
+}
+
+.description {
+  max-width: 34rem;
+  margin: 0 auto;
+  font-family: var(--font-beyond-body, var(--font-body));
+  font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+  line-height: 1.75;
+  color: rgba(244, 240, 234, 0.72);
+}
+
+@media (max-width: 767px) {
+  .frame::after {
+    display: none;
+  }
+
+  .content {
+    align-content: end;
+    padding: 2rem 1.5rem 3.5rem;
+  }
+
+  .description {
+    max-width: 22rem;
+  }
+}

@@ -1,6 +1,5 @@
 "use client";
 
-import { MotionConfig } from "motion/react";
 import Navigation from "@/components/layout/Navigation";
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import SageOrb from "@/components/layout/SageOrb";
@@ -21,7 +20,7 @@ import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
   return (
-    <MotionConfig reducedMotion="user">
+    <>
       {/* Landing experience - motion-rich rebrand hero flow */}
       <LandingExperience />
 
@@ -55,6 +54,6 @@ export default function Home() {
         {/* Footer */}
         <Footer />
       </main>
-    </MotionConfig>
+    </>
   );
 }

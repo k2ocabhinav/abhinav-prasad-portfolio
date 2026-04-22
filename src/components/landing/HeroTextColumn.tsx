@@ -1,52 +1,41 @@
 "use client";
 
 import { motion } from "motion/react";
+import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
+import MagneticButton from "@/components/ui/MagneticButton";
 import { landingHero } from "@/data/landing";
 import { personal } from "@/data/personal";
 import { landingFadeInUp, landingStagger, titleMaskReveal } from "@/lib/animations";
-import MagneticButton from "@/components/ui/MagneticButton";
 import styles from "./HeroTextColumn.module.css";
 
-// =============================================================================
-// HeroTextColumn — Editorial copy block for the landing hero.
-// Handles the easter-egg trigger, title reveals, and CTA grouping.
-// =============================================================================
-
-interface HeroTextColumnProps {
-  onNameClick: () => void;
-  reduceMotion?: boolean;
-}
-
 export default function HeroTextColumn({
-  onNameClick,
   reduceMotion = false,
-}: HeroTextColumnProps) {
-  // The data keeps the title as a single string so copy stays centralized.
-  // The hero splits it here to animate each line independently.
+}: {
+  reduceMotion?: boolean;
+}) {
   const titleLines = landingHero.displayTitle.split("\n");
-
-  const handleNameKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      onNameClick();
-    }
-  };
 
   return (
     <div className={styles.textColumn}>
-      <motion.span
-        className={styles.nameLabel}
+      <motion.div
         initial={reduceMotion ? false : "hidden"}
         animate="visible"
         variants={landingFadeInUp}
-        onClick={onNameClick}
-        onKeyDown={handleNameKeyDown}
-        role="button"
-        tabIndex={0}
-        aria-label={`${personal.name} -- click for a surprise`}
       >
-        {personal.name}
-      </motion.span>
+        <PortalEntryTrigger
+          href="/beyond-terminal"
+          source="easter-egg"
+          variant="portal-bloom"
+          skin="beyond-pastel-mist"
+          className={styles.nameLabel}
+          aria-label={`${personal.name} — open Beyond the Terminal`}
+        >
+          <span className={styles.nameLabelInner}>
+            <span className={styles.nameLabelBadge}>Beyond</span>
+            <span className={styles.nameLabelName}>{personal.name}</span>
+          </span>
+        </PortalEntryTrigger>
+      </motion.div>
 
       <motion.div
         className={styles.displayTitle}
@@ -56,10 +45,7 @@ export default function HeroTextColumn({
       >
         {titleLines.map((line) => (
           <span key={line} className={styles.displayTitleLine}>
-            {/* Title lines reveal independently on motion-capable layouts. */}
-            <motion.span
-              variants={reduceMotion ? undefined : titleMaskReveal}
-            >
+            <motion.span variants={reduceMotion ? undefined : titleMaskReveal}>
               {line}
             </motion.span>
           </span>
@@ -94,8 +80,6 @@ export default function HeroTextColumn({
         transition={reduceMotion ? undefined : { delayChildren: 0.5 }}
       >
         {landingHero.ctas.map((cta) => (
-          // CTA wiring stays data-driven so the landing copy can evolve without
-          // changing component structure.
           <motion.div
             key={cta.label}
             variants={reduceMotion ? undefined : landingFadeInUp}

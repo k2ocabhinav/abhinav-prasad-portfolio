@@ -2,11 +2,24 @@
 // Portfolio — Shared Type Definitions
 // =============================================================================
 
-/** Navigation section definition */
+/** Scroll navigation section definition */
 export interface NavSection {
+  kind: "section";
   id: string;
   label: string;
 }
+
+/** Route navigation entry rendered alongside scroll sections */
+export interface NavRoute {
+  kind: "route";
+  href: string;
+  label: string;
+  source: PortalTransitionIntent["source"];
+  variant: PortalTransitionIntent["variant"];
+  skin?: PortalTransitionIntent["skin"];
+}
+
+export type NavigationItem = NavSection | NavRoute;
 
 /** Social media link */
 export interface SocialLink {
@@ -229,4 +242,101 @@ export interface LandingStory {
   icon: string;
   accent: LandingAccentKey;
   note: string;
+}
+
+// ─── Beyond The Terminal ─────────────────────────────────────────────────────
+
+export interface BeyondVisual {
+  kind: "image";
+  src: string;
+  alt: string;
+  aspectRatio: string;
+  priority?: boolean;
+  treatment?: "obsidian" | "chrome" | "paper";
+  frame?: "default" | "offset" | "signal";
+  surfaceTone?: "neutral" | "lavender" | "powder" | "silver" | "peach";
+}
+
+export type BeyondMedia = BeyondVisual;
+
+export interface BeyondNote {
+  id: string;
+  label: string;
+  value: string;
+  tone: "muted" | "accent" | "warm";
+}
+
+export interface BeyondSymbol {
+  id: string;
+  src: string;
+  alt: string;
+  placement: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "center";
+  accent: "chrome" | "signal" | "ghost";
+}
+
+export interface BeyondCardAction {
+  label: string;
+  href: string;
+  kind: "link" | "route";
+}
+
+export type BeyondCardLayout =
+  | "hero_split"
+  | "wide_strip"
+  | "wide_strip_reverse"
+  | "journal_feature"
+  | "journal_secondary";
+
+export type BeyondCardAccent = "lavender" | "powder" | "silver" | "peach";
+
+export interface BeyondCard {
+  id: string;
+  kind: "statement" | "feature" | "artifact" | "journal";
+  layout: BeyondCardLayout;
+  accent: BeyondCardAccent;
+  alignment: "start" | "center";
+  eyebrow: string;
+  title: string;
+  deck: string;
+  body: string[];
+  media?: BeyondVisual;
+  notes?: BeyondNote[];
+  symbol?: BeyondSymbol;
+  cta?: BeyondCardAction;
+}
+
+export interface BeyondAct {
+  id: string;
+  title: string;
+  deck: string;
+  cards: BeyondCard[];
+}
+
+export interface BeyondPostMeta {
+  title: string;
+  slug: string;
+  excerpt: string;
+  publishedAt: string;
+  readingTime: string;
+  tags: string[];
+  cover: BeyondVisual;
+  featured: boolean;
+  displaySize?: "feature" | "secondary";
+}
+
+export interface PortalTransitionIntent {
+  href: string;
+  originX: number;
+  originY: number;
+  source: "easter-egg" | "navigation";
+  variant: "portal-bloom" | "accessible-fade";
+  skin: "default" | "beyond-pastel-mist";
+}
+
+export type PortalTransitionPhase = "idle" | "covering" | "navigating" | "revealing";
+
+export interface PortalTransitionState {
+  phase: PortalTransitionPhase;
+  intent: PortalTransitionIntent | null;
+  isDestinationReady: boolean;
 }

@@ -1,34 +1,26 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
-import { X, Menu } from "lucide-react";
-import { useState, useCallback, useEffect } from "react";
-import { sections } from "@/data/navigation";
+import { AnimatePresence, motion } from "motion/react";
+import { Menu, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
+import { navigationItems, sections } from "@/data/navigation";
+import { panelSpring } from "@/lib/animations";
+import { scrollToSection, cn } from "@/lib/utils";
 import { useLandingNavMode } from "@/hooks/useLandingNavMode";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
-import { scrollToSection, cn } from "@/lib/utils";
-import { panelSpring } from "@/lib/animations";
 import styles from "./Navigation.module.css";
-
-// =============================================================================
-// Navigation — Desktop rail (right side) + Mobile hamburger slide-out
-// =============================================================================
 
 export default function Navigation() {
   const sectionIds = sections.map((s) => s.id);
   const activeSection = useScrollSpy(sectionIds);
-  // The landing hero is light, so the "transparent" mode still uses sage/dark
-  // chrome rather than the white-on-dark treatment from the generic reference.
   const navMode = useLandingNavMode(80);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleNavClick = useCallback(
-    (id: string) => {
-      scrollToSection(id);
-      setIsMobileMenuOpen(false);
-    },
-    []
-  );
+  const handleNavClick = useCallback((id: string) => {
+    scrollToSection(id);
+    setIsMobileMenuOpen(false);
+  }, []);
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -53,7 +45,6 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Desktop Rail Navigation */}
       <nav
         className={cn(
           styles.desktopRail,
@@ -61,39 +52,58 @@ export default function Navigation() {
         )}
         aria-label="Section navigation"
       >
-        {sections.map(({ id, label }) => (
-          <a
-            key={id}
-            href={`#${id}`}
-            className={styles.railItem}
-            onClick={(e) => {
-              e.preventDefault();
-              handleNavClick(id);
-            }}
-          >
-            <span
-              className={cn(
-                styles.railLabel,
-                activeSection === id && styles.railLabelActive
-              )}
+        {navigationItems.map((item) =>
+          item.kind === "section" ? (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className={styles.railItem}
+              onClick={(event) => {
+                event.preventDefault();
+                handleNavClick(item.id);
+              }}
             >
-              {label}
-            </span>
-            <motion.div
-              whileHover={{ scale: 1.5 }}
-              className={cn(
-                styles.railDot,
-                activeSection === id && styles.railDotActive
-              )}
-            />
-          </a>
-        ))}
+              <span
+                className={cn(
+                  styles.railLabel,
+                  activeSection === item.id && styles.railLabelActive
+                )}
+              >
+                {item.label}
+              </span>
+              <motion.div
+                whileHover={{ scale: 1.5 }}
+                className={cn(
+                  styles.railDot,
+                  activeSection === item.id && styles.railDotActive
+                )}
+              />
+            </a>
+          ) : (
+            <PortalEntryTrigger
+              key={item.href}
+              href={item.href}
+              source={item.source}
+              variant={item.variant}
+              skin={item.skin}
+              aria-label={`Open ${item.label}`}
+              className={cn(styles.railItem, styles.railItemRoute)}
+            >
+              <span className={cn(styles.railLabel, styles.railLabelRoute)}>
+                {item.label}
+              </span>
+              <motion.div
+                whileHover={{ scale: 1.15 }}
+                className={cn(styles.railDot, styles.railDotRoute)}
+              />
+            </PortalEntryTrigger>
+          )
+        )}
       </nav>
 
-      {/* Mobile Hamburger Button */}
       <div className={styles.mobileHamburger}>
         <button
-          onClick={() => setIsMobileMenuOpen((v) => !v)}
+          onClick={() => setIsMobileMenuOpen((value) => !value)}
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           className={cn(
             styles.hamburgerButton,
@@ -104,7 +114,6 @@ export default function Navigation() {
         </button>
       </div>
 
-      {/* Mobile Slide-out Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -125,22 +134,36 @@ export default function Navigation() {
               className={styles.mobileMenu}
             >
               <nav className={styles.mobileNav} aria-label="Mobile navigation">
-                {sections.map(({ id, label }) => (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavClick(id);
-                    }}
-                    className={cn(
-                      styles.mobileNavItem,
-                      activeSection === id && styles.mobileNavItemActive
-                    )}
-                  >
-                    {label}
-                  </a>
-                ))}
+                {navigationItems.map((item) =>
+                  item.kind === "section" ? (
+                    <a
+                      key={item.id}
+                      href={`#${item.id}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        handleNavClick(item.id);
+                      }}
+                      className={cn(
+                        styles.mobileNavItem,
+                        activeSection === item.id && styles.mobileNavItemActive
+                      )}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <PortalEntryTrigger
+                      key={item.href}
+                      href={item.href}
+                      source={item.source}
+                      variant={item.variant}
+                      skin={item.skin}
+                      className={cn(styles.mobileNavItem, styles.mobileNavRoute)}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </PortalEntryTrigger>
+                  )
+                )}
               </nav>
             </motion.div>
           </>
