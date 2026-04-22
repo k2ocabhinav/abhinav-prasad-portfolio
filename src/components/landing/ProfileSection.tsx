@@ -24,12 +24,12 @@ export default function ProfileSection({
     target: sectionRef,
     offset: ["start 86%", "end 22%"],
   });
-  const portraitScale = useTransform(scrollYProgress, [0, 0.3, 0.62, 1], [0.82, 0.9, 1.04, 1.1]);
-  const portraitOpacity = useTransform(scrollYProgress, [0, 0.22, 0.55, 1], [0.38, 0.72, 0.95, 1]);
-  const portraitY = useTransform(scrollYProgress, [0, 0.36, 0.74, 1], [42, 16, -2, -14]);
-  const portraitX = useTransform(scrollYProgress, [0, 0.6, 1], [20, 0, -10]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.18, 0.42, 0.7, 1], [0, 1, 1, 0.24, 0]);
-  const hintY = useTransform(scrollYProgress, [0, 0.36, 0.7, 1], [28, 0, -24, -36]);
+  const portraitScale = useTransform(scrollYProgress, [0, 0.32, 0.64, 1], [0.86, 0.92, 1.02, 1.08]);
+  const portraitOpacity = useTransform(scrollYProgress, [0, 0.2, 0.58, 1], [0.5, 0.78, 0.96, 1]);
+  const portraitY = useTransform(scrollYProgress, [0, 0.38, 0.74, 1], [34, 14, -2, -12]);
+  const portraitX = useTransform(scrollYProgress, [0, 0.6, 1], [14, 0, -8]);
+  const hintOpacity = useTransform(scrollYProgress, [0, 0.9, 1], [0.96, 0.96, 0.42]);
+  const hintY = useTransform(scrollYProgress, [0, 0.72, 1], [4, -4, -14]);
   const hintCopy =
     personal.hintCopy ??
     "Psst... click Abhinav above to explore beyond the terminal.";
@@ -110,7 +110,9 @@ export default function ProfileSection({
               <FlipRevealText
                 text="Beyond The Terminal"
                 mode="word"
-                triggerRange={[0.24, 0.44]}
+                progress={scrollYProgress}
+                window={[0.08, 0.18]}
+                holdUntil={0.84}
                 stagger={0.035}
                 perspective={960}
                 reduceMotion={reduceMotion}
@@ -118,12 +120,15 @@ export default function ProfileSection({
             </motion.span>
             <motion.div
               className={styles.hintCopy}
+              data-secret-hint="true"
               style={reduceMotion ? undefined : { opacity: hintOpacity, y: hintY }}
             >
               <FlipRevealText
                 text={hintCopy}
                 mode="word"
-                triggerRange={[0.26, 0.5]}
+                progress={scrollYProgress}
+                window={[0.1, 0.22]}
+                holdUntil={0.88}
                 stagger={0.022}
                 perspective={980}
                 reduceMotion={reduceMotion}

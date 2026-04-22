@@ -299,6 +299,52 @@ test("profile stage keeps premium composition on mobile", async ({ page }) => {
   });
 });
 
+test("secret hint stays visible through mid profile scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+
+  await page.evaluate(() => {
+    document
+      .querySelector('[data-home-profile-stage="true"]')
+      ?.scrollIntoView({ block: "start" });
+  });
+  await page.waitForTimeout(320);
+
+  const hint = page.locator('[data-secret-hint="true"]').first();
+  await expect(hint).toBeVisible();
+
+  await page.evaluate(() => {
+    window.scrollBy({ top: 180, behavior: "auto" });
+  });
+  await page.waitForTimeout(220);
+
+  const activeOpacity = await hint.evaluate((el) =>
+    Number.parseFloat(getComputedStyle(el).opacity || "0")
+  );
+  expect(activeOpacity).toBeGreaterThan(0.7);
+
+  await page.evaluate(() => {
+    window.scrollBy({ top: 260, behavior: "auto" });
+  });
+  await page.waitForTimeout(260);
+
+  const midOpacity = await hint.evaluate((el) =>
+    Number.parseFloat(getComputedStyle(el).opacity || "0")
+  );
+  expect(midOpacity).toBeGreaterThan(0.7);
+
+  await page.evaluate(() => {
+    window.scrollBy({ top: 260, behavior: "auto" });
+  });
+  await page.waitForTimeout(220);
+
+  const lateOpacity = await hint.evaluate((el) =>
+    Number.parseFloat(getComputedStyle(el).opacity || "0")
+  );
+  expect(lateOpacity).toBeGreaterThan(0.36);
+});
+
 test("desktop home hero wordmark keeps the editorial look", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");

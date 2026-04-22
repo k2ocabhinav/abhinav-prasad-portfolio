@@ -49,7 +49,9 @@ export default function AboutSection({
             <FlipRevealText
               text="Philosophy"
               mode="char"
-              triggerRange={[0.2, 0.44]}
+              progress={scrollYProgress}
+              window={[0.2, 0.34]}
+              holdUntil={0.86}
               stagger={0.028}
               perspective={980}
               className={styles.headingFlip}

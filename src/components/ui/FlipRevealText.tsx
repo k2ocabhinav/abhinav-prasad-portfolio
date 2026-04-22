@@ -1,6 +1,8 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useMotionValue, useMotionValueEvent } from "motion/react";
+import type { MotionValue } from "motion/react";
+import { useMemo, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import styles from "./FlipRevealText.module.css";
@@ -9,6 +11,9 @@ interface FlipRevealTextProps {
   text: string;
   mode?: "word" | "char";
   triggerRange?: [number, number];
+  progress?: MotionValue<number>;
+  window?: [number, number];
+  holdUntil?: number;
   stagger?: number;
   perspective?: number;
   reduceMotion?: boolean;
@@ -42,6 +47,9 @@ export default function FlipRevealText({
   text,
   mode = "word",
   triggerRange = [0.2, 0.44],
+  progress,
+  window,
+  holdUntil,
   stagger = 0.04,
   perspective = 920,
   reduceMotion,
@@ -50,9 +58,38 @@ export default function FlipRevealText({
 }: FlipRevealTextProps) {
   const prefersReducedMotion = useReducedMotion();
   const disableFlip = reduceMotion ?? prefersReducedMotion;
+  const idleProgress = useMotionValue(0);
+  const progressSource = progress ?? idleProgress;
+  const [progressValue, setProgressValue] = useState(() => progress?.get() ?? 0);
+  const windowRange = window ?? triggerRange;
+  const holdWindowEnd = holdUntil ?? Math.min(1, windowRange[1] + 0.34);
   const tokens = buildTokens(text, mode);
-  const revealWindow = Math.max(0.15, triggerRange[1] - triggerRange[0]);
-  const viewportAmount = Math.min(0.95, Math.max(0.3, triggerRange[1]));
+  const revealWindow = Math.max(0.15, windowRange[1] - windowRange[0]);
+  const viewportAmount = Math.min(0.95, Math.max(0.3, windowRange[1]));
+
+  useMotionValueEvent(progressSource, "change", (latest) => {
+    setProgressValue(latest);
+  });
+
+  const stagedTokens = useMemo(() => {
+    const staggerStep = Math.max(0.002, stagger * 0.2);
+
+    return tokens.map((token, index) => {
+      const tokenStart = Math.min(0.98, windowRange[0] + index * staggerStep);
+      const tokenPeak = Math.min(0.995, windowRange[1] + index * staggerStep);
+      const tokenHold = Math.min(
+        0.998,
+        Math.max(tokenPeak, holdWindowEnd + index * staggerStep * 0.26)
+      );
+
+      return {
+        ...token,
+        tokenStart,
+        tokenPeak,
+        tokenHold,
+      };
+    });
+  }, [tokens, stagger, windowRange, holdWindowEnd]);
 
   return (
     <span
@@ -60,9 +97,40 @@ export default function FlipRevealText({
       style={{ ["--flip-perspective" as string]: `${perspective}px` }}
       aria-label={text}
     >
-      {tokens.map((token, index) => {
+      {stagedTokens.map((token, index) => {
         const isAnimatedToken = !token.isSpace;
         const delay = isAnimatedToken ? index * stagger : 0;
+        const useScrollLinked = Boolean(progress);
+        const progressLocal = useScrollLinked ? progressValue : 0;
+        const peakRange = Math.max(0.0001, token.tokenPeak - token.tokenStart);
+        const tReveal = Math.min(
+          1,
+          Math.max(0, (progressLocal - token.tokenStart) / peakRange)
+        );
+        const fadeRange = Math.max(0.0001, 1 - token.tokenHold);
+        const tExit = Math.min(1, Math.max(0, (progressLocal - token.tokenHold) / fadeRange));
+        const stagedOpacity = progressLocal < token.tokenStart
+          ? 0
+          : progressLocal <= token.tokenPeak
+            ? tReveal
+            : progressLocal <= token.tokenHold
+              ? 1
+              : 1 - tExit;
+        const stagedY = progressLocal < token.tokenPeak
+          ? (disableFlip ? 12 : 14) * (1 - tReveal)
+          : progressLocal <= token.tokenHold
+            ? 0
+            : -8 * tExit;
+        const stagedRotateX = disableFlip
+          ? 0
+          : progressLocal < token.tokenPeak
+            ? -94 * (1 - tReveal)
+            : progressLocal <= token.tokenHold
+              ? 0
+              : -8 * tExit;
+        const scrollLinkedTarget = disableFlip
+          ? { opacity: stagedOpacity, y: stagedY }
+          : { opacity: stagedOpacity, y: stagedY, rotateX: stagedRotateX };
 
         return (
           <span key={token.key} className={styles.clip}>
@@ -78,11 +146,16 @@ export default function FlipRevealText({
                   ? { opacity: 1, y: 0 }
                   : { opacity: 1, rotateX: 0, y: 0 }
               }
+              animate={useScrollLinked ? scrollLinkedTarget : undefined}
               viewport={{ once: true, amount: viewportAmount }}
               transition={{
-                duration: disableFlip ? 0.34 : Math.min(0.54, revealWindow + 0.14),
-                delay,
-                ease: "easeOut",
+                duration: useScrollLinked
+                  ? 0.18
+                  : disableFlip
+                    ? 0.34
+                    : Math.min(0.54, revealWindow + 0.14),
+                delay: useScrollLinked ? 0 : delay,
+                ease: useScrollLinked ? "linear" : "easeOut",
               }}
               style={disableFlip ? undefined : { transformOrigin: "50% 100%" }}
             >

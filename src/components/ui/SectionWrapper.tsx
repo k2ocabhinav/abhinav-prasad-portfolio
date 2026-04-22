@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import type { SectionBlendStyle, SectionTexture, SectionTone } from "@/types";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import styles from "./SectionWrapper.module.css";
 
@@ -61,12 +62,17 @@ export default function SectionWrapper({
   blendStyle = "soft",
   className = "",
 }: SectionWrapperProps) {
+  const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
   const drift = useTransform(scrollYProgress, [0, 0.5, 1], [-16, 0, 16]);
+  const topBlendY = useTransform(scrollYProgress, [0, 0.5, 1], [-8, -4, 0]);
+  const topBlendOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.45, 0.68, 0.9]);
+  const bottomBlendY = useTransform(scrollYProgress, [0, 0.5, 1], [0, 4, 8]);
+  const bottomBlendOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 0.68, 0.45]);
   const surface = tone ? toneSurfaceMap[tone] : "var(--section-bg, var(--color-surface))";
 
   return (
@@ -75,7 +81,7 @@ export default function SectionWrapper({
       id={id}
       style={
         {
-          ["--section-bg-shift" as string]: drift,
+          ["--section-bg-shift" as string]: prefersReducedMotion ? 0 : drift,
         } as CSSProperties
       }
       className={cn(
@@ -89,25 +95,29 @@ export default function SectionWrapper({
       )}
     >
       {blendTopFrom ? (
-        <span
+        <motion.span
           aria-hidden="true"
           className={cn(styles.edgeBlend, styles.edgeBlendTop)}
           style={
             {
               ["--edge-from" as string]: toneSurfaceMap[blendTopFrom],
               ["--edge-to" as string]: surface,
+              y: prefersReducedMotion ? 0 : topBlendY,
+              opacity: prefersReducedMotion ? 0.82 : topBlendOpacity,
             } as CSSProperties
           }
         />
       ) : null}
       {blendBottomTo ? (
-        <span
+        <motion.span
           aria-hidden="true"
           className={cn(styles.edgeBlend, styles.edgeBlendBottom)}
           style={
             {
               ["--edge-from" as string]: surface,
               ["--edge-to" as string]: toneSurfaceMap[blendBottomTo],
+              y: prefersReducedMotion ? 0 : bottomBlendY,
+              opacity: prefersReducedMotion ? 0.82 : bottomBlendOpacity,
             } as CSSProperties
           }
         />
