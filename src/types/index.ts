@@ -170,22 +170,49 @@ export interface SEOData {
 }
 
 /** Floating artifact definition for theme system */
+export interface ArtifactPalette {
+  stroke?: string;
+  fill?: string;
+  glow?: string;
+  halo?: string;
+  core?: string;
+  satellite?: string;
+}
+
+export interface ArtifactLayers {
+  halo?: boolean;
+  glow?: boolean;
+  core?: boolean;
+  satellite?: boolean;
+}
+
 export interface ArtifactDef {
   id: string;
+  priority: "hero" | "ambient";
   svgPath: string;
   viewBox?: string;
-  fill: string;
-  /** Optional stroke color for outlined SVG shapes */
-  stroke?: string;
+  palette: ArtifactPalette;
+  layers?: ArtifactLayers;
   /** Optional stroke width in px */
   strokeWidth?: number;
   size: number;
   opacity: number;
   x: number;
   y: number;
-  scrollRange: [number, number];
-  bobAmplitude: number;
-  bobDuration: number;
+  /** Motion intensity for the shared artifact controller */
+  driftAmplitude?: number;
+  /** Vertical scroll response in px at full-page travel */
+  parallaxDepth?: number;
+  /** Subtle idle scale pulse ceiling (1.06 = 6%) */
+  pulseScale?: number;
+  /** Optional side-to-side drift in px */
+  swayAmplitude?: number;
+  /** Optional orbit radius for the satellite accent */
+  orbitRadius?: number;
+  /** Orbit duration in seconds */
+  orbitDuration?: number;
+  /** Optional blend mode for layered glow treatment */
+  blendMode?: string;
   rotationSwing: number;
 }
 

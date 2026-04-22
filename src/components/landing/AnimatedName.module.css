@@ -1,5 +1,5 @@
 /* =============================================================================
-   AnimatedName — Per-letter interactive hero typography
+   AnimatedName — Editorial hero wordmark with rich per-letter hover stages
    ============================================================================= */
 
 .nameShell {
@@ -8,6 +8,7 @@
   display: block;
   overflow: visible;
   container-type: inline-size;
+  contain: layout style;
 }
 
 .nameTrigger {
@@ -39,25 +40,32 @@
 
 .letterWrapper {
   display: inline-block;
-  /* Overflow visible so decorations can escape the bounding box */
   overflow: visible;
 }
 
 .letterStage {
   display: inline-block;
   position: relative;
-  isolation: isolate;
-  will-change: transform, color, filter;
+  padding-inline: 0.006em;
   transform-origin: 50% 86%;
-  padding-inline: 0.005em;
-  user-select: none;
   color: var(--color-on-surface);
+  user-select: none;
+  isolation: isolate;
+  transition:
+    transform 320ms var(--motion-ease-spring),
+    color 220ms var(--motion-ease-out);
+}
+
+.letterStage[data-hovered="true"] {
+  transform: translate3d(0, -0.095em, 0) scale(1.085);
+  color: color-mix(in srgb, var(--letter-color) 84%, white 16%);
+  z-index: 2;
 }
 
 .glyph {
   display: inline-block;
-  line-height: 0.9;
   white-space: nowrap;
+  line-height: 0.9;
   color: currentColor;
   transform-origin: 50% 86%;
 }
@@ -65,13 +73,158 @@
 .editorialGlyph {
   font-family: var(--font-hero-display);
   font-weight: 700;
-  font-size: clamp(4.4rem, 23.8cqw, 19rem);
+  font-size: clamp(4.6rem, 24.8cqw, 19.8rem);
   line-height: 0.9;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.056em;
   text-shadow:
-    0 0 0.015em rgba(240, 234, 249, 0.4),
-    0 0 0.1em rgba(184, 169, 240, 0.08);
-  backface-visibility: hidden;
+    0 0 0.025em rgba(255, 248, 255, 0.42),
+    0 0 0.12em rgba(184, 169, 240, 0.14),
+    0 0 0.26em rgba(139, 196, 232, 0.05);
+  transition:
+    opacity 260ms var(--motion-ease-out),
+    transform 320ms var(--motion-ease-out),
+    filter 280ms var(--motion-ease-out);
+}
+
+.letterStage[data-hovered="true"] .editorialGlyph {
+  opacity: 0.14;
+  filter: blur(5px);
+  transform: translate3d(0, 0, 0) scale(0.94, 0.985);
+}
+
+.hoverAura {
+  position: absolute;
+  inset: -0.74em -0.54em -0.42em;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transform: translate3d(0, 18px, 0) scale(0.84);
+  transition:
+    opacity 240ms var(--motion-ease-out),
+    transform 360ms var(--motion-ease-spring);
+}
+
+.letterStage[data-hovered="true"] .hoverAura {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.hoverHalo,
+.hoverBloom,
+.hoverSweep,
+.hoverSweepSecondary,
+.sparkleDot {
+  position: absolute;
+  pointer-events: none;
+}
+
+.hoverHalo {
+  inset: 2% -2% -2%;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--letter-color) 34%, white 66%);
+  opacity: 0;
+  transform: scale(0.82) rotate(10deg);
+}
+
+.letterStage[data-hovered="true"] .hoverHalo {
+  animation: hoverHaloBloom 820ms var(--motion-ease-out) both;
+}
+
+.hoverBloom {
+  inset: 2% -8% -10%;
+  background:
+    radial-gradient(circle at 50% 56%, color-mix(in srgb, var(--letter-color) 52%, white 48%) 0%, color-mix(in srgb, var(--letter-color) 24%, transparent 76%) 30%, transparent 68%),
+    radial-gradient(circle at 28% 38%, color-mix(in srgb, var(--letter-color) 26%, white 74%) 0%, transparent 42%),
+    radial-gradient(circle at 76% 64%, color-mix(in srgb, var(--letter-color) 22%, white 78%) 0%, transparent 40%),
+    radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.14) 0%, transparent 62%);
+  filter: blur(22px) saturate(1.08);
+  mix-blend-mode: screen;
+  opacity: 0.88;
+}
+
+.hoverSweep {
+  left: 8%;
+  right: 8%;
+  top: 42%;
+  height: 0.085em;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 12%,
+    color-mix(in srgb, var(--letter-color) 66%, white 34%) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translate3d(-34%, 0, 0) rotate(-14deg);
+}
+
+.letterStage[data-hovered="true"] .hoverSweep {
+  animation: hoverSweepTraverse 540ms var(--motion-ease-out) both;
+}
+
+.hoverSweepSecondary {
+  left: 22%;
+  right: 16%;
+  top: 34%;
+  height: 0.06em;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--letter-color) 46%, white 54%) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translate3d(-12%, 0, 0) rotate(8deg);
+}
+
+.letterStage[data-hovered="true"] .hoverSweepSecondary {
+  animation: hoverSweepSecondary 620ms var(--motion-ease-out) both;
+}
+
+.sparkleDot {
+  display: block;
+  width: 0.12em;
+  height: 0.12em;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--letter-color) 74%, white 26%);
+  box-shadow:
+    0 0 0.12em color-mix(in srgb, var(--letter-color) 78%, white 22%),
+    0 0 0.28em rgba(255, 255, 255, 0.36);
+  opacity: 0;
+}
+
+.sparkleDotUpper {
+  top: 9%;
+  right: 18%;
+  transform: translate3d(-10px, 12px, 0) scale(0.48);
+}
+
+.letterStage[data-hovered="true"] .sparkleDotUpper {
+  animation: sparkleRisePrimary 460ms var(--motion-ease-spring) 30ms both;
+}
+
+.sparkleDotMid {
+  top: 30%;
+  left: 10%;
+  width: 0.09em;
+  height: 0.09em;
+  transform: translate3d(8px, 8px, 0) scale(0.4);
+}
+
+.letterStage[data-hovered="true"] .sparkleDotMid {
+  animation: sparkleRiseSecondary 560ms var(--motion-ease-out) 70ms both;
+}
+
+.sparkleDotLower {
+  bottom: 12%;
+  left: 14%;
+  transform: translate3d(10px, 10px, 0) scale(0.44);
+}
+
+.letterStage[data-hovered="true"] .sparkleDotLower {
+  animation: sparkleRiseTertiary 520ms var(--motion-ease-spring) 110ms both;
 }
 
 .scriptPositioner {
@@ -88,146 +241,183 @@
 .scriptGlyph {
   font-family: var(--font-hero-script);
   font-weight: 700;
-  font-size: calc(clamp(4.4rem, 23.8cqw, 19rem) * 1.14);
-  line-height: 0.8;
-  letter-spacing: -0.09em;
+  font-size: calc(clamp(4.6rem, 24.8cqw, 19.8rem) * 1.12);
+  line-height: 0.78;
+  letter-spacing: -0.1em;
+  color: color-mix(in srgb, var(--letter-color) 72%, white 28%);
   text-shadow:
-    0 0 0.14em rgba(184, 169, 240, 0.34),
-    0 0 0.28em rgba(232, 160, 180, 0.22);
+    0 0 0.09em color-mix(in srgb, var(--letter-color) 44%, white 56%),
+    0 0 0.22em color-mix(in srgb, var(--letter-color) 22%, white 78%),
+    0 0 0.42em rgba(255, 255, 255, 0.1);
   opacity: 0;
-  backface-visibility: hidden;
+  transform: translate3d(0, 0.1em, 0) scale(var(--script-idle-scale, 1)) rotate(-1.4deg);
+  transition:
+    opacity 240ms var(--motion-ease-out),
+    transform 360ms var(--motion-ease-spring),
+    filter 280ms var(--motion-ease-out);
 }
 
-.hoverAura {
-  position: absolute;
-  inset: -0.4em -0.18em -0.16em;
-  pointer-events: none;
-  z-index: -1;
+.letterStage[data-hovered="true"] .scriptGlyph {
+  opacity: 1;
+  filter: drop-shadow(0 0 0.12em color-mix(in srgb, var(--letter-color) 22%, white 78%));
+  transform: translate3d(0, -0.055em, 0) scale(var(--script-scale, 1.08)) rotate(0deg);
 }
 
-.hoverBloom {
-  position: absolute;
-  inset: 22% 12% 8%;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at center, color-mix(in srgb, var(--letter-glow) 72%, white 28%) 0%, transparent 58%);
-  filter: blur(22px);
-  opacity: 0.78;
-}
-
-.hoverSweep {
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  top: 42%;
-  height: 0.08em;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.04) 15%,
-    color-mix(in srgb, var(--letter-glow) 60%, white 40%) 50%,
-    transparent 100%
-  );
-  filter: blur(1px);
-}
-
-.sparkleDot {
-  position: absolute;
-  display: block;
-  width: 0.08em;
-  height: 0.08em;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--letter-glow) 70%, white 30%);
-  box-shadow:
-    0 0 0.08em color-mix(in srgb, var(--letter-glow) 78%, white 22%),
-    0 0 0.22em rgba(255, 255, 255, 0.28);
-}
-
-.sparkleDotUpper {
-  top: 12%;
-  right: 18%;
-}
-
-.sparkleDotLower {
-  bottom: 14%;
-  left: 14%;
-}
-
-/* SVG decoration — floats above the letter, centred on it */
 .decoration {
   position: absolute;
   bottom: 100%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 12px) scale(0.68);
   pointer-events: none;
   z-index: 10;
-  /* Small padding so decorations don't clip at the exact baseline */
   padding-bottom: 0.15em;
+  opacity: 0;
+  filter: drop-shadow(0 0 0.22em color-mix(in srgb, var(--letter-color) 22%, white 78%));
+  transition:
+    opacity 220ms var(--motion-ease-out),
+    transform 340ms var(--motion-ease-spring);
 }
 
-/* Reduced-motion / SSR fallback — plain text, no split */
-.nameStatic {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: fit-content;
-  max-width: 100%;
-  margin-inline: auto;
+.letterStage[data-hovered="true"] .decoration {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
 }
 
-/* ─── Mobile ─────────────────────────────────────────────────── */
+@keyframes hoverHaloBloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.82) rotate(10deg);
+  }
+
+  45% {
+    opacity: 0.34;
+  }
+
+  100% {
+    opacity: 0.18;
+    transform: scale(1.06) rotate(6deg);
+  }
+}
+
+@keyframes hoverSweepTraverse {
+  0% {
+    opacity: 0;
+    transform: translate3d(-34%, 0, 0) rotate(-14deg);
+  }
+
+  30% {
+    opacity: 0.82;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(28%, 0, 0) rotate(10deg);
+  }
+}
+
+@keyframes hoverSweepSecondary {
+  0% {
+    opacity: 0;
+    transform: translate3d(-16%, 0, 0) rotate(10deg);
+  }
+
+  38% {
+    opacity: 0.48;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(14%, 0, 0) rotate(-8deg);
+  }
+}
+
+@keyframes sparkleRisePrimary {
+  0% {
+    opacity: 0;
+    transform: translate3d(-10px, 12px, 0) scale(0.44);
+  }
+
+  55% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.76;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes sparkleRiseSecondary {
+  0% {
+    opacity: 0;
+    transform: translate3d(8px, 8px, 0) scale(0.34);
+  }
+
+  60% {
+    opacity: 0.92;
+  }
+
+  100% {
+    opacity: 0.7;
+    transform: translate3d(0, 0, 0) scale(0.92);
+  }
+}
+
+@keyframes sparkleRiseTertiary {
+  0% {
+    opacity: 0;
+    transform: translate3d(10px, 10px, 0) scale(0.4);
+  }
+
+  52% {
+    opacity: 0.96;
+  }
+
+  100% {
+    opacity: 0.78;
+    transform: translate3d(0, 0, 0) scale(0.98);
+  }
+}
 
 @media (max-width: 767px) {
   .editorialGlyph {
-    font-size: clamp(4rem, 23.4cqw, 6.6rem);
-    letter-spacing: -0.048em;
+    font-size: clamp(4.1rem, 23.6cqw, 6.9rem);
+    letter-spacing: -0.05em;
   }
 
   .scriptGlyph {
-    font-size: calc(clamp(4rem, 23.4cqw, 6.6rem) * 1.12);
+    font-size: calc(clamp(4.1rem, 23.6cqw, 6.9rem) * 1.08);
   }
 
   .hoverAura {
-    inset: -0.34em -0.12em -0.14em;
+    inset: -0.48em -0.24em -0.18em;
   }
 
   .decoration {
-    transform: translateX(-50%) scale(0.8);
+    transform: translate(-50%, 10px) scale(0.74);
+  }
+
+  .letterStage[data-hovered="true"] .decoration {
+    transform: translate(-50%, 0) scale(0.92);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .letterStage,
+  .editorialGlyph,
+  .scriptGlyph,
   .hoverAura,
+  .decoration {
+    transition-duration: 140ms;
+  }
+
+  .letterStage[data-hovered="true"] {
+    transform: scale(1.02);
+  }
+
+  .hoverHalo,
   .hoverSweep,
-  .sparkleDot {
-    display: none;
-  }
-}
-
-@supports (-moz-appearance: none) {
-  .letterStage {
-    will-change: transform, color;
-  }
-
-  .editorialGlyph {
-    text-shadow:
-      0 0 0.012em rgba(240, 234, 249, 0.26),
-      0 0 0.05em rgba(184, 169, 240, 0.04);
-  }
-
-  .scriptGlyph {
-    text-shadow:
-      0 0 0.05em rgba(184, 169, 240, 0.18),
-      0 0 0.12em rgba(232, 160, 180, 0.12);
-  }
-
-  .hoverBloom {
-    filter: blur(12px);
-    opacity: 0.55;
-  }
-
-  .hoverSweep,
+  .hoverSweepSecondary,
   .sparkleDot {
     display: none;
   }

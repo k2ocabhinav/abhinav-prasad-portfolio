@@ -1,6 +1,5 @@
 "use client";
 
-import { MotionConfig } from "motion/react";
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";
@@ -20,7 +19,7 @@ import ContactSection from "@/components/sections/ContactSection";
 
 export default function Home() {
   return (
-    <MotionConfig reducedMotion="user">
+    <>
       {/* Landing experience - motion-rich rebrand hero flow */}
       <LandingExperience />
 
@@ -31,7 +30,7 @@ export default function Home() {
 
       {/* Main scrollable content */}
       <main
-        className="content-container"
+        className="content-container deferred-section deferred-section-deep"
         style={{
           position: "relative",
           backgroundColor: "var(--color-surface)",
@@ -53,6 +52,6 @@ export default function Home() {
         {/* Footer */}
         <Footer />
       </main>
-    </MotionConfig>
+    </>
   );
 }

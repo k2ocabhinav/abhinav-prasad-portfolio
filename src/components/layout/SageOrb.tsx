@@ -22,12 +22,17 @@ export default function SageOrb() {
     <motion.div
       className={styles.orb}
       animate={{
-        x: mousePos.x - 16,
-        y: mousePos.y - 16,
-        scale: isContact ? 2.5 : 1,
-        opacity: isContact ? 0.5 : 0.8,
+        x: mousePos.x - 22,
+        y: mousePos.y - 22,
+        scale: isContact ? 2.35 : 1,
+        opacity: isContact ? 0.6 : 0.92,
       }}
       transition={orbSpring}
-    />
+    >
+      <span className={styles.orbHalo} />
+      <span className={styles.orbCore} />
+      <span className={styles.orbRing} />
+      <span className={styles.orbSpark} />
+    </motion.div>
   );
 }

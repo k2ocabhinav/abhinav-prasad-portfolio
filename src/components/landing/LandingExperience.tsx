@@ -18,19 +18,23 @@ export default function LandingExperience() {
           <section id="hero" className={styles.heroFrame} aria-label="Hero">
             <LandingFrame1Hero showScrollIndicator={false} reduceMotion />
           </section>
-          <LandingFrame2WorkStack staticMode />
-          <LandingFrame3Services reduceMotion />
-          <ProfileSection reduceMotion />
+          <div className={`deferred-section ${styles.deferredFrames}`}>
+            <LandingFrame2WorkStack staticMode />
+            <LandingFrame3Services reduceMotion />
+            <ProfileSection reduceMotion />
+          </div>
         </>
       ) : (
         <>
           <section id="hero" className={styles.heroFrame} aria-label="Hero">
             <LandingFrame1Hero />
           </section>
-          <LandingFrame2WorkStack />
-          <LandingFrame3Services />
-          <LandingBlendSection />
-          <ProfileSection />
+          <div className={`deferred-section ${styles.deferredFrames}`}>
+            <LandingFrame2WorkStack />
+            <LandingFrame3Services />
+            <LandingBlendSection />
+            <ProfileSection />
+          </div>
         </>
       )}
     </div>

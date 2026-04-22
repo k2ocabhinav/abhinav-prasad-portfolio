@@ -1,0 +1,116 @@
+.shell {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 640ms var(--motion-ease-out);
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  isolation: isolate;
+  mix-blend-mode: var(--artifact-blend-mode);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.vector {
+  position: absolute;
+  inset: 16%;
+  width: 68%;
+  height: 68%;
+  overflow: visible;
+  filter:
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.08))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--artifact-glow) 48%, transparent 52%));
+  opacity: 0.92;
+}
+
+.halo,
+.glow,
+.core,
+.satellite {
+  position: absolute;
+  pointer-events: none;
+}
+
+.halo {
+  inset: 6%;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--artifact-halo) 72%, transparent 28%);
+  opacity: 0.34;
+  transform: rotate(12deg) scale(1.06);
+}
+
+.glow {
+  inset: 14%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--artifact-glow) 84%, white 16%) 0%, transparent 62%);
+  filter: blur(18px);
+  opacity: 0.72;
+}
+
+.core {
+  left: 50%;
+  top: 50%;
+  width: 14%;
+  height: 14%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9) 0%, color-mix(in srgb, var(--artifact-core) 82%, white 18%) 42%, transparent 72%);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--artifact-core) 50%, transparent 50%),
+    0 0 22px color-mix(in srgb, var(--artifact-glow) 34%, transparent 66%);
+}
+
+.satellite {
+  left: 50%;
+  top: 50%;
+  width: 12%;
+  height: 12%;
+  margin-left: -6%;
+  margin-top: -6%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--artifact-satellite) 74%, white 26%);
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--artifact-satellite) 44%, transparent 56%),
+    0 0 18px color-mix(in srgb, var(--artifact-glow) 24%, transparent 76%);
+  animation: artifactOrbit var(--artifact-orbit-duration) linear infinite;
+}
+
+[data-artifact-priority="hero"] .halo {
+  opacity: 0.42;
+}
+
+[data-artifact-priority="hero"] .glow {
+  opacity: 0.84;
+}
+
+@keyframes artifactOrbit {
+  0% {
+    transform: rotate(0deg) translateX(34%) rotate(0deg);
+    opacity: 0.78;
+  }
+
+  50% {
+    opacity: 0.98;
+  }
+
+  100% {
+    transform: rotate(360deg) translateX(34%) rotate(-360deg);
+    opacity: 0.78;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    will-change: auto;
+  }
+
+  .satellite {
+    animation: none;
+  }
+}

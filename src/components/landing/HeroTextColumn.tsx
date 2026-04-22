@@ -10,13 +10,6 @@ import styles from "./HeroTextColumn.module.css";
 
 // =============================================================================
 // HeroTextColumn — Hero content stack.
-//
-// Layout (top → bottom):
-//   Abhinav         ← Editorial wordmark with layered hover transformations
-//   Software [word] ← cycling role rotator (slides every 2.6s)
-//   & Creative …    ← static accent line
-//   Supporting copy
-//   [Explore] [Contact]
 // =============================================================================
 
 const DEFAULT_ROLES = ["Developer", "Architect", "Cloud Engineer", "AI Systems Builder"];
@@ -38,8 +31,6 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
 
   return (
     <div className={styles.textColumn} data-home-hero-text="true">
-
-      {/* ── Oversized editorial wordmark ─────────────────────────── */}
       <AnimatedName
         name="Abhinav"
         reduceMotion={reduceMotion}
@@ -51,7 +42,6 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
         }}
       />
 
-      {/* ── Cycling role line ────────────────────────────────────── */}
       <motion.div
         className={styles.roleLine}
         variants={landingFadeInUp}
@@ -69,10 +59,10 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
               <motion.span
                 key={roles[roleIndex]}
                 className={styles.cyclerWord}
-                initial={{ y: "105%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: "-105%", opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ y: "110%", opacity: 0, filter: "blur(8px)" }}
+                animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                exit={{ y: "-110%", opacity: 0, filter: "blur(8px)" }}
+                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
               >
                 {roles[roleIndex]}
               </motion.span>
@@ -81,7 +71,6 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
         )}
       </motion.div>
 
-      {/* ── Static accent ────────────────────────────────────────── */}
       <motion.p
         className={styles.accentLine}
         variants={landingFadeInUp}
@@ -92,7 +81,6 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
         {landingHero.displayTitleAccent}
       </motion.p>
 
-      {/* ── Supporting copy ──────────────────────────────────────── */}
       <motion.p
         className={styles.supportingCopy}
         variants={landingFadeInUp}
@@ -103,7 +91,6 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
         {landingHero.supportingCopy}
       </motion.p>
 
-      {/* ── CTAs ─────────────────────────────────────────────────── */}
       <motion.div
         className={styles.ctaGroup}
         variants={landingStagger(0.1)}

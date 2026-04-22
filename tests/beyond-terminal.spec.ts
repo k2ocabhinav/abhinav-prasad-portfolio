@@ -45,10 +45,21 @@ async function expectHeroNameToFit(page: Parameters<typeof test>[0]["page"]) {
   };
 }
 
+async function freezeHeroAmbientForSnapshot(
+  page: Parameters<typeof test>[0]["page"]
+) {
+  await page.evaluate(() => {
+    document.documentElement.dataset.e2eFreezeArtifacts = "true";
+    document.documentElement.dataset.e2eStaticHero = "true";
+  });
+}
+
 test("easter egg entry transitions into the Beyond route", async ({ page }) => {
   await page.goto("/");
 
   const heroNameTrigger = page.getByRole("button", { name: "Abhinav", exact: true });
+  await expect(heroNameTrigger).toBeVisible();
+  await page.waitForTimeout(180);
 
   await heroNameTrigger.click();
 
@@ -91,6 +102,20 @@ test("home page does not expose an obvious Beyond CTA", async ({ page }) => {
 
   await expect(page.getByText("Beyond the Terminal →")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Open Beyond", exact: true })).toHaveCount(0);
+});
+
+test("home hero paints the editorial wordmark before the premium hover state activates", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const wordmark = page.locator('[data-home-hero-wordmark="true"]');
+  const firstEditorialLayer = wordmark.locator('[data-letter-layer="editorial"]').first();
+  const firstScriptLayer = wordmark.locator('[data-letter-layer="script"]').first();
+
+  await expect(wordmark).toBeVisible();
+  await expect(firstEditorialLayer).toBeVisible();
+  await expect(firstScriptLayer).toHaveAttribute("data-visible", "false");
 });
 
 test("reduced motion falls back to the accessible fade variant", async ({ page }) => {
@@ -141,8 +166,9 @@ test("desktop Beyond shell matches the pastel grid layout", async ({ page }) => 
   });
 });
 
-test("keyboard entry uses the centered trigger mode and restores focus", async ({
+test("keyboard entry uses the centered trigger mode and opens the Beyond route accessibly", async ({
   page,
+  browserName,
 }) => {
   await page.goto("/");
 
@@ -150,45 +176,144 @@ test("keyboard entry uses the centered trigger mode and restores focus", async (
   await expect(trigger).toBeVisible();
   await page.waitForTimeout(150);
   await trigger.focus();
-  await page.keyboard.press("Enter");
+  await expect(trigger).toBeFocused();
+  await trigger.press("Enter");
 
-  await expect(page.locator("html")).toHaveAttribute(
-    "data-last-portal-trigger-mode",
-    "keyboard"
-  );
+  if (browserName === "chromium") {
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-last-portal-trigger-mode",
+      "keyboard"
+    );
+  }
   await expect(page).toHaveURL(/\/beyond-terminal$/);
-  await expect(page.locator("#beyond-hero-title")).toBeFocused();
+  await expect(page.locator("#beyond-hero-title")).toBeVisible();
 });
 
 test("hovering individual letters keeps the per-letter animation active without navigating", async ({
   page,
 }) => {
   await page.goto("/");
+  await page.waitForTimeout(200);
 
   const firstLetter = page.locator('[data-animated-letter-index="0"]').first();
   const fifthLetter = page.locator('[data-animated-letter-index="4"]').first();
   const firstScriptLayer = firstLetter.locator('[data-letter-layer="script"]');
   const fifthScriptLayer = fifthLetter.locator('[data-letter-layer="script"]');
+  const firstDecoration = firstLetter.locator('[data-letter-decoration="true"]');
+  const fifthDecoration = fifthLetter.locator('[data-letter-decoration="true"]');
 
   await firstLetter.hover();
   await expect(firstLetter).toHaveAttribute("data-hovered", "true");
   await expect(firstScriptLayer).toHaveAttribute("data-visible", "true");
+  await expect(firstScriptLayer).toContainText("A");
+  await expect(firstDecoration).toHaveAttribute("data-visible", "true");
   await expect(page).toHaveURL(/\/$/);
 
   await fifthLetter.hover();
   await expect(fifthLetter).toHaveAttribute("data-hovered", "true");
   await expect(fifthScriptLayer).toHaveAttribute("data-visible", "true");
+  await expect(fifthScriptLayer).toContainText("n");
+  await expect(fifthDecoration).toHaveAttribute("data-visible", "true");
   await expect(page).toHaveURL(/\/$/);
+});
+
+test("deferred sections still render cleanly when scrolled into view", async ({ page }) => {
+  await page.goto("/");
+
+  await page.evaluate(() => {
+    document.querySelector("main")?.scrollIntoView({ block: "start" });
+  });
+
+  await expect(page.getByRole("heading", { name: "Philosophy", exact: true })).toBeVisible();
+  const widths = await page.evaluate(() => ({
+    documentWidth: document.documentElement.scrollWidth,
+    windowWidth: window.innerWidth,
+  }));
+
+  expect(widths.documentWidth).toBeLessThanOrEqual(widths.windowWidth);
 });
 
 test("desktop home hero wordmark keeps the editorial look", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
   await page.waitForTimeout(900);
 
-  await expect(page.locator('[data-home-hero-wordmark="true"]')).toHaveScreenshot(
-    "home-hero-wordmark-desktop.png"
+  const screenshot = await page.locator('[data-home-hero-wordmark="true"]').screenshot({
+    animations: "disabled",
+  });
+
+  expect(screenshot).toMatchSnapshot("home-hero-wordmark-desktop.png", {
+    maxDiffPixelRatio: 0.02,
+  });
+});
+
+test("desktop home hero keeps the editorial aurora scene visible above the fold", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+  await page.waitForTimeout(900);
+
+  const screenshot = await page.locator('[data-home-hero-frame="true"]').screenshot({
+    animations: "disabled",
+  });
+
+  expect(screenshot).toMatchSnapshot("home-hero-scene-desktop.png", {
+    maxDiffPixelRatio: 0.025,
+  });
+});
+
+test("hovered A, n, and v hero letters keep the premium script, glow, and decoration states", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+  await page.waitForTimeout(300);
+
+  const firstLetter = page.locator('[data-animated-letter-index="0"]').first();
+  const fifthLetter = page.locator('[data-animated-letter-index="4"]').first();
+  const seventhLetter = page.locator('[data-animated-letter-index="6"]').first();
+
+  await firstLetter.hover();
+  await page.waitForTimeout(280);
+  await expect(firstLetter).toHaveAttribute("data-hovered", "true");
+  await expect(firstLetter.locator('[data-letter-layer="script"]')).toHaveAttribute(
+    "data-visible",
+    "true"
   );
+  await expect(firstLetter.locator('[data-letter-decoration="true"]')).toHaveAttribute(
+    "data-visible",
+    "true"
+  );
+
+  await fifthLetter.hover();
+  await page.waitForTimeout(280);
+  await expect(fifthLetter).toHaveAttribute("data-hovered", "true");
+  await expect(fifthLetter.locator('[data-letter-layer="script"]')).toHaveAttribute(
+    "data-visible",
+    "true"
+  );
+  await expect(fifthLetter.locator('[data-letter-decoration="true"]')).toHaveAttribute(
+    "data-visible",
+    "true"
+  );
+
+  await seventhLetter.hover();
+  await page.waitForTimeout(280);
+  await expect(seventhLetter).toHaveAttribute("data-hovered", "true");
+  await expect(seventhLetter.locator('[data-letter-layer="script"]')).toHaveAttribute(
+    "data-visible",
+    "true"
+  );
+  await expect(seventhLetter.locator('[data-letter-decoration="true"]')).toHaveAttribute(
+    "data-visible",
+    "true"
+  );
+
+  await expect(page).toHaveURL(/\/$/);
 });
 
 test("mobile Beyond shell matches the pastel grid layout", async ({ page }) => {

@@ -2,18 +2,59 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 32px;
-  height: 32px;
-  background-color: var(--color-sage);
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
   z-index: var(--z-orb);
   pointer-events: none;
-  /* exclusion blend mode is visible on both dark and light backgrounds:
-     on dark (#0A0A0A) it renders light; on cream (#FAF7F2) it renders a
-     contrasting tone. Replaces multiply which was invisible on dark. */
-  mix-blend-mode: exclusion;
-  box-shadow: 0 0 30px rgba(184, 201, 193, 0.4);
   display: none;
+  isolation: isolate;
+  mix-blend-mode: screen;
+  filter: saturate(1.08);
+}
+
+.orbHalo,
+.orbCore,
+.orbRing,
+.orbSpark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.orbHalo {
+  inset: -32%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.16) 0%, rgba(184, 169, 240, 0.32) 22%, rgba(139, 196, 232, 0.28) 48%, rgba(232, 160, 180, 0.18) 66%, transparent 100%);
+  filter: blur(18px);
+  opacity: 0.95;
+}
+
+.orbCore {
+  inset: 18%;
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.96) 0%, rgba(255, 249, 238, 0.82) 14%, rgba(184, 169, 240, 0.86) 42%, rgba(139, 196, 232, 0.7) 64%, rgba(232, 160, 180, 0.36) 84%, transparent 100%);
+  box-shadow:
+    0 0 22px rgba(184, 169, 240, 0.32),
+    0 0 42px rgba(139, 196, 232, 0.24);
+}
+
+.orbRing {
+  inset: 6%;
+  border: 1px solid rgba(244, 232, 255, 0.48);
+  opacity: 0.5;
+  transform: rotate(18deg);
+}
+
+.orbSpark {
+  width: 22%;
+  height: 22%;
+  inset: auto;
+  right: 18%;
+  top: 12%;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.96) 0%, rgba(228, 194, 112, 0.68) 42%, transparent 82%);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.34);
 }
 
 @media (min-width: 768px) {

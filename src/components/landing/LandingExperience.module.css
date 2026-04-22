@@ -1,34 +1,63 @@
 /* =============================================================================
-   LandingExperience — Dark hero wrapper
-   Background: deep indigo-black. Pastel accents via CSS custom property cascade.
+   LandingExperience — Editorial aurora landing wrapper
    ============================================================================= */
 
 .landing {
   position: relative;
   z-index: 6;
-  background-color: #0C0C18;
+  overflow: clip;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(184, 169, 240, 0.18) 0%, transparent 28%),
+    radial-gradient(circle at 82% 20%, rgba(139, 196, 232, 0.16) 0%, transparent 26%),
+    radial-gradient(circle at 76% 74%, rgba(232, 160, 180, 0.14) 0%, transparent 26%),
+    radial-gradient(circle at 34% 82%, rgba(228, 194, 112, 0.1) 0%, transparent 24%),
+    linear-gradient(180deg, #0d0d1d 0%, #111227 38%, #12142c 100%);
 
-  /* Cascade dark tokens to all landing children via CSS custom property
-     override. Components using var(--color-*) automatically get the dark
-     palette without individual file changes. */
-  --color-surface: #0C0C18;
-  --color-surface-rgb: 12, 12, 24;
-  --color-on-surface: #F0EAF9;
-  --color-on-surface-rgb: 240, 234, 249;
-  --color-secondary-text: #8080A8;
-  /* Lavender as primary accent — replaces sage/mint */
-  --color-primary-brand: #B8A9F0;
-  --color-primary-brand-rgb: 184, 169, 240;
-  --color-sage: #B8A9F0;
-  --color-sage-rgb: 184, 169, 240;
-  --color-accent-brown: #F0EAF9;
-  /* Glass tokens tuned for dark indigo background */
-  --landing-glass-bg: rgba(255, 255, 255, 0.04);
-  --landing-glass-border: rgba(255, 255, 255, 0.07);
-  --landing-glass-border-active: rgba(184, 169, 240, 0.3);
-  --landing-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --color-surface: #0f1125;
+  --color-surface-rgb: 15, 17, 37;
+  --color-on-surface: #f6f0ff;
+  --color-on-surface-rgb: 246, 240, 255;
+  --color-secondary-text: #b4b0cf;
+  --color-primary-brand: #c5b8ff;
+  --color-primary-brand-rgb: 197, 184, 255;
+  --color-sage: #c5b8ff;
+  --color-sage-rgb: 197, 184, 255;
+  --color-accent-brown: #fff5e5;
+  --landing-glass-bg: rgba(255, 255, 255, 0.045);
+  --landing-glass-border: rgba(255, 255, 255, 0.09);
+  --landing-glass-border-active: rgba(197, 184, 255, 0.34);
+  --landing-glass-shadow: 0 18px 42px rgba(7, 7, 16, 0.42);
+}
+
+.landing::before,
+.landing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.landing::before {
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.06) 0%, transparent 20%, transparent 78%, rgba(255, 255, 255, 0.04) 100%),
+    radial-gradient(circle at 50% 16%, rgba(255, 255, 255, 0.06) 0%, transparent 34%);
+  mix-blend-mode: soft-light;
+  opacity: 0.78;
+}
+
+.landing::after {
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.06) 0.8px, transparent 0.8px);
+  background-size: 22px 22px;
+  opacity: 0.08;
 }
 
 .heroFrame {
+  position: relative;
   scroll-snap-align: start;
+}
+
+.deferredFrames {
+  position: relative;
 }

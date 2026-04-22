@@ -21,6 +21,7 @@ export function usePortalNavigation() {
   const { beginTransition, isTransitioning } = usePortalTransitionContext();
   const pointerOriginRef = useRef<{ x: number; y: number } | null>(null);
   const keyboardIntentRef = useRef(false);
+  const ignoreNextClickRef = useRef(false);
 
   const rememberPointerOrigin = useCallback((event: PointerEvent<HTMLElement>) => {
     keyboardIntentRef.current = false;
@@ -30,18 +31,8 @@ export function usePortalNavigation() {
     };
   }, []);
 
-  const rememberKeyboardIntent = useCallback((event: KeyboardEvent<HTMLElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      keyboardIntentRef.current = true;
-      document.documentElement.dataset.lastPortalTriggerMode = "keyboard";
-    }
-  }, []);
-
   const buildIntent = useCallback(
-    (event: MouseEvent<HTMLElement>, options: PortalTriggerOptions) => {
-      const triggeredByKeyboard =
-        keyboardIntentRef.current ||
-        (event.detail === 0 && pointerOriginRef.current === null);
+    (options: PortalTriggerOptions, triggeredByKeyboard: boolean) => {
       const origin =
         triggeredByKeyboard || pointerOriginRef.current === null
           ? {
@@ -70,23 +61,59 @@ export function usePortalNavigation() {
 
   const beginPortalNavigation = useCallback(
     (event: MouseEvent<HTMLElement>, options: PortalTriggerOptions) => {
+      if (ignoreNextClickRef.current) {
+        ignoreNextClickRef.current = false;
+        event.preventDefault();
+        return Promise.resolve(false);
+      }
+
       event.preventDefault();
 
-      const { intent, triggeredByKeyboard } = buildIntent(event, options);
+      const triggeredByKeyboard =
+        keyboardIntentRef.current ||
+        (event.detail === 0 && pointerOriginRef.current === null);
+      const { intent } = buildIntent(options, triggeredByKeyboard);
+      document.documentElement.dataset.lastPortalTriggerMode = triggeredByKeyboard
+        ? "keyboard"
+        : "pointer";
       return beginTransition(intent, { triggeredByKeyboard });
     },
     [beginTransition, buildIntent]
   );
 
+  const beginKeyboardPortalNavigation = useCallback(
+    (event: KeyboardEvent<HTMLElement>, options: PortalTriggerOptions) => {
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (isTransitioning) {
+        return;
+      }
+
+      ignoreNextClickRef.current = true;
+      document.documentElement.dataset.lastPortalTriggerMode = "keyboard";
+
+      const { intent } = buildIntent(options, true);
+      void beginTransition(intent, { triggeredByKeyboard: true });
+    },
+    [beginTransition, buildIntent, isTransitioning]
+  );
+
   const getTriggerProps = useCallback(
     (options: PortalTriggerOptions) => ({
       onPointerDown: rememberPointerOrigin,
-      onKeyDown: rememberKeyboardIntent,
+      onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+        keyboardIntentRef.current = event.key === "Enter" || event.key === " ";
+        beginKeyboardPortalNavigation(event, options);
+      },
       onClick: (event: MouseEvent<HTMLElement>) =>
         beginPortalNavigation(event, options),
       disabled: isTransitioning,
     }),
-    [beginPortalNavigation, isTransitioning, rememberKeyboardIntent, rememberPointerOrigin]
+    [beginKeyboardPortalNavigation, beginPortalNavigation, isTransitioning, rememberPointerOrigin]
   );
 
   return {
