@@ -7,6 +7,7 @@ import type { SectionBlendStyle, SectionTone } from "@/types";
 import { personal } from "@/data/personal";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./ContactSection.module.css";
 
 // =============================================================================
@@ -58,6 +59,7 @@ export default function ContactSection({
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
   const primaryCtaHref =
     personal.resumeHref ?? `mailto:${personal.email}?subject=Request%20Resume`;
   const primaryCtaLabel = personal.resumeHref ? "Download Resume" : "Request Resume";
@@ -75,14 +77,34 @@ export default function ContactSection({
     >
       <div ref={sectionRef}>
         <motion.h2
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
           style={{ y: headingY }}
           className={styles.heading}
         >
-          Let&apos;s build.
+          <FlipRevealText
+            text="Let's build."
+            mode="char"
+            progress={scrollYProgress}
+            window={[0.16, 0.3]}
+            holdUntil={0.84}
+            stagger={0.028}
+            perspective={910}
+            className={styles.headingFlip}
+            tokenClassName={styles.headingFlipToken}
+          />
         </motion.h2>
+        <motion.p className={styles.callout} style={{ y: calloutY }}>
+          <FlipRevealText
+            text="From idea to shipped system."
+            mode="word"
+            progress={scrollYProgress}
+            window={[0.24, 0.4]}
+            holdUntil={0.82}
+            stagger={0.03}
+            perspective={860}
+            className={styles.calloutFlip}
+            tokenClassName={styles.calloutFlipToken}
+          />
+        </motion.p>
 
         <div className={styles.ctaContainer}>
           <MagneticButton

@@ -7,6 +7,7 @@ import { experiences } from "@/data/experience";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./ExperienceSection.module.css";
 
 // =============================================================================
@@ -32,6 +33,7 @@ export default function ExperienceSection({
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
 
   return (
     <SectionWrapper
@@ -47,8 +49,31 @@ export default function ExperienceSection({
             style={{ y: headingY }}
             className={styles.heading}
           >
-            Chronicle
+            <FlipRevealText
+              text="Chronicle"
+              mode="char"
+              progress={scrollYProgress}
+              window={[0.16, 0.3]}
+              holdUntil={0.86}
+              stagger={0.028}
+              perspective={910}
+              className={styles.headingFlip}
+              tokenClassName={styles.headingFlipToken}
+            />
           </motion.h2>
+          <motion.p className={styles.callout} style={{ y: calloutY }}>
+            <FlipRevealText
+              text="Built to stay resilient."
+              mode="word"
+              progress={scrollYProgress}
+              window={[0.24, 0.38]}
+              holdUntil={0.82}
+              stagger={0.03}
+              perspective={860}
+              className={styles.calloutFlip}
+              tokenClassName={styles.calloutFlipToken}
+            />
+          </motion.p>
         </div>
         <div className={`col-8 ${styles.timelineCol}`}>
           {/* Timeline line */}

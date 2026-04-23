@@ -34,15 +34,15 @@
 }
 
 :global(html[data-profile-focus="true"]) .floatingArtifactsContainer {
-  opacity: 0.68;
+  opacity: 0.42;
 }
 
 :global(html[data-profile-focus="true"]) .floatingArtifactsContainer::before {
-  opacity: 0.52;
+  opacity: 0.2;
 }
 
 :global(html[data-profile-focus="true"]) .floatingArtifactsContainer::after {
-  opacity: 0.4;
+  opacity: 0.24;
 }
 
 @media (max-width: 767px) {

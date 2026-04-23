@@ -63,16 +63,44 @@ export default function SectionWrapper({
   className = "",
 }: SectionWrapperProps) {
   const prefersReducedMotion = useReducedMotion();
+  const isBoldBlend = blendStyle === "bold";
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
-  const drift = useTransform(scrollYProgress, [0, 0.5, 1], [-16, 0, 16]);
-  const topBlendY = useTransform(scrollYProgress, [0, 0.5, 1], [-8, -4, 0]);
-  const topBlendOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.45, 0.68, 0.9]);
-  const bottomBlendY = useTransform(scrollYProgress, [0, 0.5, 1], [0, 4, 8]);
-  const bottomBlendOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 0.68, 0.45]);
+  const driftAmount = isBoldBlend ? 28 : 16;
+  const handoffOffset = isBoldBlend ? 14 : 8;
+  const handoffMidOffset = isBoldBlend ? 6 : 4;
+  const handoffOpacityFloor = isBoldBlend ? 0.66 : 0.45;
+  const handoffOpacityMid = isBoldBlend ? 0.86 : 0.68;
+  const handoffOpacityPeak = isBoldBlend ? 1 : 0.9;
+  const staticHandoffOpacity = isBoldBlend ? 0.92 : 0.82;
+  const drift = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [-driftAmount, 0, driftAmount]
+  );
+  const topBlendY = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [-handoffOffset, -handoffMidOffset, 0]
+  );
+  const topBlendOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [handoffOpacityFloor, handoffOpacityMid, handoffOpacityPeak]
+  );
+  const bottomBlendY = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [0, handoffMidOffset, handoffOffset]
+  );
+  const bottomBlendOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [handoffOpacityPeak, handoffOpacityMid, handoffOpacityFloor]
+  );
   const surface = tone ? toneSurfaceMap[tone] : "var(--section-bg, var(--color-surface))";
 
   return (
@@ -103,7 +131,7 @@ export default function SectionWrapper({
               ["--edge-from" as string]: toneSurfaceMap[blendTopFrom],
               ["--edge-to" as string]: surface,
               y: prefersReducedMotion ? 0 : topBlendY,
-              opacity: prefersReducedMotion ? 0.82 : topBlendOpacity,
+              opacity: prefersReducedMotion ? staticHandoffOpacity : topBlendOpacity,
             } as CSSProperties
           }
         />
@@ -117,7 +145,7 @@ export default function SectionWrapper({
               ["--edge-from" as string]: surface,
               ["--edge-to" as string]: toneSurfaceMap[blendBottomTo],
               y: prefersReducedMotion ? 0 : bottomBlendY,
-              opacity: prefersReducedMotion ? 0.82 : bottomBlendOpacity,
+              opacity: prefersReducedMotion ? staticHandoffOpacity : bottomBlendOpacity,
             } as CSSProperties
           }
         />

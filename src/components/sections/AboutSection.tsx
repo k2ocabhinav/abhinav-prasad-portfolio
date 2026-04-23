@@ -31,6 +31,7 @@ export default function AboutSection({
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
 
   return (
     <SectionWrapper
@@ -58,6 +59,19 @@ export default function AboutSection({
               tokenClassName={styles.headingFlipToken}
             />
           </motion.h2>
+          <motion.p className={styles.callout} style={{ y: calloutY }}>
+            <FlipRevealText
+              text="Design for failure."
+              mode="word"
+              progress={scrollYProgress}
+              window={[0.26, 0.38]}
+              holdUntil={0.84}
+              stagger={0.03}
+              perspective={860}
+              className={styles.calloutFlip}
+              tokenClassName={styles.calloutFlipToken}
+            />
+          </motion.p>
         </div>
         <div className={`col-8 ${styles.contentCol}`}>
           <motion.div

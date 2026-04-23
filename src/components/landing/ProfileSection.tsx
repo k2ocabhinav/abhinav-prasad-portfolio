@@ -22,14 +22,14 @@ export default function ProfileSection({
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 86%", "end 22%"],
+    offset: ["start 90%", "end 14%"],
   });
-  const portraitScale = useTransform(scrollYProgress, [0, 0.32, 0.64, 1], [0.86, 0.92, 1.02, 1.08]);
-  const portraitOpacity = useTransform(scrollYProgress, [0, 0.2, 0.58, 1], [0.5, 0.78, 0.96, 1]);
-  const portraitY = useTransform(scrollYProgress, [0, 0.38, 0.74, 1], [34, 14, -2, -12]);
-  const portraitX = useTransform(scrollYProgress, [0, 0.6, 1], [14, 0, -8]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.9, 1], [0.96, 0.96, 0.42]);
-  const hintY = useTransform(scrollYProgress, [0, 0.72, 1], [4, -4, -14]);
+  const portraitScale = useTransform(scrollYProgress, [0, 0.34, 0.66, 1], [0.84, 0.92, 1.01, 1.06]);
+  const portraitOpacity = useTransform(scrollYProgress, [0, 0.16, 0.6, 1], [0.52, 0.8, 0.97, 1]);
+  const portraitY = useTransform(scrollYProgress, [0, 0.42, 0.76, 1], [48, 20, 0, -10]);
+  const portraitX = useTransform(scrollYProgress, [0, 0.62, 1], [10, 0, -6]);
+  const hintOpacity = useTransform(scrollYProgress, [0, 0.82, 1], [1, 1, 0.58]);
+  const hintY = useTransform(scrollYProgress, [0, 0.76, 1], [2, 0, -8]);
   const hintCopy =
     personal.hintCopy ??
     "Psst... click Abhinav above to explore beyond the terminal.";
@@ -103,21 +103,6 @@ export default function ProfileSection({
           </motion.div>
 
           <div className={styles.copyColumn}>
-            <motion.span
-              className={styles.hintEyebrow}
-              style={reduceMotion ? undefined : { opacity: hintOpacity, y: hintY }}
-            >
-              <FlipRevealText
-                text="Beyond The Terminal"
-                mode="word"
-                progress={scrollYProgress}
-                window={[0.08, 0.18]}
-                holdUntil={0.84}
-                stagger={0.035}
-                perspective={960}
-                reduceMotion={reduceMotion}
-              />
-            </motion.span>
             <motion.div
               className={styles.hintCopy}
               data-secret-hint="true"
@@ -127,10 +112,10 @@ export default function ProfileSection({
                 text={hintCopy}
                 mode="word"
                 progress={scrollYProgress}
-                window={[0.1, 0.22]}
-                holdUntil={0.88}
-                stagger={0.022}
-                perspective={980}
+                window={[0.06, 0.2]}
+                holdUntil={0.9}
+                stagger={0.028}
+                perspective={860}
                 reduceMotion={reduceMotion}
               />
             </motion.div>

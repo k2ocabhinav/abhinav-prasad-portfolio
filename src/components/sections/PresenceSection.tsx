@@ -1,11 +1,13 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import type { SectionBlendStyle, SectionTone } from "@/types";
 import { personal } from "@/data/personal";
 import { presenceNodes } from "@/data/presence";
 import LiveClock from "@/components/ui/LiveClock";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./PresenceSection.module.css";
 
 // =============================================================================
@@ -25,6 +27,14 @@ export default function PresenceSection({
   blendBottomTo,
   blendStyle,
 }: PresenceSectionProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
+
   return (
     <SectionWrapper
       id="presence"
@@ -33,9 +43,34 @@ export default function PresenceSection({
       blendBottomTo={blendBottomTo}
       blendStyle={blendStyle}
     >
-      <div className="grid-12">
+      <div ref={sectionRef} className="grid-12">
         <div className="col-4">
-          <h2 className={styles.heading}>Presence</h2>
+          <motion.h2 style={{ y: headingY }} className={styles.heading}>
+            <FlipRevealText
+              text="Presence"
+              mode="char"
+              progress={scrollYProgress}
+              window={[0.16, 0.3]}
+              holdUntil={0.84}
+              stagger={0.028}
+              perspective={900}
+              className={styles.headingFlip}
+              tokenClassName={styles.headingFlipToken}
+            />
+          </motion.h2>
+          <motion.p className={styles.callout} style={{ y: calloutY }}>
+            <FlipRevealText
+              text="Signals across time zones."
+              mode="word"
+              progress={scrollYProgress}
+              window={[0.24, 0.38]}
+              holdUntil={0.8}
+              stagger={0.03}
+              perspective={860}
+              className={styles.calloutFlip}
+              tokenClassName={styles.calloutFlipToken}
+            />
+          </motion.p>
           <div className={styles.clockWrapper}>
             <LiveClock
               city={personal.location.city}

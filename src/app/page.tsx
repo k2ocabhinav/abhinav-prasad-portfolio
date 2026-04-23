@@ -39,36 +39,36 @@ export default function Home() {
           tone="pastel-cream"
           blendTopFrom="hero-light"
           blendBottomTo="pastel-blue"
-          blendStyle="soft"
+          blendStyle="bold"
         />
         <ExperienceSection
           tone="pastel-blue"
           blendTopFrom="pastel-cream"
           blendBottomTo="pastel-blush"
-          blendStyle="soft"
+          blendStyle="bold"
         />
         <WorksSection
           tone="pastel-blush"
           blendTopFrom="pastel-blue"
           blendBottomTo="pastel-peach"
-          blendStyle="soft"
+          blendStyle="bold"
         />
         <TechStackSection
           tone="pastel-peach"
           blendTopFrom="pastel-blush"
           blendBottomTo="pastel-mint"
-          blendStyle="soft"
+          blendStyle="bold"
         />
         <PresenceSection
           tone="pastel-mint"
           blendTopFrom="pastel-peach"
           blendBottomTo="hero-light"
-          blendStyle="soft"
+          blendStyle="bold"
         />
         <ContactSection
           tone="hero-light"
           blendTopFrom="pastel-mint"
-          blendStyle="soft"
+          blendStyle="bold"
         />
 
         {/* Footer */}

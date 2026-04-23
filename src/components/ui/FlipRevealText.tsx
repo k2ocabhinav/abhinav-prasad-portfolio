@@ -61,6 +61,9 @@ export default function FlipRevealText({
   const idleProgress = useMotionValue(0);
   const progressSource = progress ?? idleProgress;
   const [progressValue, setProgressValue] = useState(() => progress?.get() ?? 0);
+  const useScrollLinked = Boolean(progress);
+  const startY = disableFlip ? 10 : 16;
+  const startRotate = disableFlip ? 0 : -112;
   const windowRange = window ?? triggerRange;
   const holdWindowEnd = holdUntil ?? Math.min(1, windowRange[1] + 0.34);
   const tokens = buildTokens(text, mode);
@@ -100,7 +103,6 @@ export default function FlipRevealText({
       {stagedTokens.map((token, index) => {
         const isAnimatedToken = !token.isSpace;
         const delay = isAnimatedToken ? index * stagger : 0;
-        const useScrollLinked = Boolean(progress);
         const progressLocal = useScrollLinked ? progressValue : 0;
         const peakRange = Math.max(0.0001, token.tokenPeak - token.tokenStart);
         const tReveal = Math.min(
@@ -117,14 +119,14 @@ export default function FlipRevealText({
               ? 1
               : 1 - tExit;
         const stagedY = progressLocal < token.tokenPeak
-          ? (disableFlip ? 12 : 14) * (1 - tReveal)
+          ? startY * (1 - tReveal)
           : progressLocal <= token.tokenHold
             ? 0
             : -8 * tExit;
         const stagedRotateX = disableFlip
           ? 0
           : progressLocal < token.tokenPeak
-            ? -94 * (1 - tReveal)
+            ? startRotate * (1 - tReveal)
             : progressLocal <= token.tokenHold
               ? 0
               : -8 * tExit;
@@ -137,20 +139,24 @@ export default function FlipRevealText({
             <motion.span
               className={cn(styles.token, tokenClassName)}
               initial={
-                disableFlip
-                  ? { opacity: 0, y: 12 }
-                  : { opacity: 0, rotateX: -94, y: 14 }
+                useScrollLinked
+                  ? false
+                  : disableFlip
+                    ? { opacity: 0, y: startY }
+                    : { opacity: 0, rotateX: startRotate, y: startY }
               }
               whileInView={
-                disableFlip
-                  ? { opacity: 1, y: 0 }
-                  : { opacity: 1, rotateX: 0, y: 0 }
+                useScrollLinked
+                  ? undefined
+                  : disableFlip
+                    ? { opacity: 1, y: 0 }
+                    : { opacity: 1, rotateX: 0, y: 0 }
               }
               animate={useScrollLinked ? scrollLinkedTarget : undefined}
-              viewport={{ once: true, amount: viewportAmount }}
+              viewport={useScrollLinked ? undefined : { once: true, amount: viewportAmount }}
               transition={{
                 duration: useScrollLinked
-                  ? 0.18
+                  ? 0.14
                   : disableFlip
                     ? 0.34
                     : Math.min(0.54, revealWindow + 0.14),

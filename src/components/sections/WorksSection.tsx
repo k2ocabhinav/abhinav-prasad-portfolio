@@ -12,6 +12,7 @@ import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
 import { renderIcon, cn } from "@/lib/utils";
 import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./WorksSection.module.css";
 
 // =============================================================================
@@ -37,6 +38,7 @@ export default function WorksSection({
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
 
   return (
     <SectionWrapper
@@ -51,8 +53,31 @@ export default function WorksSection({
           style={{ y: headingY }}
           className={styles.heading}
         >
-          Selected Works
+          <FlipRevealText
+            text="Selected Works"
+            mode="word"
+            progress={scrollYProgress}
+            window={[0.14, 0.28]}
+            holdUntil={0.84}
+            stagger={0.03}
+            perspective={900}
+            className={styles.headingFlip}
+            tokenClassName={styles.headingFlipToken}
+          />
         </motion.h2>
+        <motion.p className={styles.callout} style={{ y: calloutY }}>
+          <FlipRevealText
+            text="Systems that ship."
+            mode="word"
+            progress={scrollYProgress}
+            window={[0.24, 0.38]}
+            holdUntil={0.8}
+            stagger={0.03}
+            perspective={860}
+            className={styles.calloutFlip}
+            tokenClassName={styles.calloutFlipToken}
+          />
+        </motion.p>
       </div>
 
       <motion.div

@@ -8,6 +8,7 @@ import { useCardTilt } from "@/hooks/useCardTilt";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
 import { renderIcon } from "@/lib/utils";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./TechStackSection.module.css";
 
 // =============================================================================
@@ -33,6 +34,7 @@ export default function TechStackSection({
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
 
   return (
     <SectionWrapper
@@ -48,8 +50,31 @@ export default function TechStackSection({
             style={{ y: headingY }}
             className={styles.heading}
           >
-            Technical Voice
+            <FlipRevealText
+              text="Technical Voice"
+              mode="word"
+              progress={scrollYProgress}
+              window={[0.14, 0.28]}
+              holdUntil={0.84}
+              stagger={0.03}
+              perspective={900}
+              className={styles.headingFlip}
+              tokenClassName={styles.headingFlipToken}
+            />
           </motion.h2>
+          <motion.p className={styles.callout} style={{ y: calloutY }}>
+            <FlipRevealText
+              text="Cloud-native by default."
+              mode="word"
+              progress={scrollYProgress}
+              window={[0.24, 0.38]}
+              holdUntil={0.8}
+              stagger={0.03}
+              perspective={860}
+              className={styles.calloutFlip}
+              tokenClassName={styles.calloutFlipToken}
+            />
+          </motion.p>
         </div>
       </div>
 

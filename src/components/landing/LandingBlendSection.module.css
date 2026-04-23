@@ -3,26 +3,67 @@
    ============================================================================= */
 
 .blend {
-  height: clamp(32vh, 42vh, 52vh);
+  min-height: clamp(34vh, 44vh, 52vh);
   margin-bottom: -1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  padding: clamp(2.8rem, 6vw, 5.4rem) var(--content-padding-x);
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(
     180deg,
-    #1C1456 0%,
-    rgba(0, 60, 116, 0.9) 22%,
-    rgba(57, 111, 188, 0.68) 44%,
-    rgba(231, 92, 74, 0.48) 68%,
-    var(--surface-tone-pastel-cream) 100%
+    #1D4570 0%,
+    #22456F 32%,
+    #2A3A63 62%,
+    #362244 84%,
+    #381026 100%
   );
 }
 
-.label {
+.blend::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: clamp(5.2rem, 10vw, 7.2rem);
+  background: linear-gradient(
+    180deg,
+    rgba(56, 16, 38, 0) 0%,
+    rgba(56, 16, 38, 0.68) 100%
+  );
+  pointer-events: none;
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: inline-block;
   font-family: var(--font-label);
-  font-size: 11px;
-  letter-spacing: 0.3em;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  /* Mid-blend label keeps continuity between dark hero and pastel sections. */
-  color: rgba(251, 255, 62, 0.82);
+  color: rgba(244, 246, 248, 0.72);
+}
+
+.label {
+  margin-top: 0.9rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.65rem, 4.4vw, 3.8rem);
+  line-height: 1.06;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  color: rgba(244, 246, 248, 0.98);
+}
+
+@media (max-width: 767px) {
+  .label {
+    font-size: clamp(1.35rem, 8vw, 2.1rem);
+  }
 }

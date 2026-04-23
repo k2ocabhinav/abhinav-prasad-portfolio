@@ -253,6 +253,52 @@ test("desktop section handoff into Philosophy stays seam-free", async ({ page })
   });
 });
 
+test("explore bridge keeps the matte headline composition on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+  await page.evaluate(() => {
+    document
+      .querySelector('[data-home-explore-bridge="true"]')
+      ?.scrollIntoView({ block: "center" });
+  });
+  await page.waitForTimeout(420);
+
+  const exploreBridge = page.locator('[data-home-explore-bridge="true"]');
+  await expect(exploreBridge).toBeVisible();
+
+  const screenshot = await exploreBridge.screenshot({
+    animations: "disabled",
+  });
+
+  expect(screenshot).toMatchSnapshot("home-explore-bridge-desktop.png", {
+    maxDiffPixelRatio: 0.025,
+  });
+});
+
+test("explore bridge keeps the matte headline composition on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+  await page.evaluate(() => {
+    document
+      .querySelector('[data-home-explore-bridge="true"]')
+      ?.scrollIntoView({ block: "start" });
+  });
+  await page.waitForTimeout(420);
+
+  const exploreBridge = page.locator('[data-home-explore-bridge="true"]');
+  await expect(exploreBridge).toBeVisible();
+
+  const screenshot = await exploreBridge.screenshot({
+    animations: "disabled",
+  });
+
+  expect(screenshot).toMatchSnapshot("home-explore-bridge-mobile.png", {
+    maxDiffPixelRatio: 0.025,
+  });
+});
+
 test("profile stage keeps premium composition on desktop", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");

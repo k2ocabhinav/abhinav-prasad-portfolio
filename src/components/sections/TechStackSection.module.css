@@ -10,6 +10,31 @@
   color: var(--color-primary-brand);
 }
 
+.headingFlip {
+  display: inline-block;
+}
+
+.headingFlipToken {
+  display: inline-block;
+}
+
+.callout {
+  margin-top: 0.95rem;
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-primary-brand) 84%, var(--color-on-surface) 16%);
+}
+
+.calloutFlip {
+  display: inline-block;
+}
+
+.calloutFlipToken {
+  display: inline-block;
+}
+
 .cardsGrid {
   display: grid;
   grid-template-columns: 1fr;
