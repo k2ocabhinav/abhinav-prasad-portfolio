@@ -1,12 +1,14 @@
 .sectionHeader {
+  position: relative;
   margin-bottom: 5rem;
 }
 
 .heading {
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 300;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: 3rem;
+  letter-spacing: 0;
   color: var(--color-primary-brand);
 }
 
@@ -235,10 +237,11 @@
 }
 
 .projectTitle {
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 300;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: 2.25rem;
+  letter-spacing: 0;
   margin-bottom: 1.5rem;
 }
 
@@ -409,10 +412,11 @@
   margin-top: 2rem;
   padding-bottom: 0.25rem;
   color: var(--color-primary-brand);
-  font-family: var(--font-headline);
-  font-style: italic;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: 1.5rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   cursor: not-allowed;
   opacity: 0.6;
   transition: opacity 0.3s ease;

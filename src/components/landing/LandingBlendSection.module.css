@@ -1,5 +1,5 @@
 /* =============================================================================
-   LandingBlendSection — Visual bridge from dark indigo landing to cream portfolio
+   LandingBlendSection - dark bridge from landing to profile
    ============================================================================= */
 
 .blend {
@@ -12,11 +12,10 @@
   overflow: hidden;
   background: linear-gradient(
     180deg,
-    #1D4570 0%,
-    #22456F 32%,
-    #2A3A63 62%,
-    #362244 84%,
-    #381026 100%
+    #06080B 0%,
+    #0D1216 45%,
+    #101715 72%,
+    #0D1216 100%
   );
 }
 
@@ -27,8 +26,8 @@
   height: clamp(5.2rem, 10vw, 7.2rem);
   background: linear-gradient(
     180deg,
-    rgba(56, 16, 38, 0) 0%,
-    rgba(56, 16, 38, 0.68) 100%
+    rgba(13, 18, 22, 0) 0%,
+    rgba(13, 18, 22, 1) 100%
   );
   pointer-events: none;
 }
@@ -48,7 +47,7 @@
   font-size: 0.68rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(244, 246, 248, 0.72);
+  color: rgba(243, 246, 238, 0.66);
 }
 
 .label {
@@ -57,9 +56,9 @@
   font-weight: 700;
   font-size: clamp(1.65rem, 4.4vw, 3.8rem);
   line-height: 1.06;
-  letter-spacing: 0.045em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: rgba(244, 246, 248, 0.98);
+  color: rgba(243, 246, 238, 0.98);
 }
 
 @media (max-width: 767px) {

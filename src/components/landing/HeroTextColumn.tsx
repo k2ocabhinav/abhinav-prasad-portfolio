@@ -59,9 +59,9 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
               <motion.span
                 key={roles[roleIndex]}
                 className={styles.cyclerWord}
-                initial={{ y: 12, opacity: 0, filter: "blur(4px)" }}
-                animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                exit={{ y: -12, opacity: 0, filter: "blur(4px)" }}
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -10, opacity: 0 }}
                 transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
               >
                 {roles[roleIndex]}

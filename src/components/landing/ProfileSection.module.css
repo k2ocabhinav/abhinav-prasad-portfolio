@@ -1,5 +1,5 @@
 /* =============================================================================
-   ProfileSection — Espresso stage with restrained flip hint and portrait focus
+   ProfileSection - dark precision portrait stage
    ============================================================================= */
 
 .profileSection {
@@ -8,19 +8,20 @@
   padding-bottom: clamp(6.2rem, 10vw, 9rem);
   scroll-snap-align: start;
   overflow: clip;
-  background: linear-gradient(180deg, #31101f 0%, #381026 52%, #2a0c18 100%);
+  background:
+    linear-gradient(180deg, #0D1216 0%, #06080B 58%, #0D1216 100%);
 }
 
 .profileStageWash {
   position: absolute;
   inset: -8% -4%;
   pointer-events: none;
-  background: linear-gradient(
-    120deg,
-    rgba(255, 87, 69, 0.08) 0%,
-    rgba(255, 87, 69, 0.02) 28%,
-    transparent 54%
-  );
+  background:
+    linear-gradient(rgba(243, 246, 238, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(243, 246, 238, 0.035) 1px, transparent 1px),
+    radial-gradient(ellipse at 28% 42%, rgba(97, 223, 255, 0.08), transparent 54%),
+    radial-gradient(ellipse at 72% 72%, rgba(200, 255, 46, 0.06), transparent 48%);
+  background-size: 84px 84px, 84px 84px, auto, auto;
   z-index: 0;
 }
 
@@ -66,8 +67,8 @@
   inset: 10% -14% -8%;
   border-radius: 999px;
   pointer-events: none;
-  background: radial-gradient(ellipse at 52% 50%, rgba(255, 87, 69, 0.14) 0%, transparent 72%);
-  filter: blur(4px);
+  background: radial-gradient(ellipse at 52% 50%, rgba(97, 223, 255, 0.1) 0%, transparent 72%);
+  filter: blur(5px);
 }
 
 .imageFrame {
@@ -80,8 +81,10 @@
   height: auto;
   object-fit: contain;
   border: none;
-  border-radius: 0;
-  box-shadow: 0 16px 30px rgba(8, 0, 0, 0.34);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px rgba(243, 246, 238, 0.12),
+    0 18px 42px rgba(0, 0, 0, 0.42);
 }
 
 .copyColumn {
@@ -102,14 +105,14 @@
 
 .hintCopy {
   margin-top: 0.4rem;
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: clamp(1.84rem, 3.2vw, 2.98rem);
-  letter-spacing: 0.012em;
+  letter-spacing: 0;
   line-height: 1.14;
-  color: rgba(252, 244, 232, 0.99);
-  text-shadow: 0 1px 4px rgba(10, 0, 0, 0.2);
+  color: rgba(243, 246, 238, 0.98);
+  text-shadow: 0 0 26px rgba(97, 223, 255, 0.08);
 }
 
 .taglineBlock {
@@ -122,7 +125,7 @@
   font-family: var(--font-body);
   font-weight: 500;
   font-size: clamp(1.46rem, 2vw, 2.1rem);
-  color: rgba(250, 238, 224, 0.96);
+  color: rgba(243, 246, 238, 0.96);
   line-height: 1.5;
 }
 
@@ -134,5 +137,5 @@
   line-height: 1.74;
   max-width: 36rem;
   margin-inline: auto;
-  color: rgba(250, 238, 224, 0.84);
+  color: rgba(158, 169, 161, 0.94);
 }

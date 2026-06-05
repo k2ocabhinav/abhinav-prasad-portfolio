@@ -98,7 +98,7 @@ export default function WorksSection({
 // ─── WorkCard Sub-component ─────────────────────────────────────────
 
 function WorkCard({ project }: { project: (typeof projects)[number] }) {
-  const { ref: tiltRef, tilt } = useCardTilt();
+  const { ref: tiltRef, tilt } = useCardTilt(3);
   const screenshots = project.screenshots ?? [];
   const [heroScreenshot, ...supportScreenshots] = screenshots;
   const hasScreenshots = Boolean(heroScreenshot);
@@ -115,7 +115,7 @@ function WorkCard({ project }: { project: (typeof projects)[number] }) {
       <motion.div
         ref={tiltRef}
         animate={{ rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
-        whileHover={{ scale: 1.02 }}
+        whileHover={{ scale: 1.01 }}
         transition={tiltSpring}
         style={{ transformPerspective: 800 }}
         className={cn(

@@ -1,5 +1,5 @@
 /* =============================================================================
-   AnimatedName — Editorial hero wordmark with rich per-letter hover stages
+   AnimatedName - dark precision technical wordmark
    ============================================================================= */
 
 .nameShell {
@@ -23,9 +23,9 @@
 }
 
 .nameTrigger:focus-visible {
-  outline: 2px solid rgba(var(--color-on-surface-rgb), 0.34);
+  outline: 2px solid rgba(var(--color-primary-brand-rgb), 0.64);
   outline-offset: 0.45rem;
-  border-radius: 1rem;
+  border-radius: 0.35rem;
 }
 
 .nameRow {
@@ -36,6 +36,7 @@
   max-width: 100%;
   margin-inline: auto;
   position: relative;
+  gap: clamp(0.01em, 0.35cqw, 0.045em);
 }
 
 .letterWrapper {
@@ -46,79 +47,93 @@
 .letterStage {
   display: inline-block;
   position: relative;
-  padding-inline: 0.006em;
+  padding-inline: 0.01em;
   transform-origin: 50% 86%;
   color: var(--color-on-surface);
   user-select: none;
   isolation: isolate;
   transition:
-    transform 280ms var(--motion-ease-spring),
-    color 180ms var(--motion-ease-out);
+    transform 280ms var(--motion-ease-out),
+    color 180ms var(--motion-ease-out),
+    filter 220ms var(--motion-ease-out);
 }
 
 .letterStage[data-hovered="true"] {
-  transform: translate3d(0, -0.06em, 0) scale(1.04);
-  color: color-mix(in srgb, var(--letter-color) 90%, #F4F6F8 10%);
+  color: color-mix(in srgb, var(--letter-color) 84%, var(--color-on-surface) 16%);
+  filter: drop-shadow(0 0 14px rgba(200, 255, 46, 0.2));
+  transform: translate3d(0, -0.035em, 0);
   z-index: 2;
 }
 
 .glyph {
   display: inline-block;
   white-space: nowrap;
-  line-height: 0.9;
+  line-height: 0.86;
   color: currentColor;
   transform-origin: 50% 86%;
 }
 
 .editorialGlyph {
-  font-family: var(--font-hero-display);
-  font-weight: 900;
-  font-size: clamp(5rem, 26cqw, 20rem);
-  line-height: 0.88;
-  letter-spacing: -0.03em;
-  text-shadow: none;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(4.2rem, 21cqw, 15.6rem);
+  line-height: 0.86;
+  letter-spacing: 0;
+  text-transform: none;
+  text-shadow:
+    0 0 32px rgba(97, 223, 255, 0.07),
+    0 0 42px rgba(200, 255, 46, 0.05);
   transition:
-    opacity 260ms var(--motion-ease-out),
-    transform 320ms var(--motion-ease-out),
-    filter 280ms var(--motion-ease-out);
-}
-
-.letterStage[data-hovered="true"] .editorialGlyph {
-  opacity: 0.08;
-  filter: blur(1.4px);
-  transform: translate3d(0, 0, 0) scale(0.96);
+    opacity 220ms var(--motion-ease-out),
+    transform 280ms var(--motion-ease-out),
+    color 180ms var(--motion-ease-out),
+    -webkit-text-stroke-color 180ms var(--motion-ease-out);
 }
 
 .hoverAura {
   position: absolute;
-  inset: -0.2em -0.15em -0.1em;
+  inset: -0.12em -0.1em -0.08em;
   pointer-events: none;
   z-index: -1;
   opacity: 0;
   transform: translate3d(0, 6px, 0);
   transition:
-    opacity 200ms ease,
-    transform 300ms var(--motion-ease-spring);
+    opacity 220ms ease,
+    transform 300ms var(--motion-ease-out);
 }
 
 .letterStage[data-hovered="true"] .hoverAura {
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
+  transform: translate3d(0, 0, 0);
 }
 
-/* --- Editorial hover effects (replace fairy glow) --- */
+.hoverColorWash {
+  position: absolute;
+  inset: 8% -8%;
+  border-radius: 0.25rem;
+  background:
+    linear-gradient(90deg, transparent, rgba(200, 255, 46, 0.14), transparent),
+    radial-gradient(circle at 50% 58%, var(--letter-color), transparent 62%);
+  opacity: 0;
+  filter: blur(16px);
+  transition: opacity 260ms var(--motion-ease-out);
+}
+
+.letterStage[data-hovered="true"] .hoverColorWash {
+  opacity: 0.2;
+}
 
 .hoverAccentBar {
   position: absolute;
-  bottom: 0.05em;
-  left: 10%;
-  right: 10%;
-  height: 0.075em;
-  background: var(--letter-color);
+  left: 0.02em;
+  right: 0.02em;
+  bottom: 0.03em;
+  height: 0.045em;
+  background: linear-gradient(90deg, transparent, var(--letter-color), transparent);
   border-radius: 999px;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 240ms var(--motion-ease-out);
+  transition: transform 220ms var(--motion-ease-out);
   opacity: 0.92;
 }
 
@@ -126,160 +141,120 @@
   transform: scaleX(1);
 }
 
-.hoverColorWash {
+.scanSlice {
   position: absolute;
-  inset: 5% 0%;
-  border-radius: 4px;
-  background: var(--letter-color);
+  left: -4%;
+  right: -4%;
+  top: 46%;
+  height: 0.035em;
+  background: linear-gradient(90deg, transparent, var(--letter-color), transparent);
   opacity: 0;
-  filter: blur(12px);
-  transition: opacity 300ms var(--motion-ease-out);
-}
-
-.letterStage[data-hovered="true"] .hoverColorWash {
-  opacity: 0.18;
-}
-
-/* --- Per-letter editorial effects --- */
-
-/* A — amber accent emphasis */
-.letterStage[data-animated-letter-index="0"][data-hovered="true"] {
-  transform: translate3d(0, -0.06em, 0) scale(1.05);
-}
-
-/* b — 3D perspective tilt */
-.letterStage[data-animated-letter-index="1"][data-hovered="true"] {
-  transform: perspective(400px) rotateY(8deg) translate3d(0, -0.04em, 0);
-}
-
-/* h — outline mode (stroke only) */
-.letterStage[data-animated-letter-index="2"][data-hovered="true"] .editorialGlyph {
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--letter-color);
-  paint-order: stroke fill;
-  opacity: 1;
-  filter: none;
-  transform: none;
-  transition: color 200ms, -webkit-text-stroke 200ms;
-}
-
-/* i — vertical stretch */
-.letterStage[data-animated-letter-index="3"][data-hovered="true"] {
-  transform: translate3d(0, -0.02em, 0) scaleY(1.12);
-}
-
-/* n — soft color wash + slight lift (default effect) */
-.letterStage[data-animated-letter-index="4"][data-hovered="true"] {
-  transform: translate3d(0, -0.06em, 0) scale(1.04);
-}
-
-/* a — rotation + color */
-.letterStage[data-animated-letter-index="5"][data-hovered="true"] {
-  transform: translate3d(0, -0.04em, 0) rotate(-4deg) scale(1.04);
-}
-
-/* v — drop-bounce */
-.letterStage[data-animated-letter-index="6"][data-hovered="true"] {
-  animation: letterBounce 400ms var(--motion-ease-spring) both;
-}
-
-.scriptPositioner {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translate(
-    calc(-50% + var(--script-offset-x, 0em)),
-    var(--script-offset-y, 0em)
-  );
-  pointer-events: none;
-}
-
-.scriptGlyph {
-  font-family: var(--font-hero-script);
-  font-weight: 700;
-  font-size: calc(clamp(5rem, 26cqw, 20rem) * 1.12);
-  line-height: 0.78;
-  letter-spacing: -0.1em;
-  color: var(--letter-color);
-  text-shadow: none;
-  opacity: 0;
-  transform: translate3d(0, 0.1em, 0) scale(var(--script-idle-scale, 1)) rotate(-1.4deg);
+  transform: scaleX(0.35) translateY(0.12em);
+  transform-origin: center;
   transition:
-    opacity 240ms var(--motion-ease-out),
-    transform 360ms var(--motion-ease-spring),
-    filter 280ms var(--motion-ease-out);
+    opacity 200ms var(--motion-ease-out),
+    transform 300ms var(--motion-ease-out);
 }
 
-.letterStage[data-hovered="true"] .scriptGlyph {
-  opacity: 1;
-  filter: none;
-  transform: translate3d(0, -0.055em, 0) scale(var(--script-scale, 1.08)) rotate(0deg);
-}
-
-.decoration {
+.cornerTop,
+.cornerBottom {
   position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translate(-50%, 12px) scale(0.68);
-  pointer-events: none;
-  z-index: 10;
-  padding-bottom: 0.15em;
+  width: 0.18em;
+  height: 0.18em;
   opacity: 0;
-  filter: none;
   transition:
     opacity 220ms var(--motion-ease-out),
-    transform 340ms var(--motion-ease-spring);
+    transform 300ms var(--motion-ease-out);
 }
 
-.letterStage[data-hovered="true"] .decoration {
+.cornerTop {
+  top: 0.08em;
+  right: -0.02em;
+  border-top: 1px solid var(--letter-color);
+  border-right: 1px solid var(--letter-color);
+  transform: translate3d(-0.05em, 0.05em, 0);
+}
+
+.cornerBottom {
+  left: -0.02em;
+  bottom: 0.06em;
+  border-left: 1px solid var(--letter-color);
+  border-bottom: 1px solid var(--letter-color);
+  transform: translate3d(0.05em, -0.05em, 0);
+}
+
+.letterStage[data-hovered="true"] .scanSlice,
+.letterStage[data-hovered="true"] .cornerTop,
+.letterStage[data-hovered="true"] .cornerBottom {
   opacity: 1;
-  transform: translate(-50%, 0) scale(1);
+  transform: translate3d(0, 0, 0) scaleX(1);
 }
 
-@keyframes letterBounce {
-  0%   { transform: translate3d(0, 0, 0); }
-  30%  { transform: translate3d(0, 0.08em, 0); }
-  60%  { transform: translate3d(0, -0.06em, 0) scale(1.06); }
-  100% { transform: translate3d(0, -0.04em, 0) scale(1.04); }
+.letterStage[data-animated-letter-index="0"][data-hovered="true"] .editorialGlyph {
+  -webkit-text-stroke: 1px var(--letter-color);
+  color: transparent;
+}
+
+.letterStage[data-animated-letter-index="1"][data-hovered="true"] {
+  transform: perspective(520px) rotateY(6deg) translate3d(0, -0.025em, 0);
+}
+
+.letterStage[data-animated-letter-index="2"][data-hovered="true"] .scanSlice {
+  height: 0.065em;
+  opacity: 0.9;
+}
+
+.letterStage[data-animated-letter-index="3"][data-hovered="true"] .editorialGlyph {
+  transform: translate3d(0, -0.02em, 0) scaleY(1.04);
+}
+
+.letterStage[data-animated-letter-index="4"][data-hovered="true"] .editorialGlyph {
+  color: var(--color-on-surface);
+  text-shadow:
+    0 0 0 var(--letter-color),
+    0 0 24px rgba(97, 223, 255, 0.2);
+}
+
+.letterStage[data-animated-letter-index="5"][data-hovered="true"] {
+  transform: translate3d(0, -0.03em, 0) skewX(-2deg);
+}
+
+.letterStage[data-animated-letter-index="6"][data-hovered="true"] .editorialGlyph {
+  -webkit-text-stroke: 1px var(--letter-color);
+  color: color-mix(in srgb, var(--letter-color) 24%, var(--color-on-surface) 76%);
 }
 
 @media (max-width: 767px) {
-  .editorialGlyph {
-    font-size: clamp(4.2rem, 25cqw, 7.2rem);
-    letter-spacing: -0.025em;
+  .nameRow {
+    width: 100%;
+    justify-content: center;
+    gap: 0;
   }
 
-  .scriptGlyph {
-    font-size: calc(clamp(4.2rem, 25cqw, 7.2rem) * 1.08);
+  .editorialGlyph {
+    font-size: clamp(2.8rem, 16.8cqw, 4.15rem);
+    line-height: 0.9;
   }
 
   .hoverAura {
-    inset: -0.48em -0.24em -0.18em;
-  }
-
-  .decoration {
-    transform: translate(-50%, 10px) scale(0.74);
-  }
-
-  .letterStage[data-hovered="true"] .decoration {
-    transform: translate(-50%, 0) scale(0.92);
+    inset: -0.34em -0.18em -0.12em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .letterStage,
   .editorialGlyph,
-  .scriptGlyph,
   .hoverAura,
-  .decoration {
-    transition-duration: 140ms;
+  .scanSlice,
+  .cornerTop,
+  .cornerBottom {
+    transition-duration: 120ms;
   }
 
   .letterStage[data-hovered="true"] {
-    transform: scale(1.02);
+    transform: none;
   }
 
-  .hoverAccentBar,
   .hoverColorWash {
     display: none;
   }

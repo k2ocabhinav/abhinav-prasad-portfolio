@@ -25,7 +25,7 @@ export default function MagneticButton({
   className = "",
   variant = "outline",
 }: MagneticButtonProps) {
-  const { ref, offset } = useMagneticHover();
+  const { ref, offset } = useMagneticHover(0.08);
 
   return (
     <motion.a

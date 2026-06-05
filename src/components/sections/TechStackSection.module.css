@@ -1,12 +1,14 @@
 .headerGrid {
+  position: relative;
   margin-bottom: 5rem;
 }
 
 .heading {
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 300;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: 3rem;
+  letter-spacing: 0;
   color: var(--color-primary-brand);
 }
 

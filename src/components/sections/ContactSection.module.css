@@ -1,9 +1,14 @@
+.contactMotionRoot {
+  position: relative;
+}
+
 .heading {
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 300;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: 3.75rem;
   margin-bottom: 0.8rem;
+  letter-spacing: 0;
   color: color-mix(in srgb, var(--color-on-surface) 86%, var(--color-primary-brand) 14%);
 }
 
@@ -53,8 +58,9 @@
 }
 
 .emailLink {
-  font-family: var(--font-headline);
-  font-style: italic;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: 1.5rem;
   color: var(--color-accent-brown);
   transition: opacity 0.3s ease;

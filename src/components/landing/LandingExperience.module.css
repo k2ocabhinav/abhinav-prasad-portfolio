@@ -1,5 +1,5 @@
 /* =============================================================================
-   LandingExperience — Editorial aurora landing wrapper
+   LandingExperience - dark precision data-aura landing wrapper
    ============================================================================= */
 
 .landing {
@@ -7,26 +7,24 @@
   z-index: 6;
   overflow: clip;
   background:
-    radial-gradient(ellipse at 12% 16%, rgba(255, 49, 171, 0.22) 0%, transparent 48%),
-    radial-gradient(ellipse at 82% 22%, rgba(255, 183, 40, 0.2) 0%, transparent 46%),
-    radial-gradient(ellipse at 62% 84%, rgba(233, 83, 48, 0.22) 0%, transparent 44%),
-    radial-gradient(ellipse at 24% 80%, rgba(57, 111, 188, 0.24) 0%, transparent 46%),
-    linear-gradient(180deg, #1C1456 0%, #003C74 48%, #29648E 100%);
+    radial-gradient(ellipse at 18% 6%, rgba(97, 223, 255, 0.1) 0%, transparent 44%),
+    radial-gradient(ellipse at 82% 24%, rgba(200, 255, 46, 0.08) 0%, transparent 42%),
+    linear-gradient(180deg, #06080B 0%, #0D1216 52%, #06080B 100%);
 
-  --color-surface: #1C1456;
-  --color-surface-rgb: 28, 20, 86;
-  --color-on-surface: #F4F6F8;
-  --color-on-surface-rgb: 244, 246, 248;
-  --color-secondary-text: #E4DACD;
-  --color-primary-brand: #FFB728;
-  --color-primary-brand-rgb: 255, 183, 40;
-  --color-sage: #396FBC;
-  --color-sage-rgb: 57, 111, 188;
-  --color-accent-brown: #F4F6F8;
-  --landing-glass-bg: rgba(28, 20, 86, 0.28);
-  --landing-glass-border: rgba(251, 255, 62, 0.2);
-  --landing-glass-border-active: rgba(255, 183, 40, 0.48);
-  --landing-glass-shadow: 0 18px 40px rgba(28, 20, 86, 0.34);
+  --color-surface: #06080B;
+  --color-surface-rgb: 6, 8, 11;
+  --color-on-surface: #F3F6EE;
+  --color-on-surface-rgb: 243, 246, 238;
+  --color-secondary-text: #9EA9A1;
+  --color-primary-brand: #C8FF2E;
+  --color-primary-brand-rgb: 200, 255, 46;
+  --color-sage: #61DFFF;
+  --color-sage-rgb: 97, 223, 255;
+  --color-accent-brown: #F3F6EE;
+  --landing-glass-bg: rgba(20, 27, 29, 0.72);
+  --landing-glass-border: rgba(243, 246, 238, 0.14);
+  --landing-glass-border-active: rgba(200, 255, 46, 0.42);
+  --landing-glass-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
 }
 
 .landing::before,
@@ -39,17 +37,25 @@
 
 .landing::before {
   background:
-    linear-gradient(180deg, rgba(244, 246, 248, 0.08) 0%, transparent 34%),
-    radial-gradient(ellipse at 50% 0%, rgba(251, 255, 62, 0.16) 0%, transparent 52%);
-  opacity: 1;
+    linear-gradient(rgba(243, 246, 238, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(243, 246, 238, 0.035) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: linear-gradient(180deg, black 0%, black 62%, transparent 100%);
+  opacity: 0.86;
 }
 
 .landing::after {
   inset: 0;
   background:
-    radial-gradient(ellipse at 18% 78%, rgba(244, 246, 248, 0.06) 0%, transparent 44%),
-    radial-gradient(ellipse at 84% 34%, rgba(251, 255, 62, 0.08) 0%, transparent 48%);
-  opacity: 0.62;
+    linear-gradient(90deg, transparent 0%, rgba(97, 223, 255, 0.08) 50%, transparent 100%),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0,
+      transparent 58px,
+      rgba(200, 255, 46, 0.035) 59px,
+      transparent 60px
+    );
+  opacity: 0.42;
 }
 
 .heroFrame {

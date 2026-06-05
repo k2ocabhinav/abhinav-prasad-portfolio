@@ -3,7 +3,6 @@
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";
-import FloatingArtifacts from "@/components/artifacts/FloatingArtifacts";
 import LandingExperience from "@/components/landing/LandingExperience";
 import AboutSection from "@/components/sections/AboutSection";
 import ExperienceSection from "@/components/sections/ExperienceSection";
@@ -25,7 +24,6 @@ export default function Home() {
       {/* Global UI */}
       <SageOrb />
       <ScrollProgress />
-      <FloatingArtifacts />
 
       {/* Main scrollable content */}
       <main

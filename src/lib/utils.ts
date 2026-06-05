@@ -52,17 +52,17 @@ export function cn(...classes: (string | false | null | undefined)[]): string {
 }
 
 const landingAccentColorMap: Record<LandingAccentKey, string> = {
-  sage: "var(--color-sage)",
-  peach: "var(--color-accent-peach-soft)",
-  sky: "var(--color-accent-sky-soft)",
-  sand: "var(--color-accent-sand-soft)",
+  sage: "var(--color-primary-brand)",
+  peach: "var(--color-sage)",
+  sky: "var(--color-sage)",
+  sand: "var(--color-secondary-text)",
 };
 
 const landingAccentRgbMap: Record<LandingAccentKey, string> = {
-  sage: "var(--color-sage-rgb)",
-  peach: "var(--color-accent-peach-rgb)",
-  sky: "var(--color-accent-sky-rgb)",
-  sand: "var(--color-accent-sand-rgb)",
+  sage: "var(--color-primary-brand-rgb)",
+  peach: "var(--color-sage-rgb)",
+  sky: "var(--color-sage-rgb)",
+  sand: "158, 169, 161",
 };
 
 /**

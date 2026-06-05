@@ -43,7 +43,7 @@ export default function PresenceSection({
       blendBottomTo={blendBottomTo}
       blendStyle={blendStyle}
     >
-      <div ref={sectionRef} className="grid-12">
+      <div ref={sectionRef} className={`grid-12 ${styles.presenceGrid}`}>
         <div className="col-4">
           <motion.h2 style={{ y: headingY }} className={styles.heading}>
             <FlipRevealText

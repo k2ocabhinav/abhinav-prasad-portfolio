@@ -28,8 +28,8 @@
   font-weight: 800;
   font-size: clamp(3rem, 8vw, 6rem);
   line-height: 1;
-  letter-spacing: -0.04em;
-  color: rgba(var(--color-primary-brand-rgb), 0.2);
+  letter-spacing: 0;
+  color: rgba(var(--color-primary-brand-rgb), 0.16);
   margin-bottom: 0.5rem;
 }
 
@@ -39,11 +39,12 @@
 }
 
 .projectTitle {
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 300;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   line-height: 1.1;
+  letter-spacing: 0;
   color: var(--color-on-surface);
   margin-bottom: 1rem;
 }

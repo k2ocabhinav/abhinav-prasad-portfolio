@@ -1,5 +1,5 @@
 /* =============================================================================
-   LandingFrame1Hero — Full-viewport centered hero frame with aurora backdrop
+   LandingFrame1Hero - full-viewport centered hero frame with data-aura backdrop
    ============================================================================= */
 
 .frame {
@@ -21,7 +21,10 @@
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  opacity: 0.96;
+  opacity: 1;
+  background:
+    linear-gradient(90deg, rgba(200, 255, 46, 0.08), transparent 17%, transparent 83%, rgba(97, 223, 255, 0.08)),
+    radial-gradient(ellipse at 50% 44%, rgba(243, 246, 238, 0.05), transparent 58%);
 }
 
 .auroraPlane,
@@ -32,60 +35,69 @@
 }
 
 .auroraPlane {
-  border-radius: 50%;
+  border-radius: 999px;
   mix-blend-mode: normal;
-  filter: blur(74px);
-  opacity: 0.38;
-  animation: auroraDrift 28s var(--motion-ease-in-out) infinite alternate;
+  filter: blur(44px);
+  opacity: 0.2;
+  animation: auraDrift 32s var(--motion-ease-in-out) infinite alternate;
 }
 
 .auroraLavender {
-  width: 46vw;
-  height: 46vw;
-  left: -6vw;
-  top: 4vh;
-  background: rgba(57, 111, 188, 0.32);
-  animation-duration: 32s;
+  width: 36vw;
+  height: 18vw;
+  left: -9vw;
+  top: 12vh;
+  background: rgba(97, 223, 255, 0.22);
+  animation-duration: 34s;
 }
 
 .auroraRose {
-  width: 34vw;
-  height: 34vw;
-  left: 22vw;
-  top: 18vh;
-  background: rgba(255, 49, 171, 0.28);
-  animation-duration: 26s;
+  width: 22vw;
+  height: 12vw;
+  left: 35vw;
+  top: 20vh;
+  background: rgba(200, 255, 46, 0.16);
+  animation-duration: 28s;
   animation-delay: -5s;
 }
 
 .auroraSky {
   width: 40vw;
-  height: 40vw;
-  right: -4vw;
-  top: 8vh;
-  background: rgba(231, 92, 74, 0.28);
-  animation-duration: 30s;
+  height: 16vw;
+  right: -12vw;
+  top: 16vh;
+  background: rgba(97, 223, 255, 0.16);
+  animation-duration: 36s;
   animation-delay: -8s;
 }
 
 .auroraGold {
-  width: 30vw;
-  height: 30vw;
+  width: 34vw;
+  height: 10vw;
   right: 18vw;
-  bottom: 10vh;
-  background: rgba(255, 183, 40, 0.28);
-  animation-duration: 34s;
+  bottom: 16vh;
+  background: rgba(200, 255, 46, 0.12);
+  animation-duration: 40s;
   animation-delay: -11s;
 }
 
 .auroraMesh {
-  inset: 12% 10%;
+  inset: 8% 7%;
   background:
-    radial-gradient(ellipse at 50% 40%, rgba(244, 246, 248, 0.05) 0%, transparent 62%),
-    radial-gradient(ellipse at 62% 18%, rgba(251, 255, 62, 0.06) 0%, transparent 58%);
-  opacity: 0.56;
+    linear-gradient(rgba(243, 246, 238, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(243, 246, 238, 0.04) 1px, transparent 1px),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0,
+      transparent 42px,
+      rgba(200, 255, 46, 0.045) 43px,
+      transparent 44px
+    );
+  background-size: 78px 78px, 78px 78px, auto;
+  opacity: 0.52;
   mix-blend-mode: normal;
-  animation: auroraMeshShift 24s linear infinite alternate;
+  mask-image: radial-gradient(ellipse at center, black 0%, black 46%, transparent 78%);
+  animation: auraMeshShift 28s linear infinite alternate;
 }
 
 .backdropStatic .auroraPlane,
@@ -104,7 +116,7 @@
   justify-content: center;
 }
 
-@keyframes auroraDrift {
+@keyframes auraDrift {
   0% {
     transform: translate3d(-1%, -0.5%, 0) scale(0.99);
   }
@@ -118,15 +130,15 @@
   }
 }
 
-@keyframes auroraMeshShift {
+@keyframes auraMeshShift {
   0% {
-    transform: translate3d(-1.5%, -1%, 0) scale(1);
-    opacity: 0.34;
+    transform: translate3d(-1%, -1%, 0) scale(1);
+    opacity: 0.42;
   }
 
   100% {
-    transform: translate3d(1.5%, 2%, 0) scale(1.06);
-    opacity: 0.46;
+    transform: translate3d(1%, 1.5%, 0) scale(1.03);
+    opacity: 0.56;
   }
 }
 
@@ -136,35 +148,35 @@
   }
 
   .auroraPlane {
-    filter: blur(60px);
+    filter: blur(42px);
   }
 
   .auroraLavender {
-    width: 72vw;
-    height: 72vw;
-    left: -18vw;
-    top: 12vh;
-  }
-
-  .auroraRose {
-    width: 58vw;
-    height: 58vw;
-    left: 22vw;
+    width: 86vw;
+    height: 28vw;
+    left: -34vw;
     top: 18vh;
   }
 
+  .auroraRose {
+    width: 48vw;
+    height: 22vw;
+    left: 32vw;
+    top: 22vh;
+  }
+
   .auroraSky {
-    width: 68vw;
-    height: 68vw;
-    right: -24vw;
-    top: 8vh;
+    width: 88vw;
+    height: 26vw;
+    right: -36vw;
+    top: 12vh;
   }
 
   .auroraGold {
-    width: 54vw;
-    height: 54vw;
+    width: 68vw;
+    height: 18vw;
     right: 8vw;
-    bottom: 16vh;
+    bottom: 18vh;
   }
 
   .auroraMesh {

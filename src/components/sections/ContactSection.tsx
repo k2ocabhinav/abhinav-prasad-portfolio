@@ -75,7 +75,7 @@ export default function ContactSection({
       fullHeight
       centered
     >
-      <div ref={sectionRef}>
+      <div ref={sectionRef} className={styles.contactMotionRoot}>
         <motion.h2
           style={{ y: headingY }}
           className={styles.heading}

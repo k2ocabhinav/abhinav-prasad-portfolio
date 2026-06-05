@@ -7,20 +7,25 @@
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  transition: background-color 0.5s ease, border-color 0.5s ease;
+  transition:
+    background-color 220ms var(--motion-ease-out),
+    border-color 220ms var(--motion-ease-out),
+    box-shadow 220ms var(--motion-ease-out),
+    color 220ms var(--motion-ease-out);
   cursor: pointer;
 }
 
 .outline {
   padding: 1.25rem 4rem;
-  border: 1px solid var(--color-sage);
-  border-radius: 9999px;
-  color: var(--color-accent-brown);
+  border: 1px solid rgba(var(--color-primary-brand-rgb), 0.42);
+  border-radius: 8px;
+  color: var(--color-on-surface);
   background: transparent;
 }
 
 .outline:hover {
-  background-color: rgba(var(--color-accent-sky-rgb), 0.18);
+  background-color: rgba(var(--color-primary-brand-rgb), 0.1);
+  box-shadow: 0 0 26px rgba(var(--color-primary-brand-rgb), 0.12);
 }
 
 .ghost {
@@ -35,17 +40,22 @@
   border-radius: 8px;
 }
 
-/* Glow variant — pastel blue border for use on dark landing backgrounds */
+/* Glow variant - focused signal outline for dark landing backgrounds */
 .glow {
   padding: 1.25rem 4rem;
-  border: 1px solid rgba(158, 199, 232, 0.45);
-  border-radius: 9999px;
-  color: #9EC7E8;
-  background: transparent;
+  border: 1px solid rgba(var(--color-primary-brand-rgb), 0.42);
+  border-radius: 8px;
+  color: var(--color-on-surface);
+  background:
+    linear-gradient(90deg, rgba(var(--color-primary-brand-rgb), 0.06), transparent),
+    transparent;
 }
 
 .glow:hover {
-  background-color: rgba(158, 199, 232, 0.12);
-  border-color: rgba(158, 199, 232, 0.72);
-  box-shadow: 0 6px 24px rgba(158, 199, 232, 0.16);
+  color: var(--color-primary-brand);
+  background-color: rgba(var(--color-primary-brand-rgb), 0.1);
+  border-color: rgba(var(--color-primary-brand-rgb), 0.72);
+  box-shadow:
+    0 0 0 1px rgba(var(--color-primary-brand-rgb), 0.12),
+    0 12px 34px rgba(var(--color-primary-brand-rgb), 0.12);
 }

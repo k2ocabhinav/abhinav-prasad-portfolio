@@ -51,7 +51,7 @@
 .progressBar {
   width: 100%;
   height: 2px;
-  background: rgba(var(--color-primary-brand-rgb), 0.1);
+  background: rgba(var(--color-on-surface-rgb), 0.08);
   margin-bottom: 2rem;
 }
 
@@ -93,7 +93,9 @@
 
 .mobileCard {
   position: relative;
-  background: var(--landing-glass-bg);
+  background:
+    linear-gradient(180deg, rgba(243, 246, 238, 0.035), transparent),
+    var(--landing-glass-bg);
   backdrop-filter: var(--landing-glass-blur);
   -webkit-backdrop-filter: var(--landing-glass-blur);
   border: 1px solid var(--landing-glass-border);
@@ -109,8 +111,8 @@
   inset: -12% 44% 50% -12%;
   background: radial-gradient(
     circle,
-    rgba(var(--landing-accent-rgb), 0.18) 0,
-    rgba(var(--landing-accent-rgb), 0.06) 42%,
+    rgba(var(--landing-accent-rgb), 0.12) 0,
+    rgba(var(--landing-accent-rgb), 0.04) 42%,
     transparent 74%
   );
   pointer-events: none;
@@ -139,10 +141,11 @@
 .mobileTitle {
   position: relative;
   z-index: 1;
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 300;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
   font-size: clamp(1.5rem, 6vw, 2rem);
+  letter-spacing: 0;
   color: var(--color-on-surface);
 }
 

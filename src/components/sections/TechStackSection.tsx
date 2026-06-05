@@ -100,7 +100,7 @@ function TechCard({
 }: {
   item: (typeof techCategories)[number];
 }) {
-  const { ref: tiltRef, tilt } = useCardTilt();
+  const { ref: tiltRef, tilt } = useCardTilt(3);
 
   return (
     <motion.div
@@ -111,8 +111,8 @@ function TechCard({
       style={{ transformPerspective: 600 }}
       className={styles.card}
       whileHover={{
-        y: -5,
-        scale: 1.02,
+        y: -3,
+        scale: 1.01,
       }}
     >
       <div className={styles.cardIcon}>

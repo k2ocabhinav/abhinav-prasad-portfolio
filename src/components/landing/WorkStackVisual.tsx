@@ -27,7 +27,7 @@ export default function WorkStackVisual({
   activeIndex,
   stories,
 }: WorkStackVisualProps) {
-  const { ref: tiltRef, tilt } = useCardTilt(8);
+  const { ref: tiltRef, tilt } = useCardTilt(4);
   const story = stories[activeIndex];
 
   return (
@@ -44,7 +44,7 @@ export default function WorkStackVisual({
         variants={workCardActive}
         initial="inactive"
         animate="active"
-        whileHover={{ y: -8 }}
+        whileHover={{ y: -3 }}
         transition={tiltSpring}
       >
         <div className={styles.dotOverlay} />
