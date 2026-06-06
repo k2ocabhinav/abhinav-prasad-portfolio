@@ -27,7 +27,7 @@ export default function WorkStackVisual({
   activeIndex,
   stories,
 }: WorkStackVisualProps) {
-  const { ref: tiltRef, tilt } = useCardTilt(4);
+  const { ref: tiltRef, tilt } = useCardTilt(2);
   const story = stories[activeIndex];
 
   return (

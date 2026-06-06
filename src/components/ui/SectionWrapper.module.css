@@ -7,6 +7,7 @@
   overflow: clip;
   background: var(--section-bg, var(--color-surface));
   color: var(--tone-text, var(--color-on-surface));
+  border-top: 1px solid var(--color-hairline);
 }
 
 .section::before {
@@ -16,8 +17,8 @@
   background:
     radial-gradient(circle at 14% 18%, var(--tone-wash-strong), transparent 42%),
     radial-gradient(circle at 86% 22%, var(--tone-wash-soft), transparent 44%);
-  transform: translate3d(0, calc(var(--section-bg-shift, 0) * 1px), 0);
-  opacity: 0.58;
+  transform: translate3d(0, 0, 0);
+  opacity: 0.15;
   pointer-events: none;
   z-index: 0;
 }
@@ -47,67 +48,37 @@
 .inner {
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 
-.edgeBlend {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: clamp(4.8rem, 11.5vw, 8.8rem);
-  pointer-events: none;
-  z-index: 0;
-  background: linear-gradient(
-    180deg,
-    var(--edge-from) 0%,
-    color-mix(in srgb, var(--edge-from) 55%, var(--edge-to) 45%) 54%,
-    var(--edge-to) 100%
-  );
-}
 
-.edgeBlendTop {
-  top: -1px;
-}
-
-.edgeBlendBottom {
-  bottom: -1px;
-}
-
-.blendSoft .edgeBlend {
-  opacity: 0.82;
-}
-
-.blendBold .edgeBlend {
-  height: clamp(6.2rem, 14vw, 11rem);
-  opacity: 0.94;
-  filter: saturate(1.08) contrast(1.02);
-}
 
 .toneHeroLight {
   --section-bg: var(--surface-tone-hero-light);
-  --tone-text: #08100D;
-  --tone-muted: #435046;
-  --tone-heading: #08100D;
-  --tone-accent: #2F6B1E;
-  --tone-accent-rgb: 47, 107, 30;
-  --tone-grid-rgb: 8, 16, 13;
-  --tone-wash-strong: rgba(47, 107, 30, 0.08);
-  --tone-wash-soft: rgba(97, 223, 255, 0.08);
-  --section-panel-bg: rgba(255, 255, 255, 0.68);
-  --section-panel-bg-strong: rgba(255, 255, 255, 0.86);
-  --section-panel-border: rgba(8, 16, 13, 0.14);
-  --section-panel-shadow: 0 18px 38px rgba(8, 16, 13, 0.1);
-  --section-chip-bg: rgba(47, 107, 30, 0.08);
-  --section-chip-border: rgba(47, 107, 30, 0.24);
-  --color-surface: #F3F6EE;
-  --color-surface-rgb: 243, 246, 238;
+  --tone-text: #F3F6EE;
+  --tone-muted: #9EA9A1;
+  --tone-heading: #F3F6EE;
+  --tone-accent: #C8FF2E;
+  --tone-accent-rgb: 200, 255, 46;
+  --tone-grid-rgb: 243, 246, 238;
+  --tone-wash-strong: rgba(200, 255, 46, 0.08);
+  --tone-wash-soft: rgba(97, 223, 255, 0.07);
+  --section-panel-bg: rgba(20, 27, 29, 0.72);
+  --section-panel-bg-strong: rgba(20, 27, 29, 0.88);
+  --section-panel-border: rgba(243, 246, 238, 0.14);
+  --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.3);
+  --section-chip-bg: rgba(200, 255, 46, 0.08);
+  --section-chip-border: rgba(200, 255, 46, 0.24);
+  --color-surface: var(--surface-tone-hero-light);
+  --color-surface-rgb: 6, 8, 11;
   --color-on-surface: var(--tone-text);
-  --color-on-surface-rgb: 8, 16, 13;
+  --color-on-surface-rgb: 243, 246, 238;
   --color-secondary-text: var(--tone-muted);
   --color-primary-brand: var(--tone-accent);
   --color-primary-brand-rgb: var(--tone-accent-rgb);
-  --color-sage: #2761A5;
-  --color-sage-rgb: 39, 97, 165;
-  --color-accent-brown: #08100D;
+  --color-sage: #61DFFF;
+  --color-sage-rgb: 97, 223, 255;
+  --color-accent-brown: #F3F6EE;
 }
 
 .tonePastelBlue {
@@ -182,8 +153,8 @@
   --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.32);
   --section-chip-bg: rgba(97, 223, 255, 0.08);
   --section-chip-border: rgba(97, 223, 255, 0.24);
-  --color-surface: #111814;
-  --color-surface-rgb: 17, 24, 20;
+  --color-surface: var(--surface-tone-pastel-peach);
+  --color-surface-rgb: 20, 27, 29;
   --color-on-surface: var(--tone-text);
   --color-on-surface-rgb: 243, 246, 238;
   --color-secondary-text: var(--tone-muted);
@@ -224,30 +195,30 @@
 
 .tonePastelCream {
   --section-bg: var(--surface-tone-pastel-cream);
-  --tone-text: #08100D;
-  --tone-muted: #435046;
-  --tone-heading: #08100D;
-  --tone-accent: #2F6B1E;
-  --tone-accent-rgb: 47, 107, 30;
-  --tone-grid-rgb: 8, 16, 13;
-  --tone-wash-strong: rgba(47, 107, 30, 0.08);
-  --tone-wash-soft: rgba(97, 223, 255, 0.08);
-  --section-panel-bg: rgba(255, 255, 255, 0.68);
-  --section-panel-bg-strong: rgba(255, 255, 255, 0.86);
-  --section-panel-border: rgba(8, 16, 13, 0.14);
-  --section-panel-shadow: 0 18px 38px rgba(8, 16, 13, 0.1);
-  --section-chip-bg: rgba(47, 107, 30, 0.08);
-  --section-chip-border: rgba(47, 107, 30, 0.24);
-  --color-surface: #F3F6EE;
-  --color-surface-rgb: 243, 246, 238;
+  --tone-text: #F3F6EE;
+  --tone-muted: #9EA9A1;
+  --tone-heading: #F3F6EE;
+  --tone-accent: #C8FF2E;
+  --tone-accent-rgb: 200, 255, 46;
+  --tone-grid-rgb: 243, 246, 238;
+  --tone-wash-strong: rgba(200, 255, 46, 0.08);
+  --tone-wash-soft: rgba(97, 223, 255, 0.07);
+  --section-panel-bg: rgba(20, 27, 29, 0.72);
+  --section-panel-bg-strong: rgba(20, 27, 29, 0.88);
+  --section-panel-border: rgba(243, 246, 238, 0.14);
+  --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.3);
+  --section-chip-bg: rgba(200, 255, 46, 0.08);
+  --section-chip-border: rgba(200, 255, 46, 0.24);
+  --color-surface: var(--surface-tone-pastel-cream);
+  --color-surface-rgb: 13, 18, 22;
   --color-on-surface: var(--tone-text);
-  --color-on-surface-rgb: 8, 16, 13;
+  --color-on-surface-rgb: 243, 246, 238;
   --color-secondary-text: var(--tone-muted);
   --color-primary-brand: var(--tone-accent);
   --color-primary-brand-rgb: var(--tone-accent-rgb);
-  --color-sage: #2761A5;
-  --color-sage-rgb: 39, 97, 165;
-  --color-accent-brown: #08100D;
+  --color-sage: #61DFFF;
+  --color-sage-rgb: 97, 223, 255;
+  --color-accent-brown: #F3F6EE;
 }
 
 .fullHeight {

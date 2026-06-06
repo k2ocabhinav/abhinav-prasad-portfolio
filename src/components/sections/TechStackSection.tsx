@@ -5,6 +5,7 @@ import { useRef } from "react";
 import type { SectionBlendStyle, SectionTone } from "@/types";
 import { techCategories } from "@/data/techStack";
 import { useCardTilt } from "@/hooks/useCardTilt";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
 import { renderIcon } from "@/lib/utils";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -24,13 +25,11 @@ interface TechStackSectionProps {
 
 export default function TechStackSection({
   tone,
-  blendTopFrom,
-  blendBottomTo,
-  blendStyle,
 }: TechStackSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: prefersReducedMotion ? undefined : sectionRef,
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
@@ -40,14 +39,11 @@ export default function TechStackSection({
     <SectionWrapper
       id="stack"
       tone={tone}
-      blendTopFrom={blendTopFrom}
-      blendBottomTo={blendBottomTo}
-      blendStyle={blendStyle}
     >
       <div ref={sectionRef} className={`grid-12 ${styles.headerGrid}`}>
         <div className="col-4">
           <motion.h2
-            style={{ y: headingY }}
+            style={{ y: prefersReducedMotion ? 0 : headingY }}
             className={styles.heading}
           >
             <FlipRevealText
@@ -62,7 +58,7 @@ export default function TechStackSection({
               tokenClassName={styles.headingFlipToken}
             />
           </motion.h2>
-          <motion.p className={styles.callout} style={{ y: calloutY }}>
+          <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
             <FlipRevealText
               text="Cloud-native by default."
               mode="word"
@@ -100,17 +96,18 @@ function TechCard({
 }: {
   item: (typeof techCategories)[number];
 }) {
-  const { ref: tiltRef, tilt } = useCardTilt(3);
+  const prefersReducedMotion = useReducedMotion();
+  const { ref: tiltRef, tilt } = useCardTilt(1.5);
 
   return (
     <motion.div
-      ref={tiltRef}
+      ref={prefersReducedMotion ? undefined : tiltRef}
       variants={staggerItem}
-      animate={{ rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
+      animate={prefersReducedMotion ? {} : { rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
       transition={tiltSpring}
       style={{ transformPerspective: 600 }}
       className={styles.card}
-      whileHover={{
+      whileHover={prefersReducedMotion ? undefined : {
         y: -3,
         scale: 1.01,
       }}

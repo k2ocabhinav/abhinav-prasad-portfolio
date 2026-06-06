@@ -33,41 +33,12 @@ export default function Home() {
           backgroundColor: "transparent",
         }}
       >
-        <AboutSection
-          tone="pastel-cream"
-          blendTopFrom="hero-light"
-          blendBottomTo="pastel-blue"
-          blendStyle="bold"
-        />
-        <ExperienceSection
-          tone="pastel-blue"
-          blendTopFrom="pastel-cream"
-          blendBottomTo="pastel-blush"
-          blendStyle="bold"
-        />
-        <WorksSection
-          tone="pastel-blush"
-          blendTopFrom="pastel-blue"
-          blendBottomTo="pastel-peach"
-          blendStyle="bold"
-        />
-        <TechStackSection
-          tone="pastel-peach"
-          blendTopFrom="pastel-blush"
-          blendBottomTo="pastel-mint"
-          blendStyle="bold"
-        />
-        <PresenceSection
-          tone="pastel-mint"
-          blendTopFrom="pastel-peach"
-          blendBottomTo="hero-light"
-          blendStyle="bold"
-        />
-        <ContactSection
-          tone="hero-light"
-          blendTopFrom="pastel-mint"
-          blendStyle="bold"
-        />
+        <AboutSection tone="pastel-cream" />
+        <ExperienceSection tone="pastel-blue" />
+        <WorksSection tone="pastel-blush" />
+        <TechStackSection tone="pastel-peach" />
+        <PresenceSection tone="pastel-mint" />
+        <ContactSection tone="hero-light" />
 
         {/* Footer */}
         <Footer />

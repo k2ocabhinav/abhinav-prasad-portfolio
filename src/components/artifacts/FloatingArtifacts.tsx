@@ -101,6 +101,11 @@ export default function FloatingArtifacts() {
           continue;
         }
 
+        if (reducedMotion) {
+          node.style.transform = "none";
+          continue;
+        }
+
         const seed = hashSeed(artifact.id);
         const phase = (seed % 360) * (Math.PI / 180);
         const timeSeconds = (frozenForTests ? 0 : time) / 1000;

@@ -2,12 +2,19 @@
   position: relative;
 }
 
+.contactSpecSheet {
+  max-width: 48rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
 .heading {
   font-family: var(--font-display);
   font-style: normal;
   font-weight: 700;
-  font-size: 3.75rem;
+  font-size: clamp(2.75rem, 12vw, 3.75rem);
   margin-bottom: 0.8rem;
+  line-height: 1.05;
   letter-spacing: 0;
   color: color-mix(in srgb, var(--color-on-surface) 86%, var(--color-primary-brand) 14%);
 }
@@ -61,9 +68,11 @@
   font-family: var(--font-display);
   font-style: normal;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: clamp(0.95rem, 4vw, 1.5rem);
   color: var(--color-accent-brown);
   transition: opacity 0.3s ease;
+  overflow-wrap: normal;
+  white-space: nowrap;
 }
 
 .emailLink:hover {

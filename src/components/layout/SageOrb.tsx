@@ -5,6 +5,7 @@ import { useMousePosition } from "@/hooks/useMousePosition";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { sections } from "@/data/navigation";
 import { orbSpring } from "@/lib/animations";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "./SageOrb.module.css";
 
 // =============================================================================
@@ -15,8 +16,13 @@ export default function SageOrb() {
   const mousePos = useMousePosition();
   const sectionIds = sections.map((s) => s.id);
   const activeSection = useScrollSpy(sectionIds);
+  const prefersReducedMotion = useReducedMotion();
 
   const isContact = activeSection === "contact";
+
+  if (prefersReducedMotion) {
+    return null;
+  }
 
   return (
     <motion.div

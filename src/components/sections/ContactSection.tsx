@@ -5,6 +5,8 @@ import { useRef } from "react";
 import { Mail } from "lucide-react";
 import type { SectionBlendStyle, SectionTone } from "@/types";
 import { personal } from "@/data/personal";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { cn } from "@/lib/utils";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import FlipRevealText from "@/components/ui/FlipRevealText";
@@ -49,13 +51,11 @@ interface ContactSectionProps {
 
 export default function ContactSection({
   tone,
-  blendTopFrom,
-  blendBottomTo,
-  blendStyle,
 }: ContactSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: prefersReducedMotion ? undefined : sectionRef,
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
@@ -69,80 +69,83 @@ export default function ContactSection({
       id="contact"
       tone={tone}
       texture="ruled"
-      blendTopFrom={blendTopFrom}
-      blendBottomTo={blendBottomTo}
-      blendStyle={blendStyle}
       fullHeight
       centered
     >
-      <div ref={sectionRef} className={styles.contactMotionRoot}>
-        <motion.h2
-          style={{ y: headingY }}
-          className={styles.heading}
-        >
-          <FlipRevealText
-            text="Let's build."
-            mode="char"
-            progress={scrollYProgress}
-            window={[0.16, 0.3]}
-            holdUntil={0.84}
-            stagger={0.028}
-            perspective={910}
-            className={styles.headingFlip}
-            tokenClassName={styles.headingFlipToken}
-          />
-        </motion.h2>
-        <motion.p className={styles.callout} style={{ y: calloutY }}>
-          <FlipRevealText
-            text="From idea to shipped system."
-            mode="word"
-            progress={scrollYProgress}
-            window={[0.24, 0.4]}
-            holdUntil={0.82}
-            stagger={0.03}
-            perspective={860}
-            className={styles.calloutFlip}
-            tokenClassName={styles.calloutFlipToken}
-          />
-        </motion.p>
-
-        <div className={styles.ctaContainer}>
-          <MagneticButton
-            href={primaryCtaHref}
-            download={Boolean(personal.resumeHref)}
+      <div className={cn("spec-sheet", styles.contactSpecSheet)}>
+        <div className="spec-header">
+          <span>SPEC-02 // ROUTING_GATEWAY</span>
+          <span>STATUS: ONLINE</span>
+        </div>
+        <div ref={sectionRef} className={cn("spec-body", styles.contactMotionRoot)}>
+          <motion.h2
+            style={{ y: prefersReducedMotion ? 0 : headingY }}
+            className={styles.heading}
           >
-            {primaryCtaLabel}
-          </MagneticButton>
+            <FlipRevealText
+              text="Let's build."
+              mode="char"
+              progress={scrollYProgress}
+              window={[0.16, 0.3]}
+              holdUntil={0.84}
+              stagger={0.028}
+              perspective={910}
+              className={styles.headingFlip}
+              tokenClassName={styles.headingFlipToken}
+            />
+          </motion.h2>
+          <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
+            <FlipRevealText
+              text="From idea to shipped system."
+              mode="word"
+              progress={scrollYProgress}
+              window={[0.24, 0.4]}
+              holdUntil={0.82}
+              stagger={0.03}
+              perspective={860}
+              className={styles.calloutFlip}
+              tokenClassName={styles.calloutFlipToken}
+            />
+          </motion.p>
 
-          <div className={styles.contactLinks}>
-            <a href={`mailto:${personal.email}`} className={styles.emailLink}>
-              {personal.email}
-            </a>
-            <div className={styles.socials}>
-              {personal.socials.map((social, i) => (
-                <motion.a
-                  key={i}
-                  href={social.href}
-                  target={social.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    social.href.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
-                  }
-                  whileHover={{ y: -5 }}
-                  aria-label={social.label}
-                  className={styles.socialIcon}
-                >
-                  {socialIcons[social.platform]}
-                </motion.a>
-              ))}
+          <div className={styles.ctaContainer}>
+            <MagneticButton
+              href={primaryCtaHref}
+              download={Boolean(personal.resumeHref)}
+            >
+              {primaryCtaLabel}
+            </MagneticButton>
+
+            <div className={styles.contactLinks}>
+              <a href={`mailto:${personal.email}`} className={styles.emailLink}>
+                {personal.email}
+              </a>
+              <div className={styles.socials}>
+                {personal.socials.map((social, i) => (
+                  <motion.a
+                    key={i}
+                    href={social.href}
+                    target={social.href.startsWith("http") ? "_blank" : undefined}
+                    rel={
+                      social.href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    whileHover={prefersReducedMotion ? undefined : { y: -5 }}
+                    aria-label={social.label}
+                    className={styles.socialIcon}
+                  >
+                    {socialIcons[social.platform]}
+                  </motion.a>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Footer tagline */}
-        <div className={styles.footerTagline}>
-          <p className={styles.taglineText}>{personal.footerTagline}</p>
+          {/* Footer tagline */}
+          <div className={styles.footerTagline}>
+            <p className={styles.taglineText}>{personal.footerTagline}</p>
+          </div>
         </div>
       </div>
     </SectionWrapper>

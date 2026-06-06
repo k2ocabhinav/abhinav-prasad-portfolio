@@ -94,6 +94,10 @@ export default function FlipRevealText({
     });
   }, [tokens, stagger, windowRange, holdWindowEnd]);
 
+  if (prefersReducedMotion) {
+    return <span className={className}>{text}</span>;
+  }
+
   return (
     <span
       className={cn(styles.root, className)}

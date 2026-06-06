@@ -5,6 +5,7 @@ import { useRef } from "react";
 import type { SectionBlendStyle, SectionTone } from "@/types";
 import { personal } from "@/data/personal";
 import { presenceNodes } from "@/data/presence";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import LiveClock from "@/components/ui/LiveClock";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import FlipRevealText from "@/components/ui/FlipRevealText";
@@ -23,13 +24,11 @@ interface PresenceSectionProps {
 
 export default function PresenceSection({
   tone,
-  blendTopFrom,
-  blendBottomTo,
-  blendStyle,
 }: PresenceSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: prefersReducedMotion ? undefined : sectionRef,
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
@@ -39,13 +38,10 @@ export default function PresenceSection({
     <SectionWrapper
       id="presence"
       tone={tone}
-      blendTopFrom={blendTopFrom}
-      blendBottomTo={blendBottomTo}
-      blendStyle={blendStyle}
     >
       <div ref={sectionRef} className={`grid-12 ${styles.presenceGrid}`}>
         <div className="col-4">
-          <motion.h2 style={{ y: headingY }} className={styles.heading}>
+          <motion.h2 style={{ y: prefersReducedMotion ? 0 : headingY }} className={styles.heading}>
             <FlipRevealText
               text="Presence"
               mode="char"
@@ -58,7 +54,7 @@ export default function PresenceSection({
               tokenClassName={styles.headingFlipToken}
             />
           </motion.h2>
-          <motion.p className={styles.callout} style={{ y: calloutY }}>
+          <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
             <FlipRevealText
               text="Signals across time zones."
               mode="word"
@@ -91,7 +87,7 @@ export default function PresenceSection({
                 style={{ top: node.top, left: node.left }}
               >
                 <div className={styles.nodeCenter}>
-                  {node.active && (
+                  {node.active && !prefersReducedMotion && (
                     <motion.div
                       animate={{
                         scale: [1, 2, 1],

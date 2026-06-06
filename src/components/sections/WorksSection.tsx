@@ -8,6 +8,7 @@ import { ChevronRight } from "lucide-react";
 import type { SectionBlendStyle, SectionTone } from "@/types";
 import { projects } from "@/data/projects";
 import { useCardTilt } from "@/hooks/useCardTilt";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
 import { renderIcon, cn } from "@/lib/utils";
 import Tag from "@/components/ui/Tag";
@@ -28,13 +29,11 @@ interface WorksSectionProps {
 
 export default function WorksSection({
   tone,
-  blendTopFrom,
-  blendBottomTo,
-  blendStyle,
 }: WorksSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: prefersReducedMotion ? undefined : sectionRef,
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
@@ -44,13 +43,10 @@ export default function WorksSection({
     <SectionWrapper
       id="work"
       tone={tone}
-      blendTopFrom={blendTopFrom}
-      blendBottomTo={blendBottomTo}
-      blendStyle={blendStyle}
     >
       <div ref={sectionRef} className={styles.sectionHeader}>
         <motion.h2
-          style={{ y: headingY }}
+          style={{ y: prefersReducedMotion ? 0 : headingY }}
           className={styles.heading}
         >
           <FlipRevealText
@@ -65,7 +61,7 @@ export default function WorksSection({
             tokenClassName={styles.headingFlipToken}
           />
         </motion.h2>
-        <motion.p className={styles.callout} style={{ y: calloutY }}>
+        <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
           <FlipRevealText
             text="Systems that ship."
             mode="word"
@@ -98,7 +94,8 @@ export default function WorksSection({
 // ─── WorkCard Sub-component ─────────────────────────────────────────
 
 function WorkCard({ project }: { project: (typeof projects)[number] }) {
-  const { ref: tiltRef, tilt } = useCardTilt(3);
+  const prefersReducedMotion = useReducedMotion();
+  const { ref: tiltRef, tilt } = useCardTilt(1.5);
   const screenshots = project.screenshots ?? [];
   const [heroScreenshot, ...supportScreenshots] = screenshots;
   const hasScreenshots = Boolean(heroScreenshot);
@@ -113,9 +110,9 @@ function WorkCard({ project }: { project: (typeof projects)[number] }) {
     <motion.div variants={staggerItem} className={styles.workCard}>
       {/* Visual Panel */}
       <motion.div
-        ref={tiltRef}
-        animate={{ rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
-        whileHover={{ scale: 1.01 }}
+        ref={prefersReducedMotion ? undefined : tiltRef}
+        animate={prefersReducedMotion ? {} : { rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
+        whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
         transition={tiltSpring}
         style={{ transformPerspective: 800 }}
         className={cn(
@@ -160,7 +157,7 @@ function WorkCard({ project }: { project: (typeof projects)[number] }) {
           <>
             <div className={`dot-grid ${styles.dotOverlay}`} />
             <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileHover={prefersReducedMotion ? undefined : { scale: 1.1, rotate: 5 }}
               className={styles.iconWrapper}
             >
               {renderIcon(project.icon, {

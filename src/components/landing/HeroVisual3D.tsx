@@ -18,7 +18,7 @@ interface HeroVisual3DProps {
 export default function HeroVisual3D({
   reduceMotion = false,
 }: HeroVisual3DProps) {
-  const { ref: tiltRef, tilt } = useCardTilt(8);
+  const { ref: tiltRef, tilt } = useCardTilt(4);
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {

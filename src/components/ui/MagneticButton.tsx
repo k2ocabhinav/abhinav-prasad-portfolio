@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { useMagneticHover } from "@/hooks/useMagneticHover";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { magneticSpring } from "@/lib/animations";
 import type { ReactNode, RefObject } from "react";
 import styles from "./MagneticButton.module.css";
@@ -25,14 +26,15 @@ export default function MagneticButton({
   className = "",
   variant = "outline",
 }: MagneticButtonProps) {
-  const { ref, offset } = useMagneticHover(0.08);
+  const prefersReducedMotion = useReducedMotion();
+  const { ref, offset } = useMagneticHover(0.04);
 
   return (
     <motion.a
-      ref={ref as RefObject<HTMLAnchorElement>}
+      ref={prefersReducedMotion ? undefined : (ref as RefObject<HTMLAnchorElement>)}
       href={href}
       download={download}
-      animate={{ x: offset.x, y: offset.y }}
+      animate={prefersReducedMotion ? {} : { x: offset.x, y: offset.y }}
       transition={magneticSpring}
       className={`${styles.magneticButton} ${styles[variant]} ${className}`}
     >

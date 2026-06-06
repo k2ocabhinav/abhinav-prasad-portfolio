@@ -100,12 +100,12 @@
   --color-accent-sand-rgb: 214, 228, 210;
 
   /* Section continuity tones */
-  --surface-tone-hero-light: #F3F6EE;
-  --surface-tone-pastel-blue: #0D1216;
-  --surface-tone-pastel-blush: #06080B;
-  --surface-tone-pastel-peach: #111814;
-  --surface-tone-pastel-mint: #141B1D;
-  --surface-tone-pastel-cream: #F3F6EE;
+  --surface-tone-hero-light: var(--color-ink);
+  --surface-tone-pastel-blue: var(--color-graphite);
+  --surface-tone-pastel-blush: var(--color-ink);
+  --surface-tone-pastel-peach: var(--color-elevated);
+  --surface-tone-pastel-mint: var(--color-elevated);
+  --surface-tone-pastel-cream: var(--color-graphite);
 
   /* Z-index scale */
   --z-artifact: 75;
@@ -129,6 +129,7 @@
 }
 
 html {
+  position: relative;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -296,42 +297,75 @@ button {
   transform-origin: left;
 }
 
-.section-transition-band {
+/* Spec Sheet Panel */
+.spec-sheet {
+  background-color: #F3F6EE;
+  color: #08100D;
+  border: 1px solid rgba(8, 16, 13, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 24px 58px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
   position: relative;
   width: 100%;
-  height: clamp(5rem, 11vw, 8rem);
-  margin-top: -1px;
-  margin-bottom: -1px;
-  overflow: hidden;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--tone-from) 92%, var(--tone-to) 8%) 0%,
-      color-mix(in srgb, var(--tone-from) 52%, var(--tone-to) 48%) 54%,
-      var(--tone-to) 100%
-    );
-  transform-origin: left;
-  box-shadow:
-    inset 0 12px 24px rgba(var(--color-on-surface-rgb), 0.1),
-    inset 0 -12px 22px rgba(var(--color-on-surface-rgb), 0.12);
+  max-width: 100%;
+
+  /* Scoped color tokens for light mode children inside dark parent */
+  --color-surface: #F3F6EE;
+  --color-surface-rgb: 243, 246, 238;
+  --color-on-surface: #08100D;
+  --color-on-surface-rgb: 8, 16, 13;
+  --color-secondary-text: #435046;
+  --color-primary-brand: #2F6B1E;
+  --color-primary-brand-rgb: 47, 107, 30;
+  --color-sage: #2761A5;
+  --color-sage-rgb: 39, 97, 165;
+  --color-accent-brown: #08100D;
 }
 
-.section-transition-band::before {
+.spec-sheet::before {
   content: "";
   position: absolute;
-  inset: -15% 0;
-  background:
-    radial-gradient(
-      ellipse at 18% 30%,
-      rgba(var(--color-primary-brand-rgb), 0.12) 0%,
-      transparent 45%
-    ),
-    radial-gradient(
-      ellipse at 82% 64%,
-      rgba(var(--color-sage-rgb), 0.1) 0%,
-      transparent 46%
-    );
+  inset: 0;
+  background-image: radial-gradient(rgba(8, 16, 13, 0.05) 1px, transparent 1px);
+  background-size: 16px 16px;
   pointer-events: none;
+  z-index: 0;
+}
+
+.spec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1.75rem;
+  background-color: rgba(8, 16, 13, 0.04);
+  border-bottom: 1px solid rgba(8, 16, 13, 0.08);
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: rgba(8, 16, 13, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.spec-body {
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 520px) {
+  .spec-header {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+  }
+
+  .spec-body {
+    padding: 1.5rem;
+  }
 }
 
 /* ─── Custom Scrollbar ───────────────────────────────────────────── */

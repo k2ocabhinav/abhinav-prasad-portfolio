@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import type { SectionBlendStyle, SectionTone } from "@/types";
 import { experiences } from "@/data/experience";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -23,13 +24,11 @@ interface ExperienceSectionProps {
 
 export default function ExperienceSection({
   tone,
-  blendTopFrom,
-  blendBottomTo,
-  blendStyle,
 }: ExperienceSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: prefersReducedMotion ? undefined : sectionRef,
     offset: ["start end", "end start"],
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
@@ -39,14 +38,11 @@ export default function ExperienceSection({
     <SectionWrapper
       id="experience"
       tone={tone}
-      blendTopFrom={blendTopFrom}
-      blendBottomTo={blendBottomTo}
-      blendStyle={blendStyle}
     >
       <div ref={sectionRef} className={`grid-12 ${styles.experienceGrid}`}>
         <div className="col-4">
           <motion.h2
-            style={{ y: headingY }}
+            style={{ y: prefersReducedMotion ? 0 : headingY }}
             className={styles.heading}
           >
             <FlipRevealText
@@ -61,7 +57,7 @@ export default function ExperienceSection({
               tokenClassName={styles.headingFlipToken}
             />
           </motion.h2>
-          <motion.p className={styles.callout} style={{ y: calloutY }}>
+          <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
             <FlipRevealText
               text="Built to stay resilient."
               mode="word"
