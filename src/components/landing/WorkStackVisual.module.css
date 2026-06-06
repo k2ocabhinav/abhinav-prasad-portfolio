@@ -6,6 +6,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
+  min-height: 0;
   min-width: 0;
   padding: 1.5rem 0 1.5rem 1rem;
 }
@@ -13,7 +15,8 @@
 .card {
   position: relative;
   width: 100%;
-  min-height: 35rem;
+  min-height: min(35rem, calc(100svh - 11rem));
+  max-height: calc(100svh - 9rem);
   aspect-ratio: 1.18 / 1;
   border-radius: var(--landing-glass-radius);
   background:
@@ -319,6 +322,49 @@
 
   .typePanel span {
     font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 860px) {
+  .visual {
+    padding: 0.25rem 0 0.25rem 0.75rem;
+  }
+
+  .card {
+    min-height: 0;
+    height: min(58svh, 31rem);
+    max-height: calc(100svh - 7rem);
+    aspect-ratio: auto;
+  }
+
+  .cardMeta {
+    inset: 0.85rem 0.85rem auto;
+  }
+
+  .visualContent {
+    gap: 0.75rem;
+    min-height: 0;
+    padding: 3.35rem 1rem 0.9rem;
+  }
+
+  .screenshotFrame,
+  .systemMap,
+  .typePanel {
+    min-height: 0;
+  }
+
+  .systemNode {
+    width: 4.1rem;
+    height: 4.1rem;
+  }
+
+  .nodePrimary {
+    width: 6rem;
+    height: 6rem;
+  }
+
+  .visualFooter {
+    font-size: 9px;
   }
 }
 

@@ -13,9 +13,10 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100svh;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   padding: 0 var(--content-padding-x);
   overflow: hidden;
 }
@@ -27,15 +28,16 @@
   color: var(--color-primary-brand);
   text-transform: uppercase;
   font-size: 11px;
-  padding-top: 3rem;
-  padding-bottom: 1rem;
+  padding-top: clamp(1.25rem, 3svh, 3rem);
+  padding-bottom: clamp(0.4rem, 1svh, 1rem);
 }
 
 .workStackGrid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
-  flex: 1;
+  min-height: 0;
+  height: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
@@ -53,7 +55,7 @@
   width: 100%;
   height: 2px;
   background: rgba(var(--color-on-surface-rgb), 0.08);
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 2.3svh, 2rem);
 }
 
 .progressFill {
@@ -370,12 +372,32 @@
 @media (max-width: 767px) {
   .workStackOuter {
     height: auto !important;
+    min-height: 0 !important;
   }
 
   .workStackSticky {
     position: relative;
     height: auto;
     display: none;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 860px) {
+  .workStackSticky {
+    padding-inline: clamp(2.5rem, 5vw, var(--content-padding-x));
+  }
+
+  .sectionLabel {
+    padding-top: 0.95rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .workStackGrid {
+    gap: clamp(2rem, 3.8vw, 3.6rem);
+  }
+
+  .progressBar {
+    margin-bottom: 0.85rem;
   }
 }
 

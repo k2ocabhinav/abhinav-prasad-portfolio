@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValueEvent } from "motion/react";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useScrollLinkedIndex } from "@/hooks/useScrollLinkedIndex";
@@ -96,35 +96,22 @@ function StoryCard({
 export default function LandingFrame2WorkStack({
   staticMode = false,
 }: LandingFrame2WorkStackProps) {
-  const { containerRef, activeIndex, progress } = useScrollLinkedIndex({
+  const { containerRef, activeIndex, activeProgress, progress } = useScrollLinkedIndex({
     itemCount: landingStories.length,
     disabled: staticMode,
   });
-  const [activeBeatIndex, setActiveBeatIndex] = useState(0);
   const [isSectionActive, setIsSectionActive] = useState(!staticMode);
-
-  useMotionValueEvent(progress, "change", (value) => {
-    if (staticMode) return;
-
-    const storyIndex = Math.min(
-      Math.floor(value * landingStories.length),
-      landingStories.length - 1
-    );
-    const story = landingStories[storyIndex];
-    const beatCount = story.proofBeats.length;
-    const localProgress = Math.max(
-      0,
-      Math.min(0.999, value * landingStories.length - storyIndex)
-    );
-    const nextBeatIndex = Math.min(
-      Math.floor(localProgress * beatCount),
-      beatCount - 1
-    );
-
-    setActiveBeatIndex((previous) =>
-      previous === nextBeatIndex ? previous : nextBeatIndex
-    );
-  });
+  const activeStory = landingStories[activeIndex];
+  const activeStoryProgress = Math.max(
+    0,
+    Math.min(0.999, activeProgress * landingStories.length - activeIndex)
+  );
+  const activeBeatIndex = staticMode
+    ? 0
+    : Math.min(
+        Math.floor(activeStoryProgress * activeStory.proofBeats.length),
+        activeStory.proofBeats.length - 1
+      );
 
   useEffect(() => {
     if (staticMode) return;
@@ -176,7 +163,10 @@ export default function LandingFrame2WorkStack({
         id="story-vignettes"
         className={styles.workStackOuter}
         data-case-active={isSectionActive ? "true" : "false"}
-        style={{ height: `${landingStories.length * 100}vh` }}
+        style={{
+          minHeight: `${(landingStories.length + 1) * 100}vh`,
+          height: `${(landingStories.length + 1) * 100}svh`,
+        }}
         aria-label="Featured project stories"
       >
         <div className={styles.workStackSticky}>

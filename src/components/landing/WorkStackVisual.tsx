@@ -76,7 +76,7 @@ export default function WorkStackVisual({
 
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${story.id}-${activeBeat.label}`}
+            key={story.id}
             className={styles.visualContent}
             initial={{ opacity: 0, y: 18, scale: 0.965 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -96,7 +96,7 @@ export default function WorkStackVisual({
             ) : null}
 
             {story.visual.kind === "system" ? (
-              <div className={styles.systemMap} aria-label={story.visual.alt}>
+              <div className={styles.systemMap} role="img" aria-label={story.visual.alt}>
                 <span className={`${styles.systemNode} ${styles.nodePrimary}`}>
                   {renderIcon(story.icon, { size: 44, strokeWidth: 0.8 })}
                 </span>
@@ -109,7 +109,7 @@ export default function WorkStackVisual({
             ) : null}
 
             {story.visual.kind === "type" ? (
-              <div className={styles.typePanel} aria-label={story.visual.alt}>
+              <div className={styles.typePanel} role="img" aria-label={story.visual.alt}>
                 <span>{story.claim}</span>
               </div>
             ) : null}

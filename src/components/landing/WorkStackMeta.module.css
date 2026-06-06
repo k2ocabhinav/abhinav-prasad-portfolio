@@ -7,6 +7,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
+  height: 100%;
   min-width: 0;
   padding: 2rem 0;
 }
@@ -21,6 +22,7 @@
 }
 
 .metaHeading {
+  display: none;
   color: var(--color-primary-brand);
 }
 
@@ -66,11 +68,11 @@
   font-family: var(--font-display);
   font-style: normal;
   font-weight: 800;
-  font-size: 3.4rem;
+  font-size: clamp(2.8rem, 5.8svh, 3.4rem);
   line-height: 0.94;
   letter-spacing: 0;
   color: var(--color-on-surface);
-  max-width: 11ch;
+  max-width: 14ch;
   overflow-wrap: break-word;
 }
 
@@ -237,11 +239,11 @@
 
 @media (min-width: 1280px) {
   .projectNumber {
-    font-size: 10rem;
+    font-size: clamp(7rem, 12svh, 10rem);
   }
 
   .projectClaim {
-    font-size: 4.4rem;
+    font-size: clamp(3.2rem, 6.2svh, 4.4rem);
   }
 }
 
@@ -258,6 +260,73 @@
   .projectClaim {
     max-width: 14ch;
     font-size: 2.8rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 860px) {
+  .meta {
+    gap: 0.55rem;
+    padding: 0.4rem 0;
+  }
+
+  .projectNumber {
+    top: -2.4rem;
+    font-size: clamp(4.8rem, 10svh, 6.6rem);
+  }
+
+  .projectEyebrow {
+    margin-bottom: 0.48rem;
+  }
+
+  .projectClaim {
+    max-width: 15ch;
+    font-size: clamp(2.25rem, 5.4svh, 2.95rem);
+    line-height: 0.94;
+  }
+
+  .projectTitle {
+    margin-top: 0.72rem;
+  }
+
+  .projectDescription {
+    margin-top: 0.42rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    max-width: 30rem;
+  }
+
+  .proofTicker {
+    gap: 0.72rem;
+    min-height: 6rem;
+    margin-top: 0.72rem;
+    padding: 0.72rem;
+  }
+
+  .proofTickerMeta {
+    min-width: 1.8rem;
+    font-size: 1.42rem;
+  }
+
+  .proofShort {
+    margin-top: 0.42rem;
+    font-size: 1.08rem;
+    line-height: 1.12;
+  }
+
+  .proofDetail {
+    display: none;
+  }
+
+  .beatRail {
+    margin-top: 0.62rem;
+  }
+
+  .tags {
+    margin-top: 0.78rem;
+  }
+
+  .storyNote {
+    display: none;
   }
 }
 

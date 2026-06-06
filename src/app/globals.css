@@ -207,6 +207,8 @@ button {
   }
 
   .deferred-section-deep {
+    content-visibility: visible;
+    contain: none;
     contain-intrinsic-size: auto 3600px;
   }
 }
