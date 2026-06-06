@@ -17,16 +17,17 @@ import styles from "./AnimatedName.module.css";
 // =============================================================================
 
 const HOVER_COLORS = [
-  "#C8FF2E",
-  "#61DFFF",
-  "#C8FF2E",
-  "#61DFFF",
-  "#C8FF2E",
-  "#61DFFF",
-  "#C8FF2E",
+  "#F8FF7A",
+  "#FF6B4A",
+  "#72F1C8",
+  "#F8FF7A",
+  "#FF6B4A",
+  "#72F1C8",
+  "#F8FF7A",
 ] as const;
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const PORTAL_LETTER_INDEX = 6;
 
 interface AnimatedNameProps {
   name: string;
@@ -93,13 +94,15 @@ export default function AnimatedName({
       ref={scope}
       className={styles.nameRow}
       data-home-hero-wordmark="true"
-      aria-hidden={triggerProps ? "true" : undefined}
     >
       {letters.map((letter, index) => {
         const hoverColor = HOVER_COLORS[index] ?? "#C8FF2E";
         const isHovered = hoveredIndex === index;
+        const isPortalLetter =
+          Boolean(portalTrigger && triggerProps) && index === PORTAL_LETTER_INDEX;
         const stageStyle = {
           ["--letter-color" as string]: hoverColor,
+          ["--letter-line" as string]: "#61DFFF",
         } as CSSProperties;
 
         const handlePointerEnter = (event: PointerEvent<HTMLSpanElement>) => {
@@ -116,6 +119,41 @@ export default function AnimatedName({
           setHoveredIndex((current) => (current === index ? null : current));
         };
 
+        const letterStage = (
+          <span
+            ref={(node) => {
+              stageRefs.current[index] = node;
+            }}
+            className={styles.letterStage}
+            style={stageStyle}
+            data-animated-letter-index={index}
+            data-hovered={isHovered ? "true" : "false"}
+            data-portal-letter={isPortalLetter ? "true" : "false"}
+          >
+            <span
+              className={styles.hoverAura}
+              data-letter-aura="true"
+              aria-hidden="true"
+            >
+              <span className={styles.hoverColorWash} />
+              <span className={styles.hoverAccentBar} />
+              <span className={styles.glowShardOne} />
+              <span className={styles.glowShardTwo} />
+            </span>
+
+            <span
+              className={`${styles.glyph} ${styles.editorialGlyph}`}
+              data-letter-layer="editorial"
+            >
+              {letter}
+            </span>
+
+            <span className={styles.scanSlice} aria-hidden="true" />
+            <span className={styles.cornerTop} aria-hidden="true" />
+            <span className={styles.cornerBottom} aria-hidden="true" />
+          </span>
+        );
+
         return (
           <span
             key={`${letter}-${index}`}
@@ -123,61 +161,33 @@ export default function AnimatedName({
             onPointerEnter={handlePointerEnter}
             onPointerLeave={handlePointerLeave}
           >
-            <span
-              ref={(node) => {
-                stageRefs.current[index] = node;
-              }}
-              className={styles.letterStage}
-              style={stageStyle}
-              data-animated-letter-index={index}
-              data-hovered={isHovered ? "true" : "false"}
-            >
-              <span
-                className={styles.hoverAura}
-                data-letter-aura="true"
-                aria-hidden="true"
+            {isPortalLetter && triggerProps ? (
+              <button
+                type="button"
+                className={styles.letterPortalButton}
+                aria-label="Open Beyond The Terminal"
+                data-animated-name="hero-trigger"
+                onPointerDown={triggerProps.onPointerDown}
+                onKeyDown={triggerProps.onKeyDown}
+                onClick={triggerProps.onClick}
+                onFocus={() => setHoveredIndex(index)}
+                onBlur={() => setHoveredIndex((current) => (current === index ? null : current))}
+                disabled={isTransitioning}
               >
-                <span className={styles.hoverColorWash} />
-                <span className={styles.hoverAccentBar} />
-              </span>
-
-              <span
-                className={`${styles.glyph} ${styles.editorialGlyph}`}
-                data-letter-layer="editorial"
-              >
-                {letter}
-              </span>
-
-              <span className={styles.scanSlice} aria-hidden="true" />
-              <span className={styles.cornerTop} aria-hidden="true" />
-              <span className={styles.cornerBottom} aria-hidden="true" />
-            </span>
+                {letterStage}
+              </button>
+            ) : (
+              letterStage
+            )}
           </span>
         );
       })}
     </span>
   );
 
-  if (!portalTrigger || triggerProps === null) {
-    return (
-      <span className={styles.nameShell} aria-label={name}>
-        {nameMarkup}
-      </span>
-    );
-  }
-
   return (
-    <button
-      type="button"
-      className={`${styles.nameShell} ${styles.nameTrigger}`}
-      aria-label={name}
-      data-animated-name="hero-trigger"
-      onPointerDown={triggerProps.onPointerDown}
-      onKeyDown={triggerProps.onKeyDown}
-      onClick={triggerProps.onClick}
-      disabled={isTransitioning}
-    >
+    <span className={styles.nameShell} aria-label={name}>
       {nameMarkup}
-    </button>
+    </span>
   );
 }

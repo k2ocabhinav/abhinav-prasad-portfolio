@@ -1,4 +1,132 @@
-import type { BeyondAct, BeyondCard, BeyondSymbol } from "@/types";
+import type { BeyondAct, BeyondAlbumItem, BeyondCard, BeyondSymbol } from "@/types";
+
+export const beyondPhotoWallIntro = {
+  eyebrow: "Hidden album",
+  title: "Beyond The Terminal",
+  deck: "Photos, people, notes, and the parts that don't fit inside a resume.",
+};
+
+export const beyondAlbumItems: BeyondAlbumItem[] = [
+  {
+    id: "hackathon-sprint",
+    kind: "event",
+    title: "48-hour build sprint",
+    caption:
+      "A hackathon frame for prototypes, pressure, and the small decisions that make teams move faster.",
+    tags: ["hackathon", "prototype", "team"],
+    meta: "Mumbai / overnight build",
+    color: "cobalt",
+    size: "hero",
+    image: {
+      alt: "Placeholder collage panel for a hackathon sprint photo.",
+      aspectRatio: "5 / 4",
+      dominantColor: "#245DFF",
+    },
+  },
+  {
+    id: "seminar-room",
+    kind: "photo",
+    title: "Room full of signals",
+    caption:
+      "Seminars, community rooms, and those fast conversations that turn into a better question.",
+    tags: ["seminar", "community"],
+    meta: "Add real event photo later",
+    color: "lemon",
+    size: "wide",
+    image: {
+      alt: "Placeholder wide panel for a seminar or community room photo.",
+      aspectRatio: "16 / 9",
+      dominantColor: "#FFE45E",
+    },
+  },
+  {
+    id: "quote-board",
+    kind: "quote",
+    title: "Borrowed fire",
+    caption:
+      "A quote slot for a developer, artist, or thinker worth keeping close to the work.",
+    tags: ["quote", "inspiration"],
+    quote: "Make the useful thing feel alive.",
+    meta: "Quote attribution goes here",
+    color: "pink",
+    size: "square",
+  },
+  {
+    id: "people-and-proof",
+    kind: "person",
+    title: "People I learn from",
+    caption:
+      "A simple place for photos with mentors, speakers, builders, and people who changed the room.",
+    tags: ["people", "learning", "moments"],
+    meta: "Name / event / year",
+    color: "mint",
+    size: "tall",
+    image: {
+      alt: "Placeholder portrait panel for a photo with people at an event.",
+      aspectRatio: "4 / 5",
+      dominantColor: "#7AF3C8",
+    },
+  },
+  {
+    id: "project-demo",
+    kind: "project",
+    title: "Demo table energy",
+    caption:
+      "Behind-the-scenes shots from demos, rough prototypes, experiments, and tiny wins.",
+    tags: ["demo", "project", "prototype"],
+    meta: "Prototype log",
+    color: "coral",
+    size: "wide",
+    image: {
+      alt: "Placeholder panel for a project demo table photo.",
+      aspectRatio: "16 / 10",
+      dominantColor: "#FF5A5F",
+    },
+  },
+  {
+    id: "meetup-notes",
+    kind: "event",
+    title: "Meetup afterglow",
+    caption:
+      "The small album space for travel, local meetups, quick notes, and hallway conversations.",
+    tags: ["meetup", "travel", "notes"],
+    meta: "City / meetup / memory",
+    color: "lilac",
+    size: "square",
+    image: {
+      alt: "Placeholder square panel for meetup and travel photos.",
+      aspectRatio: "1 / 1",
+      dominantColor: "#BDA8FF",
+    },
+  },
+  {
+    id: "big-room-moment",
+    kind: "person",
+    title: "The big room moment",
+    caption:
+      "For the occasional photo with someone important, without turning the page into a press release.",
+    tags: ["people", "event", "memory"],
+    meta: "Person / context",
+    color: "cobalt",
+    size: "tall",
+    image: {
+      alt: "Placeholder tall panel for a photo with a notable person.",
+      aspectRatio: "4 / 5",
+      dominantColor: "#245DFF",
+    },
+  },
+  {
+    id: "tiny-trick",
+    kind: "quote",
+    title: "Tiny trick, saved",
+    caption:
+      "A quick technique, note, or strange useful thing that deserves to live outside the formal portfolio.",
+    tags: ["trick", "note"],
+    quote: "Small details compound into trust.",
+    color: "lemon",
+    size: "square",
+  },
+];
 
 const beyondSymbolMark: BeyondSymbol = {
   id: "pastel-mist-mark",

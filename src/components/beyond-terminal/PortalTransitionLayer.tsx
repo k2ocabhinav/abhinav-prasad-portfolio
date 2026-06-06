@@ -21,7 +21,7 @@ function getTransitionCopy(intent: PortalTransitionIntent) {
       eyebrow: routeLabel,
       title: "Beyond The Terminal",
       description:
-        "Opening the pastel grid route with a mist bloom, slimmer frame lines, and a softer editorial settle.",
+        "Opening the hidden photo wall: people, events, notes, and the color outside the main portfolio.",
     };
   }
 

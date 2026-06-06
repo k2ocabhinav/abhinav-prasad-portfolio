@@ -11,23 +11,6 @@
   contain: layout style;
 }
 
-.nameTrigger {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  text-align: center;
-  cursor: default;
-  -webkit-tap-highlight-color: transparent;
-  position: relative;
-}
-
-.nameTrigger:focus-visible {
-  outline: 2px solid rgba(var(--color-primary-brand-rgb), 0.64);
-  outline-offset: 0.45rem;
-  border-radius: 0.35rem;
-}
-
 .nameRow {
   display: flex;
   align-items: flex-end;
@@ -42,6 +25,26 @@
 .letterWrapper {
   display: inline-block;
   overflow: visible;
+}
+
+.letterPortalButton {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.letterPortalButton:disabled {
+  cursor: wait;
+}
+
+.letterPortalButton:focus-visible {
+  outline: 2px solid rgba(248, 255, 122, 0.72);
+  outline-offset: 0.12em;
+  border-radius: 0.08em;
 }
 
 .letterStage {
@@ -59,9 +62,11 @@
 }
 
 .letterStage[data-hovered="true"] {
-  color: color-mix(in srgb, var(--letter-color) 84%, var(--color-on-surface) 16%);
-  filter: drop-shadow(0 0 14px rgba(200, 255, 46, 0.2));
-  transform: translate3d(0, -0.035em, 0);
+  color: color-mix(in srgb, var(--letter-color) 30%, var(--color-on-surface) 70%);
+  filter:
+    drop-shadow(0 0 10px color-mix(in srgb, var(--letter-color) 26%, transparent))
+    drop-shadow(0 0 18px rgba(114, 241, 200, 0.08));
+  transform: translate3d(0, -0.03em, 0);
   z-index: 2;
 }
 
@@ -81,13 +86,14 @@
   letter-spacing: 0;
   text-transform: none;
   text-shadow:
-    0 0 32px rgba(97, 223, 255, 0.07),
-    0 0 42px rgba(200, 255, 46, 0.05);
+    0 0 32px rgba(114, 241, 200, 0.06),
+    0 0 42px rgba(248, 255, 122, 0.04);
   transition:
     opacity 220ms var(--motion-ease-out),
     transform 280ms var(--motion-ease-out),
     color 180ms var(--motion-ease-out),
-    -webkit-text-stroke-color 180ms var(--motion-ease-out);
+    -webkit-text-stroke-color 180ms var(--motion-ease-out),
+    text-shadow 220ms var(--motion-ease-out);
 }
 
 .hoverAura {
@@ -110,12 +116,12 @@
 .hoverColorWash {
   position: absolute;
   inset: 8% -8%;
-  border-radius: 0.25rem;
+  border-radius: 0.18rem;
   background:
-    linear-gradient(90deg, transparent, rgba(200, 255, 46, 0.14), transparent),
-    radial-gradient(circle at 50% 58%, var(--letter-color), transparent 62%);
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--letter-line) 18%, transparent), transparent),
+    radial-gradient(circle at 50% 58%, color-mix(in srgb, var(--letter-color) 42%, transparent), transparent 62%);
   opacity: 0;
-  filter: blur(16px);
+  filter: blur(14px);
   transition: opacity 260ms var(--motion-ease-out);
 }
 
@@ -128,8 +134,9 @@
   left: 0.02em;
   right: 0.02em;
   bottom: 0.03em;
-  height: 0.045em;
-  background: linear-gradient(90deg, transparent, var(--letter-color), transparent);
+  height: 0.036em;
+  background:
+    linear-gradient(90deg, transparent, var(--letter-color) 18%, var(--letter-line) 52%, transparent);
   border-radius: 999px;
   transform: scaleX(0);
   transform-origin: left;
@@ -146,10 +153,11 @@
   left: -4%;
   right: -4%;
   top: 46%;
-  height: 0.035em;
-  background: linear-gradient(90deg, transparent, var(--letter-color), transparent);
+  height: 0.028em;
+  background:
+    linear-gradient(90deg, transparent, var(--letter-line) 22%, var(--letter-color) 50%, transparent 78%);
   opacity: 0;
-  transform: scaleX(0.35) translateY(0.12em);
+  transform: scaleX(0.25) translate3d(-0.08em, 0.12em, 0);
   transform-origin: center;
   transition:
     opacity 200ms var(--motion-ease-out),
@@ -170,7 +178,7 @@
 .cornerTop {
   top: 0.08em;
   right: -0.02em;
-  border-top: 1px solid var(--letter-color);
+  border-top: 1px solid var(--letter-line);
   border-right: 1px solid var(--letter-color);
   transform: translate3d(-0.05em, 0.05em, 0);
 }
@@ -179,7 +187,7 @@
   left: -0.02em;
   bottom: 0.06em;
   border-left: 1px solid var(--letter-color);
-  border-bottom: 1px solid var(--letter-color);
+  border-bottom: 1px solid var(--letter-line);
   transform: translate3d(0.05em, -0.05em, 0);
 }
 
@@ -190,17 +198,53 @@
   transform: translate3d(0, 0, 0) scaleX(1);
 }
 
+.glowShardOne,
+.glowShardTwo {
+  position: absolute;
+  width: 0.22em;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--letter-color), transparent);
+  opacity: 0;
+  transform: translate3d(0, 0, 0) rotate(-12deg) scaleX(0.2);
+  transition:
+    opacity 220ms var(--motion-ease-out),
+    transform 320ms var(--motion-ease-out);
+}
+
+.glowShardOne {
+  top: 0.18em;
+  left: -0.06em;
+}
+
+.glowShardTwo {
+  right: -0.08em;
+  bottom: 0.22em;
+  background: linear-gradient(90deg, transparent, var(--letter-line), transparent);
+  transform: translate3d(0, 0, 0) rotate(14deg) scaleX(0.2);
+}
+
+.letterStage[data-hovered="true"] .glowShardOne,
+.letterStage[data-hovered="true"] .glowShardTwo {
+  opacity: 0.95;
+  transform: translate3d(0.04em, -0.02em, 0) rotate(-12deg) scaleX(1);
+}
+
+.letterStage[data-hovered="true"] .glowShardTwo {
+  transform: translate3d(-0.04em, 0.02em, 0) rotate(14deg) scaleX(1);
+}
+
 .letterStage[data-animated-letter-index="0"][data-hovered="true"] .editorialGlyph {
   -webkit-text-stroke: 1px var(--letter-color);
-  color: transparent;
+  color: rgba(243, 246, 238, 0.1);
 }
 
 .letterStage[data-animated-letter-index="1"][data-hovered="true"] {
-  transform: perspective(520px) rotateY(6deg) translate3d(0, -0.025em, 0);
+  transform: perspective(520px) rotateY(4deg) translate3d(0, -0.025em, 0);
 }
 
 .letterStage[data-animated-letter-index="2"][data-hovered="true"] .scanSlice {
-  height: 0.065em;
+  height: 0.05em;
   opacity: 0.9;
 }
 
@@ -212,7 +256,7 @@
   color: var(--color-on-surface);
   text-shadow:
     0 0 0 var(--letter-color),
-    0 0 24px rgba(97, 223, 255, 0.2);
+    0 0 22px rgba(114, 241, 200, 0.18);
 }
 
 .letterStage[data-animated-letter-index="5"][data-hovered="true"] {
@@ -221,7 +265,13 @@
 
 .letterStage[data-animated-letter-index="6"][data-hovered="true"] .editorialGlyph {
   -webkit-text-stroke: 1px var(--letter-color);
-  color: color-mix(in srgb, var(--letter-color) 24%, var(--color-on-surface) 76%);
+  color: color-mix(in srgb, var(--letter-color) 18%, var(--color-on-surface) 82%);
+}
+
+.letterStage[data-portal-letter="true"] .hoverAccentBar {
+  height: 0.046em;
+  background:
+    linear-gradient(90deg, transparent, #FF6B4A 10%, #F8FF7A 46%, #72F1C8 78%, transparent);
 }
 
 @media (max-width: 767px) {
@@ -247,7 +297,9 @@
   .hoverAura,
   .scanSlice,
   .cornerTop,
-  .cornerBottom {
+  .cornerBottom,
+  .glowShardOne,
+  .glowShardTwo {
     transition-duration: 120ms;
   }
 

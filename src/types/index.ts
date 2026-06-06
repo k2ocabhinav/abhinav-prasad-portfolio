@@ -403,6 +403,38 @@ export interface BeyondPostMeta {
   displaySize?: "feature" | "secondary";
 }
 
+export type BeyondAlbumKind = "photo" | "event" | "quote" | "person" | "project";
+
+export type BeyondAlbumSize = "hero" | "wide" | "tall" | "square";
+
+export type BeyondAlbumColor =
+  | "cobalt"
+  | "coral"
+  | "lemon"
+  | "mint"
+  | "lilac"
+  | "pink";
+
+export interface BeyondAlbumImage {
+  src?: string;
+  alt: string;
+  aspectRatio?: string;
+  dominantColor?: string;
+}
+
+export interface BeyondAlbumItem {
+  id: string;
+  kind: BeyondAlbumKind;
+  title: string;
+  caption: string;
+  tags: string[];
+  image?: BeyondAlbumImage;
+  quote?: string;
+  meta?: string;
+  color: BeyondAlbumColor;
+  size: BeyondAlbumSize;
+}
+
 export interface PortalTransitionIntent {
   href: string;
   originX: number;

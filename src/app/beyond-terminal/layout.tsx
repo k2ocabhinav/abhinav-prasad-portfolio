@@ -1,24 +1,26 @@
 import type { Metadata } from "next";
-import { Archivo, IBM_Plex_Mono, Manrope } from "next/font/google";
+import { Bricolage_Grotesque, Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import BeyondShell from "@/components/beyond-terminal/BeyondShell";
 
-const display = Archivo({
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-beyond-display",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const body = Manrope({
+const body = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-beyond-body",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
+const mono = Space_Mono({
   subsets: ["latin"],
   variable: "--font-beyond-mono",
-  weight: ["400", "500"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -28,7 +30,7 @@ export const metadata: Metadata = {
     template: "%s | Beyond The Terminal",
   },
   description:
-    "A pastel-grid editorial side route for travel, books, training, and field notes.",
+    "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.",
 };
 
 export default function BeyondTerminalLayout({
@@ -37,7 +39,7 @@ export default function BeyondTerminalLayout({
   children: ReactNode;
 }) {
   return (
-    <div className={`${display.variable} ${body.variable} ${plexMono.variable}`}>
+    <div className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <BeyondShell>{children}</BeyondShell>
     </div>
   );

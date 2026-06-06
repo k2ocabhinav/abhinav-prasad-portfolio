@@ -1,35 +1,22 @@
 .shell {
-  --beyond-shell: #1C1456;
-  --beyond-shell-deep: #003C74;
-  --beyond-surface: #29648E;
-  --beyond-surface-strong: #396FBC;
-  --beyond-surface-soft: rgba(41, 100, 142, 0.84);
-  --beyond-paper: #E4DACD;
-  --beyond-paper-soft: #EFEAD7;
-  --beyond-ink: #1C1456;
-  --beyond-text: #F4F6F8;
-  --beyond-text-soft: rgba(244, 246, 248, 0.82);
-  --beyond-text-muted: rgba(228, 218, 205, 0.74);
-  --beyond-border: rgba(251, 255, 62, 0.24);
-  --beyond-border-strong: rgba(255, 183, 40, 0.36);
-  --beyond-lavender: #C7B3FF;
-  --beyond-powder: #396FBC;
-  --beyond-silver: #F4F6F8;
-  --beyond-peach: #FF5745;
-  --beyond-lavender-soft: rgba(199, 179, 255, 0.16);
-  --beyond-powder-soft: rgba(57, 111, 188, 0.2);
-  --beyond-silver-soft: rgba(244, 246, 248, 0.14);
-  --beyond-peach-soft: rgba(255, 87, 69, 0.18);
-  --beyond-card-shadow: 0 28px 80px rgba(28, 20, 86, 0.3);
+  --beyond-paper: #FFF7E8;
+  --beyond-ink: #15151B;
+  --beyond-cobalt: #245DFF;
+  --beyond-coral: #FF5A5F;
+  --beyond-lemon: #FFE45E;
+  --beyond-mint: #7AF3C8;
+  --beyond-lilac: #BDA8FF;
+  --beyond-pink: #FF7AC8;
+  --beyond-border: rgba(21, 21, 27, 0.18);
   min-height: 100vh;
-  color: var(--beyond-text);
-  overflow: clip;
+  color: var(--beyond-ink);
+  overflow-x: clip;
   isolation: isolate;
   background:
-    radial-gradient(circle at 8% 10%, rgba(199, 179, 255, 0.2), transparent 24%),
-    radial-gradient(circle at 88% 12%, rgba(57, 111, 188, 0.24), transparent 24%),
-    radial-gradient(circle at 50% 100%, rgba(255, 87, 69, 0.2), transparent 28%),
-    linear-gradient(180deg, #1C1456 0%, #003C74 46%, #29648E 100%);
+    radial-gradient(circle at 8% 12%, rgba(255, 90, 95, 0.26), transparent 24%),
+    radial-gradient(circle at 92% 8%, rgba(36, 93, 255, 0.24), transparent 25%),
+    radial-gradient(circle at 76% 84%, rgba(122, 243, 200, 0.32), transparent 28%),
+    linear-gradient(180deg, #FFF7E8 0%, #FFF0D9 48%, #FFF7E8 100%);
 }
 
 .backdrop,
@@ -42,20 +29,19 @@
 .backdrop {
   z-index: 0;
   background:
-    radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.06), transparent 0.85rem),
-    radial-gradient(circle at 78% 14%, rgba(255, 255, 255, 0.05), transparent 0.8rem),
-    radial-gradient(circle at 56% 6%, rgba(218, 223, 234, 0.07), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 22%);
-  opacity: 0.9;
+    radial-gradient(circle at 22% 24%, rgba(255, 228, 94, 0.72) 0 0.42rem, transparent 0.48rem),
+    radial-gradient(circle at 74% 22%, rgba(255, 122, 200, 0.48) 0 0.34rem, transparent 0.4rem),
+    radial-gradient(circle at 46% 78%, rgba(189, 168, 255, 0.42) 0 0.44rem, transparent 0.5rem);
+  opacity: 0.8;
 }
 
 .grid {
   z-index: 0;
   background:
-    linear-gradient(90deg, rgba(214, 220, 233, 0.05) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(214, 220, 233, 0.035) 1px, transparent 1px);
-  background-size: clamp(4.5rem, 8vw, 6.2rem) clamp(4.5rem, 8vw, 6.2rem);
-  mask-image: linear-gradient(180deg, rgba(28, 20, 86, 0.58), transparent 84%);
+    linear-gradient(90deg, rgba(21, 21, 27, 0.055) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(21, 21, 27, 0.045) 1px, transparent 1px);
+  background-size: clamp(3.8rem, 7vw, 6rem) clamp(3.8rem, 7vw, 6rem);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 88%);
 }
 
 .main {
@@ -63,11 +49,11 @@
   z-index: 1;
   width: min(100%, 1560px);
   margin: 0 auto;
-  padding: clamp(6.8rem, 10vw, 8.5rem) clamp(1rem, 4vw, 3.2rem) clamp(4rem, 8vw, 6rem);
+  padding: clamp(6.4rem, 9vw, 8.4rem) clamp(1rem, 4vw, 3.2rem) clamp(3.5rem, 8vw, 6rem);
 }
 
 @media (max-width: 767px) {
   .main {
-    padding-top: 5.9rem;
+    padding-top: 5.8rem;
   }
 }

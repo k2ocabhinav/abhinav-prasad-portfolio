@@ -3,7 +3,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { personal } from "@/data/personal";
 import styles from "./ProfileSection.module.css";
 
@@ -29,7 +28,6 @@ export default function ProfileSection({
   const portraitX = useTransform(scrollYProgress, [0, 0.62, 1], [4, 0, -4]);
   const hintOpacity = useTransform(scrollYProgress, [0, 0.82, 1], [0.72, 1, 0.78]);
   const hintY = useTransform(scrollYProgress, [0, 0.76, 1], [6, 0, -4]);
-  const hintCopy = personal.hintCopy ?? "Beyond the terminal";
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -97,19 +95,18 @@ export default function ProfileSection({
                 priority={false}
               />
             </motion.div>
-          </motion.div>
-
-          <div className={styles.copyColumn}>
             <motion.div
               className={styles.hintCopy}
               data-secret-hint="true"
               style={reduceMotion ? undefined : { opacity: hintOpacity, y: hintY }}
+              aria-label="Personal layer opens from the final v in Abhinav"
             >
               <span className={styles.hintKicker}>Personal layer</span>
-              <Link href="/beyond-terminal" className={styles.hintLink}>
-                {hintCopy}
-              </Link>
+              <span className={styles.hintText}>v opens it</span>
             </motion.div>
+          </motion.div>
+
+          <div className={styles.copyColumn}>
             <motion.div
               initial={reduceMotion ? false : { opacity: 0, y: 8 }}
               whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
