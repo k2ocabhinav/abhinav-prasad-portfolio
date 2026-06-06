@@ -105,6 +105,11 @@
   animation: none;
 }
 
+.frame[data-aura-active="false"] .auroraPlane,
+.frame[data-aura-active="false"] .auroraMesh {
+  animation-play-state: paused;
+}
+
 .content {
   position: relative;
   z-index: 2;

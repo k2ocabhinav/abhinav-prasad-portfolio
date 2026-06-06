@@ -286,16 +286,41 @@ export interface LandingHeroContent {
   ctas: LandingCTA[];
 }
 
-/** Conceptual vignette shown in the landing motion/story frame */
+export type LandingProofBeatLabel = "Problem" | "My Role" | "Shipped" | "Impact";
+
+export interface LandingProofBeat {
+  label: LandingProofBeatLabel;
+  short: string;
+  detail: string;
+}
+
+export interface LandingStoryVisual {
+  kind: "screenshot" | "system" | "type";
+  src?: string;
+  alt: string;
+  caption: string;
+}
+
+/** Featured project proof shown in the landing motion/story frame */
 export interface LandingStory {
   id: string;
   eyebrow: string;
   title: string;
+  claim: string;
   summary: string;
   tags: string[];
   icon: string;
   accent: LandingAccentKey;
   note: string;
+  proofBeats: LandingProofBeat[];
+  visual: LandingStoryVisual;
+  projectCodeTone: "lime" | "ember" | "split";
+  proof?: {
+    problem: string;
+    role: string;
+    shipped: string;
+    value: string;
+  };
 }
 
 // ─── Beyond The Terminal ─────────────────────────────────────────────────────

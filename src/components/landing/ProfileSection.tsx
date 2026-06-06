@@ -3,13 +3,12 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { personal } from "@/data/personal";
-import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./ProfileSection.module.css";
 
 // =============================================================================
-// ProfileSection — Extracted from the legacy HeroSection profile reveal.
-// This keeps the original portrait/annotation block reusable in the new landing.
+// ProfileSection - compact identity handoff with a technical silhouette portrait.
 // =============================================================================
 
 interface ProfileSectionProps {
@@ -26,13 +25,11 @@ export default function ProfileSection({
   });
   const portraitScale = useTransform(scrollYProgress, [0, 0.34, 0.66, 1], [0.84, 0.92, 1.01, 1.06]);
   const portraitOpacity = useTransform(scrollYProgress, [0, 0.16, 0.6, 1], [0.52, 0.8, 0.97, 1]);
-  const portraitY = useTransform(scrollYProgress, [0, 0.42, 0.76, 1], [48, 20, 0, -10]);
-  const portraitX = useTransform(scrollYProgress, [0, 0.62, 1], [10, 0, -6]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.82, 1], [1, 1, 0.58]);
-  const hintY = useTransform(scrollYProgress, [0, 0.76, 1], [2, 0, -8]);
-  const hintCopy =
-    personal.hintCopy ??
-    "Psst... click Abhinav above to explore beyond the terminal.";
+  const portraitY = useTransform(scrollYProgress, [0, 0.42, 0.76, 1], [28, 8, 0, -8]);
+  const portraitX = useTransform(scrollYProgress, [0, 0.62, 1], [4, 0, -4]);
+  const hintOpacity = useTransform(scrollYProgress, [0, 0.82, 1], [0.72, 1, 0.78]);
+  const hintY = useTransform(scrollYProgress, [0, 0.76, 1], [6, 0, -4]);
+  const hintCopy = personal.hintCopy ?? "Beyond the terminal";
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -108,30 +105,23 @@ export default function ProfileSection({
               data-secret-hint="true"
               style={reduceMotion ? undefined : { opacity: hintOpacity, y: hintY }}
             >
-              <FlipRevealText
-                text={hintCopy}
-                mode="word"
-                progress={scrollYProgress}
-                window={[0.06, 0.2]}
-                holdUntil={0.9}
-                stagger={0.028}
-                perspective={860}
-                reduceMotion={reduceMotion}
-              />
+              <span className={styles.hintKicker}>Personal layer</span>
+              <Link href="/beyond-terminal" className={styles.hintLink}>
+                {hintCopy}
+              </Link>
+            </motion.div>
+            <motion.div
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={reduceMotion ? undefined : { once: true }}
+              transition={reduceMotion ? undefined : { delay: 0.32 }}
+              className={styles.taglineBlock}
+            >
+              <p className={styles.profileTagline}>{personal.tagline}</p>
+              <p className={styles.profileSubtitle}>{personal.subtitle}</p>
             </motion.div>
           </div>
         </div>
-
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0 }}
-          whileInView={reduceMotion ? undefined : { opacity: 1 }}
-          viewport={reduceMotion ? undefined : { once: true }}
-          transition={reduceMotion ? undefined : { delay: 0.8 }}
-          className={styles.taglineBlock}
-        >
-          <p className={styles.profileTagline}>{personal.tagline}</p>
-          <p className={styles.profileSubtitle}>{personal.subtitle}</p>
-        </motion.div>
       </div>
     </section>
   );

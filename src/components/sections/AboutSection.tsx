@@ -60,7 +60,7 @@ export default function AboutSection({
             </motion.h2>
             <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
               <FlipRevealText
-                text="Design for failure."
+                text="Operating principle."
                 mode="word"
                 progress={scrollYProgress}
                 window={[0.26, 0.38]}

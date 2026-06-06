@@ -24,13 +24,13 @@ export default function LandingBlendSection() {
       ref={sectionRef}
       className={styles.blend}
       data-home-explore-bridge="true"
-      aria-label="Explore the work"
+      aria-label="Personal layer"
     >
       <div className={styles.inner}>
-        <span className={styles.eyebrow}>Portfolio Bridge</span>
+        <span className={styles.eyebrow}>Identity Layer</span>
         <motion.p className={styles.label} style={{ opacity: labelOpacity, y: labelY }}>
           <FlipRevealText
-            text="Explore the Work"
+            text="Beyond the Build"
             mode="word"
             progress={scrollYProgress}
             window={[0.12, 0.28]}

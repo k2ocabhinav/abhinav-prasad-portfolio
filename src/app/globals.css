@@ -17,6 +17,7 @@
   --color-on-surface: #F3F6EE;
   --color-secondary-text: #9EA9A1;
   --color-primary-brand: #C8FF2E;
+  --color-accent-ember: #FF5A1F;
   --color-sage: #61DFFF;
   --color-accent-brown: #F3F6EE;
   --color-accent-peach-soft: #A7F04C;
@@ -93,6 +94,7 @@
      without hardcoding hex values. */
   --color-surface-rgb: 6, 8, 11;
   --color-primary-brand-rgb: 200, 255, 46;
+  --color-accent-ember-rgb: 255, 90, 31;
   --color-on-surface-rgb: 243, 246, 238;
   --color-sage-rgb: 97, 223, 255;
   --color-accent-peach-rgb: 167, 240, 76;

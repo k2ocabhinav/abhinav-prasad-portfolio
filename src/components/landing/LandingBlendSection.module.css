@@ -3,11 +3,11 @@
    ============================================================================= */
 
 .blend {
-  min-height: clamp(34vh, 44vh, 52vh);
+  min-height: clamp(18vh, 24vh, 30vh);
   margin-bottom: -1px;
   display: grid;
   place-items: center;
-  padding: clamp(2.8rem, 6vw, 5.4rem) var(--content-padding-x);
+  padding: clamp(1.8rem, 4vw, 3rem) var(--content-padding-x);
   position: relative;
   overflow: hidden;
   background: linear-gradient(
@@ -51,12 +51,12 @@
 }
 
 .label {
-  margin-top: 0.9rem;
+  margin-top: 0.7rem;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.65rem, 4.4vw, 3.8rem);
+  font-size: clamp(1.25rem, 3vw, 2.4rem);
   line-height: 1.06;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: rgba(243, 246, 238, 0.98);
 }

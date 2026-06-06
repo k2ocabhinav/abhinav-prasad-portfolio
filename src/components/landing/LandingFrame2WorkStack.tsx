@@ -1,6 +1,8 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useMotionValueEvent } from "motion/react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useScrollLinkedIndex } from "@/hooks/useScrollLinkedIndex";
 import { landingStories } from "@/data/landing";
 import { staggerContainer, staggerItem } from "@/lib/animations";
@@ -11,7 +13,7 @@ import WorkStackVisual from "./WorkStackVisual";
 import styles from "./LandingFrame2WorkStack.module.css";
 
 // =============================================================================
-// LandingFrame2WorkStack — Story-vignette frame.
+// LandingFrame2WorkStack — Featured project story frame.
 // Uses sticky scroll on motion-capable layouts and a static card grid fallback
 // when reduced motion is requested.
 // =============================================================================
@@ -20,16 +22,68 @@ interface LandingFrame2WorkStackProps {
   staticMode?: boolean;
 }
 
-function StoryCard({ story }: { story: (typeof landingStories)[number] }) {
+function MobileStoryVisual({ story }: { story: (typeof landingStories)[number] }) {
+  if (story.visual.kind === "screenshot" && story.visual.src) {
+    return (
+      <figure className={styles.mobileVisual}>
+        <Image
+          src={story.visual.src}
+          alt={story.visual.alt}
+          fill
+          sizes="92vw"
+          className={styles.mobileVisualImage}
+        />
+      </figure>
+    );
+  }
+
+  return (
+    <div className={styles.mobileVisual} role="img" aria-label={story.visual.alt}>
+      <div className={styles.mobileSystemIcon}>
+        {renderIcon(story.icon, { size: 54, strokeWidth: 0.8 })}
+      </div>
+      <span className={styles.mobileSystemLine} />
+      <span className={styles.mobileSystemLineAlt} />
+    </div>
+  );
+}
+
+function StoryCard({
+  story,
+  showAllProof = false,
+}: {
+  story: (typeof landingStories)[number];
+  showAllProof?: boolean;
+}) {
+  const primaryBeat = story.proofBeats[0];
+
   return (
     <>
-      <span className={styles.mobileCaseLabel}>{story.eyebrow}</span>
-      <div className={styles.mobileIcon}>
-        {renderIcon(story.icon, { size: 44, strokeWidth: 0.9 })}
+      <div className={styles.mobileCardHeader}>
+        <span className={styles.mobileCaseLabel}>{story.eyebrow}</span>
+        <strong>{story.id}</strong>
       </div>
-      <h3 className={styles.mobileTitle}>{story.title}</h3>
+      <h3 className={styles.mobileTitle}>{story.claim}</h3>
+      <p className={styles.mobileProjectName}>{story.title}</p>
+      <MobileStoryVisual story={story} />
       <p className={styles.mobileDescription}>{story.summary}</p>
+      <dl className={showAllProof ? styles.mobileProofRows : styles.mobileProofSpotlight}>
+        {showAllProof ? (
+          story.proofBeats.map((beat) => (
+            <div key={beat.label} className={styles.mobileProofRow}>
+              <dt>{beat.label}</dt>
+              <dd>{beat.short}</dd>
+            </div>
+          ))
+        ) : (
+          <div className={styles.mobileProofRow}>
+            <dt>{primaryBeat.label}</dt>
+            <dd>{primaryBeat.short}</dd>
+          </div>
+        )}
+      </dl>
       <div className={styles.mobileTags}>
+        <span className={styles.mobileTechLabel}>Tech</span>
         {story.tags.map((tag) => (
           <Tag key={tag} label={tag} variant="subtle" />
         ))}
@@ -46,6 +100,45 @@ export default function LandingFrame2WorkStack({
     itemCount: landingStories.length,
     disabled: staticMode,
   });
+  const [activeBeatIndex, setActiveBeatIndex] = useState(0);
+  const [isSectionActive, setIsSectionActive] = useState(!staticMode);
+
+  useMotionValueEvent(progress, "change", (value) => {
+    if (staticMode) return;
+
+    const storyIndex = Math.min(
+      Math.floor(value * landingStories.length),
+      landingStories.length - 1
+    );
+    const story = landingStories[storyIndex];
+    const beatCount = story.proofBeats.length;
+    const localProgress = Math.max(
+      0,
+      Math.min(0.999, value * landingStories.length - storyIndex)
+    );
+    const nextBeatIndex = Math.min(
+      Math.floor(localProgress * beatCount),
+      beatCount - 1
+    );
+
+    setActiveBeatIndex((previous) =>
+      previous === nextBeatIndex ? previous : nextBeatIndex
+    );
+  });
+
+  useEffect(() => {
+    if (staticMode) return;
+    const node = containerRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsSectionActive(entry.isIntersecting),
+      { threshold: [0, 0.08, 0.2] }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [containerRef, staticMode]);
 
   if (staticMode) {
     return (
@@ -54,18 +147,19 @@ export default function LandingFrame2WorkStack({
       <section
         id="story-vignettes"
         className={styles.staticSection}
-        aria-label="Story vignettes"
+        aria-label="Featured project stories"
       >
         <div className={styles.staticContainer}>
-          <span className={styles.sectionLabel}>Story Vignettes</span>
+          <span className={styles.sectionLabel}>Featured Work</span>
           <div className={styles.staticGrid}>
             {landingStories.map((story) => (
               <article
                 key={story.id}
                 className={styles.mobileCard}
+                data-code-tone={story.projectCodeTone}
                 style={getLandingAccentStyle(story.accent)}
               >
-                <StoryCard story={story} />
+                <StoryCard story={story} showAllProof />
               </article>
             ))}
           </div>
@@ -77,18 +171,27 @@ export default function LandingFrame2WorkStack({
   return (
     <>
       {/* Desktop/tablet sticky experience. The outer height creates scroll room. */}
-      <div
+      <section
         ref={containerRef}
         id="story-vignettes"
         className={styles.workStackOuter}
+        data-case-active={isSectionActive ? "true" : "false"}
         style={{ height: `${landingStories.length * 100}vh` }}
-        aria-label="Story vignettes"
+        aria-label="Featured project stories"
       >
         <div className={styles.workStackSticky}>
-          <span className={styles.sectionLabel}>Story Vignettes</span>
+          <span className={styles.sectionLabel}>Featured Work</span>
           <div className={styles.workStackGrid}>
-            <WorkStackMeta activeIndex={activeIndex} stories={landingStories} />
-            <WorkStackVisual activeIndex={activeIndex} stories={landingStories} />
+            <WorkStackMeta
+              activeIndex={activeIndex}
+              activeBeatIndex={activeBeatIndex}
+              stories={landingStories}
+            />
+            <WorkStackVisual
+              activeIndex={activeIndex}
+              activeBeatIndex={activeBeatIndex}
+              stories={landingStories}
+            />
           </div>
           <div className={styles.progressBar}>
             <motion.div
@@ -97,7 +200,7 @@ export default function LandingFrame2WorkStack({
             />
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Mobile keeps the same project content but avoids sticky scroll entirely. */}
       <motion.div
@@ -108,11 +211,12 @@ export default function LandingFrame2WorkStack({
         whileInView="visible"
         viewport={{ once: true }}
       >
-        <span className={styles.sectionLabel}>Story Vignettes</span>
+        <span className={styles.sectionLabel}>Featured Work</span>
         {landingStories.map((story) => (
           <motion.div
             key={story.id}
             className={styles.mobileCard}
+            data-code-tone={story.projectCodeTone}
             variants={staggerItem}
             style={getLandingAccentStyle(story.accent)}
           >

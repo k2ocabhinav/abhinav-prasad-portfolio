@@ -10,6 +10,10 @@ export function useScrollSpy(sectionIds: string[], threshold = 0.5): string {
   const [activeSection, setActiveSection] = useState(sectionIds[0] ?? "");
 
   useEffect(() => {
+    if (sectionIds.length === 0) {
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

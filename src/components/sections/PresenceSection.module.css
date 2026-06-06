@@ -2,6 +2,10 @@
   position: relative;
 }
 
+.presenceGrid[data-presence-active="false"] .nodeDotActive {
+  animation-play-state: paused;
+}
+
 .heading {
   font-family: var(--font-display);
   font-style: normal;
@@ -107,6 +111,13 @@
     box-shadow:
       0 0 12px rgba(var(--color-primary-brand-rgb), 0.58),
       0 0 20px rgba(var(--color-primary-brand-rgb), 0.24);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nodeDotActive {
+    animation: none;
+    box-shadow: 0 0 6px rgba(var(--color-primary-brand-rgb), 0.32);
   }
 }
 

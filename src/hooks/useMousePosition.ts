@@ -11,7 +11,7 @@ interface MousePosition {
   y: number;
 }
 
-export function useMousePosition(): MousePosition {
+export function useMousePosition(enabled = true): MousePosition {
   const [position, setPosition] = useState<MousePosition>({ x: 0, y: 0 });
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -19,9 +19,11 @@ export function useMousePosition(): MousePosition {
   }, []);
 
   useEffect(() => {
+    if (!enabled) return;
+
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [handleMouseMove]);
+  }, [enabled, handleMouseMove]);
 
   return position;
 }

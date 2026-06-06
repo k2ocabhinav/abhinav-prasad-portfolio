@@ -47,7 +47,7 @@ export default function TechStackSection({
             className={styles.heading}
           >
             <FlipRevealText
-              text="Technical Voice"
+              text="Stack"
               mode="word"
               progress={scrollYProgress}
               window={[0.14, 0.28]}
@@ -60,7 +60,7 @@ export default function TechStackSection({
           </motion.h2>
           <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
             <FlipRevealText
-              text="Cloud-native by default."
+              text="Tools behind the build."
               mode="word"
               progress={scrollYProgress}
               window={[0.24, 0.38]}
@@ -115,7 +115,7 @@ function TechCard({
       <div className={styles.cardIcon}>
         {renderIcon(item.icon, { size: 20 })}
       </div>
-      <h4 className={styles.cardLabel}>{item.label}</h4>
+      <h3 className={styles.cardLabel}>{item.label}</h3>
       <p className={styles.cardContent}>{item.content}</p>
     </motion.div>
   );

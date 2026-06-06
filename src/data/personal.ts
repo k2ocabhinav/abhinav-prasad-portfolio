@@ -14,7 +14,7 @@ export const personal: PersonalData = {
   subtitle:
     "Building the invisible architecture that powers digital ecosystems with precision and craft.",
 
-  hintCopy: "Psst… click Abhinav above to explore beyond the terminal.",
+  hintCopy: "Beyond the terminal",
 
   heroAnnotations: [],
 
@@ -73,7 +73,7 @@ export const personal: PersonalData = {
   ],
 
   philosophy:
-    "Design for failure, build for scale. My approach to engineering treats systems as living organisms. By leveraging distributed architectures and cloud-native patterns, I ensure the foundation is as resilient as it is invisible — whether the system is a data pipeline, an AI application, or this very site.",
+    "I build products like systems: clear boundaries, resilient flows, and interfaces that make technical complexity feel usable. The goal is not spectacle for its own sake - it is work that ships, scales, and stays understandable.",
 
   presenceDescription:
     "Operating within distributed architectures, my physical location is secondary to the uptime of the systems I build. Currently optimized for global synchronization.",

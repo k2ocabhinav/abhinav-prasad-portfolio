@@ -1,7 +1,7 @@
 import type { TechCategory } from "@/types";
 
 // =============================================================================
-// Tech Stack Data — Categories shown in the Technical Voice section
+// Tech Stack Data - categories shown in the Stack section
 // =============================================================================
 
 export const techCategories: TechCategory[] = [

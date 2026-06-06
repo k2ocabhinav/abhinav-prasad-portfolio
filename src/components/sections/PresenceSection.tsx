@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SectionBlendStyle, SectionTone } from "@/types";
 import { personal } from "@/data/personal";
 import { presenceNodes } from "@/data/presence";
@@ -27,6 +27,7 @@ export default function PresenceSection({
 }: PresenceSectionProps) {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [isSectionActive, setIsSectionActive] = useState(false);
   const { scrollYProgress } = useScroll({
     target: prefersReducedMotion ? undefined : sectionRef,
     offset: ["start end", "end start"],
@@ -34,12 +35,34 @@ export default function PresenceSection({
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
 
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node || prefersReducedMotion) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSectionActive(entry.isIntersecting);
+      },
+      { rootMargin: "140px 0px", threshold: 0.08 },
+    );
+
+    observer.observe(node);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [prefersReducedMotion]);
+
   return (
     <SectionWrapper
       id="presence"
       tone={tone}
     >
-      <div ref={sectionRef} className={`grid-12 ${styles.presenceGrid}`}>
+      <div
+        ref={sectionRef}
+        className={`grid-12 ${styles.presenceGrid}`}
+        data-presence-active={isSectionActive ? "true" : "false"}
+      >
         <div className="col-4">
           <motion.h2 style={{ y: prefersReducedMotion ? 0 : headingY }} className={styles.heading}>
             <FlipRevealText
@@ -87,7 +110,7 @@ export default function PresenceSection({
                 style={{ top: node.top, left: node.left }}
               >
                 <div className={styles.nodeCenter}>
-                  {node.active && !prefersReducedMotion && (
+                  {node.active && !prefersReducedMotion && isSectionActive && (
                     <motion.div
                       animate={{
                         scale: [1, 2, 1],
