@@ -10,26 +10,7 @@
   padding: clamp(1.8rem, 4vw, 3rem) var(--content-padding-x);
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    #06080B 0%,
-    #0D1216 45%,
-    #101715 72%,
-    #0D1216 100%
-  );
-}
-
-.blend::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: clamp(5.2rem, 10vw, 7.2rem);
-  background: linear-gradient(
-    180deg,
-    rgba(13, 18, 22, 0) 0%,
-    rgba(13, 18, 22, 1) 100%
-  );
-  pointer-events: none;
+  background: transparent;
 }
 
 .inner {

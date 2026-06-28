@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import AnimatedName from "./AnimatedName";
 import MagneticButton from "@/components/ui/MagneticButton";
-import { landingHero } from "@/data/landing";
+import type { LandingHeroContent } from "@/types";
 import { landingFadeInUp, landingStagger } from "@/lib/animations";
 import styles from "./HeroTextColumn.module.css";
 
@@ -15,8 +15,18 @@ import styles from "./HeroTextColumn.module.css";
 const DEFAULT_ROLES = ["Developer", "Architect", "Cloud Engineer", "AI Systems Builder"];
 const ROLE_CYCLE_MS = 2600;
 
-export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?: boolean }) {
-  const roles = landingHero.roleCycleWords ?? DEFAULT_ROLES;
+interface HeroTextColumnProps {
+  hero: LandingHeroContent;
+  name: string;
+  reduceMotion?: boolean;
+}
+
+export default function HeroTextColumn({
+  hero,
+  name,
+  reduceMotion = false,
+}: HeroTextColumnProps) {
+  const roles = hero.roleCycleWords?.length ? hero.roleCycleWords : DEFAULT_ROLES;
   const tickRef = useRef(0);
   const [roleIndex, setRoleIndex] = useState(0);
 
@@ -32,7 +42,7 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
   return (
     <div className={styles.textColumn} data-home-hero-text="true">
       <AnimatedName
-        name="Abhinav"
+        name={name}
         reduceMotion={reduceMotion}
         portalTrigger={{
           href: "/beyond-terminal",
@@ -78,7 +88,7 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
         animate="visible"
         transition={reduceMotion ? undefined : { delay: 0.68 }}
       >
-        {landingHero.displayTitleAccent}
+        {hero.displayTitleAccent}
       </motion.p>
 
       <motion.p
@@ -88,7 +98,7 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
         animate="visible"
         transition={reduceMotion ? undefined : { delay: 0.8 }}
       >
-        {landingHero.supportingCopy}
+        {hero.supportingCopy}
       </motion.p>
 
       <motion.div
@@ -98,14 +108,17 @@ export default function HeroTextColumn({ reduceMotion = false }: { reduceMotion?
         animate="visible"
         transition={reduceMotion ? undefined : { delayChildren: 0.92 }}
       >
-        {landingHero.ctas.map((cta) => (
+        {hero.ctas.map((cta) => (
           <motion.div key={cta.label} variants={reduceMotion ? undefined : landingFadeInUp}>
-            <MagneticButton
-              href={cta.href}
-              variant={cta.variant === "primary" ? "glow" : "ghost"}
-            >
-              {cta.label}
-            </MagneticButton>
+            {cta.variant === "primary" ? (
+              <MagneticButton href={cta.href} variant="glow">
+                {cta.label}
+              </MagneticButton>
+            ) : (
+              <a href={cta.href} className={styles.secondaryCta}>
+                {cta.label}
+              </a>
+            )}
           </motion.div>
         ))}
       </motion.div>

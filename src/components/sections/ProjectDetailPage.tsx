@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
-import type { ProjectDetail } from "@/types";
+import type { PersonalData, ProjectDetail } from "@/types";
 import Footer from "@/components/layout/Footer";
 import { cn } from "@/lib/utils";
 import { landingFadeInUp, landingStagger, staggerItem } from "@/lib/animations";
@@ -11,6 +11,7 @@ import styles from "./ProjectDetailPage.module.css";
 
 interface ProjectDetailPageProps {
   detail: ProjectDetail;
+  personal: PersonalData;
 }
 
 const GALLERY_TILE_CLASSES = [
@@ -22,7 +23,7 @@ const GALLERY_TILE_CLASSES = [
   "galleryTile06",
 ] as const;
 
-export default function ProjectDetailPage({ detail }: ProjectDetailPageProps) {
+export default function ProjectDetailPage({ detail, personal }: ProjectDetailPageProps) {
   return (
     <div className={styles.pageShell}>
       <header className={styles.chrome}>
@@ -181,7 +182,7 @@ export default function ProjectDetailPage({ detail }: ProjectDetailPageProps) {
         ) : null}
       </main>
 
-      <Footer />
+      <Footer personal={personal} />
     </div>
   );
 }

@@ -60,14 +60,21 @@
   border: 1px solid var(--section-panel-border);
   border-radius: 0.5rem;
   cursor: default;
-  transition: border-color 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+  transition:
+    transform var(--motion-duration-short) var(--motion-ease-out),
+    border-color var(--motion-duration-short) var(--motion-ease-out),
+    box-shadow var(--motion-duration-short) var(--motion-ease-out),
+    background-color var(--motion-duration-short) var(--motion-ease-out);
   background: var(--section-panel-bg);
 }
 
 .card:hover {
+  transform: translateY(-4px);
   background: var(--section-panel-bg-strong);
-  border-color: var(--section-chip-border);
-  box-shadow: var(--section-panel-shadow);
+  border-color: var(--landing-glass-border-active);
+  box-shadow:
+    var(--section-panel-shadow),
+    0 0 28px rgba(var(--color-primary-brand-rgb), 0.12);
 }
 
 .cardIcon {
@@ -80,8 +87,9 @@
   font-family: var(--font-label);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-primary-brand);
+  letter-spacing: 0.2em;
+  /* Eyebrow meta in sage; lime reserved for headings + primary actions. */
+  color: var(--color-sage);
   margin-bottom: 1.5rem;
 }
 

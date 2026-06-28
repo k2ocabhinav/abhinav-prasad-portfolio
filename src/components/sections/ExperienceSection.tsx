@@ -2,8 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import type { SectionBlendStyle, SectionTone } from "@/types";
-import { experiences } from "@/data/experience";
+import type { ChronicleEntry, SectionBlendStyle, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 import Tag from "@/components/ui/Tag";
@@ -16,6 +15,7 @@ import styles from "./ExperienceSection.module.css";
 // =============================================================================
 
 interface ExperienceSectionProps {
+  experiences: ChronicleEntry[];
   tone?: SectionTone;
   blendTopFrom?: SectionTone;
   blendBottomTo?: SectionTone;
@@ -23,6 +23,18 @@ interface ExperienceSectionProps {
 }
 
 export default function ExperienceSection({
+  experiences,
+  tone,
+}: ExperienceSectionProps) {
+  if (experiences.length === 0) {
+    return null;
+  }
+
+  return <ExperienceSectionContent experiences={experiences} tone={tone} />;
+}
+
+function ExperienceSectionContent({
+  experiences,
   tone,
 }: ExperienceSectionProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -46,7 +58,7 @@ export default function ExperienceSection({
             className={styles.heading}
           >
             <FlipRevealText
-              text="Chronicle"
+              text="Experience"
               mode="char"
               progress={scrollYProgress}
               window={[0.16, 0.3]}
@@ -82,9 +94,9 @@ export default function ExperienceSection({
             viewport={{ once: true }}
             className={styles.entries}
           >
-            {experiences.map((exp, i) => (
+            {experiences.map((exp) => (
               <motion.div
-                key={i}
+                key={exp.slug}
                 variants={staggerItem}
                 className={styles.entry}
               >

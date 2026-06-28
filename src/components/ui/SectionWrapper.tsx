@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { motion } from "motion/react";
-import type { SectionBlendStyle, SectionTexture, SectionTone } from "@/types";
+import type { SectionBlendStyle, SectionTone } from "@/types";
 import { cn } from "@/lib/utils";
 import styles from "./SectionWrapper.module.css";
 
@@ -19,8 +19,6 @@ interface SectionWrapperProps {
   centered?: boolean;
   /** Optional pastel surface tone used by long-scroll sections */
   tone?: SectionTone;
-  /** Optional section texture treatment */
-  texture?: SectionTexture;
   /** Optional top-edge blend from previous section tone */
   blendTopFrom?: SectionTone;
   /** Optional bottom-edge blend to next section tone */
@@ -45,7 +43,6 @@ export default function SectionWrapper({
   fullHeight = false,
   centered = false,
   tone,
-  texture = "none",
   className = "",
 }: SectionWrapperProps) {
   return (
@@ -54,7 +51,6 @@ export default function SectionWrapper({
       className={cn(
         styles.section,
         tone ? toneClassMap[tone] : undefined,
-        texture === "ruled" && styles.textureRuled,
         fullHeight && styles.fullHeight,
         centered && styles.centered,
         className

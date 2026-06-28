@@ -2,8 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import type { SectionBlendStyle, SectionTone } from "@/types";
-import { personal } from "@/data/personal";
+import type { PersonalData, SectionBlendStyle, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -15,6 +14,7 @@ import styles from "./AboutSection.module.css";
 // =============================================================================
 
 interface AboutSectionProps {
+  personal: PersonalData;
   tone?: SectionTone;
   blendTopFrom?: SectionTone;
   blendBottomTo?: SectionTone;
@@ -22,6 +22,7 @@ interface AboutSectionProps {
 }
 
 export default function AboutSection({
+  personal,
   tone,
 }: AboutSectionProps) {
   const prefersReducedMotion = useReducedMotion();

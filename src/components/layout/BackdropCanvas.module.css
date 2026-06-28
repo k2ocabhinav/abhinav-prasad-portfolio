@@ -1,0 +1,28 @@
+.canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #0A0807;
+}
+
+.glow {
+  position: absolute;
+  width: min(52rem, 76vw);
+  height: min(52rem, 76vw);
+  left: 50%;
+  top: 16vh;
+  border-radius: 999px;
+  filter: blur(92px);
+  opacity: 0.34;
+  transform: translateX(-50%);
+  mix-blend-mode: screen;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow {
+    top: 22vh;
+    background: rgba(255, 107, 74, 0.22);
+  }
+}

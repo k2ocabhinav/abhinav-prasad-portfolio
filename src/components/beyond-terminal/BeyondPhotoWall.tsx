@@ -20,7 +20,7 @@ const colorClassMap: Record<BeyondAlbumColor, string> = {
   cobalt: styles.cobalt,
   coral: styles.coral,
   lemon: styles.lemon,
-  mint: styles.mint,
+  amber: styles.amber,
   lilac: styles.lilac,
   pink: styles.pink,
 };

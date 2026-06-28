@@ -10,7 +10,10 @@
   padding: 0.4rem 0 2.2rem;
   text-align: center;
   width: 100%;
-  transform: translateY(clamp(-1.3rem, -5.8vh, -4.25rem));
+  /* Gentle upward nudge only — the previous -4.25rem pulled the oversized
+     name's ascenders above the viewport top in short windows (clipping that
+     read as broken). */
+  transform: translateY(clamp(-0.5rem, -2.5vh, -2rem));
 }
 
 .roleLine {
@@ -82,6 +85,27 @@
   gap: 1.25rem;
   margin-top: 0.65rem;
   justify-content: center;
+}
+
+.secondaryCta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-family: var(--font-label);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(243, 246, 238, 0.72);
+  border-bottom: 1px solid rgba(var(--color-primary-brand-rgb), 0.36);
+  transition:
+    color 180ms var(--motion-ease-out),
+    border-color 180ms var(--motion-ease-out);
+}
+
+.secondaryCta:hover {
+  color: var(--color-sage);
+  border-color: var(--color-sage);
 }
 
 @media (max-width: 767px) {

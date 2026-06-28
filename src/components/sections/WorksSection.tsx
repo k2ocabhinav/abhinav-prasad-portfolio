@@ -5,8 +5,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
-import type { SectionBlendStyle, SectionTone } from "@/types";
-import { projects } from "@/data/projects";
+import type { Project, SectionBlendStyle, SectionTone } from "@/types";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
@@ -21,6 +20,7 @@ import styles from "./WorksSection.module.css";
 // =============================================================================
 
 interface WorksSectionProps {
+  projects: Project[];
   tone?: SectionTone;
   blendTopFrom?: SectionTone;
   blendBottomTo?: SectionTone;
@@ -28,6 +28,18 @@ interface WorksSectionProps {
 }
 
 export default function WorksSection({
+  projects,
+  tone,
+}: WorksSectionProps) {
+  if (projects.length === 0) {
+    return null;
+  }
+
+  return <WorksSectionContent projects={projects} tone={tone} />;
+}
+
+function WorksSectionContent({
+  projects,
   tone,
 }: WorksSectionProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -83,8 +95,8 @@ export default function WorksSection({
         viewport={{ once: true, margin: "-80px" }}
         className={styles.projectsList}
       >
-        {projects.map((project, i) => (
-          <WorkCard key={i} project={project} />
+        {projects.map((project) => (
+          <WorkCard key={project.id} project={project} />
         ))}
       </motion.div>
     </SectionWrapper>
@@ -93,9 +105,18 @@ export default function WorksSection({
 
 // ─── WorkCard Sub-component ─────────────────────────────────────────
 
-function WorkCard({ project }: { project: (typeof projects)[number] }) {
+function WorkCard({ project }: { project: Project }) {
   const prefersReducedMotion = useReducedMotion();
   const { ref: tiltRef, tilt } = useCardTilt(1.5);
+  // Scroll anchor is the plain content panel below — passing a motion-component
+  // ref to useScroll can throw "Target ref is defined but not hydrated".
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: prefersReducedMotion ? undefined : cardRef,
+    offset: ["start end", "end start"],
+  });
+  // Subtle scroll-linked drift on the media so the card feels alive while scrolling.
+  const visualY = useTransform(scrollYProgress, [0, 1], [24, -24]);
   const screenshots = project.screenshots ?? [];
   const [heroScreenshot, ...supportScreenshots] = screenshots;
   const hasScreenshots = Boolean(heroScreenshot);
@@ -114,7 +135,7 @@ function WorkCard({ project }: { project: (typeof projects)[number] }) {
         animate={prefersReducedMotion ? {} : { rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
         whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
         transition={tiltSpring}
-        style={{ transformPerspective: 800 }}
+        style={{ transformPerspective: 800, y: prefersReducedMotion ? 0 : visualY }}
         className={cn(
           styles.visualPanel,
           "glass-card",
@@ -169,8 +190,9 @@ function WorkCard({ project }: { project: (typeof projects)[number] }) {
         )}
       </motion.div>
 
-      {/* Content Panel */}
+      {/* Content Panel — also the scroll anchor for the visual parallax */}
       <div
+        ref={cardRef}
         className={cn(
           styles.contentPanel,
           project.reversed && styles.contentReversed

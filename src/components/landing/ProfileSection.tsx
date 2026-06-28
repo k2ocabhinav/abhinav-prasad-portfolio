@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { personal } from "@/data/personal";
+import type { PersonalData } from "@/types";
 import styles from "./ProfileSection.module.css";
 
 // =============================================================================
@@ -11,10 +11,12 @@ import styles from "./ProfileSection.module.css";
 // =============================================================================
 
 interface ProfileSectionProps {
+  personal: PersonalData;
   reduceMotion?: boolean;
 }
 
 export default function ProfileSection({
+  personal,
   reduceMotion = false,
 }: ProfileSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);

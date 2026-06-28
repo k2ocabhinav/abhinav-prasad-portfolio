@@ -45,7 +45,7 @@
   transform: translateY(-3px);
   background:
     linear-gradient(180deg, rgba(var(--landing-accent-rgb), 0.08), transparent 42%),
-    rgba(20, 27, 29, 0.82);
+    rgba(31, 26, 23, 0.82);
   border-color: rgba(var(--landing-accent-rgb), 0.48);
   box-shadow:
     var(--landing-glass-shadow),

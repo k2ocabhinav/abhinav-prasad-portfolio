@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { services } from "@/data/services";
+import type { ServiceEntry } from "@/types";
 import { landingStagger, staggerItem } from "@/lib/animations";
 import ServiceTile from "./ServiceTile";
 import styles from "./LandingFrame3Services.module.css";
@@ -13,12 +13,18 @@ import styles from "./LandingFrame3Services.module.css";
 // =============================================================================
 
 interface LandingFrame3ServicesProps {
+  services: ServiceEntry[];
   reduceMotion?: boolean;
 }
 
 export default function LandingFrame3Services({
+  services,
   reduceMotion = false,
 }: LandingFrame3ServicesProps) {
+  if (services.length === 0) {
+    return null;
+  }
+
   if (reduceMotion) {
     return (
       <section className={styles.frame} aria-label="Services">

@@ -2,8 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import type { SectionBlendStyle, SectionTone } from "@/types";
-import { techCategories } from "@/data/techStack";
+import type { SectionBlendStyle, SectionTone, StackGroup } from "@/types";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
@@ -17,6 +16,7 @@ import styles from "./TechStackSection.module.css";
 // =============================================================================
 
 interface TechStackSectionProps {
+  techCategories: StackGroup[];
   tone?: SectionTone;
   blendTopFrom?: SectionTone;
   blendBottomTo?: SectionTone;
@@ -24,6 +24,18 @@ interface TechStackSectionProps {
 }
 
 export default function TechStackSection({
+  techCategories,
+  tone,
+}: TechStackSectionProps) {
+  if (techCategories.length === 0) {
+    return null;
+  }
+
+  return <TechStackSectionContent techCategories={techCategories} tone={tone} />;
+}
+
+function TechStackSectionContent({
+  techCategories,
   tone,
 }: TechStackSectionProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -81,8 +93,8 @@ export default function TechStackSection({
         viewport={{ once: true }}
         className={styles.cardsGrid}
       >
-        {techCategories.map((item, i) => (
-          <TechCard key={i} item={item} />
+        {techCategories.map((item) => (
+          <TechCard key={item.id} item={item} />
         ))}
       </motion.div>
     </SectionWrapper>
@@ -91,11 +103,7 @@ export default function TechStackSection({
 
 // ─── TechCard Sub-component ─────────────────────────────────────────
 
-function TechCard({
-  item,
-}: {
-  item: (typeof techCategories)[number];
-}) {
+function TechCard({ item }: { item: StackGroup }) {
   const prefersReducedMotion = useReducedMotion();
   const { ref: tiltRef, tilt } = useCardTilt(1.5);
 

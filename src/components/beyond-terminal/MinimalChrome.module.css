@@ -48,7 +48,7 @@
   height: 1rem;
   border-radius: 999px;
   background:
-    linear-gradient(135deg, #FFE45E 0 45%, #FF5A5F 45% 70%, #7AF3C8 70%);
+    linear-gradient(135deg, #FFE45E 0 45%, #FF5A5F 45% 70%, #FFC24B 70%);
 }
 
 .brandCopy {
@@ -95,7 +95,7 @@
   border: 2px solid #15151B;
   border-radius: 999px;
   color: #15151B;
-  background: #7AF3C8;
+  background: #FFC24B;
   box-shadow: 3px 4px 0 rgba(21, 21, 27, 0.9);
   transition:
     transform 180ms ease,

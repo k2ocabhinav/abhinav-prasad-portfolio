@@ -16,7 +16,7 @@ export const landingHero: LandingHeroContent = {
     {
       label: "View Featured Work",
       // Targets the Frame 2 sticky scroll container
-      href: "#story-vignettes",
+      href: "#work",
       variant: "primary",
     },
     {

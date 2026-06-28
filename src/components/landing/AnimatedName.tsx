@@ -17,13 +17,13 @@ import styles from "./AnimatedName.module.css";
 // =============================================================================
 
 const HOVER_COLORS = [
-  "#F8FF7A",
   "#FF6B4A",
-  "#72F1C8",
-  "#F8FF7A",
+  "#FFC24B",
   "#FF6B4A",
-  "#72F1C8",
-  "#F8FF7A",
+  "#FFC24B",
+  "#FF6B4A",
+  "#FFC24B",
+  "#FF6B4A",
 ] as const;
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -96,13 +96,13 @@ export default function AnimatedName({
       data-home-hero-wordmark="true"
     >
       {letters.map((letter, index) => {
-        const hoverColor = HOVER_COLORS[index] ?? "#C8FF2E";
+        const hoverColor = HOVER_COLORS[index] ?? "#FF6B4A";
         const isHovered = hoveredIndex === index;
         const isPortalLetter =
           Boolean(portalTrigger && triggerProps) && index === PORTAL_LETTER_INDEX;
         const stageStyle = {
           ["--letter-color" as string]: hoverColor,
-          ["--letter-line" as string]: "#61DFFF",
+          ["--letter-line" as string]: "#FFC24B",
         } as CSSProperties;
 
         const handlePointerEnter = (event: PointerEvent<HTMLSpanElement>) => {

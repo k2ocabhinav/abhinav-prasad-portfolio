@@ -3,8 +3,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Mail } from "lucide-react";
-import type { SectionBlendStyle, SectionTone } from "@/types";
-import { personal } from "@/data/personal";
+import type { PersonalData, SectionBlendStyle, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import MagneticButton from "@/components/ui/MagneticButton";
@@ -43,6 +42,7 @@ const socialIcons: Record<string, React.ReactNode> = {
 };
 
 interface ContactSectionProps {
+  personal: PersonalData;
   tone?: SectionTone;
   blendTopFrom?: SectionTone;
   blendBottomTo?: SectionTone;
@@ -50,6 +50,7 @@ interface ContactSectionProps {
 }
 
 export default function ContactSection({
+  personal,
   tone,
 }: ContactSectionProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -68,7 +69,6 @@ export default function ContactSection({
     <SectionWrapper
       id="contact"
       tone={tone}
-      texture="ruled"
       fullHeight
       centered
     >

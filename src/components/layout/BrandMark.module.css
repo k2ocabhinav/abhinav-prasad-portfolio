@@ -1,0 +1,46 @@
+.brandMark {
+  position: fixed;
+  top: clamp(1rem, 2vw, 1.5rem);
+  left: clamp(1rem, 2.6vw, 2rem);
+  z-index: calc(var(--z-nav) + 2);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+  padding: 0.55rem 0.74rem;
+  color: var(--color-on-surface);
+  background: rgba(10, 8, 7, 0.72);
+  border: 1px solid rgba(243, 246, 238, 0.12);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.initial {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--color-primary-brand);
+  color: #0A0807;
+  font-family: var(--font-wordmark);
+  font-size: 1.28rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.name {
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(243, 246, 238, 0.88);
+}
+
+@media (max-width: 767px) {
+  .name {
+    display: none;
+  }
+}

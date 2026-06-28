@@ -4,9 +4,9 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useScrollLinkedIndex } from "@/hooks/useScrollLinkedIndex";
-import { landingStories } from "@/data/landing";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 import { getLandingAccentStyle, renderIcon } from "@/lib/utils";
+import type { LandingStory } from "@/types";
 import Tag from "@/components/ui/Tag";
 import WorkStackMeta from "./WorkStackMeta";
 import WorkStackVisual from "./WorkStackVisual";
@@ -19,10 +19,11 @@ import styles from "./LandingFrame2WorkStack.module.css";
 // =============================================================================
 
 interface LandingFrame2WorkStackProps {
+  stories: LandingStory[];
   staticMode?: boolean;
 }
 
-function MobileStoryVisual({ story }: { story: (typeof landingStories)[number] }) {
+function MobileStoryVisual({ story }: { story: LandingStory }) {
   if (story.visual.kind === "screenshot" && story.visual.src) {
     return (
       <figure className={styles.mobileVisual}>
@@ -52,7 +53,7 @@ function StoryCard({
   story,
   showAllProof = false,
 }: {
-  story: (typeof landingStories)[number];
+  story: LandingStory;
   showAllProof?: boolean;
 }) {
   const primaryBeat = story.proofBeats[0];
@@ -94,24 +95,16 @@ function StoryCard({
 }
 
 export default function LandingFrame2WorkStack({
+  stories,
   staticMode = false,
 }: LandingFrame2WorkStackProps) {
+  const itemCount = stories.length;
   const { containerRef, activeIndex, activeProgress, progress } = useScrollLinkedIndex({
-    itemCount: landingStories.length,
+    itemCount,
     disabled: staticMode,
   });
   const [isSectionActive, setIsSectionActive] = useState(!staticMode);
-  const activeStory = landingStories[activeIndex];
-  const activeStoryProgress = Math.max(
-    0,
-    Math.min(0.999, activeProgress * landingStories.length - activeIndex)
-  );
-  const activeBeatIndex = staticMode
-    ? 0
-    : Math.min(
-        Math.floor(activeStoryProgress * activeStory.proofBeats.length),
-        activeStory.proofBeats.length - 1
-      );
+  const activeStory = stories[Math.min(activeIndex, Math.max(itemCount - 1, 0))];
 
   useEffect(() => {
     if (staticMode) return;
@@ -127,6 +120,21 @@ export default function LandingFrame2WorkStack({
     return () => observer.disconnect();
   }, [containerRef, staticMode]);
 
+  if (itemCount === 0 || !activeStory) {
+    return null;
+  }
+
+  const activeStoryProgress = Math.max(
+    0,
+    Math.min(0.999, activeProgress * itemCount - activeIndex)
+  );
+  const activeBeatIndex = staticMode
+    ? 0
+    : Math.min(
+        Math.floor(activeStoryProgress * activeStory.proofBeats.length),
+        activeStory.proofBeats.length - 1
+      );
+
   if (staticMode) {
     return (
       // Static mode preserves the same content and anchor target without any
@@ -139,7 +147,7 @@ export default function LandingFrame2WorkStack({
         <div className={styles.staticContainer}>
           <span className={styles.sectionLabel}>Featured Work</span>
           <div className={styles.staticGrid}>
-            {landingStories.map((story) => (
+            {stories.map((story) => (
               <article
                 key={story.id}
                 className={styles.mobileCard}
@@ -164,8 +172,8 @@ export default function LandingFrame2WorkStack({
         className={styles.workStackOuter}
         data-case-active={isSectionActive ? "true" : "false"}
         style={{
-          minHeight: `${(landingStories.length + 1) * 100}vh`,
-          height: `${(landingStories.length + 1) * 100}svh`,
+          minHeight: `${(itemCount + 1) * 100}vh`,
+          height: `${(itemCount + 1) * 100}svh`,
         }}
         aria-label="Featured project stories"
       >
@@ -175,12 +183,12 @@ export default function LandingFrame2WorkStack({
             <WorkStackMeta
               activeIndex={activeIndex}
               activeBeatIndex={activeBeatIndex}
-              stories={landingStories}
+              stories={stories}
             />
             <WorkStackVisual
               activeIndex={activeIndex}
               activeBeatIndex={activeBeatIndex}
-              stories={landingStories}
+              stories={stories}
             />
           </div>
           <div className={styles.progressBar}>
@@ -202,7 +210,7 @@ export default function LandingFrame2WorkStack({
         viewport={{ once: true }}
       >
         <span className={styles.sectionLabel}>Featured Work</span>
-        {landingStories.map((story) => (
+        {stories.map((story) => (
           <motion.div
             key={story.id}
             className={styles.mobileCard}

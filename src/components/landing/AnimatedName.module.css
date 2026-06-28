@@ -6,7 +6,7 @@
   width: 100%;
   max-width: 100%;
   display: block;
-  overflow: visible;
+  overflow: clip;
   container-type: inline-size;
   contain: layout style;
 }
@@ -15,16 +15,16 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   margin-inline: auto;
   position: relative;
-  gap: clamp(0.01em, 0.35cqw, 0.045em);
+  gap: clamp(0.006em, 0.24cqw, 0.032em);
 }
 
 .letterWrapper {
   display: inline-block;
-  overflow: visible;
+  overflow: clip;
 }
 
 .letterPortalButton {
@@ -42,7 +42,7 @@
 }
 
 .letterPortalButton:focus-visible {
-  outline: 2px solid rgba(248, 255, 122, 0.72);
+  outline: 2px solid rgba(255, 107, 74, 0.72);
   outline-offset: 0.12em;
   border-radius: 0.08em;
 }
@@ -63,9 +63,6 @@
 
 .letterStage[data-hovered="true"] {
   color: color-mix(in srgb, var(--letter-color) 30%, var(--color-on-surface) 70%);
-  filter:
-    drop-shadow(0 0 10px color-mix(in srgb, var(--letter-color) 26%, transparent))
-    drop-shadow(0 0 18px rgba(114, 241, 200, 0.08));
   transform: translate3d(0, -0.03em, 0);
   z-index: 2;
 }
@@ -73,21 +70,19 @@
 .glyph {
   display: inline-block;
   white-space: nowrap;
-  line-height: 0.86;
+  line-height: 0.92;
   color: currentColor;
   transform-origin: 50% 86%;
 }
 
 .editorialGlyph {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(4.2rem, 21cqw, 15.6rem);
-  line-height: 0.86;
-  letter-spacing: 0;
+  font-family: var(--font-wordmark);
+  font-weight: 900;
+  font-size: clamp(3rem, 15.8vw, 18rem);
+  line-height: 0.92;
+  letter-spacing: 0.01em;
   text-transform: none;
-  text-shadow:
-    0 0 32px rgba(114, 241, 200, 0.06),
-    0 0 42px rgba(248, 255, 122, 0.04);
+  text-shadow: none;
   transition:
     opacity 220ms var(--motion-ease-out),
     transform 280ms var(--motion-ease-out),
@@ -126,7 +121,7 @@
 }
 
 .letterStage[data-hovered="true"] .hoverColorWash {
-  opacity: 0.2;
+  opacity: 0;
 }
 
 .hoverAccentBar {
@@ -226,12 +221,36 @@
 
 .letterStage[data-hovered="true"] .glowShardOne,
 .letterStage[data-hovered="true"] .glowShardTwo {
-  opacity: 0.95;
+  opacity: 0;
   transform: translate3d(0.04em, -0.02em, 0) rotate(-12deg) scaleX(1);
 }
 
 .letterStage[data-hovered="true"] .glowShardTwo {
   transform: translate3d(-0.04em, 0.02em, 0) rotate(14deg) scaleX(1);
+}
+
+.letterStage[data-animated-letter-index="0"] .editorialGlyph,
+.letterStage[data-animated-letter-index="6"] .editorialGlyph {
+  text-shadow:
+    0 0 16px rgba(255, 107, 74, 0.14),
+    0 0 24px rgba(255, 194, 75, 0.08);
+}
+
+.letterStage[data-animated-letter-index="0"][data-hovered="true"],
+.letterStage[data-animated-letter-index="6"][data-hovered="true"] {
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--letter-color) 30%, transparent));
+}
+
+.letterStage[data-animated-letter-index="0"][data-hovered="true"] .hoverColorWash,
+.letterStage[data-animated-letter-index="6"][data-hovered="true"] .hoverColorWash {
+  opacity: 0.16;
+}
+
+.letterStage[data-animated-letter-index="0"][data-hovered="true"] .glowShardOne,
+.letterStage[data-animated-letter-index="0"][data-hovered="true"] .glowShardTwo,
+.letterStage[data-animated-letter-index="6"][data-hovered="true"] .glowShardOne,
+.letterStage[data-animated-letter-index="6"][data-hovered="true"] .glowShardTwo {
+  opacity: 0.72;
 }
 
 .letterStage[data-animated-letter-index="0"][data-hovered="true"] .editorialGlyph {
@@ -254,9 +273,7 @@
 
 .letterStage[data-animated-letter-index="4"][data-hovered="true"] .editorialGlyph {
   color: var(--color-on-surface);
-  text-shadow:
-    0 0 0 var(--letter-color),
-    0 0 22px rgba(114, 241, 200, 0.18);
+  text-shadow: none;
 }
 
 .letterStage[data-animated-letter-index="5"][data-hovered="true"] {
@@ -265,13 +282,13 @@
 
 .letterStage[data-animated-letter-index="6"][data-hovered="true"] .editorialGlyph {
   -webkit-text-stroke: 1px var(--letter-color);
-  color: color-mix(in srgb, var(--letter-color) 18%, var(--color-on-surface) 82%);
+  color: rgba(243, 246, 238, 0.1);
 }
 
 .letterStage[data-portal-letter="true"] .hoverAccentBar {
   height: 0.046em;
   background:
-    linear-gradient(90deg, transparent, #FF6B4A 10%, #F8FF7A 46%, #72F1C8 78%, transparent);
+    linear-gradient(90deg, transparent, #FF6B4A 10%, #FFC24B 46%, #FFC24B 78%, transparent);
 }
 
 @media (max-width: 767px) {
@@ -282,8 +299,8 @@
   }
 
   .editorialGlyph {
-    font-size: clamp(2.8rem, 16.8cqw, 4.15rem);
-    line-height: 0.9;
+    font-size: clamp(2.6rem, 14.2vw, 4.4rem);
+    line-height: 0.94;
   }
 
   .hoverAura {

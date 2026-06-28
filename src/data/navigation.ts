@@ -3,7 +3,7 @@ import type { NavigationItem, NavSection } from "@/types";
 export const navigationItems: NavigationItem[] = [
   { kind: "section", id: "hero", label: "Hero" },
   { kind: "section", id: "about", label: "About" },
-  { kind: "section", id: "experience", label: "Chronicle" },
+  { kind: "section", id: "experience", label: "Experience" },
   { kind: "section", id: "work", label: "Works" },
   { kind: "section", id: "stack", label: "Tech" },
   { kind: "section", id: "presence", label: "Presence" },

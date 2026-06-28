@@ -2,9 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import type { SectionBlendStyle, SectionTone } from "@/types";
-import { personal } from "@/data/personal";
-import { presenceNodes } from "@/data/presence";
+import type { PersonalData, PresenceNode, SectionBlendStyle, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import LiveClock from "@/components/ui/LiveClock";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -16,6 +14,8 @@ import styles from "./PresenceSection.module.css";
 // =============================================================================
 
 interface PresenceSectionProps {
+  personal: PersonalData;
+  presenceNodes: PresenceNode[];
   tone?: SectionTone;
   blendTopFrom?: SectionTone;
   blendBottomTo?: SectionTone;
@@ -23,6 +23,26 @@ interface PresenceSectionProps {
 }
 
 export default function PresenceSection({
+  personal,
+  presenceNodes,
+  tone,
+}: PresenceSectionProps) {
+  if (presenceNodes.length === 0) {
+    return null;
+  }
+
+  return (
+    <PresenceSectionContent
+      personal={personal}
+      presenceNodes={presenceNodes}
+      tone={tone}
+    />
+  );
+}
+
+function PresenceSectionContent({
+  personal,
+  presenceNodes,
   tone,
 }: PresenceSectionProps) {
   const prefersReducedMotion = useReducedMotion();

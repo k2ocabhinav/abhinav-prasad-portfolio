@@ -30,11 +30,10 @@ export type SectionTone =
   | "pastel-mint"
   | "pastel-cream";
 
-/** Optional section texture treatment */
-export type SectionTexture = "none" | "ruled";
-
 /** Optional section edge handoff treatment */
 export type SectionBlendStyle = "soft" | "bold";
+
+export type PortfolioStatus = "draft" | "published";
 
 /** Social media link */
 export interface SocialLink {
@@ -137,6 +136,45 @@ export interface Project {
   detailCtaLabel?: string;
   /** Optional microcopy shown below deep-dive CTA */
   detailCtaSubline?: string;
+}
+
+export interface PortfolioProfile {
+  personal: PersonalData;
+  hero: LandingHeroContent;
+  presenceNodes: PresenceNode[];
+  seo?: SEOData;
+}
+
+export interface PortfolioProject extends Project {
+  slug: string;
+  status: PortfolioStatus;
+  featured: boolean;
+  featuredOrder?: number;
+  worksOrder?: number;
+  landingStory: LandingStory;
+  detail?: ProjectDetail;
+}
+
+export interface ChronicleEntry extends Experience {
+  slug: string;
+  status: PortfolioStatus;
+  order?: number;
+}
+
+export interface StackGroup extends TechCategory {
+  id: string;
+  status: PortfolioStatus;
+  order?: number;
+}
+
+export interface ServiceEntry extends Service {
+  status: PortfolioStatus;
+  order?: number;
+}
+
+export interface PortfolioBeyondAlbumItem extends BeyondAlbumItem {
+  status: PortfolioStatus;
+  order?: number;
 }
 
 export interface ProjectDetailSection {
@@ -411,7 +449,7 @@ export type BeyondAlbumColor =
   | "cobalt"
   | "coral"
   | "lemon"
-  | "mint"
+  | "amber"
   | "lilac"
   | "pink";
 

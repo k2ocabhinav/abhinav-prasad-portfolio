@@ -59,12 +59,12 @@ export const beyondAlbumItems: BeyondAlbumItem[] = [
       "A simple place for photos with mentors, speakers, builders, and people who changed the room.",
     tags: ["people", "learning", "moments"],
     meta: "Name / event / year",
-    color: "mint",
+    color: "amber",
     size: "tall",
     image: {
       alt: "Placeholder portrait panel for a photo with people at an event.",
       aspectRatio: "4 / 5",
-      dominantColor: "#7AF3C8",
+      dominantColor: "#FFC24B",
     },
   },
   {

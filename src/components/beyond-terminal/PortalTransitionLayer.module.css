@@ -41,7 +41,7 @@
     radial-gradient(
       circle at var(--portal-origin-x) var(--portal-origin-y),
       rgba(255, 228, 94, 0.74),
-      rgba(122, 243, 200, 0.36) 18%,
+      rgba(255, 194, 75, 0.36) 18%,
       rgba(255, 247, 232, 0.94) 42%,
       rgba(21, 21, 27, 0.98) 82%
     ),

@@ -54,10 +54,21 @@ async function freezeHeroAmbientForSnapshot(
   });
 }
 
+function getHeroPortalTrigger(page: Parameters<typeof test>[0]["page"]) {
+  return page.locator('[data-animated-name="hero-trigger"]').first();
+}
+
+async function expectBeyondPhotoWallVisible(page: Parameters<typeof test>[0]["page"]) {
+  await expect(page.locator("#beyond-hero-title")).toHaveText("Beyond The Terminal");
+  await expect(
+    page.getByText("Photos, people, notes, and the parts that don't fit inside a resume.")
+  ).toBeVisible();
+}
+
 test("easter egg entry transitions into the Beyond route", async ({ page }) => {
   await page.goto("/");
 
-  const heroNameTrigger = page.getByRole("button", { name: "Abhinav", exact: true });
+  const heroNameTrigger = getHeroPortalTrigger(page);
   await expect(heroNameTrigger).toBeVisible();
   await page.waitForTimeout(180);
 
@@ -72,11 +83,7 @@ test("easter egg entry transitions into the Beyond route", async ({ page }) => {
     "beyond-pastel-mist"
   );
   await expect(page).toHaveURL(/\/beyond-terminal$/);
-  await expect(
-    page.getByRole("heading", {
-      name: /The route narrows the noise and lets the larger ideas breathe/i,
-    })
-  ).toBeVisible();
+  await expectBeyondPhotoWallVisible(page);
 });
 
 test("home hero keeps the full name inside the desktop viewport", async ({ page }) => {
@@ -111,11 +118,11 @@ test("home hero paints the editorial wordmark before the premium hover state act
 
   const wordmark = page.locator('[data-home-hero-wordmark="true"]');
   const firstEditorialLayer = wordmark.locator('[data-letter-layer="editorial"]').first();
-  const firstScriptLayer = wordmark.locator('[data-letter-layer="script"]').first();
 
   await expect(wordmark).toBeVisible();
   await expect(firstEditorialLayer).toBeVisible();
-  await expect(firstScriptLayer).toHaveAttribute("data-visible", "false");
+  await expect(wordmark.locator('[data-letter-layer="editorial"]')).toHaveCount(7);
+  await expect(wordmark.locator('[data-letter-layer="script"]')).toHaveCount(0);
 });
 
 test("reduced motion falls back to the accessible fade variant", async ({ page }) => {
@@ -123,37 +130,31 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   await page.goto("/");
   await page.waitForTimeout(150);
 
-  await page.getByRole("button", { name: "Abhinav", exact: true }).click();
+  await getHeroPortalTrigger(page).click();
 
-  await expect(page.locator('[data-portal-variant="accessible-fade"]')).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-last-portal-variant",
+    "accessible-fade"
+  );
   await expect(page).toHaveURL(/\/beyond-terminal$/);
 });
 
-test("journal archive and article routes render cleanly", async ({ page }) => {
+test("legacy journal routes redirect into the Beyond photo wall", async ({ page }) => {
   await page.goto("/beyond-terminal/journal");
 
-  await expect(
-    page.getByRole("heading", {
-      name: /Local essays framed like the same system, just quieter/i,
-    })
-  ).toBeVisible();
-  await page.getByRole("link", { name: /Training for Quiet Judgment/i }).click();
+  await expect(page).toHaveURL(/\/beyond-terminal$/);
+  await expectBeyondPhotoWallVisible(page);
 
-  await expect(page).toHaveURL(/\/beyond-terminal\/journal\/training-for-quiet-judgment$/);
-  await expect(
-    page.getByRole("heading", { name: /Training for Quiet Judgment/i })
-  ).toBeVisible();
+  await page.goto("/beyond-terminal/journal/training-for-quiet-judgment");
+  await expect(page).toHaveURL(/\/beyond-terminal$/);
+  await expectBeyondPhotoWallVisible(page);
 });
 
-test("desktop Beyond shell matches the pastel grid layout", async ({ page }) => {
+test("desktop Beyond shell matches the photo wall layout", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/beyond-terminal");
 
-  await expect(
-    page.getByRole("heading", {
-      name: /The route narrows the noise and lets the larger ideas breathe/i,
-    })
-  ).toBeVisible();
+  await expectBeyondPhotoWallVisible(page);
   await page.waitForTimeout(900);
 
   const screenshot = await page.screenshot({
@@ -172,7 +173,7 @@ test("keyboard entry uses the centered trigger mode and opens the Beyond route a
 }) => {
   await page.goto("/");
 
-  const trigger = page.getByRole("button", { name: "Abhinav", exact: true });
+  const trigger = getHeroPortalTrigger(page);
   await expect(trigger).toBeVisible();
   await page.waitForTimeout(150);
   await trigger.focus();
@@ -197,23 +198,19 @@ test("hovering individual letters keeps the per-letter animation active without 
 
   const firstLetter = page.locator('[data-animated-letter-index="0"]').first();
   const fifthLetter = page.locator('[data-animated-letter-index="4"]').first();
-  const firstScriptLayer = firstLetter.locator('[data-letter-layer="script"]');
-  const fifthScriptLayer = fifthLetter.locator('[data-letter-layer="script"]');
-  const firstDecoration = firstLetter.locator('[data-letter-decoration="true"]');
-  const fifthDecoration = fifthLetter.locator('[data-letter-decoration="true"]');
+  const firstEditorialLayer = firstLetter.locator('[data-letter-layer="editorial"]');
+  const fifthEditorialLayer = fifthLetter.locator('[data-letter-layer="editorial"]');
 
   await firstLetter.hover();
   await expect(firstLetter).toHaveAttribute("data-hovered", "true");
-  await expect(firstScriptLayer).toHaveAttribute("data-visible", "true");
-  await expect(firstScriptLayer).toContainText("A");
-  await expect(firstDecoration).toHaveAttribute("data-visible", "true");
+  await expect(firstEditorialLayer).toContainText("A");
+  await expect(firstLetter.locator('[data-letter-aura="true"]')).toBeAttached();
   await expect(page).toHaveURL(/\/$/);
 
   await fifthLetter.hover();
   await expect(fifthLetter).toHaveAttribute("data-hovered", "true");
-  await expect(fifthScriptLayer).toHaveAttribute("data-visible", "true");
-  await expect(fifthScriptLayer).toContainText("n");
-  await expect(fifthDecoration).toHaveAttribute("data-visible", "true");
+  await expect(fifthEditorialLayer).toContainText("n");
+  await expect(fifthLetter.locator('[data-letter-aura="true"]')).toBeAttached();
   await expect(page).toHaveURL(/\/$/);
 });
 
@@ -406,7 +403,7 @@ test("desktop home hero wordmark keeps the editorial look", async ({ page }) => 
   });
 });
 
-test("desktop home hero keeps the editorial aurora scene visible above the fold", async ({
+test("desktop home hero keeps the ember scene visible above the fold", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
@@ -423,7 +420,7 @@ test("desktop home hero keeps the editorial aurora scene visible above the fold"
   });
 });
 
-test("hovered A, n, and v hero letters keep the premium script, glow, and decoration states", async ({
+test("hovered A, n, and v hero letters keep the ember wordmark states", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
@@ -438,51 +435,36 @@ test("hovered A, n, and v hero letters keep the premium script, glow, and decora
   await firstLetter.hover();
   await page.waitForTimeout(280);
   await expect(firstLetter).toHaveAttribute("data-hovered", "true");
-  await expect(firstLetter.locator('[data-letter-layer="script"]')).toHaveAttribute(
-    "data-visible",
-    "true"
-  );
-  await expect(firstLetter.locator('[data-letter-decoration="true"]')).toHaveAttribute(
-    "data-visible",
-    "true"
-  );
+  await expect(firstLetter.locator('[data-letter-layer="editorial"]')).toContainText("A");
 
   await fifthLetter.hover();
   await page.waitForTimeout(280);
   await expect(fifthLetter).toHaveAttribute("data-hovered", "true");
-  await expect(fifthLetter.locator('[data-letter-layer="script"]')).toHaveAttribute(
-    "data-visible",
-    "true"
-  );
-  await expect(fifthLetter.locator('[data-letter-decoration="true"]')).toHaveAttribute(
-    "data-visible",
-    "true"
-  );
+  await expect(fifthLetter.locator('[data-letter-layer="editorial"]')).toContainText("n");
 
   await seventhLetter.hover();
   await page.waitForTimeout(280);
   await expect(seventhLetter).toHaveAttribute("data-hovered", "true");
-  await expect(seventhLetter.locator('[data-letter-layer="script"]')).toHaveAttribute(
-    "data-visible",
-    "true"
-  );
-  await expect(seventhLetter.locator('[data-letter-decoration="true"]')).toHaveAttribute(
-    "data-visible",
-    "true"
-  );
+  await expect(seventhLetter.locator('[data-letter-layer="editorial"]')).toContainText("v");
+
+  const [firstShadow, fifthShadow, seventhShadow] = await Promise.all([
+    firstLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => getComputedStyle(el).textShadow),
+    fifthLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => getComputedStyle(el).textShadow),
+    seventhLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => getComputedStyle(el).textShadow),
+  ]);
+
+  expect(firstShadow).not.toBe("none");
+  expect(fifthShadow).toBe("none");
+  expect(seventhShadow).not.toBe("none");
 
   await expect(page).toHaveURL(/\/$/);
 });
 
-test("mobile Beyond shell matches the pastel grid layout", async ({ page }) => {
+test("mobile Beyond shell matches the photo wall layout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/beyond-terminal");
 
-  await expect(
-    page.getByRole("heading", {
-      name: /The route narrows the noise and lets the larger ideas breathe/i,
-    })
-  ).toBeVisible();
+  await expectBeyondPhotoWallVisible(page);
   await page.waitForTimeout(900);
 
   const screenshot = await page.screenshot({
@@ -495,15 +477,12 @@ test("mobile Beyond shell matches the pastel grid layout", async ({ page }) => {
   });
 });
 
-test("journal archive layout matches the supporting strip design", async ({ page }) => {
+test("redirected journal archive matches the Beyond photo wall layout", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1200 });
   await page.goto("/beyond-terminal/journal");
 
-  await expect(
-    page.getByRole("heading", {
-      name: /Local essays framed like the same system, just quieter/i,
-    })
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/beyond-terminal$/);
+  await expectBeyondPhotoWallVisible(page);
   await page.waitForTimeout(700);
 
   const screenshot = await page.screenshot({

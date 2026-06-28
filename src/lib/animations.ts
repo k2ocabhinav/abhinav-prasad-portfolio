@@ -5,25 +5,36 @@
 
 import type { Variants, Transition } from "motion/react";
 
-// ─── Entrance Variants ──────────────────────────────────────────────
+/**
+ * Signature easing — the strong ease-out (cubic-bezier(0.22,1,0.36,1)) used
+ * across the site's entrances. Replaces the flatter "easeOut" for a more
+ * modern, settled arrival. Mirrors --motion-ease-out in globals.css.
+ */
+const easeSignature: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-/** Default fade-in from below */
+// ─── Entrance Variants ──────────────────────────────────────────────
+// Movement (y/x/scale) auto-disables for reduced-motion users via the global
+// <MotionConfig reducedMotion="user"> in AppProviders; only opacity/blur remain.
+
+/** Default fade-in from below — signature easing + subtle blur-in */
 export const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 32, filter: "blur(8px)" },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: easeSignature },
   },
 };
 
-/** Fade-in from the left */
+/** Fade-in from the left — signature easing + subtle blur-in */
 export const fadeInLeft: Variants = {
-  hidden: { opacity: 0, x: -20 },
+  hidden: { opacity: 0, x: -28, filter: "blur(8px)" },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: easeSignature },
   },
 };
 
@@ -37,14 +48,15 @@ export const scaleIn: Variants = {
   },
 };
 
-/** Stagger item — fade up with slight scale */
+/** Stagger item — fade up with slight scale + blur-in */
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 24, scale: 0.97 },
+  hidden: { opacity: 0, y: 32, scale: 0.97, filter: "blur(8px)" },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.5, ease: "easeOut" },
+    filter: "blur(0px)",
+    transition: { duration: 0.6, ease: easeSignature },
   },
 };
 
@@ -57,6 +69,37 @@ export function staggerContainer(staggerDelay = 0.12): Variants {
     visible: {
       transition: {
         staggerChildren: staggerDelay,
+      },
+    },
+  };
+}
+
+// ─── Modern Reveal (blur + travel) ──────────────────────────────────
+
+/**
+ * Pronounced reveal — larger travel, stronger blur-in, signature easing.
+ * For section headings/bodies and media that should arrive with more presence
+ * than the base fade. Movement auto-disables under reduced motion; the blur
+ * fade (not vestibular motion) remains.
+ */
+export const revealUp: Variants = {
+  hidden: { opacity: 0, y: 40, filter: "blur(12px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: easeSignature },
+  },
+};
+
+/** Stagger container tuned for revealUp children (slightly slower cadence). */
+export function revealStagger(staggerDelay = 0.1): Variants {
+  return {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: staggerDelay,
+        delayChildren: 0.08,
       },
     },
   };

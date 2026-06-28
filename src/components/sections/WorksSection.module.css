@@ -231,7 +231,8 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--color-primary-brand);
+  /* Eyebrow meta in sage; lime reserved for headings + primary actions. */
+  color: var(--color-sage);
   margin-bottom: 1rem;
   display: block;
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import {
+  Big_Shoulders,
   Corinthia,
   Cormorant_Garamond,
   DM_Sans,
@@ -8,7 +9,7 @@ import {
   Syne,
 } from "next/font/google";
 import AppProviders from "@/components/providers/AppProviders";
-import { seo } from "@/data/seo";
+import { getProfileContent } from "@/lib/portfolioContent";
 import "./globals.css";
 
 // =============================================================================
@@ -59,6 +60,22 @@ const corinthia = Corinthia({
   display: "swap",
 });
 
+const bigShouldersDisplay = Big_Shoulders({
+  subsets: ["latin"],
+  weight: ["900"],
+  variable: "--font-wordmark",
+  display: "swap",
+});
+
+const seo = getProfileContent().seo ?? {
+  title: "Abhinav - Software Engineer Portfolio",
+  description: "Portfolio for Abhinav.",
+  keywords: ["Software Engineer", "Portfolio"],
+  author: "Abhinav",
+  url: "https://abhinav.dev",
+  ogImage: "https://abhinav.dev/og-image.jpg",
+};
+
 export const metadata: Metadata = {
   title: seo.title,
   description: seo.description,
@@ -88,7 +105,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable} ${playfairDisplay.variable} ${corinthia.variable}`}
+      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable} ${playfairDisplay.variable} ${corinthia.variable} ${bigShouldersDisplay.variable}`}
     >
       <body>
         <AppProviders>{children}</AppProviders>
