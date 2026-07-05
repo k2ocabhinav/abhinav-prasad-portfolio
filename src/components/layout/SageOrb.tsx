@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { sections } from "@/data/navigation";
@@ -17,6 +17,17 @@ type NavigatorWithConnection = Navigator & {
   connection?: {
     saveData?: boolean;
   };
+};
+
+// Cursor orb adopts the active section's accent (lilac / teal / gold).
+const ORB_ACCENTS: Record<string, { hex: string; rgb: string }> = {
+  hero: { hex: "#B9A7FF", rgb: "185, 167, 255" },
+  about: { hex: "#B9A7FF", rgb: "185, 167, 255" },
+  experience: { hex: "#00F5D4", rgb: "0, 245, 212" },
+  work: { hex: "#B9A7FF", rgb: "185, 167, 255" },
+  stack: { hex: "#FFD66B", rgb: "255, 214, 107" },
+  presence: { hex: "#00F5D4", rgb: "0, 245, 212" },
+  contact: { hex: "#B9A7FF", rgb: "185, 167, 255" },
 };
 
 export default function SageOrb() {
@@ -54,6 +65,7 @@ export default function SageOrb() {
   );
 
   const isContact = activeSection === "contact";
+  const accent = ORB_ACCENTS[activeSection] ?? ORB_ACCENTS.hero;
 
   if (!pointerTrackingEnabled) {
     return null;
@@ -62,6 +74,12 @@ export default function SageOrb() {
   return (
     <motion.div
       className={styles.orb}
+      style={
+        {
+          ["--orb-accent"]: accent.hex,
+          ["--orb-accent-rgb"]: accent.rgb,
+        } as CSSProperties
+      }
       animate={{
         x: mousePos.x - 18,
         y: mousePos.y - 18,

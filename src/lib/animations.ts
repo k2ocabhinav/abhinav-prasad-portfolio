@@ -115,11 +115,13 @@ export const orbSpring: Transition = {
   mass: 0.5,
 };
 
-/** Magnetic button spring */
+/** Magnetic button spring — softened (added mass, lower stiffness) for a
+    premium, weighty "pull" rather than a snappy follow. */
 export const magneticSpring: Transition = {
   type: "spring",
-  damping: 20,
-  stiffness: 300,
+  damping: 18,
+  stiffness: 170,
+  mass: 0.3,
 };
 
 /** Card tilt spring */

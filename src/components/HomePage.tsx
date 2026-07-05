@@ -5,6 +5,7 @@ import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";
 import BackdropCanvas from "@/components/layout/BackdropCanvas";
 import BrandMark from "@/components/layout/BrandMark";
+import Marquee from "@/components/layout/Marquee";
 import Navigation from "@/components/layout/Navigation";
 import LandingExperience from "@/components/landing/LandingExperience";
 import AboutSection from "@/components/sections/AboutSection";
@@ -61,6 +62,7 @@ export default function HomePage({ content }: HomePageProps) {
         <AboutSection personal={profile.personal} tone="pastel-cream" />
         <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
         <WorksSection projects={content.projects} tone="pastel-blush" />
+        <Marquee />
         <TechStackSection techCategories={content.stackGroups} tone="pastel-peach" />
         <PresenceSection
           personal={profile.personal}

@@ -51,18 +51,20 @@ export function cn(...classes: (string | false | null | undefined)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
+// Four distinct iridescent hues so per-tile accents read as multi-color
+// (previously peach + sky both collapsed to one accent → duo-tone).
 const landingAccentColorMap: Record<LandingAccentKey, string> = {
-  sage: "var(--color-primary-brand)",
-  peach: "var(--color-sage)",
-  sky: "var(--color-sage)",
+  sage: "var(--color-primary-brand)", // Holo Lilac
+  peach: "var(--color-gold)", // Ion Gold
+  sky: "var(--color-teal)", // Plasma Teal
   sand: "var(--color-secondary-text)",
 };
 
 const landingAccentRgbMap: Record<LandingAccentKey, string> = {
   sage: "var(--color-primary-brand-rgb)",
-  peach: "var(--color-sage-rgb)",
-  sky: "var(--color-sage-rgb)",
-  sand: "158, 169, 161",
+  peach: "var(--color-gold-rgb)",
+  sky: "var(--color-teal-rgb)",
+  sand: "154, 152, 173",
 };
 
 /**

@@ -7,26 +7,28 @@
 /* ─── Design Tokens ──────────────────────────────────────────────── */
 
 :root {
-  /* Colors - dark precision palette */
-  --color-ink: #0A0807;
-  --color-graphite: #14100E;
-  --color-elevated: #1F1A17;
-  --color-paper: #F3F6EE;
-  --color-hairline: rgba(243, 246, 238, 0.14);
-  --color-surface: #0A0807;
-  --color-on-surface: #F3F6EE;
-  --color-secondary-text: #9EA9A1;
-  --color-primary-brand: #FF6B4A;
-  --color-accent-ember: #FF5A1F;
-  --color-sage: #FFC24B;
-  --color-accent-brown: #F3F6EE;
-  --color-accent-peach-soft: #FF6B4A;
-  --color-accent-sky-soft: #FFC24B;
-  --color-accent-sand-soft: #FFC24B;
-  --color-accent-gold: #FF6B4A;
-  --color-accent-lavender: #FFC24B;
-  --color-accent-rose: #FF6B4A;
-  --color-accent-sky: #FFC24B;
+  /* Colors - AI Iridescence palette (void-black + holographic lilac/teal/gold) */
+  --color-ink: #07070A;
+  --color-graphite: #0E0E14;
+  --color-elevated: #17171F;
+  --color-paper: #F3F0FF;
+  --color-hairline: rgba(237, 235, 245, 0.14);
+  --color-surface: #07070A;
+  --color-on-surface: #EDEBF5;
+  --color-secondary-text: #9A98AD;
+  --color-primary-brand: #B9A7FF;
+  --color-teal: #00F5D4;
+  --color-gold: #FFD66B;
+  --color-accent-ember: #FFD66B;
+  --color-sage: var(--color-teal);
+  --color-accent-brown: #EDEBF5;
+  --color-accent-peach-soft: var(--color-gold);
+  --color-accent-sky-soft: var(--color-teal);
+  --color-accent-sand-soft: #9A98AD;
+  --color-accent-gold: var(--color-gold);
+  --color-accent-lavender: var(--color-primary-brand);
+  --color-accent-rose: var(--color-primary-brand);
+  --color-accent-sky: var(--color-teal);
 
   /* Typography — next/font in layout.tsx injects the optimised font-family
      string via a class on <html>, overriding these :root values at runtime.
@@ -42,7 +44,7 @@
   --content-padding-x: clamp(1.5rem, 5vw, 6rem);
 
   /* Glassmorphism */
-  --glass-bg: rgba(31, 26, 23, 0.72);
+  --glass-bg: rgba(23, 23, 31, 0.72);
   --glass-border: var(--color-hairline);
   --glass-blur: 12px;
   --glass-shadow: 0 18px 42px rgba(0, 0, 0, 0.36);
@@ -71,35 +73,37 @@
   /* ─── Dark Landing Palette ──────────────────────────────────────
      These are referenced directly by LandingExperience.module.css
      to scope the dark theme inside .landing without touching globals */
-  --color-surface-dark: #0A0807;
-  --color-surface-dark-rgb: 10, 8, 7;
-  --color-on-surface-dark: #F3F6EE;
-  --color-on-surface-dark-rgb: 243, 246, 238;
-  --color-secondary-text-dark: #9EA9A1;
-  --color-accent-mint: #FFC24B;
-  --color-accent-mint-rgb: 255, 194, 75;
+  --color-surface-dark: #07070A;
+  --color-surface-dark-rgb: 7, 7, 10;
+  --color-on-surface-dark: #EDEBF5;
+  --color-on-surface-dark-rgb: 237, 235, 245;
+  --color-secondary-text-dark: #9A98AD;
+  --color-accent-mint: #00F5D4;
+  --color-accent-mint-rgb: 0, 245, 212;
 
   /* ─── Landing Page Glassmorphism ────────────────────────────────
      These extend the existing --glass-* tokens with landing-specific
      opacity levels (higher opacity = more readable over hero visuals) */
-  --landing-glass-bg: rgba(31, 26, 23, 0.72);
-  --landing-glass-blur: blur(10px) saturate(1.08);
-  --landing-glass-border: rgba(243, 246, 238, 0.14);
-  --landing-glass-border-active: rgba(255, 107, 74, 0.42);
+  --landing-glass-bg: rgba(23, 23, 31, 0.72);
+  --landing-glass-blur: blur(10px) saturate(1.1);
+  --landing-glass-border: rgba(237, 235, 245, 0.14);
+  --landing-glass-border-active: rgba(185, 167, 255, 0.42);
   --landing-glass-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
   --landing-glass-radius: 8px;
 
   /* ─── RGB Channels ───────────────────────────────────────────────
      Needed so CSS Modules can build rgba() with opacity overrides
      without hardcoding hex values. */
-  --color-surface-rgb: 10, 8, 7;
-  --color-primary-brand-rgb: 255, 107, 74;
-  --color-accent-ember-rgb: 255, 90, 31;
-  --color-on-surface-rgb: 243, 246, 238;
-  --color-sage-rgb: 255, 194, 75;
-  --color-accent-peach-rgb: 255, 107, 74;
-  --color-accent-sky-rgb: 255, 194, 75;
-  --color-accent-sand-rgb: 255, 194, 75;
+  --color-surface-rgb: 7, 7, 10;
+  --color-primary-brand-rgb: 185, 167, 255;
+  --color-teal-rgb: 0, 245, 212;
+  --color-gold-rgb: 255, 214, 107;
+  --color-accent-ember-rgb: 255, 214, 107;
+  --color-on-surface-rgb: 237, 235, 245;
+  --color-sage-rgb: 0, 245, 212;
+  --color-accent-peach-rgb: 255, 214, 107;
+  --color-accent-sky-rgb: 0, 245, 212;
+  --color-accent-sand-rgb: 154, 152, 173;
 
   /* Section continuity tones */
   --surface-tone-hero-light: var(--color-ink);
@@ -131,7 +135,8 @@
 
 html {
   position: relative;
-  scroll-behavior: smooth;
+  /* scroll-behavior intentionally omitted — Lenis owns smooth scrolling
+     (native smooth + Lenis fight and cause jank). */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -143,12 +148,12 @@ body {
   background-color: var(--color-surface);
   overflow-x: hidden;
   line-height: 1.6;
-  scroll-snap-type: y proximity;
+  /* scroll-snap-type removed — snap + Lenis smooth scroll are historically janky. */
 }
 
 ::selection {
-  background-color: rgba(255, 107, 74, 0.42);
-  color: #0A0807;
+  background-color: rgba(185, 167, 255, 0.42);
+  color: #07070A;
 }
 
 img {
@@ -302,9 +307,9 @@ button {
 
 /* Spec Sheet Panel */
 .spec-sheet {
-  background-color: #F3F6EE;
-  color: #08100D;
-  border: 1px solid rgba(8, 16, 13, 0.12);
+  background-color: #F3F0FF;
+  color: #1A1530;
+  border: 1px solid rgba(26, 21, 48, 0.12);
   border-radius: 8px;
   box-shadow: 0 24px 58px rgba(0, 0, 0, 0.35);
   overflow: hidden;
@@ -312,17 +317,17 @@ button {
   width: 100%;
   max-width: 100%;
 
-  /* Scoped color tokens for light mode children inside dark parent */
-  --color-surface: #F3F6EE;
-  --color-surface-rgb: 243, 246, 238;
-  --color-on-surface: #08100D;
-  --color-on-surface-rgb: 8, 16, 13;
-  --color-secondary-text: #435046;
-  --color-primary-brand: #C2410C;
-  --color-primary-brand-rgb: 194, 65, 12;
-  --color-sage: #B45309;
-  --color-sage-rgb: 180, 83, 9;
-  --color-accent-brown: #08100D;
+  /* Scoped color tokens — cool quartz light panel (inversion beat) */
+  --color-surface: #F3F0FF;
+  --color-surface-rgb: 243, 240, 255;
+  --color-on-surface: #1A1530;
+  --color-on-surface-rgb: 26, 21, 48;
+  --color-secondary-text: #5A5475;
+  --color-primary-brand: #3B2E7E;
+  --color-primary-brand-rgb: 59, 46, 126;
+  --color-sage: #0F766E;
+  --color-sage-rgb: 15, 118, 110;
+  --color-accent-brown: #1A1530;
 }
 
 .spec-sheet::before {

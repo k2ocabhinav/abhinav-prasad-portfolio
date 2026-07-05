@@ -42,7 +42,7 @@
 }
 
 .letterPortalButton:focus-visible {
-  outline: 2px solid rgba(255, 107, 74, 0.72);
+  outline: 2px solid rgba(185, 167, 255, 0.72);
   outline-offset: 0.12em;
   border-radius: 0.08em;
 }
@@ -232,8 +232,8 @@
 .letterStage[data-animated-letter-index="0"] .editorialGlyph,
 .letterStage[data-animated-letter-index="6"] .editorialGlyph {
   text-shadow:
-    0 0 16px rgba(255, 107, 74, 0.14),
-    0 0 24px rgba(255, 194, 75, 0.08);
+    0 0 18px rgba(185, 167, 255, 0.18),
+    0 0 30px rgba(0, 245, 212, 0.1);
 }
 
 .letterStage[data-animated-letter-index="0"][data-hovered="true"],
@@ -288,7 +288,7 @@
 .letterStage[data-portal-letter="true"] .hoverAccentBar {
   height: 0.046em;
   background:
-    linear-gradient(90deg, transparent, #FF6B4A 10%, #FFC24B 46%, #FFC24B 78%, transparent);
+    linear-gradient(90deg, transparent, #B9A7FF 10%, #00F5D4 46%, #00F5D4 78%, transparent);
 }
 
 @media (max-width: 767px) {
