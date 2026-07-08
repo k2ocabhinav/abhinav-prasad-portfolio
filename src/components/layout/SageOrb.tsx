@@ -19,14 +19,14 @@ type NavigatorWithConnection = Navigator & {
   };
 };
 
-// Matte cursor dot: ink everywhere, vermilion only on the contact section.
+// Riso cursor dot: adopts each section's print hue; ink on the neutral zones.
 const ORB_ACCENTS: Record<string, { hex: string; rgb: string }> = {
   hero: { hex: "#0B1011", rgb: "11, 16, 17" },
   about: { hex: "#0B1011", rgb: "11, 16, 17" },
-  experience: { hex: "#0B1011", rgb: "11, 16, 17" },
-  work: { hex: "#0B1011", rgb: "11, 16, 17" },
-  stack: { hex: "#0B1011", rgb: "11, 16, 17" },
-  presence: { hex: "#0B1011", rgb: "11, 16, 17" },
+  experience: { hex: "#2244C7", rgb: "34, 68, 199" },
+  work: { hex: "#E42A1D", rgb: "228, 42, 29" },
+  stack: { hex: "#B8860B", rgb: "184, 134, 11" },
+  presence: { hex: "#206B4E", rgb: "32, 107, 78" },
   contact: { hex: "#E42A1D", rgb: "228, 42, 29" },
 };
 

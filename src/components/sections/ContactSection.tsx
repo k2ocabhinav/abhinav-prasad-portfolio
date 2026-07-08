@@ -61,6 +61,17 @@ export default function ContactSection({
   });
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
+
+  // Sheet rise — anchored to an untransformed wrapper (no scrub feedback).
+  const riseRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: riseProgress } = useScroll({
+    target: prefersReducedMotion ? undefined : riseRef,
+    offset: ["start end", "start 0.55"],
+  });
+  const sheetY = useTransform(riseProgress, [0, 1], [48, 0]);
+  const sheetScale = useTransform(riseProgress, [0, 1], [0.97, 1]);
+  const sheetRadius = useTransform(riseProgress, [0, 1], [12, 4]);
+
   const primaryCtaHref =
     personal.resumeHref ?? `mailto:${personal.email}?subject=Request%20Resume`;
   const primaryCtaLabel = personal.resumeHref ? "Download Resume" : "Request Resume";
@@ -72,7 +83,15 @@ export default function ContactSection({
       fullHeight
       centered
     >
-      <div className={cn("spec-sheet", styles.contactSpecSheet)}>
+      <div ref={riseRef}>
+      <motion.div
+        className={cn("spec-sheet", styles.contactSpecSheet)}
+        style={
+          prefersReducedMotion
+            ? undefined
+            : { y: sheetY, scale: sheetScale, borderRadius: sheetRadius }
+        }
+      >
         <div className="spec-header">
           <span>SPEC-02 // ROUTING_GATEWAY</span>
           <span>STATUS: ONLINE</span>
@@ -147,6 +166,7 @@ export default function ContactSection({
             <p className={styles.taglineText}>{personal.footerTagline}</p>
           </div>
         </div>
+      </motion.div>
       </div>
     </SectionWrapper>
   );

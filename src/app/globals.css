@@ -335,7 +335,8 @@ button {
   color: #EDE6DA;
   border: 1px solid rgba(11, 16, 17, 0.2);
   border-radius: 4px;
-  box-shadow: 0 12px 32px rgba(11, 16, 17, 0.14);
+  /* Hard-edge print offset (0 blur) — misregistration idiom, not a glow. */
+  box-shadow: 8px 8px 0 rgba(11, 16, 17, 0.1);
   overflow: hidden;
   position: relative;
   width: 100%;

@@ -34,9 +34,28 @@ export default function AboutSection({
   const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
 
+  // Sheet rise — the espresso panel settles onto the desk as it enters.
+  // Anchored to an untransformed wrapper so the scrub never feeds back.
+  const riseRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: riseProgress } = useScroll({
+    target: prefersReducedMotion ? undefined : riseRef,
+    offset: ["start end", "start 0.55"],
+  });
+  const sheetY = useTransform(riseProgress, [0, 1], [48, 0]);
+  const sheetScale = useTransform(riseProgress, [0, 1], [0.97, 1]);
+  const sheetRadius = useTransform(riseProgress, [0, 1], [12, 4]);
+
   return (
     <SectionWrapper id="about" tone={tone}>
-      <div className="spec-sheet">
+      <div ref={riseRef}>
+      <motion.div
+        className="spec-sheet"
+        style={
+          prefersReducedMotion
+            ? undefined
+            : { y: sheetY, scale: sheetScale, borderRadius: sheetRadius }
+        }
+      >
         <div className="spec-header">
           <span>SPEC-01 // PHILOSOPHY</span>
           <span>VER: 2026.1</span>
@@ -84,6 +103,7 @@ export default function AboutSection({
             </motion.div>
           </div>
         </div>
+      </motion.div>
       </div>
     </SectionWrapper>
   );
