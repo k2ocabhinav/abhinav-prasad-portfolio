@@ -51,20 +51,20 @@ export function cn(...classes: (string | false | null | undefined)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
-// Four distinct iridescent hues so per-tile accents read as multi-color
-// (previously peach + sky both collapsed to one accent → duo-tone).
+// Matte single-accent system: tile icons render ink; vermilion appears only
+// through hover states. `sand` stays muted for tertiary marks.
 const landingAccentColorMap: Record<LandingAccentKey, string> = {
-  sage: "var(--color-primary-brand)", // Holo Lilac
-  peach: "var(--color-gold)", // Ion Gold
-  sky: "var(--color-teal)", // Plasma Teal
-  sand: "var(--color-secondary-text)",
+  sage: "#0B1011",
+  peach: "#0B1011",
+  sky: "#0B1011",
+  sand: "#63605A",
 };
 
 const landingAccentRgbMap: Record<LandingAccentKey, string> = {
-  sage: "var(--color-primary-brand-rgb)",
-  peach: "var(--color-gold-rgb)",
-  sky: "var(--color-teal-rgb)",
-  sand: "154, 152, 173",
+  sage: "11, 16, 17",
+  peach: "11, 16, 17",
+  sky: "11, 16, 17",
+  sand: "99, 96, 90",
 };
 
 /**

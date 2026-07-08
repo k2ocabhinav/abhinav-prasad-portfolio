@@ -7,6 +7,7 @@
   overflow: clip;
   background: transparent;
   color: var(--tone-text, var(--color-on-surface));
+  border-top: 1px solid var(--color-hairline);
 }
 
 .inner {
@@ -15,176 +16,43 @@
   width: 100%;
 }
 
-/* ─── Per-section accent identity (AI Iridescence) ──────────────────
-   Each tone owns ONE hue rotating between sections; the cool void-black
-   ladder stays constant. lilac = primary, teal = secondary/live, gold = warm. */
+/* ─── Matte paper tones ──────────────────────────────────────────────
+   All six legacy tone classes resolve to the SAME warm-paper block:
+   section identity is now editorial (hairline rules + numbered mono
+   eyebrows), not chromatic. One vermilion accent; ink does the work.
+   #E42A1D is AA-large only — small accent text uses #C42117. */
 
-.toneHeroLight {
-  --section-bg: transparent;
-  --tone-text: #EDEBF5;
-  --tone-muted: #9A98AD;
-  --tone-heading: #EDEBF5;
-  --tone-accent: #B9A7FF;
-  --tone-accent-rgb: 185, 167, 255;
-  --tone-grid-rgb: 237, 235, 245;
-  --tone-wash-strong: rgba(185, 167, 255, 0.08);
-  --tone-wash-soft: rgba(0, 245, 212, 0.06);
-  --section-panel-bg: rgba(23, 23, 31, 0.72);
-  --section-panel-bg-strong: rgba(23, 23, 31, 0.9);
-  --section-panel-border: rgba(237, 235, 245, 0.14);
-  --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.34);
-  --section-chip-bg: rgba(185, 167, 255, 0.08);
-  --section-chip-border: rgba(185, 167, 255, 0.24);
-  --color-surface: var(--surface-tone-hero-light);
-  --color-surface-rgb: 7, 7, 10;
-  --color-on-surface: var(--tone-text);
-  --color-on-surface-rgb: 237, 235, 245;
-  --color-secondary-text: var(--tone-muted);
-  --color-primary-brand: var(--tone-accent);
-  --color-primary-brand-rgb: var(--tone-accent-rgb);
-  --color-sage: #00F5D4;
-  --color-sage-rgb: 0, 245, 212;
-  --color-accent-brown: #EDEBF5;
-}
-
-.tonePastelBlue {
-  --section-bg: transparent;
-  --tone-text: #EDEBF5;
-  --tone-muted: #9A98AD;
-  --tone-heading: #EDEBF5;
-  --tone-accent: #00F5D4;
-  --tone-accent-rgb: 0, 245, 212;
-  --tone-grid-rgb: 237, 235, 245;
-  --tone-wash-strong: rgba(0, 245, 212, 0.07);
-  --tone-wash-soft: rgba(185, 167, 255, 0.06);
-  --section-panel-bg: rgba(23, 23, 31, 0.72);
-  --section-panel-bg-strong: rgba(23, 23, 31, 0.9);
-  --section-panel-border: rgba(237, 235, 245, 0.14);
-  --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.34);
-  --section-chip-bg: rgba(0, 245, 212, 0.08);
-  --section-chip-border: rgba(0, 245, 212, 0.26);
-  --color-surface: #0E0E14;
-  --color-surface-rgb: 14, 14, 20;
-  --color-on-surface: var(--tone-text);
-  --color-on-surface-rgb: 237, 235, 245;
-  --color-secondary-text: var(--tone-muted);
-  --color-primary-brand: var(--tone-accent);
-  --color-primary-brand-rgb: var(--tone-accent-rgb);
-  --color-sage: #B9A7FF;
-  --color-sage-rgb: 185, 167, 255;
-  --color-accent-brown: #EDEBF5;
-}
-
-.tonePastelBlush {
-  --section-bg: transparent;
-  --tone-text: #EDEBF5;
-  --tone-muted: #9A98AD;
-  --tone-heading: #EDEBF5;
-  --tone-accent: #B9A7FF;
-  --tone-accent-rgb: 185, 167, 255;
-  --tone-grid-rgb: 237, 235, 245;
-  --tone-wash-strong: rgba(185, 167, 255, 0.08);
-  --tone-wash-soft: rgba(0, 245, 212, 0.06);
-  --section-panel-bg: rgba(23, 23, 31, 0.72);
-  --section-panel-bg-strong: rgba(23, 23, 31, 0.9);
-  --section-panel-border: rgba(237, 235, 245, 0.14);
-  --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.34);
-  --section-chip-bg: rgba(185, 167, 255, 0.08);
-  --section-chip-border: rgba(185, 167, 255, 0.24);
-  --color-surface: #07070A;
-  --color-surface-rgb: 7, 7, 10;
-  --color-on-surface: var(--tone-text);
-  --color-on-surface-rgb: 237, 235, 245;
-  --color-secondary-text: var(--tone-muted);
-  --color-primary-brand: var(--tone-accent);
-  --color-primary-brand-rgb: var(--tone-accent-rgb);
-  --color-sage: #00F5D4;
-  --color-sage-rgb: 0, 245, 212;
-  --color-accent-brown: #EDEBF5;
-}
-
-.tonePastelPeach {
-  --section-bg: transparent;
-  --tone-text: #EDEBF5;
-  --tone-muted: #9A98AD;
-  --tone-heading: #EDEBF5;
-  --tone-accent: #FFD66B;
-  --tone-accent-rgb: 255, 214, 107;
-  --tone-grid-rgb: 237, 235, 245;
-  --tone-wash-strong: rgba(255, 214, 107, 0.07);
-  --tone-wash-soft: rgba(0, 245, 212, 0.055);
-  --section-panel-bg: rgba(23, 23, 31, 0.72);
-  --section-panel-bg-strong: rgba(23, 23, 31, 0.9);
-  --section-panel-border: rgba(237, 235, 245, 0.14);
-  --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.32);
-  --section-chip-bg: rgba(255, 214, 107, 0.1);
-  --section-chip-border: rgba(255, 214, 107, 0.26);
-  --color-surface: var(--surface-tone-pastel-peach);
-  --color-surface-rgb: 23, 23, 31;
-  --color-on-surface: var(--tone-text);
-  --color-on-surface-rgb: 237, 235, 245;
-  --color-secondary-text: var(--tone-muted);
-  --color-primary-brand: var(--tone-accent);
-  --color-primary-brand-rgb: var(--tone-accent-rgb);
-  --color-sage: #00F5D4;
-  --color-sage-rgb: 0, 245, 212;
-  --color-accent-brown: #EDEBF5;
-}
-
-.tonePastelMint {
-  --section-bg: transparent;
-  --tone-text: #EDEBF5;
-  --tone-muted: #9A98AD;
-  --tone-heading: #EDEBF5;
-  --tone-accent: #00F5D4;
-  --tone-accent-rgb: 0, 245, 212;
-  --tone-grid-rgb: 237, 235, 245;
-  --tone-wash-strong: rgba(0, 245, 212, 0.07);
-  --tone-wash-soft: rgba(185, 167, 255, 0.07);
-  --section-panel-bg: rgba(23, 23, 31, 0.72);
-  --section-panel-bg-strong: rgba(23, 23, 31, 0.9);
-  --section-panel-border: rgba(237, 235, 245, 0.14);
-  --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.3);
-  --section-chip-bg: rgba(0, 245, 212, 0.08);
-  --section-chip-border: rgba(0, 245, 212, 0.26);
-  --color-surface: #0E0E14;
-  --color-surface-rgb: 14, 14, 20;
-  --color-on-surface: var(--tone-text);
-  --color-on-surface-rgb: 237, 235, 245;
-  --color-secondary-text: var(--tone-muted);
-  --color-primary-brand: var(--tone-accent);
-  --color-primary-brand-rgb: var(--tone-accent-rgb);
-  --color-sage: #B9A7FF;
-  --color-sage-rgb: 185, 167, 255;
-  --color-accent-brown: #EDEBF5;
-}
-
+.toneHeroLight,
+.tonePastelBlue,
+.tonePastelBlush,
+.tonePastelPeach,
+.tonePastelMint,
 .tonePastelCream {
   --section-bg: transparent;
-  --tone-text: #EDEBF5;
-  --tone-muted: #9A98AD;
-  --tone-heading: #EDEBF5;
-  --tone-accent: #B9A7FF;
-  --tone-accent-rgb: 185, 167, 255;
-  --tone-grid-rgb: 237, 235, 245;
-  --tone-wash-strong: rgba(185, 167, 255, 0.08);
-  --tone-wash-soft: rgba(0, 245, 212, 0.07);
-  --section-panel-bg: rgba(23, 23, 31, 0.72);
-  --section-panel-bg-strong: rgba(23, 23, 31, 0.9);
-  --section-panel-border: rgba(237, 235, 245, 0.14);
-  --section-panel-shadow: 0 24px 50px rgba(0, 0, 0, 0.3);
-  --section-chip-bg: rgba(185, 167, 255, 0.08);
-  --section-chip-border: rgba(185, 167, 255, 0.24);
-  --color-surface: var(--surface-tone-pastel-cream);
-  --color-surface-rgb: 14, 14, 20;
+  --tone-text: #0B1011;
+  --tone-muted: #63605A;
+  --tone-heading: #0B1011;
+  --tone-accent: #E42A1D;
+  --tone-accent-rgb: 228, 42, 29;
+  --tone-grid-rgb: 11, 16, 17;
+  --tone-wash-strong: rgba(11, 16, 17, 0.02);
+  --tone-wash-soft: transparent;
+  --section-panel-bg: #E9E5DC;
+  --section-panel-bg-strong: #FFFFFF;
+  --section-panel-border: rgba(11, 16, 17, 0.14);
+  --section-panel-shadow: 0 1px 2px rgba(11, 16, 17, 0.06);
+  --section-chip-bg: rgba(11, 16, 17, 0.04);
+  --section-chip-border: rgba(11, 16, 17, 0.16);
+  --color-surface: #F0EEE9;
+  --color-surface-rgb: 240, 238, 233;
   --color-on-surface: var(--tone-text);
-  --color-on-surface-rgb: 237, 235, 245;
+  --color-on-surface-rgb: 11, 16, 17;
   --color-secondary-text: var(--tone-muted);
   --color-primary-brand: var(--tone-accent);
   --color-primary-brand-rgb: var(--tone-accent-rgb);
-  --color-sage: #00F5D4;
-  --color-sage-rgb: 0, 245, 212;
-  --color-accent-brown: #EDEBF5;
+  --color-sage: #C42117;
+  --color-sage-rgb: 196, 33, 23;
+  --color-accent-brown: #0B1011;
 }
 
 .fullHeight {
