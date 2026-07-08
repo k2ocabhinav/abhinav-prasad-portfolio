@@ -23,7 +23,7 @@
   gap: 0.35em;
   font-family: var(--font-display);
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: clamp(1rem, 2vw, 1.7rem);
   color: color-mix(in srgb, var(--color-on-surface) 82%, var(--color-secondary-text) 18%);
   letter-spacing: 0;
@@ -45,37 +45,36 @@
   justify-content: flex-start;
 }
 
+/* Fraunces italic accent word — the editorial signature, AA-large vermilion. */
 .cyclerWord,
 .cyclerWordStatic {
   display: inline-flex;
   align-items: center;
   min-height: 1.15em;
   color: var(--color-primary-brand);
-  font-style: normal;
-  font-weight: 700;
+  font-style: italic;
+  font-weight: 550;
   white-space: nowrap;
-  text-shadow: none;
 }
 
 .accentLine {
   font-family: var(--font-label);
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   font-size: clamp(0.72rem, 1vw, 0.92rem);
-  color: color-mix(in srgb, var(--color-on-surface) 72%, var(--color-sage) 28%);
+  color: var(--color-secondary-text);
   letter-spacing: 0.16em;
-  opacity: 0.82;
   text-transform: uppercase;
 }
 
+/* Newsreader prose moment — reads like a print standfirst. */
 .supportingCopy {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: clamp(0.95rem, 1.22vw, 1.08rem);
-  color: color-mix(in srgb, var(--color-on-surface) 78%, var(--color-secondary-text) 22%);
-  line-height: 1.82;
+  font-family: var(--font-headline);
+  font-weight: 420;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  color: rgba(11, 16, 17, 0.8);
+  line-height: 1.72;
   max-width: 40rem;
-  opacity: 0.96;
 }
 
 .ctaGroup {
@@ -93,19 +92,19 @@
   min-height: 2.75rem;
   font-family: var(--font-label);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(243, 246, 238, 0.72);
-  border-bottom: 1px solid rgba(var(--color-primary-brand-rgb), 0.36);
+  color: var(--color-secondary-text);
+  border-bottom: 1px solid var(--color-hairline);
   transition:
     color 180ms var(--motion-ease-out),
     border-color 180ms var(--motion-ease-out);
 }
 
 .secondaryCta:hover {
-  color: var(--color-sage);
-  border-color: var(--color-sage);
+  color: #C42117;
+  border-color: #C42117;
 }
 
 @media (max-width: 767px) {

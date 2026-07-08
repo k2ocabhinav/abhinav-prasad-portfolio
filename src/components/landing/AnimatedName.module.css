@@ -1,5 +1,7 @@
 /* =============================================================================
-   AnimatedName - dark precision technical wordmark
+   AnimatedName — matte editorial serif wordmark (Fraunces, opsz 144, WONK 1).
+   Flat ink on paper; hover play is typographic (hollow stroke, hairline
+   underline, registration-mark corners) — no glow, no shadow, no blur.
    ============================================================================= */
 
 .nameShell {
@@ -42,7 +44,7 @@
 }
 
 .letterPortalButton:focus-visible {
-  outline: 2px solid rgba(185, 167, 255, 0.72);
+  outline: 2px solid rgba(196, 33, 23, 0.85);
   outline-offset: 0.12em;
   border-radius: 0.08em;
 }
@@ -57,12 +59,11 @@
   isolation: isolate;
   transition:
     transform 280ms var(--motion-ease-out),
-    color 180ms var(--motion-ease-out),
-    filter 220ms var(--motion-ease-out);
+    color 180ms var(--motion-ease-out);
 }
 
 .letterStage[data-hovered="true"] {
-  color: color-mix(in srgb, var(--letter-color) 30%, var(--color-on-surface) 70%);
+  color: var(--letter-color);
   transform: translate3d(0, -0.03em, 0);
   z-index: 2;
 }
@@ -70,25 +71,25 @@
 .glyph {
   display: inline-block;
   white-space: nowrap;
-  line-height: 0.92;
+  line-height: 0.95;
   color: currentColor;
   transform-origin: 50% 86%;
 }
 
 .editorialGlyph {
   font-family: var(--font-wordmark);
-  font-weight: 900;
-  font-size: clamp(3rem, 15.8vw, 18rem);
-  line-height: 0.92;
-  letter-spacing: 0.01em;
+  font-weight: 600;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  /* "Abhinav" in Fraunces ≈ 3.2em wide → 27vw fills ~88-92% of the viewport. */
+  font-size: clamp(3rem, 28vw, 34rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
   text-transform: none;
-  text-shadow: none;
   transition:
     opacity 220ms var(--motion-ease-out),
     transform 280ms var(--motion-ease-out),
     color 180ms var(--motion-ease-out),
-    -webkit-text-stroke-color 180ms var(--motion-ease-out),
-    text-shadow 220ms var(--motion-ease-out);
+    -webkit-text-stroke-color 180ms var(--motion-ease-out);
 }
 
 .hoverAura {
@@ -108,57 +109,32 @@
   transform: translate3d(0, 0, 0);
 }
 
-.hoverColorWash {
-  position: absolute;
-  inset: 8% -8%;
-  border-radius: 0.18rem;
-  background:
-    linear-gradient(90deg, transparent, color-mix(in srgb, var(--letter-line) 18%, transparent), transparent),
-    radial-gradient(circle at 50% 58%, color-mix(in srgb, var(--letter-color) 42%, transparent), transparent 62%);
-  opacity: 0;
-  filter: blur(14px);
-  transition: opacity 260ms var(--motion-ease-out);
+/* Retired glow layers — spans still render from the TSX; keep them inert. */
+.hoverColorWash,
+.scanSlice,
+.glowShardOne,
+.glowShardTwo {
+  display: none;
 }
 
-.letterStage[data-hovered="true"] .hoverColorWash {
-  opacity: 0;
-}
-
+/* Hairline underline — flat vermilion, draws in from the left. */
 .hoverAccentBar {
   position: absolute;
   left: 0.02em;
   right: 0.02em;
   bottom: 0.03em;
-  height: 0.036em;
-  background:
-    linear-gradient(90deg, transparent, var(--letter-color) 18%, var(--letter-line) 52%, transparent);
-  border-radius: 999px;
+  height: 2px;
+  background: #E42A1D;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 220ms var(--motion-ease-out);
-  opacity: 0.92;
 }
 
 .letterStage[data-hovered="true"] .hoverAccentBar {
   transform: scaleX(1);
 }
 
-.scanSlice {
-  position: absolute;
-  left: -4%;
-  right: -4%;
-  top: 46%;
-  height: 0.028em;
-  background:
-    linear-gradient(90deg, transparent, var(--letter-line) 22%, var(--letter-color) 50%, transparent 78%);
-  opacity: 0;
-  transform: scaleX(0.25) translate3d(-0.08em, 0.12em, 0);
-  transform-origin: center;
-  transition:
-    opacity 200ms var(--motion-ease-out),
-    transform 300ms var(--motion-ease-out);
-}
-
+/* Registration-mark corners — print artifact, revealed on hover. */
 .cornerTop,
 .cornerBottom {
   position: absolute;
@@ -173,107 +149,38 @@
 .cornerTop {
   top: 0.08em;
   right: -0.02em;
-  border-top: 1px solid var(--letter-line);
-  border-right: 1px solid var(--letter-color);
+  border-top: 1px solid var(--color-hairline);
+  border-right: 1px solid var(--color-hairline);
   transform: translate3d(-0.05em, 0.05em, 0);
 }
 
 .cornerBottom {
   left: -0.02em;
   bottom: 0.06em;
-  border-left: 1px solid var(--letter-color);
-  border-bottom: 1px solid var(--letter-line);
+  border-left: 1px solid var(--color-hairline);
+  border-bottom: 1px solid var(--color-hairline);
   transform: translate3d(0.05em, -0.05em, 0);
 }
 
-.letterStage[data-hovered="true"] .scanSlice,
 .letterStage[data-hovered="true"] .cornerTop,
 .letterStage[data-hovered="true"] .cornerBottom {
   opacity: 1;
-  transform: translate3d(0, 0, 0) scaleX(1);
+  transform: translate3d(0, 0, 0);
 }
 
-.glowShardOne,
-.glowShardTwo {
-  position: absolute;
-  width: 0.22em;
-  height: 1px;
-  pointer-events: none;
-  background: linear-gradient(90deg, transparent, var(--letter-color), transparent);
-  opacity: 0;
-  transform: translate3d(0, 0, 0) rotate(-12deg) scaleX(0.2);
-  transition:
-    opacity 220ms var(--motion-ease-out),
-    transform 320ms var(--motion-ease-out);
-}
-
-.glowShardOne {
-  top: 0.18em;
-  left: -0.06em;
-}
-
-.glowShardTwo {
-  right: -0.08em;
-  bottom: 0.22em;
-  background: linear-gradient(90deg, transparent, var(--letter-line), transparent);
-  transform: translate3d(0, 0, 0) rotate(14deg) scaleX(0.2);
-}
-
-.letterStage[data-hovered="true"] .glowShardOne,
-.letterStage[data-hovered="true"] .glowShardTwo {
-  opacity: 0;
-  transform: translate3d(0.04em, -0.02em, 0) rotate(-12deg) scaleX(1);
-}
-
-.letterStage[data-hovered="true"] .glowShardTwo {
-  transform: translate3d(-0.04em, 0.02em, 0) rotate(14deg) scaleX(1);
-}
-
-.letterStage[data-animated-letter-index="0"] .editorialGlyph,
-.letterStage[data-animated-letter-index="6"] .editorialGlyph {
-  text-shadow:
-    0 0 18px rgba(185, 167, 255, 0.18),
-    0 0 30px rgba(0, 245, 212, 0.1);
-}
-
-.letterStage[data-animated-letter-index="0"][data-hovered="true"],
-.letterStage[data-animated-letter-index="6"][data-hovered="true"] {
-  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--letter-color) 30%, transparent));
-}
-
-.letterStage[data-animated-letter-index="0"][data-hovered="true"] .hoverColorWash,
-.letterStage[data-animated-letter-index="6"][data-hovered="true"] .hoverColorWash {
-  opacity: 0.16;
-}
-
-.letterStage[data-animated-letter-index="0"][data-hovered="true"] .glowShardOne,
-.letterStage[data-animated-letter-index="0"][data-hovered="true"] .glowShardTwo,
-.letterStage[data-animated-letter-index="6"][data-hovered="true"] .glowShardOne,
-.letterStage[data-animated-letter-index="6"][data-hovered="true"] .glowShardTwo {
-  opacity: 0.72;
-}
+/* Per-letter typographic play (flat) */
 
 .letterStage[data-animated-letter-index="0"][data-hovered="true"] .editorialGlyph {
-  -webkit-text-stroke: 1px var(--letter-color);
-  color: rgba(243, 246, 238, 0.1);
+  -webkit-text-stroke: 1.5px var(--letter-color);
+  color: transparent;
 }
 
 .letterStage[data-animated-letter-index="1"][data-hovered="true"] {
   transform: perspective(520px) rotateY(4deg) translate3d(0, -0.025em, 0);
 }
 
-.letterStage[data-animated-letter-index="2"][data-hovered="true"] .scanSlice {
-  height: 0.05em;
-  opacity: 0.9;
-}
-
 .letterStage[data-animated-letter-index="3"][data-hovered="true"] .editorialGlyph {
   transform: translate3d(0, -0.02em, 0) scaleY(1.04);
-}
-
-.letterStage[data-animated-letter-index="4"][data-hovered="true"] .editorialGlyph {
-  color: var(--color-on-surface);
-  text-shadow: none;
 }
 
 .letterStage[data-animated-letter-index="5"][data-hovered="true"] {
@@ -281,14 +188,13 @@
 }
 
 .letterStage[data-animated-letter-index="6"][data-hovered="true"] .editorialGlyph {
-  -webkit-text-stroke: 1px var(--letter-color);
-  color: rgba(243, 246, 238, 0.1);
+  -webkit-text-stroke: 1.5px var(--letter-color);
+  color: transparent;
 }
 
 .letterStage[data-portal-letter="true"] .hoverAccentBar {
-  height: 0.046em;
-  background:
-    linear-gradient(90deg, transparent, #B9A7FF 10%, #00F5D4 46%, #00F5D4 78%, transparent);
+  height: 3px;
+  background: #E42A1D;
 }
 
 @media (max-width: 767px) {
@@ -299,8 +205,8 @@
   }
 
   .editorialGlyph {
-    font-size: clamp(2.6rem, 14.2vw, 4.4rem);
-    line-height: 0.94;
+    font-size: clamp(2.4rem, 26vw, 12rem);
+    line-height: 1;
   }
 
   .hoverAura {
@@ -312,19 +218,12 @@
   .letterStage,
   .editorialGlyph,
   .hoverAura,
-  .scanSlice,
   .cornerTop,
-  .cornerBottom,
-  .glowShardOne,
-  .glowShardTwo {
+  .cornerBottom {
     transition-duration: 120ms;
   }
 
   .letterStage[data-hovered="true"] {
     transform: none;
-  }
-
-  .hoverColorWash {
-    display: none;
   }
 }

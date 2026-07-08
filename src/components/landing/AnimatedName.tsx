@@ -16,14 +16,15 @@ import styles from "./AnimatedName.module.css";
 //   3. Use WAAPI only for initial entrance so hover stays CSS-driven
 // =============================================================================
 
+// Single matte accent — every letter hovers vermilion.
 const HOVER_COLORS = [
-  "#B9A7FF",
-  "#00F5D4",
-  "#B9A7FF",
-  "#00F5D4",
-  "#B9A7FF",
-  "#00F5D4",
-  "#B9A7FF",
+  "#E42A1D",
+  "#E42A1D",
+  "#E42A1D",
+  "#E42A1D",
+  "#E42A1D",
+  "#E42A1D",
+  "#E42A1D",
 ] as const;
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -96,13 +97,13 @@ export default function AnimatedName({
       data-home-hero-wordmark="true"
     >
       {letters.map((letter, index) => {
-        const hoverColor = HOVER_COLORS[index] ?? "#B9A7FF";
+        const hoverColor = HOVER_COLORS[index] ?? "#E42A1D";
         const isHovered = hoveredIndex === index;
         const isPortalLetter =
           Boolean(portalTrigger && triggerProps) && index === PORTAL_LETTER_INDEX;
         const stageStyle = {
           ["--letter-color" as string]: hoverColor,
-          ["--letter-line" as string]: "#00F5D4",
+          ["--letter-line" as string]: "#0B1011",
         } as CSSProperties;
 
         const handlePointerEnter = (event: PointerEvent<HTMLSpanElement>) => {
