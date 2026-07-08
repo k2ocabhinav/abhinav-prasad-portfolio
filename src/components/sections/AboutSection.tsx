@@ -47,7 +47,7 @@ export default function AboutSection({
               style={{ y: prefersReducedMotion ? 0 : headingY }}
               className={styles.heading}
             >
-              <FlipRevealText
+              <FlipRevealText flat
                 text="Philosophy"
                 mode="char"
                 progress={scrollYProgress}
@@ -60,7 +60,7 @@ export default function AboutSection({
               />
             </motion.h2>
             <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-              <FlipRevealText
+              <FlipRevealText flat
                 text="Operating principle."
                 mode="word"
                 progress={scrollYProgress}

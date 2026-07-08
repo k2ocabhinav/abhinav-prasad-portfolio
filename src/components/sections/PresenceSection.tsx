@@ -85,7 +85,7 @@ function PresenceSectionContent({
       >
         <div className="col-4">
           <motion.h2 style={{ y: prefersReducedMotion ? 0 : headingY }} className={styles.heading}>
-            <FlipRevealText
+            <FlipRevealText flat
               text="Presence"
               mode="char"
               progress={scrollYProgress}
@@ -98,8 +98,8 @@ function PresenceSectionContent({
             />
           </motion.h2>
           <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-            <FlipRevealText
-              text="Signals across time zones."
+            <FlipRevealText flat
+              text="(05) — Signals across time zones"
               mode="word"
               progress={scrollYProgress}
               window={[0.24, 0.38]}

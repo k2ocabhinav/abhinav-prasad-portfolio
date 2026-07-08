@@ -61,7 +61,7 @@ function WorksSectionContent({
           style={{ y: prefersReducedMotion ? 0 : headingY }}
           className={styles.heading}
         >
-          <FlipRevealText
+          <FlipRevealText flat
             text="Selected Works"
             mode="word"
             progress={scrollYProgress}
@@ -74,8 +74,8 @@ function WorksSectionContent({
           />
         </motion.h2>
         <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-          <FlipRevealText
-            text="Systems that ship."
+          <FlipRevealText flat
+            text="(03) — Systems that ship"
             mode="word"
             progress={scrollYProgress}
             window={[0.24, 0.38]}

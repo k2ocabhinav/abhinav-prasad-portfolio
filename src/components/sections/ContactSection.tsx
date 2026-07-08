@@ -82,7 +82,7 @@ export default function ContactSection({
             style={{ y: prefersReducedMotion ? 0 : headingY }}
             className={styles.heading}
           >
-            <FlipRevealText
+            <FlipRevealText flat
               text="Let's build."
               mode="char"
               progress={scrollYProgress}
@@ -95,7 +95,7 @@ export default function ContactSection({
             />
           </motion.h2>
           <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-            <FlipRevealText
+            <FlipRevealText flat
               text="From idea to shipped system."
               mode="word"
               progress={scrollYProgress}

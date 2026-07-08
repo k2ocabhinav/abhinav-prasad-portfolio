@@ -29,7 +29,7 @@ export default function LandingFrame3Services({
     return (
       <section className={styles.frame} aria-label="Services">
         <div className={styles.container}>
-          <span className={styles.sectionLabel}>What I Do</span>
+          <span className={styles.sectionLabel}>(01) — What I do</span>
           <div className={styles.grid}>
             {services.map((service) => (
               <div key={service.id} className={styles.gridItem}>
@@ -45,7 +45,7 @@ export default function LandingFrame3Services({
   return (
     <section className={styles.frame} aria-label="Services">
       <div className={styles.container}>
-        <span className={styles.sectionLabel}>What I Do</span>
+        <span className={styles.sectionLabel}>(01) — What I do</span>
         <motion.div
           className={styles.grid}
           variants={landingStagger(0.1)}

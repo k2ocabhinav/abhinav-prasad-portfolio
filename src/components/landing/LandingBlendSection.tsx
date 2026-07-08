@@ -29,7 +29,7 @@ export default function LandingBlendSection() {
       <div className={styles.inner}>
         <span className={styles.eyebrow}>Identity Layer</span>
         <motion.p className={styles.label} style={{ opacity: labelOpacity, y: labelY }}>
-          <FlipRevealText
+          <FlipRevealText flat
             text="Beyond the Build"
             mode="word"
             progress={scrollYProgress}

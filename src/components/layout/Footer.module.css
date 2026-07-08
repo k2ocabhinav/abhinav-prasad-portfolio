@@ -11,3 +11,13 @@
   text-transform: uppercase;
   color: var(--color-secondary-text);
 }
+
+/* Colophon — the print-journal sign-off. */
+.colophon {
+  margin-top: 0.6rem;
+  font-family: var(--font-label);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(99, 96, 90, 0.75);
+}

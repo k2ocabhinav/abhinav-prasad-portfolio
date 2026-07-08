@@ -17,6 +17,8 @@ interface FlipRevealTextProps {
   stagger?: number;
   perspective?: number;
   reduceMotion?: boolean;
+  /** Matte mode: masked rise (overflow-clip + translate), no 3D rotation. */
+  flat?: boolean;
   className?: string;
   tokenClassName?: string;
 }
@@ -53,16 +55,17 @@ export default function FlipRevealText({
   stagger = 0.04,
   perspective = 920,
   reduceMotion,
+  flat = false,
   className,
   tokenClassName,
 }: FlipRevealTextProps) {
   const prefersReducedMotion = useReducedMotion();
-  const disableFlip = reduceMotion ?? prefersReducedMotion;
+  const disableFlip = flat || (reduceMotion ?? prefersReducedMotion);
   const idleProgress = useMotionValue(0);
   const progressSource = progress ?? idleProgress;
   const [progressValue, setProgressValue] = useState(() => progress?.get() ?? 0);
   const useScrollLinked = Boolean(progress);
-  const startY = disableFlip ? 10 : 16;
+  const startY = flat ? 20 : disableFlip ? 10 : 16;
   const startRotate = disableFlip ? 0 : -112;
   const windowRange = window ?? triggerRange;
   const holdWindowEnd = holdUntil ?? Math.min(1, windowRange[1] + 0.34);
@@ -162,7 +165,9 @@ export default function FlipRevealText({
                 duration: useScrollLinked
                   ? 0.14
                   : disableFlip
-                    ? 0.34
+                    ? flat
+                      ? 0.5
+                      : 0.34
                     : Math.min(0.54, revealWindow + 0.14),
                 delay: useScrollLinked ? 0 : delay,
                 ease: useScrollLinked ? "linear" : "easeOut",

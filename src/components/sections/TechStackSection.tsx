@@ -58,7 +58,7 @@ function TechStackSectionContent({
             style={{ y: prefersReducedMotion ? 0 : headingY }}
             className={styles.heading}
           >
-            <FlipRevealText
+            <FlipRevealText flat
               text="Stack"
               mode="word"
               progress={scrollYProgress}
@@ -71,8 +71,8 @@ function TechStackSectionContent({
             />
           </motion.h2>
           <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-            <FlipRevealText
-              text="Tools behind the build."
+            <FlipRevealText flat
+              text="(04) — Tools behind the build"
               mode="word"
               progress={scrollYProgress}
               window={[0.24, 0.38]}

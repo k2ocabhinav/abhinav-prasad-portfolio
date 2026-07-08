@@ -15,6 +15,9 @@ export default function Footer({ personal }: FooterProps) {
       <p className={styles.copyright}>
         © {new Date().getFullYear()} {personal.name}. All rights reserved.
       </p>
+      <p className={styles.colophon}>
+        Set in Fraunces, Newsreader &amp; Fragment Mono · Badlapur, IN
+      </p>
     </footer>
   );
 }

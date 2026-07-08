@@ -57,7 +57,7 @@ function ExperienceSectionContent({
             style={{ y: prefersReducedMotion ? 0 : headingY }}
             className={styles.heading}
           >
-            <FlipRevealText
+            <FlipRevealText flat
               text="Experience"
               mode="char"
               progress={scrollYProgress}
@@ -70,8 +70,8 @@ function ExperienceSectionContent({
             />
           </motion.h2>
           <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-            <FlipRevealText
-              text="Built to stay resilient."
+            <FlipRevealText flat
+              text="(02) — Built to stay resilient"
               mode="word"
               progress={scrollYProgress}
               window={[0.24, 0.38]}
