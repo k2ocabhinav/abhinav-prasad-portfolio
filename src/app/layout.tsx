@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import {
-  Big_Shoulders,
-  Corinthia,
-  Cormorant_Garamond,
-  DM_Sans,
-  Playfair_Display,
-  Plus_Jakarta_Sans,
-  Syne,
+  Fraunces,
+  Fragment_Mono,
+  Hanken_Grotesk,
+  Newsreader,
 } from "next/font/google";
 import AppProviders from "@/components/providers/AppProviders";
 import { getProfileContent } from "@/lib/portfolioContent";
@@ -14,56 +11,42 @@ import "./globals.css";
 
 // =============================================================================
 // Root Layout — Fonts, metadata, HTML structure
+// "Print Room" system: Fraunces (display/wordmark), Newsreader (prose serif),
+// Hanken Grotesk (UI + body), Fragment Mono (meta labels).
 // =============================================================================
 
-const cormorant = Cormorant_Garamond({
+// Display + wordmark — expressive high-contrast serif; the wordmark forces
+// opsz 144 / WONK 1 via font-variation-settings in AnimatedName.module.css.
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["300", "600"],
-  style: ["italic"],
-  variable: "--font-headline",
-  display: "swap",
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["300", "500"],
-  variable: "--font-body",
-  display: "swap",
-});
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-label",
-  display: "swap",
-});
-
-// Landing page display font — geometric, ultra-bold for hero typography
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  axes: ["opsz", "SOFT", "WONK"],
+  style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });
 
-const playfairDisplay = Playfair_Display({
+// Prose serif — editorial reading moments and italic accents.
+const newsreader = Newsreader({
   subsets: ["latin"],
-  weight: ["900"],
-  variable: "--font-hero-display",
+  axes: ["opsz"],
+  style: ["normal", "italic"],
+  variable: "--font-headline",
   display: "swap",
 });
 
-const corinthia = Corinthia({
+// UI + body workhorse.
+const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
-  weight: "700",
-  variable: "--font-hero-script",
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
   display: "swap",
 });
 
-const bigShouldersDisplay = Big_Shoulders({
+// Meta/eyebrow labels — mono, uppercase, tracked.
+const fragmentMono = Fragment_Mono({
   subsets: ["latin"],
-  weight: ["900"],
-  variable: "--font-wordmark",
+  weight: "400",
+  variable: "--font-label",
   display: "swap",
 });
 
@@ -105,7 +88,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${cormorant.variable} ${plusJakarta.variable} ${dmSans.variable} ${syne.variable} ${playfairDisplay.variable} ${corinthia.variable} ${bigShouldersDisplay.variable}`}
+      className={`${fraunces.variable} ${newsreader.variable} ${hankenGrotesk.variable} ${fragmentMono.variable}`}
     >
       <body>
         <AppProviders>{children}</AppProviders>
