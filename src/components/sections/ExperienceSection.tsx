@@ -7,6 +7,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./ExperienceSection.module.css";
 
@@ -52,6 +53,7 @@ function ExperienceSectionContent({
       tone={tone}
     >
       <div ref={sectionRef} className={`grid-12 ${styles.experienceGrid}`}>
+        <RisoMark variant="arc" />
         <div className="col-4">
           <motion.h2
             style={{ y: prefersReducedMotion ? 0 : headingY }}

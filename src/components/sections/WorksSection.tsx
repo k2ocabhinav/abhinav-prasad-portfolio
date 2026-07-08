@@ -12,6 +12,7 @@ import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
 import { renderIcon, cn } from "@/lib/utils";
 import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./WorksSection.module.css";
 
@@ -57,6 +58,7 @@ function WorksSectionContent({
       tone={tone}
     >
       <div ref={sectionRef} className={styles.sectionHeader}>
+        <RisoMark variant="discs" />
         <motion.h2
           style={{ y: prefersReducedMotion ? 0 : headingY }}
           className={styles.heading}

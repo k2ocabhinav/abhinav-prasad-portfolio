@@ -1,0 +1,29 @@
+.mark {
+  position: absolute;
+  top: -0.5rem;
+  right: clamp(0rem, 6vw, 6rem);
+  width: clamp(64px, 8vw, 112px);
+  aspect-ratio: 1;
+  display: none;
+  color: var(--tone-accent, #E42A1D);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mark svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* SVG rects scale from their own left edge (print bars grow outward). */
+.bar {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+@media (min-width: 768px) {
+  .mark {
+    display: block;
+  }
+}

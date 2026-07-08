@@ -8,6 +8,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
 import { renderIcon } from "@/lib/utils";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./TechStackSection.module.css";
 
@@ -53,6 +54,7 @@ function TechStackSectionContent({
       tone={tone}
     >
       <div ref={sectionRef} className={`grid-12 ${styles.headerGrid}`}>
+        <RisoMark variant="bars" />
         <div className="col-4">
           <motion.h2
             style={{ y: prefersReducedMotion ? 0 : headingY }}

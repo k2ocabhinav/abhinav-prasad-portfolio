@@ -6,6 +6,7 @@ import type { PersonalData, PresenceNode, SectionBlendStyle, SectionTone } from 
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import LiveClock from "@/components/ui/LiveClock";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./PresenceSection.module.css";
 
@@ -83,6 +84,7 @@ function PresenceSectionContent({
         className={`grid-12 ${styles.presenceGrid}`}
         data-presence-active={isSectionActive ? "true" : "false"}
       >
+        <RisoMark variant="asterisk" />
         <div className="col-4">
           <motion.h2 style={{ y: prefersReducedMotion ? 0 : headingY }} className={styles.heading}>
             <FlipRevealText flat
