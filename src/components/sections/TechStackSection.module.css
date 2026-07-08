@@ -85,7 +85,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--color-secondary-text);
+  color: var(--tone-accent-deep, #63605A);
   margin-bottom: 1.5rem;
 }
 

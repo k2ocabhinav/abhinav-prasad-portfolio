@@ -23,6 +23,23 @@
   --color-accent-deep: #C42117;
   --color-espresso: #16130F;
   --color-bone: #EDE6DA;
+
+  /* Riso print accents — per-section identity ("deep" = small-text/link
+     variant). Ochre #B8860B is 2.8:1 on paper — marks/fills only, NEVER text. */
+  --color-cobalt: #2244C7;
+  --color-cobalt-deep: #1B3699;
+  --color-racing-green: #206B4E;
+  --color-racing-green-deep: #174F3A;
+  --color-ochre: #B8860B;
+  --color-ochre-deep: #8A6508;
+
+  /* Paper stocks — tinted "rooms" the backdrop fades between (ink ≥16:1 on all) */
+  --paper-bone: #F0EEE9;
+  --paper-blush: #F2ECE5;
+  --paper-celadon: #ECEFE9;
+  --paper-flax: #F1EDE0;
+  --paper-cool: #EBEDF1;
+
   /* Retired hues — aliased into the matte set so nothing dangles */
   --color-teal: #C42117;
   --color-gold: #63605A;
@@ -101,6 +118,9 @@
   --color-surface-rgb: 240, 238, 233;
   --color-primary-brand-rgb: 228, 42, 29;
   --color-accent-deep-rgb: 196, 33, 23;
+  --color-cobalt-rgb: 34, 68, 199;
+  --color-racing-green-rgb: 32, 107, 78;
+  --color-ochre-rgb: 184, 134, 11;
   --color-teal-rgb: 196, 33, 23;
   --color-gold-rgb: 99, 96, 90;
   --color-accent-ember-rgb: 228, 42, 29;

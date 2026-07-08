@@ -34,6 +34,7 @@
   --tone-heading: #0B1011;
   --tone-accent: #E42A1D;
   --tone-accent-rgb: 228, 42, 29;
+  --tone-accent-deep: #C42117;
   --tone-grid-rgb: 11, 16, 17;
   --tone-wash-strong: rgba(11, 16, 17, 0.02);
   --tone-wash-soft: transparent;
@@ -53,6 +54,44 @@
   --color-sage: #C42117;
   --color-sage-rgb: 196, 33, 23;
   --color-accent-brown: #0B1011;
+}
+
+/* ─── Riso per-section accent identity ───────────────────────────────
+   Each main section owns one print hue (vermilion stays the site lead
+   and the default above). Overrides change ONLY accent-carrying tokens;
+   paper, ink, and panel values are shared. Ochre text is ALWAYS deep. */
+
+.tonePastelBlue {
+  /* Experience — Cobalt */
+  --tone-accent: #2244C7;
+  --tone-accent-rgb: 34, 68, 199;
+  --tone-accent-deep: #1B3699;
+  --section-chip-bg: rgba(34, 68, 199, 0.05);
+  --section-chip-border: rgba(34, 68, 199, 0.28);
+  --color-sage: #1B3699;
+  --color-sage-rgb: 27, 54, 153;
+}
+
+.tonePastelPeach {
+  /* Tech Stack — Ochre (fill/marks only; text uses deep) */
+  --tone-accent: #B8860B;
+  --tone-accent-rgb: 184, 134, 11;
+  --tone-accent-deep: #8A6508;
+  --section-chip-bg: rgba(184, 134, 11, 0.06);
+  --section-chip-border: rgba(184, 134, 11, 0.32);
+  --color-sage: #8A6508;
+  --color-sage-rgb: 138, 101, 8;
+}
+
+.tonePastelMint {
+  /* Presence — Racing Green */
+  --tone-accent: #206B4E;
+  --tone-accent-rgb: 32, 107, 78;
+  --tone-accent-deep: #174F3A;
+  --section-chip-bg: rgba(32, 107, 78, 0.05);
+  --section-chip-border: rgba(32, 107, 78, 0.28);
+  --color-sage: #174F3A;
+  --color-sage-rgb: 23, 79, 58;
 }
 
 .fullHeight {

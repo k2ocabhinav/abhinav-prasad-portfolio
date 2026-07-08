@@ -96,7 +96,7 @@
 
 /* Flat vermilion dot with an ink ring; gentle opacity pulse, no glow. */
 .nodeDotActive {
-  background-color: #E42A1D;
+  background-color: var(--tone-accent, #E42A1D);
   box-shadow: 0 0 0 1px rgba(11, 16, 17, 0.3);
   animation: presencePulse 2.4s ease-in-out infinite;
 }
@@ -133,7 +133,7 @@
   font-family: var(--font-label);
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: #C42117;
+  color: var(--tone-accent-deep, #C42117);
   text-transform: uppercase;
   white-space: nowrap;
   transition: opacity 0.5s ease;
