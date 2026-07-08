@@ -4,7 +4,33 @@
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background: #F0EEE9;
+  background: var(--paper-bone, #F0EEE9);
+  transition: background-color 0.8s ease;
+}
+
+/* Tinted paper stocks — value-matched rooms (ink stays ~16:1 on all) */
+.canvas[data-stock="cool"] {
+  background: var(--paper-cool, #EBEDF1);
+}
+
+.canvas[data-stock="blush"] {
+  background: var(--paper-blush, #F2ECE5);
+}
+
+.canvas[data-stock="flax"] {
+  background: var(--paper-flax, #F1EDE0);
+}
+
+.canvas[data-stock="celadon"] {
+  background: var(--paper-celadon, #ECEFE9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas {
+    /* Near-instant, not instant — a hard snap reads as broken; a long fade
+       can still bother vestibular users. */
+    transition-duration: 0.15s;
+  }
 }
 
 .grain {
