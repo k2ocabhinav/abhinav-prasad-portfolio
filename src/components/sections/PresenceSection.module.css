@@ -9,10 +9,10 @@
 .heading {
   font-family: var(--font-display);
   font-style: normal;
-  font-weight: 700;
+  font-weight: 550;
   font-size: 3rem;
-  letter-spacing: 0;
-  color: var(--color-primary-brand);
+  letter-spacing: -0.01em;
+  color: var(--color-on-surface);
 }
 
 .headingFlip {
@@ -29,7 +29,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-primary-brand) 84%, var(--color-on-surface) 16%);
+  color: var(--color-secondary-text);
 }
 
 .calloutFlip {
@@ -51,10 +51,10 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   background: var(--section-panel-bg);
-  border-radius: 0.5rem;
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid var(--section-panel-border);
-  box-shadow: var(--section-panel-shadow);
+  border: 1px solid var(--color-hairline);
+  box-shadow: 0 1px 2px rgba(11, 16, 17, 0.06);
 }
 
 @media (min-width: 768px) {
@@ -83,11 +83,7 @@
 }
 
 .nodePulse {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  background-color: var(--color-sage);
-  border-radius: 50%;
+  display: none;
 }
 
 .nodeDot {
@@ -98,31 +94,30 @@
   z-index: 10;
 }
 
+/* Flat vermilion dot with an ink ring; gentle opacity pulse, no glow. */
 .nodeDotActive {
-  background-color: var(--color-primary-brand);
-  animation: innerGlow 3s ease-in-out infinite;
+  background-color: #E42A1D;
+  box-shadow: 0 0 0 1px rgba(11, 16, 17, 0.3);
+  animation: presencePulse 2.4s ease-in-out infinite;
 }
 
-@keyframes innerGlow {
+@keyframes presencePulse {
   0%, 100% {
-    box-shadow: 0 0 4px rgba(var(--color-primary-brand-rgb), 0.34);
+    opacity: 1;
   }
   50% {
-    box-shadow:
-      0 0 12px rgba(var(--color-primary-brand-rgb), 0.58),
-      0 0 20px rgba(var(--color-primary-brand-rgb), 0.24);
+    opacity: 0.65;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .nodeDotActive {
     animation: none;
-    box-shadow: 0 0 6px rgba(var(--color-primary-brand-rgb), 0.32);
   }
 }
 
 .nodeDotInactive {
-  background-color: rgba(var(--color-primary-brand-rgb), 0.36);
+  background-color: rgba(11, 16, 17, 0.32);
 }
 
 .nodeLabels {
@@ -138,7 +133,7 @@
   font-family: var(--font-label);
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: var(--color-primary-brand);
+  color: #C42117;
   text-transform: uppercase;
   white-space: nowrap;
   transition: opacity 0.5s ease;
@@ -159,7 +154,7 @@
   font-family: var(--font-label);
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: rgba(var(--color-primary-brand-rgb), 0.56);
+  color: var(--color-secondary-text);
   text-transform: uppercase;
   white-space: nowrap;
 }

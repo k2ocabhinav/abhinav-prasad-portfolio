@@ -12,11 +12,7 @@
 }
 
 .profileStageWash {
-  position: absolute;
-  inset: -8% -4%;
-  pointer-events: none;
-  background: linear-gradient(120deg, rgba(185, 167, 255, 0.08), transparent 56%);
-  z-index: 0;
+  display: none;
 }
 
 .profileContent {
@@ -56,29 +52,18 @@
 }
 
 .portraitHalo {
-  position: absolute;
-  inset: 12% -10% -10%;
-  border-radius: 999px;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at 52% 50%, rgba(0, 245, 212, 0.14) 0%, transparent 58%),
-    radial-gradient(ellipse at 48% 72%, rgba(185, 167, 255, 0.08) 0%, transparent 62%);
-  filter: blur(8px);
+  display: none;
 }
 
 .imageFrame {
   position: relative;
   z-index: 1;
   aspect-ratio: 1;
-  border: 1px solid rgba(243, 246, 238, 0.14);
-  border-radius: 8px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 4px;
   overflow: hidden;
-  background:
-    linear-gradient(180deg, rgba(243, 246, 238, 0.035), rgba(243, 246, 238, 0.012)),
-    #07070A;
-  box-shadow:
-    0 0 0 1px rgba(0, 245, 212, 0.08),
-    0 18px 42px rgba(0, 0, 0, 0.38);
+  background: #E9E5DC;
+  box-shadow: 0 1px 2px rgba(11, 16, 17, 0.06);
 }
 
 .imageFrame::before,
@@ -96,10 +81,7 @@
 .imageFrame::after {
   inset: 0;
   z-index: 2;
-  border: 1px solid rgba(185, 167, 255, 0.22);
-  box-shadow:
-    inset 0 0 24px rgba(0, 245, 212, 0.08),
-    inset 0 -1px 0 rgba(185, 167, 255, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(11, 16, 17, 0.08);
 }
 
 .heroImage {
@@ -109,12 +91,9 @@
   object-position: center 28%;
   border: none;
   border-radius: 0;
-  filter: grayscale(1) contrast(1.75) brightness(0.52) saturate(0);
-  opacity: 0.62;
-  mix-blend-mode: screen;
+  filter: grayscale(1) contrast(1.08);
+  opacity: 1;
   transform: scale(1.03);
-  mask-image: radial-gradient(ellipse at 50% 42%, black 0 48%, rgba(0, 0, 0, 0.72) 56%, transparent 76%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 42%, black 0 48%, rgba(0, 0, 0, 0.72) 56%, transparent 76%);
 }
 
 .copyColumn {
@@ -143,14 +122,9 @@
   align-items: center;
   max-width: 11rem;
   padding: 0.42rem 0.58rem;
-  border: 1px solid rgba(243, 246, 238, 0.12);
-  border-radius: 6px;
-  background:
-    linear-gradient(180deg, rgba(31, 26, 23, 0.72), rgba(10, 8, 7, 0.82)),
-    radial-gradient(circle at 10% 0%, rgba(0, 245, 212, 0.14), transparent 52%);
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 245, 212, 0.04),
-    0 14px 34px rgba(0, 0, 0, 0.32);
+  border: 1px solid var(--color-hairline);
+  border-radius: 2px;
+  background: rgba(240, 238, 233, 0.95);
 }
 
 .hintCopy::before {
@@ -158,8 +132,8 @@
   right: 0.46rem;
   width: 0.34rem;
   height: 0.34rem;
-  border-top: 1px solid rgba(185, 167, 255, 0.54);
-  border-right: 1px solid rgba(0, 245, 212, 0.5);
+  border-top: 1px solid rgba(196, 33, 23, 0.7);
+  border-right: 1px solid rgba(196, 33, 23, 0.7);
 }
 
 .hintKicker {
@@ -167,7 +141,7 @@
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(158, 169, 161, 0.82);
+  color: var(--color-secondary-text);
 }
 
 .hintText {
@@ -175,7 +149,7 @@
   font-size: 0.62rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(243, 246, 238, 0.94);
+  color: #0B1011;
 }
 
 .taglineBlock {
@@ -184,10 +158,10 @@
 }
 
 .profileTagline {
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
-  color: rgba(243, 246, 238, 0.96);
+  font-family: var(--font-headline);
+  font-weight: 450;
+  font-size: clamp(1.15rem, 1.7vw, 1.55rem);
+  color: rgba(11, 16, 17, 0.92);
   line-height: 1.5;
 }
 
@@ -199,7 +173,7 @@
   line-height: 1.7;
   max-width: 36rem;
   margin-inline: auto;
-  color: rgba(158, 169, 161, 0.94);
+  color: var(--color-secondary-text);
 }
 
 @media (min-width: 1024px) {

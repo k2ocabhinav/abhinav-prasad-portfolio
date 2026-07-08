@@ -4,60 +4,60 @@
   justify-content: center;
   font-family: var(--font-label);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   transition:
     background-color 220ms var(--motion-ease-out),
     border-color 220ms var(--motion-ease-out),
-    box-shadow 220ms var(--motion-ease-out),
     color 220ms var(--motion-ease-out);
   cursor: pointer;
 }
 
+/* Outline — ink hairline button; hover is the classic editorial inversion. */
 .outline {
   padding: 1.25rem 4rem;
-  border: 1px solid rgba(var(--color-primary-brand-rgb), 0.42);
-  border-radius: 8px;
-  color: var(--color-on-surface);
+  border: 1px solid #0B1011;
+  border-radius: 2px;
+  color: #0B1011;
   background: transparent;
 }
 
 .outline:hover {
-  background-color: rgba(var(--color-primary-brand-rgb), 0.1);
-  box-shadow: 0 0 26px rgba(var(--color-primary-brand-rgb), 0.12);
+  background-color: #0B1011;
+  color: #F0EEE9;
 }
 
+/* Ghost — underlined ink text link. */
 .ghost {
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 0.25rem;
   border: none;
-  color: var(--color-primary-brand);
+  color: #0B1011;
   background: transparent;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--color-hairline);
 }
 
 .ghost:hover {
-  background-color: rgba(var(--color-primary-brand-rgb), 0.12);
-  border-radius: 8px;
+  color: #C42117;
+  text-decoration-color: #C42117;
 }
 
-/* Glow variant - focused signal outline for dark landing backgrounds */
+/* Solid fill (legacy "glow" class name kept — values are flat matte). */
 .glow {
   padding: 1.25rem 4rem;
-  border: 1px solid rgba(var(--color-primary-brand-rgb), 0.42);
-  border-radius: 8px;
-  color: var(--color-on-surface);
-  background:
-    linear-gradient(90deg, rgba(var(--color-primary-brand-rgb), 0.06), transparent),
-    transparent;
+  border: 1px solid #0B1011;
+  border-radius: 2px;
+  color: #F0EEE9;
+  background: #0B1011;
 }
 
 .glow:hover {
-  color: var(--color-primary-brand);
-  background-color: rgba(var(--color-primary-brand-rgb), 0.1);
-  border-color: rgba(var(--color-primary-brand-rgb), 0.72);
-  box-shadow:
-    0 0 0 1px rgba(var(--color-primary-brand-rgb), 0.12),
-    0 12px 34px rgba(var(--color-primary-brand-rgb), 0.12);
+  background: #C42117;
+  border-color: #C42117;
+  color: #F0EEE9;
 }
 
 @media (max-width: 520px) {

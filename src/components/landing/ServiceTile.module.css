@@ -1,5 +1,5 @@
 /* =============================================================================
-   ServiceTile — Informational glass tile styling
+   ServiceTile — matte paper card: flat fill, hairline border, soft-ink hover.
    ============================================================================= */
 
 .tile {
@@ -8,48 +8,22 @@
   flex-direction: column;
   height: 100%;
   min-height: clamp(20rem, 28vw, 23rem);
-  background:
-    linear-gradient(180deg, rgba(243, 246, 238, 0.045), rgba(243, 246, 238, 0.01)),
-    var(--landing-glass-bg);
-  backdrop-filter: var(--landing-glass-blur);
-  -webkit-backdrop-filter: var(--landing-glass-blur);
-  border: 1px solid var(--landing-glass-border);
-  border-radius: var(--landing-glass-radius);
+  background: #E9E5DC;
+  border: 1px solid var(--color-hairline);
+  border-radius: 4px;
   padding: 2rem;
   overflow: hidden;
   isolation: isolate;
   transition:
     transform var(--motion-duration-short) var(--motion-ease-out),
-    background var(--motion-duration-short) var(--motion-ease-out),
     border-color var(--motion-duration-short) var(--motion-ease-out),
     box-shadow var(--motion-duration-short) var(--motion-ease-out);
 }
 
-.tile::before {
-  content: "";
-  position: absolute;
-  inset: auto -22% 52% 48%;
-  height: 10rem;
-  border-radius: 999px;
-  background: radial-gradient(
-    circle,
-    rgba(var(--landing-accent-rgb), 0.1) 0,
-    rgba(var(--landing-accent-rgb), 0.035) 38%,
-    transparent 72%
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-
 .tile:hover {
-  transform: translateY(-3px);
-  background:
-    linear-gradient(180deg, rgba(var(--landing-accent-rgb), 0.08), transparent 42%),
-    rgba(31, 26, 23, 0.82);
-  border-color: rgba(var(--landing-accent-rgb), 0.48);
-  box-shadow:
-    var(--landing-glass-shadow),
-    0 0 32px rgba(var(--landing-accent-rgb), 0.1);
+  transform: translateY(-2px);
+  border-color: rgba(11, 16, 17, 0.4);
+  box-shadow: 0 1px 2px rgba(11, 16, 17, 0.06);
 }
 
 .icon {
@@ -60,7 +34,7 @@
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  color: rgba(var(--landing-accent-rgb), 0.92);
+  color: #0B1011;
   margin-bottom: 1.5rem;
 }
 
@@ -68,9 +42,9 @@
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 8px;
-  background: rgba(var(--landing-accent-rgb), 0.1);
-  border: 1px solid rgba(var(--landing-accent-rgb), 0.24);
+  border-radius: 4px;
+  background: rgba(11, 16, 17, 0.05);
+  border: 1px solid var(--color-hairline);
   z-index: -1;
 }
 
@@ -78,12 +52,11 @@
   position: relative;
   z-index: 1;
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 550;
   font-size: clamp(1.25rem, 2vw, 1.75rem);
   color: var(--color-on-surface);
   letter-spacing: 0;
   margin-bottom: 0.75rem;
-  position: relative;
   display: inline-block;
   transition: transform var(--motion-duration-short) var(--motion-ease-out);
 }
@@ -99,7 +72,7 @@
   left: 0;
   width: 100%;
   height: 1px;
-  background: var(--color-primary-brand);
+  background: #E42A1D;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 280ms var(--motion-ease-out);
@@ -127,10 +100,4 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: auto;
-}
-
-@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .tile {
-    background: rgba(var(--color-surface-rgb), 0.9);
-  }
 }

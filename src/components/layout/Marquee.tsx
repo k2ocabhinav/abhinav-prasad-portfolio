@@ -61,7 +61,7 @@ export default function Marquee() {
             {ITEMS.map((item) => (
               <span className={styles.item} key={`${item}-${dup}`}>
                 {item}
-                <span className={styles.sep}>✦</span>
+                <span className={styles.sep}>—</span>
               </span>
             ))}
           </div>

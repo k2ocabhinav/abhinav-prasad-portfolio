@@ -19,15 +19,15 @@ type NavigatorWithConnection = Navigator & {
   };
 };
 
-// Cursor orb adopts the active section's accent (lilac / teal / gold).
+// Matte cursor dot: ink everywhere, vermilion only on the contact section.
 const ORB_ACCENTS: Record<string, { hex: string; rgb: string }> = {
-  hero: { hex: "#B9A7FF", rgb: "185, 167, 255" },
-  about: { hex: "#B9A7FF", rgb: "185, 167, 255" },
-  experience: { hex: "#00F5D4", rgb: "0, 245, 212" },
-  work: { hex: "#B9A7FF", rgb: "185, 167, 255" },
-  stack: { hex: "#FFD66B", rgb: "255, 214, 107" },
-  presence: { hex: "#00F5D4", rgb: "0, 245, 212" },
-  contact: { hex: "#B9A7FF", rgb: "185, 167, 255" },
+  hero: { hex: "#0B1011", rgb: "11, 16, 17" },
+  about: { hex: "#0B1011", rgb: "11, 16, 17" },
+  experience: { hex: "#0B1011", rgb: "11, 16, 17" },
+  work: { hex: "#0B1011", rgb: "11, 16, 17" },
+  stack: { hex: "#0B1011", rgb: "11, 16, 17" },
+  presence: { hex: "#0B1011", rgb: "11, 16, 17" },
+  contact: { hex: "#E42A1D", rgb: "228, 42, 29" },
 };
 
 export default function SageOrb() {
