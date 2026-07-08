@@ -14,25 +14,29 @@
   cursor: pointer;
 }
 
-/* Outline — ink hairline button; hover is the classic editorial inversion. */
+/* Variants are token-driven so buttons adapt to their surface scope:
+   ink-on-paper in the page flow, bone-on-espresso inside .spec-sheet
+   panels (hardcoded ink was invisible on the dark panels). */
+
+/* Outline — hairline button; hover is the classic editorial inversion. */
 .outline {
   padding: 1.25rem 4rem;
-  border: 1px solid #0B1011;
+  border: 1px solid var(--color-on-surface, #0B1011);
   border-radius: 2px;
-  color: #0B1011;
+  color: var(--color-on-surface, #0B1011);
   background: transparent;
 }
 
 .outline:hover {
-  background-color: #0B1011;
-  color: #F0EEE9;
+  background-color: var(--color-on-surface, #0B1011);
+  color: var(--color-surface, #F0EEE9);
 }
 
-/* Ghost — underlined ink text link. */
+/* Ghost — underlined text link. */
 .ghost {
   padding: 0.75rem 0.25rem;
   border: none;
-  color: #0B1011;
+  color: var(--color-on-surface, #0B1011);
   background: transparent;
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -41,17 +45,17 @@
 }
 
 .ghost:hover {
-  color: #C42117;
-  text-decoration-color: #C42117;
+  color: var(--color-sage, #C42117);
+  text-decoration-color: var(--color-sage, #C42117);
 }
 
 /* Solid fill (legacy "glow" class name kept — values are flat matte). */
 .glow {
   padding: 1.25rem 4rem;
-  border: 1px solid #0B1011;
+  border: 1px solid var(--color-on-surface, #0B1011);
   border-radius: 2px;
-  color: #F0EEE9;
-  background: #0B1011;
+  color: var(--color-surface, #F0EEE9);
+  background: var(--color-on-surface, #0B1011);
 }
 
 .glow:hover {
