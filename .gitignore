@@ -42,5 +42,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# claude-flow tooling state
+# local tooling + agent working state (keep off the public repo)
+.claude/
 .claude-flow/
+
+# agent-facing / handoff docs — local working references, never published
+CLAUDE.md
+AGENTS.md
+docs/handoff/
+docs/workflow/
