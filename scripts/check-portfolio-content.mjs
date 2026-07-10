@@ -61,6 +61,15 @@ function stringArray(data, key, filePath) {
   return value;
 }
 
+function optionalStringArray(data, key, filePath) {
+  const value = data[key];
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
+    fail(filePath, `optional "${key}" must be a string array`);
+  }
+  return value;
+}
+
 function objectValue(data, key, filePath) {
   const value = data[key];
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -208,14 +217,16 @@ function validateProjects() {
   }
 }
 
-function validateCollection(section, idKey, requiredFields = []) {
-  const items = mdxFiles(section).map((filePath) => {
+function validateChronicle() {
+  const entries = mdxFiles("chronicle").map((filePath) => {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
-    requiredFields.forEach((key) => stringValue(data, key, filePath));
+    ["slug", "date", "title", "company"].forEach((key) => stringValue(data, key, filePath));
+    stringArray(data, "tags", filePath);
+    optionalStringArray(data, "highlights", filePath);
     return data;
   });
-  unique(items.map((item) => item[idKey]), `${section} ${idKey}`);
+  unique(entries.map((entry) => entry.slug), "chronicle slug");
 }
 
 function validateStack() {
@@ -254,7 +265,7 @@ function validateBeyond() {
 
 validateProfile();
 validateProjects();
-validateCollection("chronicle", "slug", ["slug", "date", "title", "company"]);
+validateChronicle();
 validateStack();
 validateServices();
 validateBeyond();

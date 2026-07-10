@@ -159,6 +159,7 @@ export interface ChronicleEntry extends Experience {
   slug: string;
   status: PortfolioStatus;
   order?: number;
+  highlights?: string[];
 }
 
 export interface StackGroup extends TechCategory {
@@ -312,9 +313,9 @@ export interface DoodleAsset {
 
 /** Content for the Landing Frame 1 hero section */
 export interface LandingHeroContent {
-  /** Main display title rendered in Syne 800 via AnimatedName */
+  /** Main display title rendered in Fraunces via AnimatedName */
   displayTitle: string;
-  /** Accent line in Cormorant italic below the role cycler */
+  /** Uppercase label-font accent line below the role cycler */
   displayTitleAccent: string;
   /** Standalone role phrases cycled every 2.6 seconds */
   roleCycleWords?: string[];

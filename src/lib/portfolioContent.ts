@@ -432,6 +432,7 @@ export function getChronicleEntries(): ChronicleEntry[] {
       title: stringValue(data, "title", filePath),
       company: stringValue(data, "company", filePath),
       tags: stringArray(data, "tags", filePath),
+      highlights: optionalStringArray(data, "highlights"),
     };
   });
   ensureUnique(entries.map((entry) => entry.slug), "chronicle slug");

@@ -106,6 +106,13 @@ function ExperienceSectionContent({
                 <span className={styles.date}>{exp.date}</span>
                 <h3 className={styles.role}>{exp.title}</h3>
                 <p className={styles.company}>{exp.company}</p>
+                {exp.highlights && exp.highlights.length > 0 && (
+                  <ul className={styles.highlights}>
+                    {exp.highlights.map((highlight) => (
+                      <li key={highlight}>{highlight}</li>
+                    ))}
+                  </ul>
+                )}
                 <div className={styles.tags}>
                   {exp.tags.map((tag) => (
                     <Tag key={tag} label={tag} />
