@@ -277,6 +277,7 @@ function validateServices() {
     enumValue(data, "status", statuses, filePath);
     optionalEnum(data, "accent", accents, filePath);
     ["id", "title", "description", "icon"].forEach((key) => stringValue(data, key, filePath));
+    optionalStringArray(data, "tags", filePath);
   });
 }
 
