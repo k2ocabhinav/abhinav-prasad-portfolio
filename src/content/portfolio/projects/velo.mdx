@@ -5,15 +5,15 @@ featured: true
 featuredOrder: 1
 worksOrder: 1
 id: "01"
-title: "Velo - White-Label Dispatch Platform"
-description: "A branding-led white-label dispatch suite for rider, driver, and admin operations on a shared real-time core."
-scopeSummary: "Built end-to-end: multi-tenant backend architecture, real-time dispatch, and production-grade quality gates."
+title: "Velo — White-Label Dispatch Platform"
+description: "A tenant-aware dispatch-platform prototype for rider, driver, and admin workflows on a shared realtime backend."
+scopeSummary: "Built with Java 22, Spring Boot, PostgreSQL/PostGIS, Redis, JWT, WebSockets/STOMP, Flyway, and automated tests."
 icon: "cpu"
 accent: "sage"
 projectCodeTone: "split"
 eyebrow: "Product Build"
 claim: "One dispatch core. Three product roles."
-summary: "A branding-led dispatch suite for rider, driver, and admin operations on one shared real-time core."
+summary: "A substantial functional prototype for tenant-aware rider, driver, and admin workflows on a shared realtime backend."
 note: "Featured proof - full deep dive available in Works."
 tags:
   - "Spring Boot"
@@ -21,7 +21,7 @@ tags:
   - "Redis"
   - "Next.js"
   - "STOMP/SockJS"
-  - "Playwright + CI"
+  - "Automated Tests"
 links:
   - label: "GitHub"
     href: "https://github.com/k2ocabhinav/Velo"
@@ -40,20 +40,20 @@ proofBeats:
     detail: "Multi-role delivery operations needed one reusable system without rebuilding the core per brand."
   - label: "My Role"
     short: "Owned the architecture, flows, surfaces, and release checks."
-    detail: "Built backend architecture, dispatch paths, admin/rider/driver surfaces, and CI quality gates."
+    detail: "Built the backend architecture, dispatch paths, rider, driver, and admin surfaces, and automated quality checks."
   - label: "Shipped"
     short: "Tenant-aware backend plus live dispatch product scenes."
-    detail: "Shipped tenant-aware services, location dispatch, branded screens, and Playwright-backed checks."
+    detail: "Built tenant-aware data paths, geospatial matching, branded screens, and Playwright-backed checks."
   - label: "Impact"
-    short: "Turns a service idea into a scalable product system."
-    detail: "Shows end-to-end product thinking across architecture, UX surfaces, and production discipline."
+    short: "Demonstrates an end-to-end functional dispatch prototype."
+    detail: "Shows product thinking across architecture, role-specific interfaces, realtime workflows, and automated quality checks."
 detail:
   enabled: true
   slug: "velo"
   eyebrow: "Flagship Build"
-  title: "Velo - White-Label Dispatch Platform"
-  subtitle: "A branding-first dispatch engine for mobility and logistics, with tenant-specific rider, driver, and admin experiences over a shared real-time core."
-  scopeSummary: "End-to-end ownership across platform architecture, multi-portal frontend systems, reliability controls, and security-focused delivery workflows."
+  title: "Velo — White-Label Dispatch Platform"
+  subtitle: "A substantial functional prototype for tenant-aware rider, driver, and admin workflows on a shared realtime backend."
+  scopeSummary: "Built end-to-end with Java 22, Spring Boot, PostgreSQL/PostGIS, Redis, JWT, WebSockets/STOMP, Flyway, and automated tests."
   detailCtaLabel: "Read the Full Velo Story"
   detailCtaSubline: "Branding, architecture, and 6 product scenes"
   heroImage:
@@ -93,11 +93,11 @@ detail:
         - "Race-safe request claiming via compare-and-set transitions plus optimistic locking safeguards."
         - "Event-driven notifications and STOMP/SockJS realtime delivery to rider and driver clients."
     - title: "Reliability + Delivery Discipline"
-      description: "Platform quality is enforced through layered tests, reproducible integration harnesses, and security checks integrated into CI."
+      description: "Quality work includes layered tests, reproducible integration harnesses, and security and dependency checks configured in workflow pipelines."
       points:
         - "Backend unit/integration coverage with tenant and lifecycle regression focus."
         - "Frontend unit, contract, and Playwright smoke coverage across admin/rider/driver apps."
-        - "Security and dependency gates with OWASP dependency-check and npm audit in workflow pipelines."
+        - "OWASP dependency-check and npm audit are configured in workflow pipelines."
   stackBuckets:
     - label: "Backend Platform"
       items:
@@ -133,12 +133,12 @@ detail:
         - "Docker Compose"
         - "OWASP Dependency-Check"
   qualityHighlights:
-    - "Deterministic contract boundaries via BFF proxy routes and consistent response unwrapping."
-    - "Dispatch lifecycle integrity through idempotent earnings settlement and migration-backed repair paths."
-    - "Operational transparency from dashboard health counters, queue depth visibility, and audit trail events."
+    - "Tenant-scoped atomic state transitions, optimistic locking, idempotent records, database constraints, and recovery migrations harden concurrent assignment and settlement flows."
+    - "Redis-backed location and dashboard caching includes graceful degradation plus Micrometer hit, miss, and error instrumentation."
+    - "Automated test coverage spans backend behavior and the rider, driver, and admin interfaces."
   references:
     - label: "Source"
-      href: null
+      href: "https://github.com/k2ocabhinav/Velo"
     - label: "Architecture"
       href: null
 ---
