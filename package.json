@@ -6,6 +6,7 @@
     "dev": "next dev",
     "check:content": "node scripts/check-portfolio-content.mjs",
     "build": "npm run check:content && next build",
+    "capture:portfolio": "node scripts/capture-portfolio-assets.mjs",
     "start": "next start",
     "lint": "eslint",
     "test:e2e": "playwright test"

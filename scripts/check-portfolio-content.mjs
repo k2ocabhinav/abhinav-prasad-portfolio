@@ -53,6 +53,15 @@ function optionalString(data, key) {
   return typeof value === "string" && value.trim().length > 0 ? value : undefined;
 }
 
+function optionalNullableString(data, key, filePath) {
+  const value = data[key];
+  if (value === undefined || value === null) return value;
+  if (typeof value !== "string" || value.trim().length === 0) {
+    fail(filePath, `optional "${key}" must be a non-empty string or null`);
+  }
+  return value;
+}
+
 function stringArray(data, key, filePath) {
   const value = data[key];
   if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
@@ -189,6 +198,10 @@ function validateProjects() {
       stringValue(beat, "detail", filePath);
     });
     optionalObjectArray(data, "screenshots").forEach((image) => validateImage(image, filePath));
+    optionalObjectArray(data, "links").forEach((link) => {
+      stringValue(link, "label", filePath);
+      optionalNullableString(link, "href", filePath);
+    });
     const visual = objectValue(data, "visual", filePath);
     enumValue(visual, "kind", new Set(["screenshot", "system", "type"]), filePath);
     validatePublicAsset(optionalString(visual, "src"), filePath);
@@ -196,18 +209,38 @@ function validateProjects() {
     stringValue(visual, "caption", filePath);
     const detail = optionalObject(data, "detail");
     if (detail?.enabled === true) {
-      stringValue(detail, "slug", filePath);
+      ["slug", "eyebrow", "title", "subtitle", "scopeSummary"].forEach((key) =>
+        stringValue(detail, key, filePath)
+      );
       validateImage(objectValue(detail, "heroImage", filePath), filePath);
       objectArray(detail, "gallery", filePath).forEach((image) => validateImage(image, filePath));
-      objectArray(detail, "architectureSections", filePath);
-      objectArray(detail, "stackBuckets", filePath);
+      objectArray(detail, "architectureSections", filePath).forEach((section) => {
+        stringValue(section, "title", filePath);
+        stringValue(section, "description", filePath);
+        stringArray(section, "points", filePath);
+      });
+      objectArray(detail, "stackBuckets", filePath).forEach((bucket) => {
+        stringValue(bucket, "label", filePath);
+        stringArray(bucket, "items", filePath);
+      });
       stringArray(detail, "qualityHighlights", filePath);
+      optionalObjectArray(detail, "references").forEach((reference) => {
+        stringValue(reference, "label", filePath);
+        optionalNullableString(reference, "href", filePath);
+      });
     }
     return data;
   });
 
   unique(projects.map((project) => project.slug), "project slug");
   unique(projects.map((project) => project.id), "project id");
+  unique(
+    projects
+      .map((project) => optionalObject(project, "detail"))
+      .filter((detail) => detail?.enabled === true)
+      .map((detail) => detail.slug),
+    "project detail slug"
+  );
 
   const published = projects.filter((project) => project.status === "published");
   const featured = published.filter((project) => project.featured === true);
