@@ -12,7 +12,12 @@ import styles from "./HeroTextColumn.module.css";
 // HeroTextColumn — Hero content stack.
 // =============================================================================
 
-const DEFAULT_ROLES = ["Developer", "Architect", "Cloud Engineer", "AI Systems Builder"];
+const DEFAULT_ROLES = [
+  "Backend Engineer",
+  "Full-Stack Developer",
+  "Database Engineer",
+  "Java & Spring Boot",
+];
 const ROLE_CYCLE_MS = 2600;
 
 interface HeroTextColumnProps {
@@ -59,8 +64,6 @@ export default function HeroTextColumn({
         animate="visible"
         transition={reduceMotion ? undefined : { delay: 0.55 }}
       >
-        <span className={styles.rolePrefix}>Software</span>
-
         {reduceMotion ? (
           <span className={styles.cyclerWordStatic}>{roles[0]}</span>
         ) : (

@@ -18,11 +18,11 @@ import styles from "./Marquee.module.css";
 
 const ITEMS = [
   "Backend systems",
-  "Cloud architecture",
-  "Real-time platforms",
-  "AI systems",
+  "Database engineering",
+  "Release automation",
+  "Cloud delivery",
+  "Operational analytics",
   "Design engineering",
-  "Production-grade",
 ];
 
 function wrapValue(min: number, max: number, value: number): number {

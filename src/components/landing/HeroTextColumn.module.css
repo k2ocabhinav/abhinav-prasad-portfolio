@@ -30,17 +30,10 @@
   margin-top: 0.1rem;
 }
 
-.rolePrefix {
-  white-space: nowrap;
-  flex-shrink: 0;
-  opacity: 0.8;
-}
-
 .cyclerOuter {
   display: inline-flex;
   position: relative;
   overflow: hidden;
-  min-width: 9.2ch;
   height: 1.15em;
   justify-content: flex-start;
 }
@@ -119,11 +112,6 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-
-  .cyclerOuter {
-    min-width: 7.2ch;
-  }
-
   .accentLine {
     font-size: clamp(0.82rem, 3vw, 1.08rem);
   }

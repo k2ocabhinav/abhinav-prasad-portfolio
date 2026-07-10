@@ -316,7 +316,7 @@ export interface LandingHeroContent {
   displayTitle: string;
   /** Accent line in Cormorant italic below the role cycler */
   displayTitleAccent: string;
-  /** Words cycled after "Software " every 2.6 s */
+  /** Standalone role phrases cycled every 2.6 seconds */
   roleCycleWords?: string[];
   /** 1–2 sentence supporting copy */
   supportingCopy: string;
