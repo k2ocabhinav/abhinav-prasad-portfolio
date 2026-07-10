@@ -1,74 +1,50 @@
-# Abhinav Portfolio
+# Abhinav — Engineering Portfolio
 
-Next.js 16 single-page portfolio built with the App Router, `motion/react`, and CSS Modules. The site uses an editorial sage-and-cream visual system with scroll-snapped sections:
+A matte editorial portfolio for a backend-leaning full-stack software engineer. The site pairs a warm-paper/riso visual system with real experience, project case studies, and a typed content publishing layer.
 
-Hero Carousel -> Profile -> About -> Experience -> Works -> Tech Stack -> Presence -> Contact
+## Stack
+
+- Next.js 16 App Router, React 19, and strict TypeScript
+- CSS Modules with shared design tokens
+- MDX frontmatter parsed on the server
+- Motion and Lenis with reduced-motion fallbacks
+- Playwright interaction and visual-regression coverage
 
 ## Commands
 
 ```bash
-npm run dev
-npm run lint
-npm run build
-npm run start
+npm run dev                # Start the development server
+npm run check:content      # Validate portfolio frontmatter and local assets
+npm run lint               # Run ESLint
+npm run build              # Validate content and create a production build
+npm run test:e2e           # Run the Playwright suite
+npm run capture:portfolio  # Regenerate case-study and social-preview captures
 ```
 
-## Current State
+## Content system
 
-- Repo initialization is complete.
-- `npm run lint` passes.
-- `npm run build` passes.
-- Hero carousel uses `next/image` and accessible slide controls.
-- Mobile navigation includes a slide-out panel, backdrop, `Escape` handling, and scroll locking.
-- A dummy resume PDF is included and wired to the primary contact CTA.
-
-## Project Structure
+Public portfolio content lives in `src/content/portfolio/`:
 
 ```text
-src/
-├── app/             # App Router entrypoints and global styles
-├── components/      # Sections, layout shell, reusable UI, artifacts
-├── data/            # Static content and content configuration
-├── hooks/           # Custom interaction and animation hooks
-├── lib/             # Shared utilities and animation presets
-└── types/           # Shared TypeScript interfaces
+src/content/portfolio/
+├── profile.mdx       # Identity, presence, social links, and metadata
+├── chronicle/        # Experience timeline entries
+├── projects/         # Work cards and full case-study routes
+├── services/         # "What I do" cards
+├── stack/            # Evidence-scoped technology groups
+└── beyond/           # Beyond the Terminal album content
 ```
 
-## Content Configuration
+Every collection item has a `draft` or `published` status. The server-only loader in `src/lib/portfolioContent.ts` filters drafts, orders collections, and exposes typed content to the App Router. `scripts/check-portfolio-content.mjs` rejects malformed fields, duplicate identifiers, invalid enums, and missing local assets before a production build.
 
-Most site content lives in `src/data/`.
+Published project details are statically generated at `/work/[slug]`. Gallery assets live under `public/projects/`.
 
-- `src/data/personal.ts`: hero text, profile image, annotations, location, socials, email, and `resumeHref`
-- `src/data/projects.ts`: work cards
-- `src/data/experience.ts`: timeline entries
-- `src/data/techStack.ts`: technical voice cards
-- `src/data/presence.ts`: presence map nodes
+## Visual and interaction system
 
-The download button currently points to `/resume/abhinav-resume.pdf`.
-
-Editable resume source lives in:
-
-- `resume/abhinav-resume.txt`
-- `resume/README.md`
-
-Generated public asset lives in:
-
-- `public/resume/abhinav-resume.pdf`
-
-Regenerate the PDF after editing the source:
-
-```bash
-cupsfilter -m application/pdf resume/abhinav-resume.txt > public/resume/abhinav-resume.pdf
-```
-
-## Workflow
-
-- Work on branches instead of directly on `main`.
-- Prefer small, revertable micro commits over a single large commit.
-- Update documentation in the same branch when behavior changes.
-- See `docs/workflow/AGENT_WORKFLOW.md` for the agent workflow rules.
+The interface uses warm paper, ink, espresso panels, section-specific risograph accents, and Fraunces/Newsreader/Hanken Grotesk/Fragment Mono typography. Motion is concentrated in the opening sequence, scroll-linked section reveals, sheet-rise panels, work-card interactions, and the cross-route Beyond transition. Keyboard focus and reduced-motion paths are part of the interaction model.
 
 ## Notes
 
-- Fonts are loaded through `next/font/google` in `src/app/layout.tsx`.
-- The current hero uses placeholder remote imagery from Unsplash. Replacing those assets with final personal photography is the main remaining content polish step.
+- The contact CTA requests a resume by email until an approved public PDF is available.
+- The profile photograph and Beyond album still use placeholders pending owner-supplied media.
+- `abhinav.dev` is a deferred metadata placeholder; update the domain, social-image host, robots, and sitemap together before deployment.

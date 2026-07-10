@@ -60,6 +60,7 @@ const seo = getProfileContent().seo ?? {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(seo.url),
   title: seo.title,
   description: seo.description,
   keywords: seo.keywords,
@@ -69,13 +70,27 @@ export const metadata: Metadata = {
     title: seo.title,
     description: seo.description,
     url: seo.url,
-    images: [seo.ogImage],
+    images: [
+      {
+        url: seo.ogImage,
+        width: 1200,
+        height: 630,
+        alt: "Abhinav's editorial engineering portfolio",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: seo.title,
     description: seo.description,
-    images: [seo.ogImage],
+    images: [
+      {
+        url: seo.ogImage,
+        width: 1200,
+        height: 630,
+        alt: "Abhinav's editorial engineering portfolio",
+      },
+    ],
   },
 };
 
