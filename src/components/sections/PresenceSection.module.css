@@ -129,6 +129,15 @@
   pointer-events: none;
 }
 
+@media (max-width: 767px) {
+  .nodeLabels {
+    left: 50%;
+    align-items: center;
+    text-align: center;
+    transform: translateX(-50%);
+  }
+}
+
 .nodeLabel {
   font-family: var(--font-label);
   font-size: 11px;

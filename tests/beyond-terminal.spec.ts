@@ -130,6 +130,23 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   await page.goto("/");
   await page.waitForTimeout(150);
 
+  const staticRole = page.getByText("Backend Engineer", { exact: true });
+  await expect(staticRole).toBeVisible();
+  await page.waitForTimeout(2_800);
+  await expect(staticRole).toBeVisible();
+
+  await page.locator("#about").scrollIntoViewIfNeeded();
+  await expect(
+    page.getByText("I like systems that make complex behavior understandable", {
+      exact: false,
+    })
+  ).toBeVisible();
+  const widths = await page.evaluate(() => ({
+    documentWidth: document.documentElement.scrollWidth,
+    windowWidth: window.innerWidth,
+  }));
+  expect(widths.documentWidth).toBeLessThanOrEqual(widths.windowWidth);
+
   await getHeroPortalTrigger(page).click();
 
   await expect(page.locator("html")).toHaveAttribute(
@@ -228,6 +245,46 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
   }));
 
   expect(widths.documentWidth).toBeLessThanOrEqual(widths.windowWidth);
+
+  await expect(page.locator("#experience li")).toHaveCount(6);
+  await expect(
+    page.getByRole("heading", { name: "Velo — White-Label Dispatch Platform", exact: true })
+  ).toHaveCount(1);
+  await expect(
+    page.getByRole("heading", {
+      name: "Interactive Engineering Portfolio & Content Platform",
+      exact: true,
+    })
+  ).toHaveCount(1);
+
+  const resumeCta = page.getByRole("link", { name: "Request Resume", exact: true });
+  await expect(resumeCta).toHaveAttribute(
+    "href",
+    "mailto:abhinavp0304@gmail.com?subject=Request%20Resume"
+  );
+
+  await page.goto("/work/portfolio-platform");
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Interactive Engineering Portfolio & Content Platform",
+      exact: true,
+    })
+  ).toBeVisible();
+  await expect(page.locator("main img")).toHaveCount(7);
+
+  await page.goto("/work/velo");
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Velo — White-Label Dispatch Platform",
+      exact: true,
+    })
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Source", exact: true })).toHaveAttribute(
+    "href",
+    "https://github.com/k2ocabhinav/Velo"
+  );
 });
 
 test("desktop section handoff into Philosophy stays seam-free", async ({ page }) => {
@@ -403,7 +460,7 @@ test("desktop home hero wordmark keeps the editorial look", async ({ page }) => 
   });
 });
 
-test("desktop home hero keeps the ember scene visible above the fold", async ({
+test("desktop home hero keeps the matte scene visible above the fold", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
@@ -420,7 +477,7 @@ test("desktop home hero keeps the ember scene visible above the fold", async ({
   });
 });
 
-test("hovered A, n, and v hero letters keep the ember wordmark states", async ({
+test("hovered A, n, and v hero letters keep the matte print states", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
@@ -436,26 +493,40 @@ test("hovered A, n, and v hero letters keep the ember wordmark states", async ({
   await page.waitForTimeout(280);
   await expect(firstLetter).toHaveAttribute("data-hovered", "true");
   await expect(firstLetter.locator('[data-letter-layer="editorial"]')).toContainText("A");
+  const firstPrintState = await firstLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => ({
+    color: getComputedStyle(el).color,
+    strokeWidth: getComputedStyle(el).webkitTextStrokeWidth,
+    textShadow: getComputedStyle(el).textShadow,
+  }));
+  expect(firstPrintState.color).toBe("rgba(0, 0, 0, 0)");
+  expect(firstPrintState.strokeWidth).toBe("1.5px");
+  expect(firstPrintState.textShadow).toBe("none");
 
   await fifthLetter.hover();
   await page.waitForTimeout(280);
   await expect(fifthLetter).toHaveAttribute("data-hovered", "true");
   await expect(fifthLetter.locator('[data-letter-layer="editorial"]')).toContainText("n");
+  const fifthPrintState = await fifthLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => ({
+    color: getComputedStyle(el).color,
+    strokeWidth: getComputedStyle(el).webkitTextStrokeWidth,
+    textShadow: getComputedStyle(el).textShadow,
+  }));
+  expect(fifthPrintState.color).toBe("rgb(228, 42, 29)");
+  expect(fifthPrintState.strokeWidth).toBe("0px");
+  expect(fifthPrintState.textShadow).toBe("none");
 
   await seventhLetter.hover();
   await page.waitForTimeout(280);
   await expect(seventhLetter).toHaveAttribute("data-hovered", "true");
   await expect(seventhLetter.locator('[data-letter-layer="editorial"]')).toContainText("v");
-
-  const [firstShadow, fifthShadow, seventhShadow] = await Promise.all([
-    firstLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => getComputedStyle(el).textShadow),
-    fifthLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => getComputedStyle(el).textShadow),
-    seventhLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => getComputedStyle(el).textShadow),
-  ]);
-
-  expect(firstShadow).not.toBe("none");
-  expect(fifthShadow).toBe("none");
-  expect(seventhShadow).not.toBe("none");
+  const seventhPrintState = await seventhLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => ({
+    color: getComputedStyle(el).color,
+    strokeWidth: getComputedStyle(el).webkitTextStrokeWidth,
+    textShadow: getComputedStyle(el).textShadow,
+  }));
+  expect(seventhPrintState.color).toBe("rgba(0, 0, 0, 0)");
+  expect(seventhPrintState.strokeWidth).toBe("1.5px");
+  expect(seventhPrintState.textShadow).toBe("none");
 
   await expect(page).toHaveURL(/\/$/);
 });

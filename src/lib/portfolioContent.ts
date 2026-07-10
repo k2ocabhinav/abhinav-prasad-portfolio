@@ -224,8 +224,8 @@ function readImage(data: Frontmatter, filePath: string): ProjectVisual {
   };
 }
 
-function readLinks(data: Frontmatter, filePath: string): ProjectLink[] {
-  return optionalObjectArray(data, "links").map((link) => ({
+function readLinks(data: Frontmatter, filePath: string, key = "links"): ProjectLink[] {
+  return optionalObjectArray(data, key).map((link) => ({
     label: stringValue(link, "label", filePath),
     href: nullableString(link, "href") ?? null,
   }));
@@ -263,7 +263,7 @@ function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefi
     })),
     stackBuckets: readTechBuckets(detail, filePath),
     qualityHighlights: stringArray(detail, "qualityHighlights", filePath),
-    references: readLinks(detail, filePath),
+    references: readLinks(detail, filePath, "references"),
   };
 }
 
