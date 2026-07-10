@@ -94,10 +94,14 @@ export default function AboutSection({
           </div>
           <div className={`col-8 ${styles.contentCol}`}>
             <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              initial={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.35 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { duration: 0.6, delay: 0.15, ease: "easeOut" }
+              }
             >
               <p className={styles.philosophyText}>{personal.philosophy}</p>
             </motion.div>
