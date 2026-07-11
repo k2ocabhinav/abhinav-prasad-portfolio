@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/app/**/{page,layout,route,loading,error,not-found,template,default}.{ts,tsx}",
+    "src/content/portfolio/**/*.mdx",
+    "scripts/*.mjs",
+    "tests/**/*.ts"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "scripts/**/*.mjs",
+    "tests/**/*.ts"
+  ],
+  "ignoreExportsUsedInFile": true
+}

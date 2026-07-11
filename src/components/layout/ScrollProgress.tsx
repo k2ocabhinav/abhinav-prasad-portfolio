@@ -14,6 +14,7 @@ export default function ScrollProgress() {
 
   return (
     <motion.div
+      data-site-chrome="scroll-progress"
       className={styles.progressBar}
       style={{ scaleX, transformOrigin: "left" }}
     />

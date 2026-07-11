@@ -11,6 +11,8 @@ interface TiltValues {
   rotateY: number;
 }
 
+const FINE_HOVER_QUERY = "(hover: hover) and (pointer: fine)";
+
 export function useCardTilt(maxDegrees = 5) {
   const ref = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState<TiltValues>({ rotateX: 0, rotateY: 0 });
@@ -34,15 +36,37 @@ export function useCardTilt(maxDegrees = 5) {
   }, []);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    const fineHoverMedia = window.matchMedia(FINE_HOVER_QUERY);
+    let removeElementListeners = () => {};
 
-    el.addEventListener("mousemove", handleMouseMove);
-    el.addEventListener("mouseleave", handleMouseLeave);
+    const syncInputCapability = () => {
+      removeElementListeners();
+      removeElementListeners = () => {};
+
+      if (!fineHoverMedia.matches) {
+        handleMouseLeave();
+        return;
+      }
+
+      const element = ref.current;
+      if (!element) {
+        return;
+      }
+
+      element.addEventListener("mousemove", handleMouseMove);
+      element.addEventListener("mouseleave", handleMouseLeave);
+      removeElementListeners = () => {
+        element.removeEventListener("mousemove", handleMouseMove);
+        element.removeEventListener("mouseleave", handleMouseLeave);
+      };
+    };
+
+    syncInputCapability();
+    fineHoverMedia.addEventListener("change", syncInputCapability);
 
     return () => {
-      el.removeEventListener("mousemove", handleMouseMove);
-      el.removeEventListener("mouseleave", handleMouseLeave);
+      fineHoverMedia.removeEventListener("change", syncInputCapability);
+      removeElementListeners();
     };
   }, [handleMouseMove, handleMouseLeave]);
 

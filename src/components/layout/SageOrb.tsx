@@ -73,6 +73,7 @@ export default function SageOrb() {
 
   return (
     <motion.div
+      data-site-chrome="cursor-orb"
       className={styles.orb}
       style={
         {

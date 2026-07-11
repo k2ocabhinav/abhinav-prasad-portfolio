@@ -8,16 +8,22 @@ A matte editorial portfolio for a backend-leaning full-stack software engineer. 
 - CSS Modules with shared design tokens
 - MDX frontmatter parsed on the server
 - Motion and Lenis with reduced-motion fallbacks
-- Playwright interaction and visual-regression coverage
+- Playwright, Axe, and Lighthouse release coverage
+- Vercel Speed Insights instrumentation for hosted production builds
 
 ## Commands
 
 ```bash
 npm run dev                # Start the development server
 npm run check:content      # Validate portfolio frontmatter and local assets
+npm run typecheck          # Run strict TypeScript checks
 npm run lint               # Run ESLint
+npm run check:dead         # Find unused files and dependencies with Knip
+npm run check:security     # Audit production and full dependency trees
 npm run build              # Validate content and create a production build
 npm run test:e2e           # Run the Playwright suite
+npm run test:lighthouse    # Run three mobile Performance and SEO audits
+npm run verify             # Run the complete release gate
 npm run capture:portfolio  # Regenerate case-study and social-preview captures
 ```
 
@@ -45,6 +51,8 @@ The interface uses warm paper, ink, espresso panels, section-specific risograph 
 
 ## Notes
 
-- The contact CTA requests a resume by email until an approved public PDF is available.
-- The profile photograph and Beyond album still use placeholders pending owner-supplied media.
-- `abhinav.dev` is a deferred metadata placeholder; update the domain, social-image host, robots, and sitemap together before deployment.
+- Use Node 24 LTS, as pinned by `.nvmrc` and `package.json`.
+- The approved resume is published at `/resume/abhinav-prasad-resume.pdf`.
+- The profile uses a neutral Abhinav monogram until an original portrait is approved.
+- Production metadata resolves from the hosting environment or `SITE_URL`; local and preview builds remain `noindex`.
+- Speed Insights loads only on Vercel, so local tests do not emit analytics requests.

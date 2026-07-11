@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 const artifactPath = (filename: string) =>
   path.join(process.cwd(), "test-artifacts", filename);
@@ -9,7 +10,7 @@ test.beforeAll(() => {
   fs.mkdirSync(path.join(process.cwd(), "test-artifacts"), { recursive: true });
 });
 
-async function expectHeroNameToFit(page: Parameters<typeof test>[0]["page"]) {
+async function expectHeroNameToFit(page: Page) {
   const wordmark = page.locator('[data-home-hero-wordmark="true"]');
   const firstLetter = page.locator('[data-animated-letter-index="0"]').first();
   const lastLetter = page.locator('[data-animated-letter-index="6"]').first();
@@ -46,19 +47,19 @@ async function expectHeroNameToFit(page: Parameters<typeof test>[0]["page"]) {
 }
 
 async function freezeHeroAmbientForSnapshot(
-  page: Parameters<typeof test>[0]["page"]
+  page: Page
 ) {
-  await page.evaluate(() => {
-    document.documentElement.dataset.e2eFreezeArtifacts = "true";
-    document.documentElement.dataset.e2eStaticHero = "true";
+  await page.addStyleTag({
+    content: `[data-scroll-indicator="true"] { display: none !important; }`,
   });
 }
 
-function getHeroPortalTrigger(page: Parameters<typeof test>[0]["page"]) {
+function getHeroPortalTrigger(page: Page) {
   return page.locator('[data-animated-name="hero-trigger"]').first();
 }
 
-async function expectBeyondPhotoWallVisible(page: Parameters<typeof test>[0]["page"]) {
+async function expectBeyondPhotoWallVisible(page: Page) {
+  await expect(page.getByText("Beyond the Build", { exact: true })).toBeVisible();
   await expect(page.locator("#beyond-hero-title")).toHaveText("Beyond The Terminal");
   await expect(
     page.getByText("Photos, people, notes, and the parts that don't fit inside a resume.")
@@ -135,9 +136,16 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   await page.waitForTimeout(2_800);
   await expect(staticRole).toBeVisible();
 
+  const bridge = page.locator('[data-home-explore-bridge="true"]');
+  await bridge.scrollIntoViewIfNeeded();
+  await expect(bridge.getByText("A little context", { exact: true })).toBeVisible();
+  await expect(
+    bridge.getByRole("heading", { level: 2, name: "The thinking behind the build." })
+  ).toBeVisible();
+
   await page.locator("#about").scrollIntoViewIfNeeded();
   await expect(
-    page.getByText("I like systems that make complex behavior understandable", {
+    page.getByText("I build scalable backend systems by first understanding", {
       exact: false,
     })
   ).toBeVisible();
@@ -246,7 +254,8 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
 
   expect(widths.documentWidth).toBeLessThanOrEqual(widths.windowWidth);
 
-  await expect(page.locator("#experience li")).toHaveCount(6);
+  await expect(page.locator("#experience [data-experience-dossier]")).toHaveCount(1);
+  await expect(page.locator("#experience [data-experience-workstream]")).toHaveCount(4);
   await expect(
     page.getByRole("heading", { name: "Velo — White-Label Dispatch Platform", exact: true })
   ).toHaveCount(1);
@@ -257,11 +266,12 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
     })
   ).toHaveCount(1);
 
-  const resumeCta = page.getByRole("link", { name: "Request Resume", exact: true });
+  const resumeCta = page.getByRole("link", { name: "Download Resume", exact: true });
   await expect(resumeCta).toHaveAttribute(
     "href",
-    "mailto:abhinavp0304@gmail.com?subject=Request%20Resume"
+    "/resume/abhinav-prasad-resume.pdf"
   );
+  await expect(resumeCta).toHaveAttribute("download", "");
 
   await page.goto("/work/portfolio-platform");
   await expect(
@@ -355,6 +365,7 @@ test("explore bridge keeps the matte headline composition on mobile", async ({ p
 
 test("profile stage keeps premium composition on desktop", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
@@ -366,6 +377,8 @@ test("profile stage keeps premium composition on desktop", async ({ page }) => {
   });
   await page.waitForTimeout(420);
   await expect(profileStage).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('[data-site-chrome="brand"]')).toHaveCSS("opacity", "1");
 
   const screenshot = await profileStage.screenshot({
     animations: "disabled",
@@ -378,6 +391,7 @@ test("profile stage keeps premium composition on desktop", async ({ page }) => {
 
 test("profile stage keeps premium composition on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
@@ -389,6 +403,11 @@ test("profile stage keeps premium composition on mobile", async ({ page }) => {
   });
   await page.waitForTimeout(420);
   await expect(profileStage).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  await page.addStyleTag({
+    content:
+      '[data-site-chrome="brand"], [data-site-chrome="navigation-toggle"] { display: none !important; }',
+  });
 
   const screenshot = await profileStage.screenshot({
     animations: "disabled",

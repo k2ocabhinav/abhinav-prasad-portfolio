@@ -2,35 +2,60 @@
   "name": "portfolio",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "24.x",
+    "npm": ">=11 <12"
+  },
   "scripts": {
     "dev": "next dev",
     "check:content": "node scripts/check-portfolio-content.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "check:dead": "knip --include files,dependencies,unlisted,binaries,unresolved",
+    "check:assets": "node scripts/check-public-assets.mjs",
+    "check:security:prod": "npm audit --omit=dev --audit-level=moderate",
+    "check:security:all": "npm audit --audit-level=high",
+    "check:security": "npm run check:security:prod && npm run check:security:all",
     "build": "npm run check:content && next build",
+    "build:lighthouse": "SITE_URL=http://127.0.0.1:3001 LIGHTHOUSE_CI=1 next build",
     "capture:portfolio": "node scripts/capture-portfolio-assets.mjs",
     "start": "next start",
-    "lint": "eslint",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:responsive": "playwright test tests/portfolio-responsive.spec.ts",
+    "test:lighthouse": "npm run build:lighthouse && LIGHTHOUSE_CI=1 lhci autorun",
+    "verify": "npm run check:content && npm run typecheck && npm run lint && npm run check:dead && npm run check:assets && npm run check:security && npm run build && npm run test:e2e && npm run test:lighthouse"
   },
   "dependencies": {
-    "@mdx-js/loader": "^3.1.1",
-    "@mdx-js/react": "^3.1.1",
-    "@next/mdx": "^16.2.4",
+    "@vercel/speed-insights": "^2.0.0",
     "gray-matter": "^4.0.3",
-    "gsap": "^3.15.0",
     "lenis": "^1.3.23",
     "lucide-react": "^1.7.0",
     "motion": "^12.38.0",
-    "next": "16.2.1",
+    "next": "16.2.10",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@lhci/cli": "0.15.1",
     "@playwright/test": "^1.59.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.1",
+    "eslint-config-next": "16.2.10",
+    "knip": "6.26.0",
     "typescript": "^5"
+  },
+  "overrides": {
+    "brace-expansion@<2": "1.1.13",
+    "brace-expansion@>=5 <5.0.6": "5.0.6",
+    "gray-matter": {
+      "js-yaml": "3.15.0"
+    },
+    "postcss": "8.5.10",
+    "tmp": "0.2.7",
+    "uuid": "11.1.1"
   }
 }

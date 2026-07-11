@@ -81,24 +81,35 @@
 
 .socials {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .socialIcon {
+  width: 44px;
+  height: 44px;
   color: var(--color-accent-brown);
   transition: opacity 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  border-radius: 50%;
+  touch-action: manipulation;
 }
 
-.socialIcon:hover {
-  opacity: 0.6;
+@media (hover: hover) and (pointer: fine) {
+  .socialIcon:hover {
+    opacity: 0.6;
+  }
+}
+
+.socialIcon:focus-visible {
+  outline: 2px solid var(--color-accent-deep);
+  outline-offset: 3px;
 }
 
 .footerTagline {
   margin-top: 8rem;
-  opacity: 0.46;
+  opacity: 0.7;
 }
 
 .taglineText {

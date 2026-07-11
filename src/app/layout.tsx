@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import {
   Fraunces,
   Fragment_Mono,
@@ -7,6 +8,7 @@ import {
 } from "next/font/google";
 import AppProviders from "@/components/providers/AppProviders";
 import { getProfileContent } from "@/lib/portfolioContent";
+import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 import "./globals.css";
 
 // =============================================================================
@@ -50,45 +52,75 @@ const fragmentMono = Fragment_Mono({
   display: "swap",
 });
 
-const seo = getProfileContent().seo ?? {
-  title: "Abhinav - Software Engineer Portfolio",
-  description: "Portfolio for Abhinav.",
-  keywords: ["Software Engineer", "Portfolio"],
-  author: "Abhinav",
-  url: "https://abhinav.dev",
-  ogImage: "https://abhinav.dev/og-image.jpg",
-};
+const profile = getProfileContent();
+const seo = profile.seo;
+const title = seo?.title ?? `${profile.personal.fullName} — Engineering Portfolio`;
+const description = seo?.description ?? profile.personal.subtitle;
+const author = seo?.author ?? profile.personal.fullName;
+const openGraphImage = seo?.ogImage ?? "/og-image.jpg";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(seo.url),
-  title: seo.title,
-  description: seo.description,
-  keywords: seo.keywords,
-  authors: [{ name: seo.author }],
+  metadataBase: siteConfig.url,
+  title: {
+    default: title,
+    template: `%s | ${profile.personal.fullName}`,
+  },
+  description,
+  applicationName: `${profile.personal.fullName} — Engineering Portfolio`,
+  keywords: seo?.keywords,
+  authors: [{ name: author, url: absoluteUrl("/") }],
+  creator: profile.personal.fullName,
+  publisher: profile.personal.fullName,
+  alternates: {
+    canonical: "/",
+  },
+  robots: siteConfig.isIndexable
+    ? {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      }
+    : {
+        index: false,
+        follow: false,
+        nocache: true,
+        googleBot: {
+          index: false,
+          follow: false,
+        },
+      },
   openGraph: {
     type: "website",
-    title: seo.title,
-    description: seo.description,
-    url: seo.url,
+    locale: "en_IN",
+    siteName: `${profile.personal.fullName} — Engineering Portfolio`,
+    title,
+    description,
+    url: absoluteUrl("/"),
     images: [
       {
-        url: seo.ogImage,
+        url: openGraphImage,
         width: 1200,
         height: 630,
-        alt: "Abhinav's editorial engineering portfolio",
+        alt: `${profile.personal.fullName}'s editorial engineering portfolio`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: seo.title,
-    description: seo.description,
+    title,
+    description,
     images: [
       {
-        url: seo.ogImage,
+        url: openGraphImage,
         width: 1200,
         height: 630,
-        alt: "Abhinav's editorial engineering portfolio",
+        alt: `${profile.personal.fullName}'s editorial engineering portfolio`,
       },
     ],
   },
@@ -107,6 +139,7 @@ export default function RootLayout({
     >
       <body>
         <AppProviders>{children}</AppProviders>
+        {process.env.VERCEL === "1" ? <SpeedInsights /> : null}
       </body>
     </html>
   );

@@ -5,7 +5,7 @@ import { getBeyondAlbumItems } from "@/lib/portfolioContent";
 import styles from "./page.module.css";
 
 const beyondPhotoWallIntro = {
-  eyebrow: "Hidden album",
+  eyebrow: "Beyond the Build",
   title: "Beyond The Terminal",
   deck: "Photos, people, notes, and the parts that don't fit inside a resume.",
 };

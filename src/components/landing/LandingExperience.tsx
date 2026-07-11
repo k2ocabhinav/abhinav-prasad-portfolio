@@ -35,6 +35,7 @@ export default function LandingExperience({
             {services.length > 0 ? (
               <LandingFrame3Services services={services} reduceMotion />
             ) : null}
+            <LandingBlendSection content={profile.bridge} reduceMotion />
             <ProfileSection personal={profile.personal} reduceMotion />
           </div>
         </>
@@ -47,7 +48,7 @@ export default function LandingExperience({
             {services.length > 0 ? (
               <LandingFrame3Services services={services} />
             ) : null}
-            <LandingBlendSection />
+            <LandingBlendSection content={profile.bridge} />
             <ProfileSection personal={profile.personal} />
           </div>
         </>

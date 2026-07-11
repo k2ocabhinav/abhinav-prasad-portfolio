@@ -2,36 +2,28 @@
 
 ## Fonts
 
-- `Archivo` is the Beyond display voice. Use it for landing headlines, card titles, archive/article titles, and major pull quotes.
-- `Manrope` is the default reading and UI face inside Beyond.
-- `IBM Plex Mono` is reserved for labels, timestamps, route chrome, and metadata.
-- Do not pull the main portfolio font stack into Beyond components unless a fallback is unavoidable.
+- `Bricolage Grotesque` is the display voice for the photo-wall title and item headings.
+- `Plus Jakarta Sans` is the reading and UI face.
+- `Space Mono` is reserved for labels, metadata, tags, and route chrome.
+- Keep the Beyond font variables scoped to the Beyond layout.
 
 ## Motion
 
-- The portal bloom remains the only signature cross-route entry effect into Beyond.
-- Allowed motion vocabulary: opacity, transform, clip-path, restrained blur, and GSAP ScrollTrigger choreography tied to band reveals and depth.
-- Landing-page smooth scroll may use Lenis, but archive and article routes should default to native scrolling.
-- Reduced-motion users must skip Lenis and pinning and receive short transform/opacity reveals only.
-- Never animate `width`, `height`, `top`, `left`, or heavy filter stacks during scroll.
+- The portal bloom remains the only signature cross-route entry effect.
+- Photo-wall interaction may use restrained opacity and transform transitions.
+- Reduced-motion users receive the accessible fade route transition and static photo-wall geometry.
+- Do not add GSAP, scroll pinning, heavy filter stacks, or layout-property animation.
 
 ## Visual System
 
-- The shell stays `charcoal + pastel mist`, with dusty lavender, powder blue, pale silver, and muted peach acting as the only approved accent family.
-- Use oversized rectangular cards with one shared border contract: outer border, inner frame, consistent label position, and one symbol placement zone.
-- Keep the landing page to one dominant focal point per viewport.
-- Article pages may introduce a cool paper reading surface, but the outer chrome must remain aligned with the landing shell.
+- Preserve the active warm-paper photo wall: ink, cobalt, coral, lemon, amber, lilac, and pink.
+- Use bold editorial type, outlined sticker-like cards, clear reading order, and one dominant focal point per viewport.
+- Keep Beyond tokens and behavior isolated from the main portfolio.
+- Journal URLs are compatibility redirects to the photo wall; they are not article-rendering routes.
 
-## Regressions To Avoid
+## Content
 
-- No return to the previous electric-blue noir palette.
-- No floating tiles, chapter-chip strips, or multi-link sticky nav bars on the Beyond home page.
-- No small icon clutter, generic SaaS cards, or decorative motion that competes with the reading order.
-- Do not leak Beyond tokens or GSAP/Lenis behavior into the main portfolio routes.
-
-## Adding Cards And Posts
-
-- Keep landing content in `src/data/beyondTerminal.ts` using the deterministic act/card model.
-- Prefer `hero_split`, `wide_strip`, `wide_strip_reverse`, `journal_feature`, and `journal_secondary` before inventing new layouts.
-- Store journal entries as MDX in `src/content/beyond-terminal/journal/` with typed `export const metadata`.
-- Keep Beyond placeholder-safe assets local under `public/beyond-terminal/` so future swaps stay content-only.
+- Store active album entries as validated frontmatter in `src/content/portfolio/beyond/`.
+- Keep optional approved album media under `public/beyond-terminal/album/`; text-first entries must remain valid without an image.
+- Extend the existing `BeyondAlbumItem` contract and content validator when adding fields.
+- Do not recreate the retired act/card model, journal MDX runtime, or deleted placeholder-asset system.

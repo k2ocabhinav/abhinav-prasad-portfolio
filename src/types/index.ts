@@ -30,9 +30,6 @@ export type SectionTone =
   | "pastel-mint"
   | "pastel-cream";
 
-/** Optional section edge handoff treatment */
-export type SectionBlendStyle = "soft" | "bold";
-
 export type PortfolioStatus = "draft" | "published";
 
 /** Social media link */
@@ -53,23 +50,30 @@ export interface Location {
 /** Personal/profile data */
 export interface PersonalData {
   name: string;
+  fullName: string;
   title: string;
   tagline: string;
   subtitle: string;
   hintCopy?: string;
   heroAnnotations: HeroAnnotation[];
-  /** Personal portrait image URL — grayscale filter applied via CSS */
+  /** Personal portrait or approved identity image URL */
   heroPhoto: string;
   heroSlides: HeroSlide[];
   heroSlideInterval: number;
   heroOverlayOpacity: number;
   location: Location;
   email: string;
-  resumeHref?: string | null;
+  resumeHref: string;
   socials: SocialLink[];
   philosophy: string;
   presenceDescription: string;
   footerTagline: string;
+}
+
+/** Editable handoff between the landing sequence and the profile story */
+export interface ProfileBridgeContent {
+  eyebrow: string;
+  title: string;
 }
 
 /** Hero section image annotations */
@@ -84,12 +88,26 @@ export interface HeroSlide {
   alt: string;
 }
 
-/** Work experience entry */
-export interface Experience {
-  date: string;
+/** A role held within a single employer experience */
+export interface ExperienceRole {
   title: string;
-  company: string;
-  tags: string[];
+  date: string;
+  note?: string;
+}
+
+/** A semantically emphasized proof point within an experience workstream */
+export interface ExperiencePoint {
+  lead: string;
+  detail: string;
+}
+
+/** A coherent area of engineering ownership within an employer experience */
+export interface ExperienceWorkstream {
+  id: string;
+  title: string;
+  summary: string;
+  points: ExperiencePoint[];
+  tools: string[];
 }
 
 /** Portfolio project */
@@ -141,7 +159,9 @@ export interface Project {
 export interface PortfolioProfile {
   personal: PersonalData;
   hero: LandingHeroContent;
+  bridge: ProfileBridgeContent;
   presenceNodes: PresenceNode[];
+  knowsAbout: string[];
   seo?: SEOData;
 }
 
@@ -155,11 +175,17 @@ export interface PortfolioProject extends Project {
   detail?: ProjectDetail;
 }
 
-export interface ChronicleEntry extends Experience {
+export interface ChronicleEntry {
   slug: string;
   status: PortfolioStatus;
   order?: number;
-  highlights?: string[];
+  company: string;
+  period: string;
+  companyContext: string;
+  backendThesis: string;
+  functionality: string;
+  roles: ExperienceRole[];
+  workstreams: ExperienceWorkstream[];
 }
 
 export interface StackGroup extends TechCategory {
@@ -199,10 +225,13 @@ export interface ProjectDetail {
 }
 
 /** Tech stack category */
+export type StackContext = "Used at work" | "Part of my workflow" | "Built with in projects";
+
 export interface TechCategory {
-  icon: "cloud" | "database" | "terminal" | "sparkles";
+  icon: "cloud" | "cpu" | "database" | "terminal" | "sparkles";
   label: string;
-  content: string;
+  context: StackContext;
+  items: string[];
 }
 
 /** Presence map node */
@@ -220,62 +249,7 @@ export interface SEOData {
   description: string;
   keywords: string[];
   author: string;
-  url: string;
   ogImage: string;
-}
-
-/** Floating artifact definition for theme system */
-export interface ArtifactPalette {
-  stroke?: string;
-  fill?: string;
-  glow?: string;
-  halo?: string;
-  core?: string;
-  satellite?: string;
-}
-
-export interface ArtifactLayers {
-  halo?: boolean;
-  glow?: boolean;
-  core?: boolean;
-  satellite?: boolean;
-}
-
-export interface ArtifactDef {
-  id: string;
-  priority: "hero" | "ambient";
-  svgPath: string;
-  viewBox?: string;
-  palette: ArtifactPalette;
-  layers?: ArtifactLayers;
-  /** Optional stroke width in px */
-  strokeWidth?: number;
-  size: number;
-  opacity: number;
-  x: number;
-  y: number;
-  /** Motion intensity for the shared artifact controller */
-  driftAmplitude?: number;
-  /** Vertical scroll response in px at full-page travel */
-  parallaxDepth?: number;
-  /** Subtle idle scale pulse ceiling (1.06 = 6%) */
-  pulseScale?: number;
-  /** Optional side-to-side drift in px */
-  swayAmplitude?: number;
-  /** Optional orbit radius for the satellite accent */
-  orbitRadius?: number;
-  /** Orbit duration in seconds */
-  orbitDuration?: number;
-  /** Optional blend mode for layered glow treatment */
-  blendMode?: string;
-  rotationSwing: number;
-}
-
-/** Theme containing floating artifacts */
-export interface Theme {
-  id: string;
-  name: string;
-  artifacts: ArtifactDef[];
 }
 
 // ─── Landing Page Types ──────────────────────────────────────────────────────
@@ -300,15 +274,6 @@ export interface LandingCTA {
   label: string;
   href: string;
   variant: "primary" | "secondary";
-}
-
-/** Hand-drawn SVG doodle accent (kept for reference; DoodleEngine currently inactive) */
-export interface DoodleAsset {
-  id: string;
-  svgPath: string;
-  viewBox: string;
-  size: number;
-  anchorHint: "topLeft" | "topRight" | "bottomLeft" | "bottomRight" | "inlineLeft" | "inlineRight";
 }
 
 /** Content for the Landing Frame 1 hero section */
@@ -363,84 +328,6 @@ export interface LandingStory {
 }
 
 // ─── Beyond The Terminal ─────────────────────────────────────────────────────
-
-export interface BeyondVisual {
-  kind: "image";
-  src: string;
-  alt: string;
-  aspectRatio: string;
-  priority?: boolean;
-  treatment?: "obsidian" | "chrome" | "paper";
-  frame?: "default" | "offset" | "signal";
-  surfaceTone?: "neutral" | "lavender" | "powder" | "silver" | "peach";
-}
-
-export type BeyondMedia = BeyondVisual;
-
-export interface BeyondNote {
-  id: string;
-  label: string;
-  value: string;
-  tone: "muted" | "accent" | "warm";
-}
-
-export interface BeyondSymbol {
-  id: string;
-  src: string;
-  alt: string;
-  placement: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "center";
-  accent: "chrome" | "signal" | "ghost";
-}
-
-export interface BeyondCardAction {
-  label: string;
-  href: string;
-  kind: "link" | "route";
-}
-
-export type BeyondCardLayout =
-  | "hero_split"
-  | "wide_strip"
-  | "wide_strip_reverse"
-  | "journal_feature"
-  | "journal_secondary";
-
-export type BeyondCardAccent = "lavender" | "powder" | "silver" | "peach";
-
-export interface BeyondCard {
-  id: string;
-  kind: "statement" | "feature" | "artifact" | "journal";
-  layout: BeyondCardLayout;
-  accent: BeyondCardAccent;
-  alignment: "start" | "center";
-  eyebrow: string;
-  title: string;
-  deck: string;
-  body: string[];
-  media?: BeyondVisual;
-  notes?: BeyondNote[];
-  symbol?: BeyondSymbol;
-  cta?: BeyondCardAction;
-}
-
-export interface BeyondAct {
-  id: string;
-  title: string;
-  deck: string;
-  cards: BeyondCard[];
-}
-
-export interface BeyondPostMeta {
-  title: string;
-  slug: string;
-  excerpt: string;
-  publishedAt: string;
-  readingTime: string;
-  tags: string[];
-  cover: BeyondVisual;
-  featured: boolean;
-  displaySize?: "feature" | "secondary";
-}
 
 export type BeyondAlbumKind = "photo" | "event" | "quote" | "person" | "project";
 

@@ -2,25 +2,31 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import type { ChronicleEntry, SectionBlendStyle, SectionTone } from "@/types";
+import type { ChronicleEntry, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { staggerContainer, staggerItem } from "@/lib/animations";
-import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./ExperienceSection.module.css";
 
-// =============================================================================
-// ExperienceSection — Timeline with staggered entry animations
-// =============================================================================
-
 interface ExperienceSectionProps {
   experiences: ChronicleEntry[];
   tone?: SectionTone;
-  blendTopFrom?: SectionTone;
-  blendBottomTo?: SectionTone;
-  blendStyle?: SectionBlendStyle;
+}
+
+function OpeningSentence({ text }: { text: string }) {
+  const sentenceEnd = text.indexOf(".");
+
+  if (sentenceEnd < 0) {
+    return <strong>{text}</strong>;
+  }
+
+  return (
+    <>
+      <strong>{text.slice(0, sentenceEnd + 1)}</strong>
+      {text.slice(sentenceEnd + 1)}
+    </>
+  );
 }
 
 export default function ExperienceSection({
@@ -39,88 +45,192 @@ function ExperienceSectionContent({
   tone,
 }: ExperienceSectionProps) {
   const prefersReducedMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : sectionRef,
-    offset: ["start end", "end start"],
+  const headerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: headerProgress } = useScroll({
+    target: prefersReducedMotion ? undefined : headerRef,
+    offset: ["start 0.86", "start 0.50"],
   });
-  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
-  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
+  const clusterY = useTransform(headerProgress, [0, 0.7], [12, 0]);
+  const deckOpacity = useTransform(headerProgress, [0.3, 0.7], [0, 1]);
+  const deckY = useTransform(headerProgress, [0.3, 0.7], [10, 0]);
 
   return (
-    <SectionWrapper
-      id="experience"
-      tone={tone}
-    >
-      <div ref={sectionRef} className={`grid-12 ${styles.experienceGrid}`}>
-        <RisoMark variant="arc" />
-        <div className="col-4">
-          <motion.h2
-            style={{ y: prefersReducedMotion ? 0 : headingY }}
-            className={styles.heading}
-          >
-            <FlipRevealText flat
-              text="Experience"
-              mode="char"
-              progress={scrollYProgress}
-              window={[0.16, 0.3]}
-              holdUntil={0.86}
-              stagger={0.028}
-              perspective={910}
-              className={styles.headingFlip}
-              tokenClassName={styles.headingFlipToken}
-            />
-          </motion.h2>
-          <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-            <FlipRevealText flat
-              text="(02) — Built to stay resilient"
-              mode="word"
-              progress={scrollYProgress}
-              window={[0.24, 0.38]}
-              holdUntil={0.82}
-              stagger={0.03}
-              perspective={860}
-              className={styles.calloutFlip}
-              tokenClassName={styles.calloutFlipToken}
-            />
-          </motion.p>
-        </div>
-        <div className={`col-8 ${styles.timelineCol}`}>
-          {/* Timeline line */}
-          <div className={styles.timelineLine} />
-
+    <SectionWrapper id="experience" tone={tone} className={styles.experienceSection}>
+      <div className={styles.experienceRoot}>
+        <header
+          ref={headerRef}
+          className={styles.sectionHeader}
+          data-experience-header="true"
+        >
           <motion.div
-            variants={staggerContainer(0.12)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className={styles.entries}
+            className={styles.titleCluster}
+            style={{ y: prefersReducedMotion ? 0 : clusterY }}
           >
-            {experiences.map((exp) => (
-              <motion.div
-                key={exp.slug}
-                variants={staggerItem}
-                className={styles.entry}
-              >
-                <div className={styles.timelineDot} />
-                <span className={styles.date}>{exp.date}</span>
-                <h3 className={styles.role}>{exp.title}</h3>
-                <p className={styles.company}>{exp.company}</p>
-                {exp.highlights && exp.highlights.length > 0 && (
-                  <ul className={styles.highlights}>
-                    {exp.highlights.map((highlight) => (
-                      <li key={highlight}>{highlight}</li>
-                    ))}
-                  </ul>
-                )}
-                <div className={styles.tags}>
-                  {exp.tags.map((tag) => (
-                    <Tag key={tag} label={tag} />
-                  ))}
-                </div>
-              </motion.div>
-            ))}
+            <h2
+              id="experience-title"
+              className={styles.heading}
+              data-experience-title="true"
+            >
+              <FlipRevealText
+                flat
+                persist
+                text="Experience"
+                mode="char"
+                progress={headerProgress}
+                window={[0.12, 0.48]}
+                stagger={0.028}
+                perspective={910}
+                className={styles.headingFlip}
+                tokenClassName={styles.headingFlipToken}
+              />
+            </h2>
+            <span className={styles.arcAnchor} data-experience-arc="true">
+              <RisoMark
+                variant="arc"
+                placement="inline"
+                progress={headerProgress}
+                className={styles.experienceArc}
+              />
+            </span>
           </motion.div>
+
+          <motion.p
+            className={styles.callout}
+            style={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: deckOpacity, y: deckY }
+            }
+          >
+            Backend systems · business logic · reliable delivery
+          </motion.p>
+        </header>
+
+        <div className={styles.dossierList}>
+          {experiences.map((experience) => {
+            const employerHeadingId = `${experience.slug}-employer`;
+            const rolesHeadingId = `${experience.slug}-roles`;
+            const workHeadingId = `${experience.slug}-work`;
+
+            return (
+              <article
+                key={experience.slug}
+                className={styles.dossier}
+                aria-labelledby={employerHeadingId}
+                data-experience-dossier={experience.slug}
+              >
+                <header className={styles.employerLabel}>
+                  <p className={styles.eyebrow}>Professional experience</p>
+                  <div className={styles.employerLine}>
+                    <h3 id={employerHeadingId} className={styles.employerName}>
+                      {experience.company}
+                      <span className={styles.employerDivision}>· Airport Assistance</span>
+                    </h3>
+                    <span className={styles.period}>{experience.period}</span>
+                  </div>
+                  <p className={styles.companyContext}>{experience.companyContext}</p>
+                </header>
+
+                <div className={styles.narrativeDeck}>
+                  <motion.p
+                    className={styles.backendThesis}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
+                    whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.4 }}
+                    transition={{
+                      duration: prefersReducedMotion ? 0 : 0.5,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    <OpeningSentence text={experience.backendThesis} />
+                  </motion.p>
+                  <p className={styles.functionality}>
+                    <strong className={styles.functionalityLead}>
+                      Functionality breadth
+                    </strong>
+                    <span>{experience.functionality}</span>
+                  </p>
+                </div>
+
+                <div className={styles.dossierBody}>
+                  <section
+                    className={styles.roleRail}
+                    aria-labelledby={rolesHeadingId}
+                    data-experience-role-rail="true"
+                  >
+                    <h4 id={rolesHeadingId} className={styles.columnLabel}>
+                      Role progression
+                    </h4>
+                    <ol className={styles.roleList}>
+                      {experience.roles.map((role) => (
+                        <li key={`${role.title}-${role.date}`} className={styles.roleItem}>
+                          <span className={styles.roleMarker} aria-hidden="true" />
+                          <div>
+                            <h5 className={styles.roleTitle}>{role.title}</h5>
+                            <p className={styles.roleDate}>{role.date}</p>
+                            {role.note ? <p className={styles.roleNote}>{role.note}</p> : null}
+                          </div>
+                        </li>
+                      ))}
+                    </ol>
+                  </section>
+
+                  <section
+                    className={styles.engineeringWork}
+                    aria-labelledby={workHeadingId}
+                    data-experience-workstreams="true"
+                  >
+                    <h4 id={workHeadingId} className={styles.columnLabel}>
+                      Selected engineering work
+                    </h4>
+                    <div className={styles.workstreamList}>
+                      {experience.workstreams.map((workstream, index) => (
+                        <motion.article
+                          key={workstream.id}
+                          className={styles.workstream}
+                          data-experience-workstream={workstream.id}
+                          initial={{ opacity: 0, y: 16 }}
+                          animate={prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
+                          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                          viewport={{ once: true, amount: 0.12 }}
+                          transition={{
+                            duration: prefersReducedMotion ? 0 : 0.45,
+                            delay: prefersReducedMotion ? 0 : index * 0.08,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
+                        >
+                          <div className={styles.workstreamHeader}>
+                            <h5 className={styles.workstreamTitle}>{workstream.title}</h5>
+                            <p className={styles.workstreamSummary}>{workstream.summary}</p>
+                          </div>
+
+                          <ul className={styles.pointList}>
+                            {workstream.points.map((point) => (
+                              <li key={`${workstream.id}-${point.lead}`}>
+                                <span>
+                                  <strong>{point.lead}.</strong> {point.detail}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+
+                          <ul
+                            className={styles.toolList}
+                            aria-label={`${workstream.title} tools and practices`}
+                          >
+                            {workstream.tools.map((tool) => (
+                              <li key={tool}>{tool}</li>
+                            ))}
+                          </ul>
+                        </motion.article>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </SectionWrapper>

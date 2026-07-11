@@ -55,6 +55,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
               alt={detail.heroImage.alt}
               fill
               priority
+              loading="eager"
               className={styles.heroImage}
               sizes="(max-width: 1024px) 100vw, 56vw"
             />

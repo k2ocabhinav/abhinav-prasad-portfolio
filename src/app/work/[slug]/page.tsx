@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProjectDetailPage from "@/components/sections/ProjectDetailPage";
 import {
-  getProfileContent,
   getProjectDetailBySlug,
   getProjectDetailSlugs,
+  getProfileContent,
 } from "@/lib/portfolioContent";
+import { absoluteUrl } from "@/lib/siteConfig";
 
 interface WorkDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -21,20 +22,21 @@ export async function generateMetadata({ params }: WorkDetailPageProps): Promise
     return {};
   }
 
-  const seo = getProfileContent().seo;
-  const title = `${detail.title} — Abhinav`;
-  const imageUrl = seo
-    ? new URL(detail.heroImage.src, seo.url).toString()
-    : detail.heroImage.src;
+  const title = detail.title;
+  const imageUrl = absoluteUrl(detail.heroImage.src);
+  const canonicalUrl = absoluteUrl(`/work/${detail.slug}`);
 
   return {
     title,
     description: detail.subtitle,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      type: "website",
+      type: "article",
       title,
       description: detail.subtitle,
-      url: seo ? new URL(`/work/${detail.slug}`, seo.url).toString() : undefined,
+      url: canonicalUrl,
       images: [
         {
           url: imageUrl,

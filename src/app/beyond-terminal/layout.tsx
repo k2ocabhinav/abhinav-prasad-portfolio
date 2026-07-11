@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import BeyondShell from "@/components/beyond-terminal/BeyondShell";
+import { absoluteUrl } from "@/lib/siteConfig";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -31,6 +32,16 @@ export const metadata: Metadata = {
   },
   description:
     "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.",
+  alternates: {
+    canonical: absoluteUrl("/beyond-terminal"),
+  },
+  openGraph: {
+    type: "website",
+    title: "Beyond The Terminal",
+    description:
+      "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.",
+    url: absoluteUrl("/beyond-terminal"),
+  },
 };
 
 export default function BeyondTerminalLayout({

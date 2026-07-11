@@ -14,6 +14,7 @@
 /coverage
 /test-results
 /test-artifacts
+/.lighthouseci
 
 # next.js
 /.next/
@@ -43,11 +44,6 @@ yarn-error.log*
 next-env.d.ts
 
 # local tooling + agent working state (keep off the public repo)
-.claude/
-.claude-flow/
-
-# agent-facing / handoff docs — local working references, never published
-CLAUDE.md
 AGENTS.md
 docs/handoff/
 docs/workflow/

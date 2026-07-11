@@ -4,7 +4,7 @@
 }
 
 .heading {
-  font-family: var(--font-display);
+  font-family: var(--font-headline);
   font-style: normal;
   font-weight: 550;
   font-size: 3rem;
@@ -268,7 +268,7 @@
 
 .scopeSummary {
   margin-top: 0.85rem;
-  font-family: var(--font-headline);
+  font-family: var(--font-display);
   font-weight: 420;
   color: rgba(var(--color-on-surface-rgb), 0.78);
   line-height: 1.55;

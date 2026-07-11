@@ -39,40 +39,43 @@ export default function HomePage({ content }: HomePageProps) {
 
   return (
     <>
-      <BackdropCanvas />
+      <div id="site-content">
+        <BackdropCanvas />
 
-      <LandingExperience
-        profile={profile}
-        services={content.services}
-      />
+        <LandingExperience
+          profile={profile}
+          services={content.services}
+        />
+
+        <BrandMark />
+        <SageOrb />
+        <ScrollProgress />
+
+        <main
+          className="deferred-section deferred-section-deep"
+          style={{
+            position: "relative",
+            zIndex: 1,
+            backgroundColor: "transparent",
+          }}
+        >
+          <AboutSection personal={profile.personal} tone="pastel-cream" />
+          <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
+          <WorksSection projects={content.projects} tone="pastel-blush" />
+          <Marquee />
+          <TechStackSection techCategories={content.stackGroups} tone="pastel-peach" />
+          <PresenceSection
+            personal={profile.personal}
+            presenceNodes={profile.presenceNodes}
+            tone="pastel-mint"
+          />
+          <ContactSection personal={profile.personal} tone="hero-light" />
+
+          <Footer personal={profile.personal} />
+        </main>
+      </div>
 
       <Navigation />
-      <BrandMark />
-      <SageOrb />
-      <ScrollProgress />
-
-      <main
-        className="deferred-section deferred-section-deep"
-        style={{
-          position: "relative",
-          zIndex: 1,
-          backgroundColor: "transparent",
-        }}
-      >
-        <AboutSection personal={profile.personal} tone="pastel-cream" />
-        <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
-        <WorksSection projects={content.projects} tone="pastel-blush" />
-        <Marquee />
-        <TechStackSection techCategories={content.stackGroups} tone="pastel-peach" />
-        <PresenceSection
-          personal={profile.personal}
-          presenceNodes={profile.presenceNodes}
-          tone="pastel-mint"
-        />
-        <ContactSection personal={profile.personal} tone="hero-light" />
-
-        <Footer personal={profile.personal} />
-      </main>
     </>
   );
 }

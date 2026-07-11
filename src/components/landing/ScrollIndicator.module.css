@@ -13,10 +13,6 @@
   align-items: center;
 }
 
-:global(html[data-e2e-static-hero="true"]) .scrollIndicator {
-  display: none;
-}
-
 .line {
   position: relative;
   width: 1px;

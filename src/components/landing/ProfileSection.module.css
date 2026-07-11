@@ -91,7 +91,7 @@
   object-position: center 28%;
   border: none;
   border-radius: 0;
-  filter: grayscale(1) contrast(1.08);
+  filter: contrast(1.03);
   opacity: 1;
   transform: scale(1.03);
 }
@@ -141,7 +141,7 @@
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-secondary-text);
+  color: #303840;
 }
 
 .hintText {

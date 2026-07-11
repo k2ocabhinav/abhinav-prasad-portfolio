@@ -187,8 +187,8 @@ export default function AnimatedName({
   );
 
   return (
-    <span className={styles.nameShell} aria-label={name}>
+    <h1 className={styles.nameShell} aria-label={name}>
       {nameMarkup}
-    </span>
+    </h1>
   );
 }

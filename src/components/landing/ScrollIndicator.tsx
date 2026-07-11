@@ -30,6 +30,7 @@ export default function ScrollIndicator() {
     // Decorative only — hidden from assistive tech and fades out as the user
     // begins exploring the landing sequence so it never competes with content.
     <motion.div
+      data-scroll-indicator="true"
       className={styles.scrollIndicator}
       style={{ opacity, y }}
       aria-hidden="true"

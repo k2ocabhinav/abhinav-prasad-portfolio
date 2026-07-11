@@ -23,6 +23,7 @@ import type {
   ProjectTechBucket,
   ProjectVisual,
   ServiceEntry,
+  StackContext,
   StackGroup,
 } from "@/types";
 
@@ -32,7 +33,8 @@ const PUBLIC_ROOT = path.join(process.cwd(), "public");
 type Frontmatter = Record<string, unknown>;
 
 const projectIcons = ["terminal", "cloud", "database", "sparkles", "cpu"] as const;
-const stackIcons = ["cloud", "database", "terminal", "sparkles"] as const;
+const stackIcons = ["cloud", "cpu", "database", "terminal", "sparkles"] as const;
+const stackContextValues = ["Used at work", "Part of my workflow", "Built with in projects"] as const;
 const accents = ["sage", "peach", "sky", "sand"] as const;
 const statusValues = ["draft", "published"] as const;
 const proofLabels = ["Problem", "My Role", "Shipped", "Impact"] as const;
@@ -97,6 +99,15 @@ function optionalString(data: Frontmatter, key: string): string | undefined {
   return typeof value === "string" && value.trim().length > 0 ? value : undefined;
 }
 
+function optionalNonEmptyString(data: Frontmatter, key: string, filePath: string): string | undefined {
+  const value = data[key];
+  if (value === undefined) return undefined;
+  if (typeof value !== "string" || value.trim().length === 0) {
+    fail(filePath, `optional "${key}" must be a non-empty string`);
+  }
+  return value;
+}
+
 function nullableString(data: Frontmatter, key: string): string | null | undefined {
   const value = data[key];
   if (value === null) return null;
@@ -121,6 +132,14 @@ function stringArray(data: Frontmatter, key: string, filePath: string): string[]
   return value as string[];
 }
 
+function nonEmptyStringArray(data: Frontmatter, key: string, filePath: string): string[] {
+  const values = stringArray(data, key, filePath);
+  if (values.length === 0 || values.some((value) => value.trim().length === 0)) {
+    fail(filePath, `"${key}" must contain at least one non-empty string`);
+  }
+  return values;
+}
+
 function optionalStringArray(data: Frontmatter, key: string): string[] {
   const value = data[key];
   return Array.isArray(value) && value.every((item) => typeof item === "string")
@@ -134,6 +153,14 @@ function objectArray(data: Frontmatter, key: string, filePath: string): Frontmat
     fail(filePath, `missing object array "${key}"`);
   }
   return value as Frontmatter[];
+}
+
+function nonEmptyObjectArray(data: Frontmatter, key: string, filePath: string): Frontmatter[] {
+  const values = objectArray(data, key, filePath);
+  if (values.length === 0) {
+    fail(filePath, `"${key}" must contain at least one object`);
+  }
+  return values;
 }
 
 function optionalObjectArray(data: Frontmatter, key: string): Frontmatter[] {
@@ -327,10 +354,12 @@ function readProfile(): PortfolioProfile {
   const data = readFrontmatter(filePath);
   const personalData = objectValue(data, "personal", filePath);
   const hero = objectValue(data, "hero", filePath);
+  const bridge = objectValue(data, "bridge", filePath);
   const seo = optionalObject(data, "seo");
 
   const personal: PersonalData = {
     name: stringValue(personalData, "name", filePath),
+    fullName: stringValue(personalData, "fullName", filePath),
     title: stringValue(personalData, "title", filePath),
     tagline: stringValue(personalData, "tagline", filePath),
     subtitle: stringValue(personalData, "subtitle", filePath),
@@ -350,7 +379,7 @@ function readProfile(): PortfolioProfile {
       timezone: stringValue(objectValue(personalData, "location", filePath), "timezone", filePath),
     },
     email: stringValue(personalData, "email", filePath),
-    resumeHref: nullableString(personalData, "resumeHref") ?? null,
+    resumeHref: stringValue(personalData, "resumeHref", filePath),
     socials: objectArray(personalData, "socials", filePath).map((social) => ({
       platform: enumValue(social, "platform", socialPlatforms, filePath),
       label: stringValue(social, "label", filePath),
@@ -360,6 +389,12 @@ function readProfile(): PortfolioProfile {
     presenceDescription: stringValue(personalData, "presenceDescription", filePath),
     footerTagline: stringValue(personalData, "footerTagline", filePath),
   };
+  validatePublicAsset(personal.heroPhoto, filePath);
+  personal.heroSlides.forEach((slide) => validatePublicAsset(slide.image, filePath));
+  validatePublicAsset(personal.resumeHref, filePath);
+
+  const knowsAbout = nonEmptyStringArray(data, "knowsAbout", filePath);
+  ensureUnique(knowsAbout, "knowsAbout value");
 
   const heroContent: LandingHeroContent = {
     displayTitle: stringValue(hero, "displayTitle", filePath),
@@ -376,6 +411,10 @@ function readProfile(): PortfolioProfile {
   return {
     personal,
     hero: heroContent,
+    bridge: {
+      eyebrow: stringValue(bridge, "eyebrow", filePath),
+      title: stringValue(bridge, "title", filePath),
+    },
     presenceNodes: objectArray(data, "presenceNodes", filePath).map((node) => ({
       top: stringValue(node, "top", filePath),
       left: stringValue(node, "left", filePath),
@@ -383,13 +422,13 @@ function readProfile(): PortfolioProfile {
       sub: optionalString(node, "sub"),
       active: booleanValue(node, "active", false),
     })),
+    knowsAbout,
     seo: seo
       ? {
           title: stringValue(seo, "title", filePath),
           description: stringValue(seo, "description", filePath),
           keywords: stringArray(seo, "keywords", filePath),
           author: stringValue(seo, "author", filePath),
-          url: stringValue(seo, "url", filePath),
           ogImage: stringValue(seo, "ogImage", filePath),
         }
       : undefined,
@@ -424,15 +463,42 @@ export function getProjectDetailBySlug(slug: string): ProjectDetail | null {
 export function getChronicleEntries(): ChronicleEntry[] {
   const entries = listMdxFiles("chronicle").map((filePath) => {
     const data = readFrontmatter(filePath);
+    const workstreams = nonEmptyObjectArray(data, "workstreams", filePath).map((workstream) => {
+      const tools = nonEmptyStringArray(workstream, "tools", filePath);
+      ensureUnique(tools, `tool in workstream "${stringValue(workstream, "id", filePath)}"`);
+
+      return {
+        id: stringValue(workstream, "id", filePath),
+        title: stringValue(workstream, "title", filePath),
+        summary: stringValue(workstream, "summary", filePath),
+        points: nonEmptyObjectArray(workstream, "points", filePath).map((point) => ({
+          lead: stringValue(point, "lead", filePath),
+          detail: stringValue(point, "detail", filePath),
+        })),
+        tools,
+      };
+    });
+
+    ensureUnique(
+      workstreams.map((workstream) => workstream.id),
+      `workstream id in ${path.relative(process.cwd(), filePath)}`
+    );
+
     return {
       slug: stringValue(data, "slug", filePath),
       status: enumValue(data, "status", statusValues, filePath) as PortfolioStatus,
       order: numberValue(data, "order", 999),
-      date: stringValue(data, "date", filePath),
-      title: stringValue(data, "title", filePath),
       company: stringValue(data, "company", filePath),
-      tags: stringArray(data, "tags", filePath),
-      highlights: optionalStringArray(data, "highlights"),
+      period: stringValue(data, "period", filePath),
+      companyContext: stringValue(data, "companyContext", filePath),
+      backendThesis: stringValue(data, "backendThesis", filePath),
+      functionality: stringValue(data, "functionality", filePath),
+      roles: nonEmptyObjectArray(data, "roles", filePath).map((role) => ({
+        title: stringValue(role, "title", filePath),
+        date: stringValue(role, "date", filePath),
+        note: optionalNonEmptyString(role, "note", filePath),
+      })),
+      workstreams,
     };
   });
   ensureUnique(entries.map((entry) => entry.slug), "chronicle slug");
@@ -442,13 +508,16 @@ export function getChronicleEntries(): ChronicleEntry[] {
 export function getStackGroups(): StackGroup[] {
   const groups = listMdxFiles("stack").map((filePath) => {
     const data = readFrontmatter(filePath);
+    const items = nonEmptyStringArray(data, "items", filePath);
+    ensureUnique(items, `stack item in ${path.relative(process.cwd(), filePath)}`);
     return {
       id: stringValue(data, "id", filePath),
       status: enumValue(data, "status", statusValues, filePath) as PortfolioStatus,
       order: numberValue(data, "order", 999),
       icon: enumValue(data, "icon", stackIcons, filePath),
       label: stringValue(data, "label", filePath),
-      content: stringValue(data, "content", filePath),
+      context: enumValue(data, "context", stackContextValues, filePath) as StackContext,
+      items,
     };
   });
   ensureUnique(groups.map((group) => group.id), "stack id");

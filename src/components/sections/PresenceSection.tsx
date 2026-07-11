@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import type { PersonalData, PresenceNode, SectionBlendStyle, SectionTone } from "@/types";
+import type { PersonalData, PresenceNode, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import LiveClock from "@/components/ui/LiveClock";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -18,9 +18,6 @@ interface PresenceSectionProps {
   personal: PersonalData;
   presenceNodes: PresenceNode[];
   tone?: SectionTone;
-  blendTopFrom?: SectionTone;
-  blendBottomTo?: SectionTone;
-  blendStyle?: SectionBlendStyle;
 }
 
 export default function PresenceSection({

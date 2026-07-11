@@ -12,6 +12,7 @@ export default function BrandMark() {
     <motion.a
       href="#hero"
       aria-label="Back to Abhinav hero"
+      data-site-chrome="brand"
       className={styles.brandMark}
       initial={false}
       animate={isVisible ? "visible" : "hidden"}

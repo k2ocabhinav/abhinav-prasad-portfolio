@@ -61,12 +61,18 @@ export default function ProfileSection({
       ref={sectionRef}
       className={styles.profileSection}
       data-home-profile-stage="true"
+      aria-label="Profile"
     >
       <div className={styles.profileStageWash} aria-hidden="true" />
       <div className={`content-container ${styles.profileContent}`}>
         <div className={styles.storyGrid}>
           <motion.div
             className={styles.portraitColumn}
+            animate={
+              reduceMotion
+                ? { scale: 1, opacity: 1, y: 0, x: 0 }
+                : undefined
+            }
             style={
               reduceMotion
                 ? undefined
@@ -81,6 +87,7 @@ export default function ProfileSection({
             <div className={styles.portraitHalo} />
             <motion.div
               initial={reduceMotion ? false : { scale: 0.9, opacity: 0 }}
+              animate={reduceMotion ? { scale: 1, opacity: 1 } : undefined}
               whileInView={
                 reduceMotion ? undefined : { scale: 1, opacity: 1 }
               }
@@ -90,7 +97,7 @@ export default function ProfileSection({
             >
               <Image
                 src={personal.heroPhoto}
-                alt={`${personal.name} portrait`}
+                alt={`${personal.fullName} editorial monogram`}
                 width={640}
                 height={640}
                 className={styles.heroImage}
@@ -111,6 +118,7 @@ export default function ProfileSection({
           <div className={styles.copyColumn}>
             <motion.div
               initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={reduceMotion ? { opacity: 1, y: 0 } : undefined}
               whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={reduceMotion ? undefined : { once: true }}
               transition={reduceMotion ? undefined : { delay: 0.32 }}

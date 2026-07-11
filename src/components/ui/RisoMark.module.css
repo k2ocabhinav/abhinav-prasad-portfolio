@@ -11,9 +11,24 @@
 }
 
 .mark svg {
+  display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+.mark.inline {
+  position: relative;
+  inset: auto;
+  display: block;
+  flex: 0 0 auto;
+  width: 44px;
+  z-index: 1;
+}
+
+.arcDot {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 /* SVG rects scale from their own left edge (print bars grow outward). */
@@ -25,5 +40,31 @@
 @media (min-width: 768px) {
   .mark {
     display: block;
+  }
+
+  .mark.inline {
+    width: 60px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mark.inline {
+    width: clamp(80px, 6vw, 88px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark path[data-riso-arc-path="true"] {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .arcDot {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .bar {
+    transform: scaleX(1) !important;
   }
 }

@@ -33,7 +33,7 @@
 
 /* Newsreader italic bridge line — sentence case, editorial. */
 .label {
-  margin-top: 0.7rem;
+  margin: 0.7rem 0 0;
   font-family: var(--font-headline);
   font-style: italic;
   font-weight: 450;

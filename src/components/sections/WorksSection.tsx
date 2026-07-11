@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
-import type { Project, SectionBlendStyle, SectionTone } from "@/types";
+import type { Project, SectionTone } from "@/types";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
@@ -23,9 +23,6 @@ import styles from "./WorksSection.module.css";
 interface WorksSectionProps {
   projects: Project[];
   tone?: SectionTone;
-  blendTopFrom?: SectionTone;
-  blendBottomTo?: SectionTone;
-  blendStyle?: SectionBlendStyle;
 }
 
 export default function WorksSection({
@@ -154,7 +151,6 @@ function WorkCard({ project }: { project: Project }) {
                 fill
                 className={styles.heroShotImage}
                 sizes="(max-width: 768px) 100vw, 56vw"
-                priority={project.id === "01"}
               />
               <div className={styles.mediaCaption}>{heroScreenshot.caption}</div>
             </div>

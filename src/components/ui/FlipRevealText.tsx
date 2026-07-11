@@ -14,6 +14,7 @@ interface FlipRevealTextProps {
   progress?: MotionValue<number>;
   window?: [number, number];
   holdUntil?: number;
+  persist?: boolean;
   stagger?: number;
   perspective?: number;
   reduceMotion?: boolean;
@@ -52,6 +53,7 @@ export default function FlipRevealText({
   progress,
   window,
   holdUntil,
+  persist = false,
   stagger = 0.04,
   perspective = 920,
   reduceMotion,
@@ -60,7 +62,8 @@ export default function FlipRevealText({
   tokenClassName,
 }: FlipRevealTextProps) {
   const prefersReducedMotion = useReducedMotion();
-  const disableFlip = flat || (reduceMotion ?? prefersReducedMotion);
+  const shouldReduceMotion = reduceMotion ?? prefersReducedMotion;
+  const disableFlip = flat || shouldReduceMotion;
   const idleProgress = useMotionValue(0);
   const progressSource = progress ?? idleProgress;
   const [progressValue, setProgressValue] = useState(() => progress?.get() ?? 0);
@@ -97,7 +100,7 @@ export default function FlipRevealText({
     });
   }, [tokens, stagger, windowRange, holdWindowEnd]);
 
-  if (prefersReducedMotion) {
+  if (shouldReduceMotion) {
     return <span className={className}>{text}</span>;
   }
 
@@ -117,24 +120,26 @@ export default function FlipRevealText({
           Math.max(0, (progressLocal - token.tokenStart) / peakRange)
         );
         const fadeRange = Math.max(0.0001, 1 - token.tokenHold);
-        const tExit = Math.min(1, Math.max(0, (progressLocal - token.tokenHold) / fadeRange));
+        const tExit = persist
+          ? 0
+          : Math.min(1, Math.max(0, (progressLocal - token.tokenHold) / fadeRange));
         const stagedOpacity = progressLocal < token.tokenStart
           ? 0
           : progressLocal <= token.tokenPeak
             ? tReveal
-            : progressLocal <= token.tokenHold
+            : persist || progressLocal <= token.tokenHold
               ? 1
               : 1 - tExit;
         const stagedY = progressLocal < token.tokenPeak
           ? startY * (1 - tReveal)
-          : progressLocal <= token.tokenHold
+          : persist || progressLocal <= token.tokenHold
             ? 0
             : -8 * tExit;
         const stagedRotateX = disableFlip
           ? 0
           : progressLocal < token.tokenPeak
             ? startRotate * (1 - tReveal)
-            : progressLocal <= token.tokenHold
+            : persist || progressLocal <= token.tokenHold
               ? 0
               : -8 * tExit;
         const scrollLinkedTarget = disableFlip

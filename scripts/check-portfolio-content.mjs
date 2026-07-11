@@ -8,7 +8,8 @@ const publicRoot = path.join(root, "public");
 const statuses = new Set(["draft", "published"]);
 const proofLabels = new Set(["Problem", "My Role", "Shipped", "Impact"]);
 const projectIcons = new Set(["terminal", "cloud", "database", "sparkles", "cpu"]);
-const stackIcons = new Set(["cloud", "database", "terminal", "sparkles"]);
+const stackIcons = new Set(["cloud", "cpu", "database", "terminal", "sparkles"]);
+const stackContextValues = new Set(["Used at work", "Part of my workflow", "Built with in projects"]);
 const accents = new Set(["sage", "peach", "sky", "sand"]);
 const codeTones = new Set(["lime", "ember", "split"]);
 const beyondKinds = new Set(["photo", "event", "quote", "person", "project"]);
@@ -64,8 +65,12 @@ function optionalNullableString(data, key, filePath) {
 
 function stringArray(data, key, filePath) {
   const value = data[key];
-  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
-    fail(filePath, `missing string array "${key}"`);
+  if (
+    !Array.isArray(value) ||
+    value.length === 0 ||
+    value.some((item) => typeof item !== "string" || item.trim().length === 0)
+  ) {
+    fail(filePath, `"${key}" must be a non-empty array of non-empty strings`);
   }
   return value;
 }
@@ -160,10 +165,10 @@ function validateProfile() {
   const personal = objectValue(data, "personal", filePath);
   const hero = objectValue(data, "hero", filePath);
 
-  ["name", "title", "tagline", "subtitle", "email", "philosophy", "presenceDescription", "footerTagline"].forEach((key) =>
+  ["name", "fullName", "title", "tagline", "subtitle", "email", "philosophy", "presenceDescription", "footerTagline"].forEach((key) =>
     stringValue(personal, key, filePath)
   );
-  validatePublicAsset(optionalString(personal, "resumeHref"), filePath);
+  validatePublicAsset(stringValue(personal, "resumeHref", filePath), filePath);
   objectArray(personal, "socials", filePath).forEach((social) => {
     enumValue(social, "platform", new Set(["github", "linkedin", "email"]), filePath);
     stringValue(social, "label", filePath);
@@ -179,6 +184,14 @@ function validateProfile() {
     stringValue(cta, "href", filePath);
     enumValue(cta, "variant", new Set(["primary", "secondary"]), filePath);
   });
+  const bridge = objectValue(data, "bridge", filePath);
+  stringValue(bridge, "eyebrow", filePath);
+  stringValue(bridge, "title", filePath);
+  unique(stringArray(data, "knowsAbout", filePath), "knowsAbout value");
+  const seo = objectValue(data, "seo", filePath);
+  ["title", "description", "author", "ogImage"].forEach((key) => stringValue(seo, key, filePath));
+  stringArray(seo, "keywords", filePath);
+  validatePublicAsset(stringValue(seo, "ogImage", filePath), filePath);
 }
 
 function validateProjects() {
@@ -254,21 +267,61 @@ function validateChronicle() {
   const entries = mdxFiles("chronicle").map((filePath) => {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
-    ["slug", "date", "title", "company"].forEach((key) => stringValue(data, key, filePath));
-    stringArray(data, "tags", filePath);
-    optionalStringArray(data, "highlights", filePath);
+    ["slug", "company", "period", "companyContext", "backendThesis", "functionality"].forEach((key) =>
+      stringValue(data, key, filePath)
+    );
+
+    const roles = objectArray(data, "roles", filePath);
+    if (roles.length === 0) {
+      fail(filePath, '"roles" must contain at least one role');
+    }
+    roles.forEach((role) => {
+      stringValue(role, "title", filePath);
+      stringValue(role, "date", filePath);
+      const note = role.note;
+      if (note !== undefined && (typeof note !== "string" || note.trim().length === 0)) {
+        fail(filePath, 'optional role "note" must be a non-empty string');
+      }
+    });
+
+    const workstreams = objectArray(data, "workstreams", filePath);
+    if (workstreams.length === 0) {
+      fail(filePath, '"workstreams" must contain at least one workstream');
+    }
+    workstreams.forEach((workstream) => {
+      ["id", "title", "summary"].forEach((key) => stringValue(workstream, key, filePath));
+      const points = objectArray(workstream, "points", filePath);
+      if (points.length === 0) {
+        fail(filePath, `workstream "${workstream.id}" must contain at least one point`);
+      }
+      points.forEach((point) => {
+        stringValue(point, "lead", filePath);
+        stringValue(point, "detail", filePath);
+      });
+      const tools = stringArray(workstream, "tools", filePath);
+      unique(tools, `tool in workstream "${workstream.id}"`);
+    });
+    unique(
+      workstreams.map((workstream) => workstream.id),
+      `workstream id in ${rel(filePath)}`
+    );
     return data;
   });
   unique(entries.map((entry) => entry.slug), "chronicle slug");
 }
 
 function validateStack() {
-  mdxFiles("stack").forEach((filePath) => {
+  const groups = mdxFiles("stack").map((filePath) => {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
     enumValue(data, "icon", stackIcons, filePath);
-    ["id", "label", "content"].forEach((key) => stringValue(data, key, filePath));
+    enumValue(data, "context", stackContextValues, filePath);
+    ["id", "label"].forEach((key) => stringValue(data, key, filePath));
+    const items = stringArray(data, "items", filePath);
+    unique(items, `stack item in ${rel(filePath)}`);
+    return data;
   });
+  unique(groups.map((group) => group.id), "stack id");
 }
 
 function validateServices() {
