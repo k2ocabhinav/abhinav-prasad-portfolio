@@ -1,9 +1,14 @@
 .experienceSection {
+  background: var(--paper-linen, #FCF8F2);
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-cornflower-deep, #25447B);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-bone, #F0EEE9);
   --cassette-shell: #e7eae7;
   --cassette-label: #cbd6e2;
-  --cassette-field: #dfe4e5;
-  --cassette-cobalt: #2244c7;
-  --cassette-cobalt-deep: #1b3699;
+  --cassette-field: var(--paper-linen, #FCF8F2);
+  --cassette-cobalt: var(--color-cornflower, #94B6EF);
+  --cassette-cobalt-deep: var(--color-cornflower-deep, #25447B);
   --cassette-silver: #9fabb9;
   --cassette-ink: #0b1011;
   --cassette-muted: #4d5659;
@@ -15,15 +20,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background:
-    linear-gradient(
-      180deg,
-      #f0eee9 0%,
-      #e7eae9 9%,
-      #d9e0e4 44%,
-      var(--cassette-field) 100%
-    ),
-    var(--cassette-field);
+  background: var(--paper-linen, #FCF8F2);
 }
 
 .experienceSection::after {
@@ -33,7 +30,7 @@
   z-index: 0;
   height: clamp(8rem, 18vw, 15rem);
   border-block: 1px solid rgba(27, 54, 153, 0.08);
-  background: rgba(68, 86, 105, 0.035);
+  background: rgba(148, 182, 239, 0.08);
   pointer-events: none;
 }
 
@@ -112,13 +109,11 @@
 
 .dossier {
   position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(27, 54, 153, 0.3);
-  border-radius: 6px;
+  overflow: visible;
+  border: 1px solid rgba(37, 68, 123, 0.32);
+  border-radius: 3px;
   background: var(--cassette-shell);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.42) inset,
-    0 18px 45px rgba(17, 30, 55, 0.065);
+  box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
 }
 
 .dossier::after {
@@ -139,9 +134,10 @@
 }
 
 .employerLabel {
+  border-radius: 2px 2px 0 0;
   padding: clamp(1.75rem, 4vw, 3rem);
   border-bottom: 1px solid rgba(27, 54, 153, 0.26);
-  background: var(--cassette-label);
+  background: var(--paper-glacier, #D7EFFF);
 }
 
 .employerLabel::after {
@@ -203,11 +199,11 @@
 }
 
 .companyContext {
-  max-width: 65rem;
+  max-width: 65ch;
   margin-top: 1.25rem;
   color: var(--cassette-muted);
-  font-size: clamp(0.94rem, 1.4vw, 1.04rem);
-  line-height: 1.7;
+  font-size: clamp(1rem, 1.4vw, 1.0625rem);
+  line-height: 1.65;
 }
 
 .narrativeDeck {
@@ -218,7 +214,7 @@
 }
 
 .backendThesis {
-  max-width: 70rem;
+  max-width: 65ch;
   padding-left: clamp(1rem, 2vw, 1.5rem);
   border-left: 3px solid var(--cassette-cobalt);
   color: var(--cassette-ink);
@@ -235,10 +231,10 @@
 .functionality {
   display: grid;
   gap: 0.65rem;
-  max-width: 68rem;
+  max-width: 65ch;
   color: var(--cassette-muted);
-  font-size: 0.98rem;
-  line-height: 1.75;
+  font-size: 1.0625rem;
+  line-height: 1.65;
 }
 
 .functionalityLead {
@@ -326,7 +322,7 @@
 }
 
 .roleTitle {
-  font-size: 1.05rem;
+  font-size: 1.125rem;
   line-height: 1.4;
 }
 
@@ -337,7 +333,7 @@
 .roleNote {
   margin-top: 0.75rem;
   color: var(--cassette-subtle);
-  font-size: 0.9rem;
+  font-size: 1.0625rem;
   line-height: 1.6;
 }
 
@@ -374,9 +370,9 @@
 }
 
 .workstreamSummary {
-  max-width: 56rem;
+  max-width: 65ch;
   color: var(--cassette-muted);
-  font-size: 0.96rem;
+  font-size: 1.0625rem;
   line-height: 1.65;
 }
 
@@ -389,8 +385,10 @@
   display: grid;
   grid-template-columns: 0.7rem minmax(0, 1fr);
   color: #3f484b;
-  font-size: 0.94rem;
+  max-width: 65ch;
+  font-size: 1.0625rem;
   line-height: 1.68;
+  overflow-wrap: anywhere;
 }
 
 .pointList li::before {
@@ -430,6 +428,11 @@
 }
 
 @media (min-width: 1024px) {
+  .roleRailContent {
+    position: sticky;
+    top: 6rem;
+  }
+
   .narrativeDeck {
     grid-template-columns: minmax(0, 1.12fr) minmax(18rem, 0.88fr);
     align-items: start;
@@ -437,7 +440,7 @@
   }
 
   .dossierBody {
-    grid-template-columns: minmax(15rem, 0.34fr) minmax(0, 0.66fr);
+    grid-template-columns: minmax(17rem, 0.4fr) minmax(0, 0.6fr);
   }
 
   .roleRail {
@@ -447,6 +450,9 @@
 }
 
 @media (max-width: 767px) {
+  .experienceSection::after {
+    display: none;
+  }
   .sectionHeader,
   .employerLine {
     align-items: flex-start;

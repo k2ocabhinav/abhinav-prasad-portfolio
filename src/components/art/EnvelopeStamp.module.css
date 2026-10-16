@@ -1,0 +1,12 @@
+.plate {
+  display: block;
+  width: 7rem;
+  height: auto;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 767px) {
+  .plate {
+    width: 5rem;
+  }
+}

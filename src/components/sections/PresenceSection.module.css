@@ -1,3 +1,16 @@
+.presenceSection.presenceSection {
+  background: var(--paper-glacier, #D7EFFF);
+  color: var(--color-black-cherry, #351E28);
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-petrol, #1A5D74);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-linen, #FCF8F2);
+  --plate-glacier: var(--paper-glacier, #D7EFFF);
+  --tone-accent: var(--color-petrol, #1A5D74);
+  --tone-accent-deep: var(--color-petrol-deep, #174F61);
+  --color-sage: var(--color-petrol-deep, #174F61);
+}
+
 .presenceGrid {
   position: relative;
 }
@@ -7,12 +20,13 @@
 }
 
 .heading {
+  color: var(--color-black-cherry, #351E28);
   font-family: var(--font-display);
   font-style: normal;
   font-weight: 550;
-  font-size: 3rem;
-  letter-spacing: -0.01em;
-  color: var(--color-on-surface);
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
 }
 
 .headingFlip {
@@ -25,11 +39,12 @@
 
 .callout {
   margin-top: 0.95rem;
+  color: var(--color-petrol-deep, #174F61);
   font-family: var(--font-label);
   font-size: 0.72rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
+  line-height: 1.6;
   text-transform: uppercase;
-  color: var(--color-secondary-text);
 }
 
 .calloutFlip {
@@ -44,35 +59,17 @@
   margin-top: 1.2rem;
 }
 
-/* ─── Map ────────────────────────────────────────────── */
-
 .mapContainer {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  background: var(--section-panel-bg);
-  border-radius: 4px;
-  overflow: hidden;
-  border: 1px solid var(--color-hairline);
-  box-shadow: 0 1px 2px rgba(11, 16, 17, 0.06);
+  aspect-ratio: 2 / 1;
+  overflow: visible;
 }
-
-@media (min-width: 768px) {
-  .mapContainer {
-    aspect-ratio: 21 / 9;
-  }
-}
-
-.mapDotGrid {
-  position: absolute;
-  inset: 0;
-  opacity: 0.05;
-}
-
-/* ─── Map Nodes ──────────────────────────────────────── */
 
 .mapNode {
   position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -50%);
 }
 
 .nodeCenter {
@@ -83,41 +80,32 @@
 }
 
 .nodePulse {
-  display: none;
+  position: absolute;
+  display: block;
+  width: 1.8rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--color-petrol, #1A5D74);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .nodeDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
   position: relative;
-  z-index: 10;
+  z-index: 1;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid var(--paper-glacier, #D7EFFF);
+  border-radius: 50%;
 }
 
-/* Flat vermilion dot with an ink ring; gentle opacity pulse, no glow. */
 .nodeDotActive {
-  background-color: var(--tone-accent, #E42A1D);
-  box-shadow: 0 0 0 1px rgba(11, 16, 17, 0.3);
-  animation: presencePulse 2.4s ease-in-out infinite;
-}
-
-@keyframes presencePulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.65;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nodeDotActive {
-    animation: none;
-  }
+  background: var(--color-petrol, #1A5D74);
+  box-shadow: 0 0 0 1px var(--color-black-cherry, #351E28);
 }
 
 .nodeDotInactive {
-  background-color: rgba(11, 16, 17, 0.32);
+  background: var(--paper-linen, #FCF8F2);
+  box-shadow: 0 0 0 1px var(--color-petrol, #1A5D74);
 }
 
 .nodeLabels {
@@ -125,57 +113,82 @@
   top: 1rem;
   left: 1rem;
   display: flex;
+  width: max-content;
+  max-width: 9rem;
   flex-direction: column;
+  padding: 0.22rem 0.35rem;
+  border: 1px solid rgba(26, 93, 116, 0.18);
+  background: var(--paper-linen, #FCF8F2);
   pointer-events: none;
 }
 
-@media (max-width: 767px) {
-  .nodeLabels {
-    left: 50%;
-    align-items: center;
-    text-align: center;
-    transform: translateX(-50%);
-  }
-}
-
 .nodeLabel {
+  color: var(--color-petrol-deep, #174F61);
   font-family: var(--font-label);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--tone-accent-deep, #C42117);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
   text-transform: uppercase;
   white-space: nowrap;
-  transition: opacity 0.5s ease;
-}
-
-/* On desktop, labels show on hover of parent node */
-@media (min-width: 768px) {
-  .nodeLabel {
-    opacity: 0;
-  }
-
-  .mapNode:hover .nodeLabel {
-    opacity: 1;
-  }
 }
 
 .nodeSub {
+  color: var(--color-black-cherry, #351E28);
   font-family: var(--font-label);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--color-secondary-text);
-  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
   white-space: nowrap;
 }
 
-/* ─── Description ────────────────────────────────────── */
-
 .description {
-  margin-top: 2rem;
+  max-width: 65ch;
+  margin-top: 1.5rem;
+  color: var(--color-black-cherry, #351E28);
   font-family: var(--font-body);
+  font-size: 1.0625rem;
   font-weight: 400;
-  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
-  font-size: 0.875rem;
-  max-width: 32rem;
-  line-height: 1.72;
+  line-height: 1.6;
+}
+
+@media (max-width: 767px) {
+  .presenceGrid {
+    gap: 1.25rem;
+  }
+
+  .mapNodeUpper .nodeLabels {
+    top: -2.85rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .mapNodeLower .nodeLabels {
+    top: 1.1rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .nodeLabels {
+    max-width: 7.25rem;
+    padding: 0.16rem 0.26rem;
+  }
+
+  .nodeLabel {
+    font-size: 0.6rem;
+  }
+
+  .nodeSub {
+    font-size: 0.58rem;
+  }
+
+  .description {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nodePulse {
+    display: none;
+  }
 }

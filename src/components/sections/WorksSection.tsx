@@ -14,6 +14,8 @@ import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
+import CaseNumeral from "@/components/art/CaseNumeral";
+import VeloRoutePlate from "@/components/art/VeloRoutePlate";
 import styles from "./WorksSection.module.css";
 
 // =============================================================================
@@ -53,6 +55,7 @@ function WorksSectionContent({
     <SectionWrapper
       id="work"
       tone={tone}
+      className={styles.worksSection}
     >
       <div ref={sectionRef} className={styles.sectionHeader}>
         <RisoMark variant="discs" />
@@ -125,6 +128,7 @@ function WorkCard({ project }: { project: Project }) {
   const visibleSupportShots = isTeaserOnly ? [] : supportScreenshots.slice(0, 2);
   const showProjectLinks = hasProjectLinks && !hasDeepDive;
   const deepDiveLabel = project.detailCtaLabel ?? "Open Deep Dive";
+  const isVeloProject = project.detailSlug === "velo";
 
   return (
     <motion.div variants={staggerItem} className={styles.workCard}>
@@ -137,8 +141,8 @@ function WorkCard({ project }: { project: Project }) {
         style={{ transformPerspective: 800, y: prefersReducedMotion ? 0 : visualY }}
         className={cn(
           styles.visualPanel,
-          "glass-card",
           hasScreenshots && styles.visualPanelRich,
+          isVeloProject && styles.visualPanelVelo,
           project.reversed && styles.visualReversed
         )}
       >
@@ -154,6 +158,12 @@ function WorkCard({ project }: { project: Project }) {
               />
               <div className={styles.mediaCaption}>{heroScreenshot.caption}</div>
             </div>
+
+            {isVeloProject && (
+              <div className={styles.routePlateWrap}>
+                <VeloRoutePlate />
+              </div>
+            )}
 
             {visibleSupportShots.length > 0 && (
               <div className={styles.supportShots}>
@@ -196,7 +206,10 @@ function WorkCard({ project }: { project: Project }) {
           project.reversed && styles.contentReversed
         )}
       >
-        <span className={styles.caseNumber}>Case {project.id}</span>
+        <div className={styles.caseMarker}>
+          <CaseNumeral number={project.id} />
+          <span className={styles.caseNumber}>Case {project.id}</span>
+        </div>
         <h3 className={styles.projectTitle}>{project.title}</h3>
         <p className={styles.projectDesc}>{project.description}</p>
         {project.scopeSummary && (

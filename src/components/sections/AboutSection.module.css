@@ -1,6 +1,18 @@
 .aboutGrid {
   position: relative;
-  align-items: start;
+  align-items: stretch;
+}
+
+.aboutPanel.aboutPanel {
+  background-color: var(--color-panel, #351E28);
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-panel-accent, #F4BEBB);
+  --plate-second: var(--color-pink, #F4BEBB);
+  --plate-paper: #EDE6DA;
+}
+
+.aboutPanel :global(.spec-header) {
+  color: var(--color-panel-accent, #F4BEBB);
 }
 
 .heading {
@@ -10,7 +22,7 @@
   font-size: clamp(2.35rem, 10vw, 3rem);
   line-height: 1.05;
   letter-spacing: -0.01em;
-  color: var(--color-primary-brand);
+  color: var(--color-panel-accent, #F4BEBB);
 }
 
 .headingFlip {
@@ -28,6 +40,10 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-secondary-text);
+}
+
+.cutawayWrap {
+  margin-top: clamp(1.6rem, 3vw, 2.6rem);
 }
 
 .calloutFlip {
@@ -48,9 +64,19 @@
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 1.125rem;
-  line-height: 1.9;
-  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
-  max-width: 42rem;
+  line-height: 1.75;
+  color: var(--color-on-panel, #EDE6DA);
+  max-width: 65ch;
+}
+
+@media (max-width: 767px) {
+  .aboutGrid {
+    gap: 1.75rem;
+  }
+
+  .cutawayWrap {
+    margin-top: 1.25rem;
+  }
 }
 
 @media (min-width: 768px) {

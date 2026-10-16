@@ -6,8 +6,8 @@ import type { PersonalData, PresenceNode, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import LiveClock from "@/components/ui/LiveClock";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
+import TimezoneMap from "@/components/art/TimezoneMap";
 import styles from "./PresenceSection.module.css";
 
 // =============================================================================
@@ -75,13 +75,13 @@ function PresenceSectionContent({
     <SectionWrapper
       id="presence"
       tone={tone}
+      className={styles.presenceSection}
     >
       <div
         ref={sectionRef}
         className={`grid-12 ${styles.presenceGrid}`}
         data-presence-active={isSectionActive ? "true" : "false"}
       >
-        <RisoMark variant="asterisk" />
         <div className="col-4">
           <motion.h2 style={{ y: prefersReducedMotion ? 0 : headingY }} className={styles.heading}>
             <FlipRevealText flat
@@ -116,16 +116,19 @@ function PresenceSectionContent({
               timezone={personal.location.timezone}
             />
           </div>
+          <p className={styles.description}>
+            {personal.presenceDescription}
+          </p>
         </div>
         <div className="col-8">
           {/* Map Area */}
           <div className={styles.mapContainer}>
-            <div className={`dot-grid ${styles.mapDotGrid}`} />
+            <TimezoneMap />
 
             {presenceNodes.map((node, i) => (
               <div
                 key={i}
-                className={styles.mapNode}
+                className={`${styles.mapNode} ${i === 0 ? styles.mapNodeUpper : styles.mapNodeLower}`}
                 style={{ top: node.top, left: node.left }}
               >
                 <div className={styles.nodeCenter}>
@@ -156,10 +159,6 @@ function PresenceSectionContent({
               </div>
             ))}
           </div>
-
-          <p className={styles.description}>
-            {personal.presenceDescription}
-          </p>
         </div>
       </div>
     </SectionWrapper>

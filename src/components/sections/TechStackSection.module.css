@@ -1,6 +1,19 @@
+.stackSection {
+  background: var(--paper-bone, #F0EEE9);
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-lovebird, #C5DE48);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-linen, #FCF8F2);
+  --tone-accent: var(--color-lovebird, #C5DE48);
+  --tone-accent-rgb: var(--color-lovebird-rgb, 197, 222, 72);
+  --tone-accent-deep: var(--color-lovebird-deep, #4E5312);
+}
+
 .headerGrid {
   position: relative;
-  margin-bottom: clamp(3rem, 7vw, 5rem);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
 }
 
 .heading {
@@ -20,7 +33,7 @@
 
 .callout {
   margin-top: 1rem;
-  color: var(--tone-accent-deep, #63605a);
+  color: var(--color-lovebird-deep, #4E5312);
   font-family: var(--font-label);
   font-size: 0.7rem;
   letter-spacing: 0.16em;
@@ -38,8 +51,8 @@
   min-width: 0;
   padding: clamp(1.5rem, 3vw, 2.25rem);
   border: 1px solid var(--section-panel-border);
-  border-radius: 5px;
-  background: var(--section-panel-bg);
+  border-radius: 3px;
+  background: var(--paper-linen, #FCF8F2);
   cursor: default;
   transition:
     border-color var(--motion-duration-short) var(--motion-ease-out),
@@ -65,7 +78,7 @@
 }
 
 .context {
-  color: #684B00;
+  color: var(--color-lovebird-deep, #4E5312);
   font-family: var(--font-label);
   font-size: 0.62rem;
   letter-spacing: 0.13em;
@@ -77,7 +90,7 @@
 .cardLabel {
   max-width: 28rem;
   margin-top: 1.45rem;
-  color: var(--color-on-surface);
+  color: var(--color-black-cherry, #351E28);
   font-family: var(--font-display);
   font-size: clamp(1.25rem, 2vw, 1.65rem);
   font-weight: 590;
@@ -91,9 +104,9 @@
   gap: 0.45rem 0.65rem;
   margin: 1.35rem 0 0;
   padding: 0;
-  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
-  font-size: 0.88rem;
-  line-height: 1.65;
+  color: var(--color-black-cherry, #351E28);
+  font-size: 1.0625rem;
+  line-height: 1.55;
   list-style: none;
 }
 
@@ -107,7 +120,7 @@
 .cardItems li:not(:last-child)::after {
   content: "·";
   margin-left: 0.65rem;
-  color: color-mix(in srgb, var(--tone-accent-deep, #63605a) 58%, transparent 42%);
+  color: var(--color-lovebird-deep, #4E5312);
 }
 
 @media (min-width: 768px) {
@@ -131,11 +144,16 @@
   }
 }
 
+/* Print offsets belong to pointing devices; touch cards stay flat. */
 @media (hover: hover) and (pointer: fine) {
+  .card {
+    box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
+  }
+
   .card:hover {
     border-color: rgba(11, 16, 17, 0.38);
-    background: var(--section-panel-bg-strong);
-    box-shadow: 4px 4px 0 rgba(var(--tone-accent-rgb, 228, 42, 29), 0.28);
+    background: var(--paper-linen, #FCF8F2);
+    box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
   }
 }
 
