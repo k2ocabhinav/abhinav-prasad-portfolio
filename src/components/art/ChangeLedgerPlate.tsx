@@ -18,7 +18,7 @@ export default function ChangeLedgerPlate({ id }: ChangeLedgerPlateProps) {
       <path d="M30 52V27h76l11 13h42V24h65l10 16h38v29H30z" fill="var(--plate-accent)" />
       <path d="M44 42h34M171 40h24M208 40h12M44 58h102" stroke="var(--plate-paper)" className={strokes.mid} />
       <path d="M45 77h211M45 300h199" stroke="var(--plate-ink)" className={strokes.fine} />
-      <path d="M68 101v150" stroke="var(--plate-second)" strokeWidth="7" />
+      <path d="M68 101v150" stroke="var(--plate-second)" className={strokes.bold} />
       <path d="M65 99v151" stroke="var(--plate-accent)" className={strokes.bold} />
       {[99, 149, 199, 249].map((y, index) => (
         <g key={y}>

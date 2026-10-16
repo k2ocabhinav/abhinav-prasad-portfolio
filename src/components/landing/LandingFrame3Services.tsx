@@ -25,15 +25,24 @@ export default function LandingFrame3Services({
     return null;
   }
 
+  const featuredService = services.find((service) => service.id === "developer-tooling");
+  const displayServices = featuredService
+    ? [featuredService, ...services.filter((service) => service.id !== featuredService.id)]
+    : services;
+
   if (reduceMotion) {
     return (
       <section className={styles.frame} aria-label="Services">
         <div className={styles.container}>
           <h2 className={styles.sectionLabel}>What I do</h2>
           <div className={styles.grid}>
-          {services.map((service, index) => (
-              <div key={service.id} className={styles.gridItem}>
-              <ServiceTile service={service} index={index} />
+            {displayServices.map((service, index) => (
+              <div
+                key={service.id}
+                className={styles.gridItem}
+                data-featured={service.id === featuredService?.id ? "true" : "false"}
+              >
+                <ServiceTile service={service} index={index} />
               </div>
             ))}
           </div>
@@ -53,8 +62,13 @@ export default function LandingFrame3Services({
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          {services.map((service, index) => (
-            <m.div key={service.id} variants={staggerItem} className={styles.gridItem}>
+          {displayServices.map((service, index) => (
+            <m.div
+              key={service.id}
+              variants={staggerItem}
+              className={styles.gridItem}
+              data-featured={service.id === featuredService?.id ? "true" : "false"}
+            >
               <ServiceTile service={service} index={index} />
             </m.div>
           ))}

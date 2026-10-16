@@ -18,20 +18,48 @@ interface ServiceTileProps {
 const serviceTones = ["burgundy", "petrol", "cornflower", "lovebird"] as const;
 const serviceObjects: ServiceObjectVariant[] = ["ledger", "stamp", "orchestration"];
 
+interface ServicePresentation {
+  tone: (typeof serviceTones)[number];
+  object: ServiceObjectVariant;
+  title: string;
+}
+
+const servicePresentations: Record<string, ServicePresentation> = {
+  "backend-systems": {
+    tone: "burgundy",
+    object: "ledger",
+    title: "Operational software",
+  },
+  "cloud-delivery": {
+    tone: "petrol",
+    object: "stamp",
+    title: "Systems and data",
+  },
+  "developer-tooling": {
+    tone: "cornflower",
+    object: "orchestration",
+    title: "Coding agents",
+  },
+};
+
 export default function ServiceTile({ service, index }: ServiceTileProps) {
-  const tone = serviceTones[index % serviceTones.length];
-  const object = serviceObjects[index % serviceObjects.length];
+  const presentation = servicePresentations[service.id] ?? {
+    tone: serviceTones[index % serviceTones.length],
+    object: serviceObjects[index % serviceObjects.length],
+    title: service.title,
+  };
 
   return (
     <article
       className={styles.tile}
-      data-tone={tone}
+      data-tone={presentation.tone}
+      data-service-id={service.id}
     >
       <div className={styles.headingRow}>
         <div className={styles.icon}>
-          <ServiceObjects variant={object} />
+          <ServiceObjects variant={presentation.object} />
         </div>
-        <h3 className={styles.title}>{service.title}</h3>
+        <h3 className={styles.title}>{presentation.title}</h3>
       </div>
       <p className={styles.description}>{service.description}</p>
       {service.tags?.length ? (

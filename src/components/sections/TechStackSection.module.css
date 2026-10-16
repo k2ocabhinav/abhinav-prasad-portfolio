@@ -112,8 +112,9 @@
 
 .groupItems li {
   display: inline-flex;
+  flex: none;
   align-items: center;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 /* A hairline rule leads each item after the first, so a wrapped line never

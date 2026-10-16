@@ -66,17 +66,6 @@
   z-index: 0;
 }
 
-@supports (animation-timeline: view()) {
-  .blend {
-    view-timeline-name: --print-run-scroll;
-    view-timeline-axis: block;
-  }
-
-  .posterColumn :global(svg g) {
-    animation-timeline: --print-run-scroll;
-  }
-}
-
 @media (max-width: 767px) {
   .blend {
     min-height: 0;
@@ -99,7 +88,7 @@
   }
 
   .posterColumn {
-    width: min(88%, 23rem);
+    width: 100%;
     align-self: center;
   }
 
@@ -120,15 +109,4 @@
     padding-block: 4rem;
   }
 
-  .posterColumn :global(svg g) {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.blend[data-reduced-motion="true"] .posterColumn :global(svg g) {
-  animation: none;
-  opacity: 1;
-  transform: none;
 }

@@ -7,56 +7,8 @@
 
 .paperLayer,
 .routeLayer,
-.vehicleLayer,
+.ticketLayer,
 .registrationLayer {
   transform-box: fill-box;
   transform-origin: center;
-}
-
-@supports (animation-timeline: view()) {
-  .paperLayer,
-  .routeLayer,
-  .vehicleLayer,
-  .registrationLayer {
-    animation-timeline: view();
-    animation-duration: 1s;
-    animation-fill-mode: both;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .paperLayer {
-    animation-name: plate-register;
-    animation-range: 32% 45%;
-  }
-
-  .routeLayer {
-    animation-name: plate-register;
-    animation-range: 38% 52%;
-  }
-
-  .vehicleLayer {
-    animation-name: plate-register;
-    animation-range: 45% 59%;
-  }
-
-  .registrationLayer {
-    animation-name: plate-register;
-    animation-range: 52% 64%;
-  }
-}
-
-@keyframes plate-register {
-  from { opacity: 0.24; transform: translate3d(0, 7px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .paperLayer,
-  .routeLayer,
-  .vehicleLayer,
-  .registrationLayer {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
 }

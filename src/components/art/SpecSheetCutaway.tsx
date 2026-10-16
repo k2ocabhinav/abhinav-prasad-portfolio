@@ -20,7 +20,7 @@ export default function SpecSheetCutaway() {
         <circle cx="33" cy="112" r="2.4" fill="var(--plate-ink)" />
         <path d="M185 25v17M181 29h8" stroke="var(--plate-ink)" className={strokes.fine} />
       </g>
-      <path d="M212 83h30v58H109v11" fill="none" stroke="var(--plate-accent)" strokeWidth="5" />
+      <path d="M212 83h30v58H109v11" fill="none" stroke="var(--plate-accent)" className={strokes.bold} />
       <path d="M210 81h30v58H107v12" fill="none" stroke="var(--plate-ink)" className={strokes.mid} />
       <circle cx="240" cy="139" r="4" fill="var(--plate-paper)" stroke="var(--plate-ink)" className={strokes.mid} />
       <path d="M89 152h37v25H89zM96 158h23M96 165h23M96 171h13" fill="none" stroke="var(--plate-ink)" className={strokes.mid} />
