@@ -27,5 +27,5 @@ Option 3.
 ## Consequences
 
 - Copy across profile, services, experience emphasis and stack changes; experience facts do not.
-- The current title shown on the site must match the owner's official title ("Software Engineer at Ostrum Tech Limited", confirmed by the owner on 2026-10-16; database engineering is presented as the specialty).
+- The current title shown on the site must match the owner's official title ("Database Engineer at Ostrum Tech Limited", confirmed by the owner on 2026-10-16). "Software engineer" may describe the owner in general copy but is never shown as the Ostrum title.
 - Biggest remaining gap for the FDE story: a public, deployed demo and a written debugging case study.
