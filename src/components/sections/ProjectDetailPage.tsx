@@ -124,6 +124,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                 alt={detail.heroImage.alt}
                 fill
                 preload
+                fetchPriority="high"
                 className={styles.heroImage}
                 sizes="(max-width: 767px) 100vw, (max-width: 1100px) 54vw, 650px"
               />
@@ -136,7 +137,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
           <div className={styles.factRail} aria-label="Project facts">
             <p><span>Stage</span>Pre-launch working demo</p>
             <p><span>Product</span>Dispatch for pre-booked transfers</p>
-            <p><span>Quality</span>334 backend tests · 16 Oct 2026</p>
+            <p><span>Quality</span>334 backend tests, 16 Oct 2026</p>
           </div>
         ) : null}
 
@@ -174,14 +175,14 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                     className={styles.liveryFigure}
                     frameClassName={styles.liveryFrame}
                     imageClassName={styles.liveryImage}
-                    sizes="(max-width: 767px) 100vw, 50vw"
+                    sizes="(max-width: 767px) 100vw, 600px"
                   />
                   <VisualFigure
                     visual={nightVisual}
                     className={styles.liveryFigure}
                     frameClassName={styles.liveryFrame}
                     imageClassName={styles.liveryImage}
-                    sizes="(max-width: 767px) 100vw, 50vw"
+                    sizes="(max-width: 767px) 100vw, 600px"
                   />
                 </div>
                 {mobileLiveryVisual ? (
@@ -197,7 +198,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                       className={styles.mobileLiveryFigure}
                       frameClassName={styles.mobileLiveryFrame}
                       imageClassName={styles.liveryImage}
-                      sizes="(max-width: 767px) 76vw, 320px"
+                      sizes="(max-width: 767px) 76vw, 440px"
                     />
                   </div>
                 ) : null}
@@ -218,7 +219,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                     visual={brandingVisual}
                     className={styles.featureFigure}
                     frameClassName={styles.featureFrame}
-                    sizes="(max-width: 767px) 100vw, 52vw"
+                    sizes="(max-width: 767px) 100vw, 720px"
                   />
                 </div>
                 <div className={styles.scheduleProof}>
@@ -229,7 +230,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                     visual={tripSheetVisual}
                     className={styles.tripSheetFigure}
                     frameClassName={styles.tripSheetFrame}
-                    sizes="(max-width: 767px) 100vw, 1040px"
+                    sizes="(max-width: 767px) 100vw, 1200px"
                   />
                 </div>
               </section>

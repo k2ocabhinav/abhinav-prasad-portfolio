@@ -1,52 +1,27 @@
-.reel {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
-  align-items: start;
-  gap: clamp(2rem, 5vw, 5rem);
-}
-
-.stage {
-  position: sticky;
-  top: 7rem;
-  min-width: 0;
-}
-
-.stickyFrame,
-.mobileFrame {
-  margin: 0;
-}
-
-.imageFrame {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border: 1px solid var(--detail-hairline);
-  background: var(--paper-linen, #FCF8F2);
-}
-
-.image {
-  object-fit: contain;
-}
-
-.caption {
-  margin-top: 0.7rem;
-  color: var(--detail-muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
 .steps {
   display: grid;
-  gap: clamp(2rem, 8vh, 5.75rem);
-  list-style: none;
+  gap: clamp(2.5rem, 6vw, 4.5rem);
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 .step {
-  min-height: 68vh;
-  padding-top: 1rem;
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  padding-top: clamp(1.35rem, 3vw, 2rem);
   border-top: 1px solid var(--detail-hairline);
+}
+
+/* The phone screens sit beside their copy; the desktop desk runs full width so
+   the fleet map stays legible. */
+.step[data-viewport="mobile"] {
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.42fr);
+  align-items: center;
+}
+
+.stepText {
+  max-width: 44rem;
 }
 
 .stepRole {
@@ -82,67 +57,60 @@
   line-height: 1.55;
 }
 
-.mobileFrame {
-  display: none;
-  margin-top: 1.2rem;
+.stepMedia {
+  min-width: 0;
+  margin: 0;
 }
 
-.reel[data-reduced-motion="true"] {
-  grid-template-columns: 1fr;
+.frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--detail-hairline);
+  background: var(--paper-linen, #FCF8F2);
 }
 
-.reel[data-reduced-motion="true"] .stage {
-  display: none;
+.frameInner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--frame-ratio, 4 / 3);
 }
 
-.reel[data-reduced-motion="true"] .step {
-  min-height: 0;
-  padding-bottom: 1.75rem;
+.image {
+  object-fit: contain;
 }
 
-.reel[data-reduced-motion="true"] .mobileFrame {
-  display: block;
+.step[data-viewport="mobile"] .frame {
+  max-width: 360px;
+}
+
+.caption {
+  margin-top: 0.7rem;
+  color: var(--detail-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 @media (max-width: 767px) {
-  .reel {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .stage {
-    display: none;
-  }
-
   .steps {
-    gap: 2rem;
+    gap: 2.25rem;
   }
 
-  .step {
-    min-height: 0;
-    padding-bottom: 1.25rem;
-  }
-
-  .mobileFrame {
-    display: block;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reel {
+  .step[data-viewport="mobile"] {
     grid-template-columns: 1fr;
   }
 
-  .stage {
-    display: none;
+  .step[data-viewport="mobile"] .frame {
+    max-width: min(100%, 340px);
   }
 
-  .step {
-    min-height: 0;
-    padding-bottom: 1.75rem;
+  /* A 1440-wide desk cannot shrink to a phone legibly: crop to the fleet map at
+     the centre of the screen instead of showing the sidebar alone. */
+  .step[data-viewport="desktop"] .frameInner {
+    aspect-ratio: 1 / 1;
   }
 
-  .mobileFrame {
-    display: block;
+  .step[data-viewport="desktop"] .image {
+    object-fit: cover;
+    object-position: 35% center;
   }
 }
