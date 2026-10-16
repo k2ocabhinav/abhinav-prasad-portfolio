@@ -32,7 +32,7 @@ export default function LandingFrame3Services({
 
   if (reduceMotion) {
     return (
-      <section className={styles.frame} aria-label="Services">
+      <section id="services" className={styles.frame} aria-label="Services">
         <div className={styles.container}>
           <h2 className={styles.sectionLabel}>What I do</h2>
           <div className={styles.grid}>
@@ -52,7 +52,7 @@ export default function LandingFrame3Services({
   }
 
   return (
-    <section className={styles.frame} aria-label="Services">
+    <section id="services" className={styles.frame} aria-label="Services">
       <div className={styles.container}>
         <h2 className={styles.sectionLabel}>What I do</h2>
         <m.div

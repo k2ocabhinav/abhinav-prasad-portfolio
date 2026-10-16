@@ -6,7 +6,7 @@ import * as m from "motion/react-m";
 import { useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
-import type { Project, SectionTone } from "@/types";
+import type { OrchestrationContent, Project, SectionTone } from "@/types";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { tiltSpring } from "@/lib/animations";
@@ -16,6 +16,7 @@ import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import CaseNumeral from "@/components/art/CaseNumeral";
+import PrintRunPoster from "@/components/art/PrintRunPoster";
 import VeloRoutePlate from "@/components/art/VeloRoutePlate";
 import styles from "./WorksSection.module.css";
 
@@ -25,22 +26,35 @@ import styles from "./WorksSection.module.css";
 
 interface WorksSectionProps {
   projects: Project[];
+  orchestration: OrchestrationContent;
+  featuredProofLine?: string;
   tone?: SectionTone;
 }
 
 export default function WorksSection({
   projects,
+  orchestration,
+  featuredProofLine,
   tone,
 }: WorksSectionProps) {
   if (projects.length === 0) {
     return null;
   }
 
-  return <WorksSectionContent projects={projects} tone={tone} />;
+  return (
+    <WorksSectionContent
+      projects={projects}
+      orchestration={orchestration}
+      featuredProofLine={featuredProofLine}
+      tone={tone}
+    />
+  );
 }
 
 function WorksSectionContent({
   projects,
+  orchestration,
+  featuredProofLine,
   tone,
 }: WorksSectionProps) {
   return (
@@ -71,7 +85,68 @@ function WorksSectionContent({
           <WorkCard key={project.id} project={project} />
         ))}
       </div>
+
+      <OrchestrationEvidence
+        content={orchestration}
+        featuredProofLine={featuredProofLine}
+      />
     </SectionWrapper>
+  );
+}
+
+function OrchestrationEvidence({
+  content,
+  featuredProofLine,
+}: {
+  content: OrchestrationContent;
+  featuredProofLine?: string;
+}) {
+  const prefersReducedMotion = useReducedMotion();
+  const posterRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: prefersReducedMotion ? undefined : posterRef,
+    offset: ["start end", "end start"],
+  });
+
+  return (
+    <aside className={styles.orchestrationStrip} aria-labelledby="work-method-title">
+      <div className={styles.orchestrationLead}>
+        <div ref={posterRef} className={styles.posterColumn}>
+          <PrintRunPoster
+            progress={scrollYProgress}
+            reducedMotion={prefersReducedMotion}
+          />
+        </div>
+        <div className={styles.evidenceHeading}>
+          <h3 id="work-method-title">How I orchestrate AI agents</h3>
+          <p>{content.metricsContext}</p>
+        </div>
+      </div>
+
+      <div className={styles.evidenceContent}>
+        {featuredProofLine ? (
+          <p className={styles.featuredProof}>{featuredProofLine}</p>
+        ) : null}
+        <p className={styles.orchestrationIntro}>{content.intro}</p>
+        <p className={styles.method}>{content.method}</p>
+        <ol className={styles.methodLanes} aria-label="Four method lanes">
+          <li>Scope</li>
+          <li>Isolate</li>
+          <li>Review</li>
+          <li>Rehearse</li>
+        </ol>
+
+        <ul className={styles.metrics}>
+          {content.metrics.map((metric) => (
+            <li key={metric.label}>
+              <span className={styles.metricValue}>{metric.value}</span>
+              <span className={styles.metricLabel}>{metric.label}</span>
+            </li>
+          ))}
+        </ul>
+        <p className={styles.lesson}>{content.lesson}</p>
+      </div>
+    </aside>
   );
 }
 

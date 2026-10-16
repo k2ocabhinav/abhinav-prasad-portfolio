@@ -1,62 +1,54 @@
-"use client";
-
-import * as m from "motion/react-m";
-import { useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
-import type { PersonalData, SectionTone } from "@/types";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
+import type { PersonalData, ProfileIntroContent, SectionTone } from "@/types";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import SpecSheetCutaway from "@/components/art/SpecSheetCutaway";
+import StillLifePlate from "@/components/art/StillLifePlate";
 import styles from "./AboutSection.module.css";
-
-// =============================================================================
-// AboutSection — Philosophy statement in asymmetric grid
-// =============================================================================
 
 interface AboutSectionProps {
   personal: PersonalData;
+  intro: ProfileIntroContent;
   tone?: SectionTone;
 }
 
 export default function AboutSection({
   personal,
+  intro,
   tone,
 }: AboutSectionProps) {
-  const prefersReducedMotion = useReducedMotion();
-
-  // Sheet rise — the espresso panel settles onto the desk as it enters.
-  // Anchored to an untransformed wrapper so the scrub never feeds back.
-  const riseRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: riseProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : riseRef,
-    offset: ["start end", "start 0.55"],
-  });
-  const sheetY = useTransform(riseProgress, [0, 1], [48, 0]);
-  const sheetScale = useTransform(riseProgress, [0, 1], [0.97, 1]);
+  const proofLines = intro.proofLines.slice(1);
 
   return (
-    <SectionWrapper id="about" tone={tone}>
-      <div ref={riseRef}>
-        <m.div
-          className={`spec-sheet ${styles.aboutPanel}`}
-          style={{
-            y: prefersReducedMotion ? 0 : sheetY,
-            scale: prefersReducedMotion ? 1 : sheetScale,
-          }}
-        >
-          <div className={cn("spec-body grid-12", styles.aboutGrid)}>
-            <div className="col-4">
-              <h2 className={styles.heading}>Philosophy</h2>
-              <div className={styles.cutawayWrap}>
-                <SpecSheetCutaway />
-              </div>
-            </div>
-            <div className={`col-8 ${styles.contentCol}`}>
-              <p className={styles.philosophyText}>{personal.philosophy}</p>
-            </div>
+    <SectionWrapper id="about" tone={tone} className={styles.aboutSection}>
+      <div className={`spec-sheet ${styles.composition}`}>
+        <div className={styles.portraitColumn}>
+          <div className={styles.imageFrame}>
+            <Image
+              src={personal.heroPhoto}
+              alt={`${personal.fullName} editorial monogram`}
+              width={640}
+              height={640}
+              className={styles.heroImage}
+              priority={false}
+            />
           </div>
-        </m.div>
+          <div className={styles.stillLife}>
+            <StillLifePlate />
+          </div>
+          <span className={styles.hintCopy} data-secret-hint="true">
+            <span>Personal layer</span>
+            <span>v opens it</span>
+          </span>
+        </div>
+
+        <div className={`spec-body ${styles.copyColumn}`}>
+          <h2 className={styles.heading}>{intro.headline}</h2>
+          <ul className={styles.proofList}>
+            {proofLines.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+          <p className={styles.philosophyText}>{personal.philosophy}</p>
+        </div>
       </div>
     </SectionWrapper>
   );

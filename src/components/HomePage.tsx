@@ -11,9 +11,7 @@ import LandingExperience from "@/components/landing/LandingExperience";
 import AboutSection from "@/components/sections/AboutSection";
 import ExperienceSection from "@/components/sections/ExperienceSection";
 import WorksSection from "@/components/sections/WorksSection";
-import OrchestrationSection from "@/components/sections/OrchestrationSection";
 import TechStackSection from "@/components/sections/TechStackSection";
-import PresenceSection from "@/components/sections/PresenceSection";
 import ContactSection from "@/components/sections/ContactSection";
 import type {
   ChronicleEntry,
@@ -61,22 +59,32 @@ export default function HomePage({ content }: HomePageProps) {
         }}
       >
         <LandingExperience
-          profile={profile}
+          hero={profile.hero}
           services={content.services}
         />
 
-        <AboutSection personal={profile.personal} tone="pastel-cream" />
+        <AboutSection
+          personal={profile.personal}
+          intro={profile.profileIntro}
+          tone="pastel-cream"
+        />
         <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
-        <WorksSection projects={content.projects} tone="pastel-blush" />
-        <OrchestrationSection content={profile.orchestration} />
+        <WorksSection
+          projects={content.projects}
+          orchestration={profile.orchestration}
+          featuredProofLine={profile.profileIntro.proofLines[0]}
+          tone="pastel-blush"
+        />
         <Marquee />
-        <TechStackSection techCategories={content.stackGroups} tone="pastel-peach" />
-        <PresenceSection
+        <TechStackSection
+          techCategories={content.stackGroups}
+          stackItems={profile.profileIntro.stackItems}
+          tone="pastel-peach"
+        />
+        <ContactSection
           personal={profile.personal}
           presenceNodes={profile.presenceNodes}
-          tone="pastel-mint"
         />
-        <ContactSection personal={profile.personal} tone="hero-light" />
       </main>
 
       <Footer personal={profile.personal} />

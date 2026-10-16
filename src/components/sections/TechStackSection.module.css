@@ -9,145 +9,112 @@
   --tone-accent-deep: var(--color-lovebird-deep, #4E5312);
 }
 
-.headerGrid {
-  position: relative;
+.header {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.32fr) minmax(0, 0.68fr);
   align-items: center;
-  gap: clamp(1.5rem, 4vw, 3rem);
-  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  margin-bottom: clamp(1.8rem, 3.5vw, 2.8rem);
 }
 
 .heading {
+  margin: 0;
   color: var(--color-on-surface);
   font-family: var(--font-display);
   font-size: clamp(2.8rem, 7vw, 5rem);
-  font-style: normal;
   font-weight: 550;
   letter-spacing: -0.03em;
   line-height: 0.98;
 }
 
-.headingFlip,
-.headingFlipToken {
-  display: inline-block;
-}
-
 .callout {
-  margin-top: 1rem;
+  max-width: 22rem;
+  margin: 0.8rem 0 0;
   color: var(--color-lovebird-deep, #4E5312);
   font-family: var(--font-label);
   font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  line-height: 1.6;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
   text-transform: uppercase;
 }
 
-/* ─── Ruled index ────────────────────────────────────────────────────
-   One ruled row per group: icon, label, evidence context, then the items as
-   a hairline-separated run. Deliberately not a second icon-card grid. */
+.iconStrip {
+  justify-content: flex-start;
+}
 
-.groupList {
+.focusList {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
   padding: 0;
+  border-bottom: 1px solid var(--color-hairline);
   list-style: none;
 }
 
-.group {
-  display: grid;
-  gap: 0.85rem;
-  padding-block: clamp(1.35rem, 2.6vw, 1.9rem);
+.focusList li {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem 0.9rem 0;
   border-top: 1px solid var(--color-hairline);
 }
 
-.groupHead {
-  display: flex;
-  align-items: baseline;
-  gap: 0.7rem;
-}
-
-.groupIcon {
-  display: inline-flex;
-  flex: none;
-  align-self: flex-start;
-  margin-top: 0.3rem;
-  color: var(--color-lovebird-deep, #4E5312);
+.focusList li + li {
+  padding-left: 1rem;
+  border-left: 1px solid var(--color-hairline);
 }
 
 .groupLabel {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
   color: var(--color-black-cherry, #351E28);
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
-  font-weight: 580;
-  letter-spacing: -0.018em;
-  line-height: 1.2;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  font-weight: 570;
+  line-height: 1.25;
 }
 
 .context {
-  flex: none;
   color: var(--color-lovebird-deep, #4E5312);
   font-family: var(--font-label);
   font-size: 0.62rem;
-  letter-spacing: 0.13em;
-  line-height: 1.5;
-  text-align: right;
+  letter-spacing: 0.1em;
+  line-height: 1.45;
   text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.groupItems {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  margin: 0;
-  padding: 0;
-  color: var(--color-black-cherry, #351E28);
-  font-size: 1.0625rem;
-  line-height: 1.6;
-  list-style: none;
-}
-
-.groupItems li {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  white-space: nowrap;
-}
-
-/* A hairline rule leads each item after the first, so a wrapped line never
-   ends on a dangling separator. */
-.groupItems li + li::before {
-  content: "";
-  width: 1px;
-  height: 0.9em;
-  margin-inline: 0.7rem;
-  background: var(--color-hairline);
-}
-
-@media (min-width: 900px) {
-  .groupList {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(2.5rem, 5vw, 4.5rem);
-  }
 }
 
 @media (max-width: 767px) {
-  .callout,
-  .context {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .callout {
     font-size: 12px;
   }
 
-  .groupItems {
-    font-size: 1rem;
+  .focusList {
+    grid-template-columns: minmax(0, 1fr);
   }
-}
 
-@media (max-width: 374px) {
+  .focusList li,
+  .focusList li + li {
+    flex-direction: row;
+    align-items: baseline;
+    padding: 0.75rem 0;
+    border-left: 0;
+  }
+
+  .groupLabel {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.05rem;
+  }
+
   .context {
-    max-width: 9rem;
-    white-space: normal;
+    flex: 0 0 8rem;
+    max-width: 8rem;
+    text-align: right;
+    font-size: 12px;
   }
 }
