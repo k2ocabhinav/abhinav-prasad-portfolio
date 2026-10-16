@@ -148,7 +148,6 @@ export default function ProfileSection({
               className={styles.hintCopy}
               data-secret-hint="true"
               style={reduceMotion ? undefined : { opacity: hintOpacity, y: hintY }}
-              aria-label="Personal layer opens from the final v in Abhinav"
             >
               <span className={styles.hintKicker}>Personal layer</span>
               <span className={styles.hintText}>v opens it</span>

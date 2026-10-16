@@ -188,7 +188,7 @@ export default function FlipRevealText({
 
   if (shouldReduceMotion) {
     return (
-      <span className={cn(styles.root, className)} aria-label={text}>
+      <span className={cn(styles.root, className)} role="img" aria-label={text}>
         {overprintLayer}
         <span className={cn(styles.token, tokenClassName)}>{text}</span>
       </span>
@@ -200,6 +200,7 @@ export default function FlipRevealText({
       <span
         className={cn(styles.root, className)}
         style={{ ["--flip-perspective" as string]: `${perspective}px` }}
+        role="img"
         aria-label={text}
         data-flip-animating={animating ? "true" : undefined}
       >
@@ -225,6 +226,7 @@ export default function FlipRevealText({
     <span
       className={cn(styles.root, className)}
       style={{ ["--flip-perspective" as string]: `${perspective}px` }}
+      role="img"
       aria-label={text}
     >
       {overprintLayer}

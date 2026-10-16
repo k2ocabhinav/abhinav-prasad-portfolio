@@ -502,11 +502,25 @@
     font-size: 1rem;
   }
 
+  .caseNumber,
+  .callout,
+  .infoTitle,
+  .techBucketLabel,
+  .techChip,
+  .deepDiveSubline {
+    font-size: 12px;
+  }
+
+  .deepDiveLink {
+    min-height: 44px;
+    font-size: 1rem;
+  }
+
   .mediaCaption {
     left: 0.5rem;
     right: 0.5rem;
     bottom: 0.5rem;
     padding: 0.3rem 0.45rem;
-    font-size: 0.58rem;
+    font-size: 12px;
   }
 }

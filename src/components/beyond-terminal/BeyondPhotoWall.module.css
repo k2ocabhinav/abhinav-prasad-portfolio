@@ -359,9 +359,9 @@
   padding: 0.3rem 0.42rem;
   border: 1px solid rgba(21, 21, 27, 0.18);
   border-radius: 999px;
-  font-size: 0.58rem;
-  color: rgba(21, 21, 27, 0.72);
-  background: rgba(255, 247, 232, 0.38);
+  font-size: 12px;
+  color: #15151B;
+  background: #FFF7E8;
 }
 
 .cardTitle {
@@ -376,26 +376,28 @@
   font-family: var(--font-beyond-body);
   font-size: clamp(0.9rem, 1vw, 1.02rem);
   line-height: 1.55;
-  color: rgba(21, 21, 27, 0.74);
+  color: #15151B;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  font-size: 0.56rem;
-  color: rgba(21, 21, 27, 0.78);
+  font-size: 12px;
+  color: #15151B;
 }
 
 .tags span {
   padding: 0.25rem 0.42rem;
   border: 1px solid rgba(21, 21, 27, 0.16);
   border-radius: 999px;
-  background: rgba(255, 247, 232, 0.35);
+  background: #FFF7E8;
 }
 
+/* Cobalt is lightened from #245DFF so the near-black card ink clears 4.5:1;
+   coral already passes with the same ink. */
 .cobalt {
-  background: #245DFF;
+  background: #4682FF;
 }
 
 .coral {
@@ -521,6 +523,13 @@
   .sizeSquare {
     grid-column: span 4;
     min-height: clamp(25rem, 58vw, 34rem);
+  }
+}
+
+@media (max-width: 767px) {
+  .wallMeta,
+  .meta {
+    font-size: 12px;
   }
 }
 

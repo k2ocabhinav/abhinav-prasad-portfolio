@@ -40,42 +40,49 @@ export default function HomePage({ content }: HomePageProps) {
 
   return (
     <>
-      <div id="site-content">
-        <BackdropCanvas />
+      <a className="skip-link" href="#site-content">
+        Skip to content
+      </a>
 
+      <BackdropCanvas />
+
+      <header data-site-banner="true">
+        <BrandMark />
+      </header>
+
+      <main
+        id="site-content"
+        tabIndex={-1}
+        className="deferred-section deferred-section-deep"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          backgroundColor: "transparent",
+        }}
+      >
         <LandingExperience
           profile={profile}
           services={content.services}
         />
 
-        <BrandMark />
-        <SageOrb />
-        <ScrollProgress />
+        <AboutSection personal={profile.personal} tone="pastel-cream" />
+        <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
+        <WorksSection projects={content.projects} tone="pastel-blush" />
+        <OrchestrationSection content={profile.orchestration} />
+        <Marquee />
+        <TechStackSection techCategories={content.stackGroups} tone="pastel-peach" />
+        <PresenceSection
+          personal={profile.personal}
+          presenceNodes={profile.presenceNodes}
+          tone="pastel-mint"
+        />
+        <ContactSection personal={profile.personal} tone="hero-light" />
+      </main>
 
-        <main
-          className="deferred-section deferred-section-deep"
-          style={{
-            position: "relative",
-            zIndex: 1,
-            backgroundColor: "transparent",
-          }}
-        >
-          <AboutSection personal={profile.personal} tone="pastel-cream" />
-          <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
-          <WorksSection projects={content.projects} tone="pastel-blush" />
-          <OrchestrationSection content={profile.orchestration} />
-          <Marquee />
-          <TechStackSection techCategories={content.stackGroups} tone="pastel-peach" />
-          <PresenceSection
-            personal={profile.personal}
-            presenceNodes={profile.presenceNodes}
-            tone="pastel-mint"
-          />
-          <ContactSection personal={profile.personal} tone="hero-light" />
+      <Footer personal={profile.personal} />
 
-          <Footer personal={profile.personal} />
-        </main>
-      </div>
+      <SageOrb />
+      <ScrollProgress />
 
       <Navigation />
     </>

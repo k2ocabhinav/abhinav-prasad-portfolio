@@ -462,6 +462,50 @@ button {
   outline-offset: 3px;
 }
 
+/* Skip link — first focusable element on a route; parked off-screen until it
+   takes keyboard focus, then revealed as an ink pill above all chrome. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: var(--z-overlay, 200);
+  padding: 0.72rem 1.05rem;
+  border-radius: 2px;
+  background: var(--color-ink, #0B1011);
+  color: var(--paper-bone, #F0EEE9);
+  font-family: var(--font-label);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transform: translateY(calc(-100% - 1rem));
+  transition: transform 180ms var(--motion-ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
+}
+
+/* Mobile type floor: body copy reads at 16px and mono labels at 12px on
+   phones so small print never drops into an illegible tier. */
+@media (max-width: 767px) {
+  .label-micro,
+  .tag {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .spec-header {
+    font-size: 12px;
+  }
+}
+
 /* ─── Responsive Helpers ─────────────────────────────────────────── */
 
 .hide-mobile {

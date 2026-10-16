@@ -34,6 +34,16 @@
   margin-top: 0.7rem;
 }
 
+@media (max-width: 767px) {
+  .copyright {
+    font-size: 12px;
+  }
+
+  .colophon {
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 480px) {
   .colophonRow {
     gap: 0.45rem;
@@ -41,7 +51,6 @@
 
   .colophon {
     max-width: 17rem;
-    font-size: 9px;
     line-height: 1.5;
   }
 }

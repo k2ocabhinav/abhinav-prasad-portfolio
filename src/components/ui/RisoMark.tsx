@@ -66,7 +66,7 @@ export default function RisoMark({
       aria-hidden="true"
     >
       {variant === "arc" && (
-        <svg viewBox="0 0 96 96" fill="none">
+        <svg viewBox="0 0 96 96" fill="none" focusable="false">
           <m.path
             data-riso-arc-path="true"
             d="M 8 88 A 80 80 0 0 1 88 8"
@@ -87,7 +87,7 @@ export default function RisoMark({
       )}
 
       {variant === "discs" && (
-        <svg viewBox="0 0 96 96" fill="none">
+        <svg viewBox="0 0 96 96" fill="none" focusable="false">
           <m.circle
             cx="38"
             cy="48"
@@ -107,7 +107,7 @@ export default function RisoMark({
       )}
 
       {variant === "bars" && (
-        <svg viewBox="0 0 96 96" fill="none">
+        <svg viewBox="0 0 96 96" fill="none" focusable="false">
           {[
             { y: 22, mv: barOne },
             { y: 40, mv: barTwo },
@@ -132,6 +132,7 @@ export default function RisoMark({
         <m.svg
           viewBox="0 0 96 96"
           fill="none"
+          focusable="false"
           style={staticMode ? undefined : { rotate }}
         >
           {[0, 30, 60, 90, 120, 150].map((deg) => (

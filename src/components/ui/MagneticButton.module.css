@@ -91,6 +91,12 @@
   box-shadow: 0 0 0 var(--press-ink);
 }
 
+@media (max-width: 767px) {
+  .magneticButton {
+    font-size: 1rem;
+  }
+}
+
 @media (max-width: 520px) {
   .magneticButton {
     max-width: 100%;

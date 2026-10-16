@@ -174,11 +174,15 @@
   }
 
   .nodeLabel {
-    font-size: 0.6rem;
+    font-size: 12px;
   }
 
   .nodeSub {
-    font-size: 0.58rem;
+    font-size: 12px;
+  }
+
+  .callout {
+    font-size: 12px;
   }
 
   .description {

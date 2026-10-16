@@ -247,4 +247,12 @@
   .hintCopy {
     margin-top: 0.45rem;
   }
+
+  .hintKicker {
+    font-size: 12px;
+  }
+
+  .hintText {
+    font-size: 12px;
+  }
 }

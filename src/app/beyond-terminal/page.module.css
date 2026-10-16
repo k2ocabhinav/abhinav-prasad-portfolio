@@ -19,7 +19,7 @@
 
 .homeLink {
   display: inline-flex;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   align-items: center;
   padding: 0 0.82rem;
   border: 2px solid #15151B;
@@ -37,6 +37,12 @@
   transform: translateY(-2px);
   box-shadow: 6px 7px 0 rgba(21, 21, 27, 0.9);
   outline: none;
+}
+
+@media (max-width: 767px) {
+  .footer {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 560px) {

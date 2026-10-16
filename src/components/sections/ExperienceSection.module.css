@@ -466,6 +466,17 @@
   .callout {
     max-width: 25rem;
     padding-bottom: 0;
+    font-size: 12px;
+  }
+
+  .eyebrow,
+  .period,
+  .columnLabel,
+  .roleDate,
+  .employerDivision,
+  .functionalityLead,
+  .toolList {
+    font-size: 12px;
   }
 
   .employerName {
