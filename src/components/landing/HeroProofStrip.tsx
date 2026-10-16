@@ -28,7 +28,7 @@ const proofPoints: HeroProofPoint[] = [
   {
     id: "relocation",
     lead: "Open to relocation",
-    detail: "Remote from India and open to employer-sponsored relocation.",
+    detail: "Working remotely from India and open to relocation.",
   },
 ];
 
