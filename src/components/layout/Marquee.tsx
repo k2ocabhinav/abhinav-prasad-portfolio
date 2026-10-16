@@ -13,15 +13,17 @@ import styles from "./Marquee.module.css";
 // pauses whenever a pointer or keyboard focus enters the band (WCAG 2.2.2).
 // =============================================================================
 
-// Kept sentence-case and led by the orchestration positioning; database
-// engineering stays a single supporting item rather than the headline.
+// Named after the work this portfolio actually shows: the Velo dispatch
+// platform, agent orchestration, release and database delivery, and the
+// browser QA rehearsals behind the case studies. Plain, sentence case, no
+// capability-list filler.
 const ITEMS = [
-  "AI orchestration",
-  "Backend systems",
+  "Velo dispatch flows",
+  "Agent orchestration",
   "Release automation",
-  "Cloud delivery",
-  "Database engineering",
-  "Design engineering",
+  "Database delivery",
+  "SQL release tooling",
+  "Browser QA rehearsals",
 ];
 
 function wrapValue(min: number, max: number, value: number): number {

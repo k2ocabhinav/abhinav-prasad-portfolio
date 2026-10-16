@@ -1,7 +1,6 @@
 "use client";
 
-import * as m from "motion/react-m";
-import { useScroll, useTransform } from "motion/react";
+import { useScroll } from "motion/react";
 import { useRef } from "react";
 import type { ChronicleEntry, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -47,14 +46,13 @@ function ExperienceSectionContent({
   tone,
 }: ExperienceSectionProps) {
   const prefersReducedMotion = useReducedMotion();
+  // The section mark still draws with its header's transit; the copy itself is
+  // static, so the arc is the one motion moment on this screen.
   const headerRef = useRef<HTMLElement>(null);
   const { scrollYProgress: headerProgress } = useScroll({
     target: prefersReducedMotion ? undefined : headerRef,
     offset: ["start 0.86", "start 0.50"],
   });
-  const clusterY = useTransform(headerProgress, [0, 0.7], [12, 0]);
-  const deckOpacity = useTransform(headerProgress, [0.3, 0.7], [0, 1]);
-  const deckY = useTransform(headerProgress, [0.3, 0.7], [10, 0]);
 
   return (
     <SectionWrapper id="experience" tone={tone} className={styles.experienceSection}>
@@ -64,25 +62,17 @@ function ExperienceSectionContent({
           className={styles.sectionHeader}
           data-experience-header="true"
         >
-          <m.div
-            className={styles.titleCluster}
-            style={{ y: prefersReducedMotion ? 0 : clusterY }}
-          >
+          <div className={styles.titleCluster}>
             <h2
               id="experience-title"
               className={styles.heading}
               data-experience-title="true"
             >
               <FlipRevealText
-                flat
+                static
                 overprint
-                persist
                 text="Experience"
                 mode="char"
-                progress={headerProgress}
-                window={[0.12, 0.48]}
-                stagger={0.028}
-                perspective={910}
                 className={styles.headingFlip}
                 tokenClassName={styles.headingFlipToken}
               />
@@ -95,18 +85,11 @@ function ExperienceSectionContent({
                 className={styles.experienceArc}
               />
             </span>
-          </m.div>
+          </div>
 
-          <m.p
-            className={styles.callout}
-            style={
-              prefersReducedMotion
-                ? undefined
-                : { opacity: deckOpacity, y: deckY }
-            }
-          >
+          <p className={styles.callout}>
             Where the business rules live and the releases ship.
-          </m.p>
+          </p>
         </header>
 
         <div className={styles.dossierList}>
@@ -123,7 +106,6 @@ function ExperienceSectionContent({
                 data-experience-dossier={experience.slug}
               >
                 <header className={styles.employerLabel}>
-                  <p className={styles.eyebrow}>Professional experience</p>
                   <div className={styles.employerLine}>
                     <h3 id={employerHeadingId} className={styles.employerName}>
                       {experience.company}
@@ -135,19 +117,9 @@ function ExperienceSectionContent({
                 </header>
 
                 <div className={styles.narrativeDeck}>
-                  <m.p
-                    className={styles.backendThesis}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
-                    whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.4 }}
-                    transition={{
-                      duration: prefersReducedMotion ? 0 : 0.5,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  >
+                  <p className={styles.backendThesis}>
                     <OpeningSentence text={experience.backendThesis} />
-                  </m.p>
+                  </p>
                   <p className={styles.functionality}>
                     <strong className={styles.functionalityLead}>
                       Functionality breadth
@@ -191,20 +163,11 @@ function ExperienceSectionContent({
                       Selected engineering work
                     </h4>
                     <div className={styles.workstreamList}>
-                      {experience.workstreams.map((workstream, index) => (
-                        <m.article
+                      {experience.workstreams.map((workstream) => (
+                        <article
                           key={workstream.id}
                           className={styles.workstream}
                           data-experience-workstream={workstream.id}
-                          initial={{ opacity: 0, y: 16 }}
-                          animate={prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
-                          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-                          viewport={{ once: true, amount: 0.12 }}
-                          transition={{
-                            duration: prefersReducedMotion ? 0 : 0.45,
-                            delay: prefersReducedMotion ? 0 : index * 0.08,
-                            ease: [0.22, 1, 0.36, 1],
-                          }}
                         >
                           <div className={styles.workstreamHeader}>
                             <h5 className={styles.workstreamTitle}>{workstream.title}</h5>
@@ -229,7 +192,7 @@ function ExperienceSectionContent({
                               <li key={tool}>{tool}</li>
                             ))}
                           </ul>
-                        </m.article>
+                        </article>
                       ))}
                     </div>
                   </section>

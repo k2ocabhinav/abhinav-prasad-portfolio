@@ -9,7 +9,6 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import FlipRevealText from "@/components/ui/FlipRevealText";
 import EnvelopeStamp from "@/components/art/EnvelopeStamp";
 import styles from "./ContactSection.module.css";
 
@@ -53,13 +52,6 @@ export default function ContactSection({
   tone,
 }: ContactSectionProps) {
   const prefersReducedMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : sectionRef,
-    offset: ["start end", "end start"],
-  });
-  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
-  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
 
   // Sheet rise — anchored to an untransformed wrapper (no scrub feedback).
   const riseRef = useRef<HTMLDivElement>(null);
@@ -98,41 +90,13 @@ export default function ContactSection({
           scale: prefersReducedMotion ? 1 : sheetScale,
         }}
       >
-        <div className="spec-header">
-          <span>SPEC-02 // ROUTING_GATEWAY</span>
-          <span>STATUS: ONLINE</span>
-        </div>
-        <div ref={sectionRef} className={cn("spec-body", styles.contactMotionRoot)}>
-          <m.h2
-            style={{ y: prefersReducedMotion ? 0 : headingY }}
-            className={styles.heading}
-          >
-            <FlipRevealText flat
-              overprint
-              text="Let's build."
-              mode="char"
-              progress={scrollYProgress}
-              window={[0.16, 0.3]}
-              holdUntil={0.84}
-              stagger={0.028}
-              perspective={910}
-              className={styles.headingFlip}
-              tokenClassName={styles.headingFlipToken}
-            />
-          </m.h2>
-          <m.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-            <FlipRevealText flat
-              text="From idea to shipped system."
-              mode="word"
-              progress={scrollYProgress}
-              window={[0.24, 0.4]}
-              holdUntil={0.82}
-              stagger={0.03}
-              perspective={860}
-              className={styles.calloutFlip}
-              tokenClassName={styles.calloutFlipToken}
-            />
-          </m.p>
+        <div className={cn("spec-body", styles.contactMotionRoot)}>
+          <h2 className={styles.heading}>
+            Let&apos;s build.
+          </h2>
+          <p className={styles.callout}>
+            From idea to shipped system.
+          </p>
 
           <div className={styles.ctaContainer}>
             <MagneticButton

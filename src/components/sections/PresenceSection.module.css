@@ -29,14 +29,6 @@
   letter-spacing: -0.02em;
 }
 
-.headingFlip {
-  display: inline-block;
-}
-
-.headingFlipToken {
-  display: inline-block;
-}
-
 .callout {
   margin-top: 0.95rem;
   color: var(--color-petrol-deep, #174F61);
@@ -45,14 +37,6 @@
   letter-spacing: 0.16em;
   line-height: 1.6;
   text-transform: uppercase;
-}
-
-.calloutFlip {
-  display: inline-block;
-}
-
-.calloutFlipToken {
-  display: inline-block;
 }
 
 .clockWrapper {

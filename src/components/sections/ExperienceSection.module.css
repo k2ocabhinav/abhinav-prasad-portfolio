@@ -84,7 +84,6 @@
 }
 
 .callout,
-.eyebrow,
 .period,
 .columnLabel,
 .roleDate,
@@ -149,7 +148,6 @@
   background: var(--cassette-cobalt);
 }
 
-.eyebrow,
 .period,
 .columnLabel,
 .roleDate {
@@ -158,10 +156,6 @@
   letter-spacing: 0.14em;
   line-height: 1.5;
   text-transform: uppercase;
-}
-
-.eyebrow {
-  margin-bottom: 1.15rem;
 }
 
 .employerLine {
@@ -405,7 +399,7 @@
 .toolList {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem 0.55rem;
+  gap: 0.4rem;
   color: var(--cassette-cobalt-deep);
   font-size: 0.66rem;
   letter-spacing: 0.08em;
@@ -413,18 +407,15 @@
   text-transform: uppercase;
 }
 
+/* One consistent tag treatment: a flat hairline chip per tool, so a wrapped
+   line can never end on a dangling separator. */
 .toolList li {
   display: inline-flex;
   align-items: center;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid rgba(37, 68, 123, 0.26);
+  border-radius: 2px;
   overflow-wrap: anywhere;
-}
-
-/* The separator leads each item after the first, so a wrapped line never ends
-   on a lone "·". */
-.toolList li + li::before {
-  content: "·";
-  margin-right: 0.55rem;
-  color: rgba(27, 54, 153, 0.46);
 }
 
 @media (min-width: 1024px) {
@@ -469,7 +460,6 @@
     font-size: 12px;
   }
 
-  .eyebrow,
   .period,
   .columnLabel,
   .roleDate,

@@ -2,31 +2,43 @@
 // Utility Functions
 // =============================================================================
 
-import { createElement, type CSSProperties } from "react";
+import { createElement, type CSSProperties, type ComponentType } from "react";
 import type { LandingAccentKey } from "@/types";
 import {
   Cloud,
   Database,
   Terminal,
-  Sparkles,
   Cpu,
   type LucideIcon,
   type LucideProps,
 } from "lucide-react";
+import StackIcon from "@/components/art/stack-icons/StackIcon";
+
+type IconRenderer = LucideIcon | ComponentType<LucideProps>;
+
+// "sparkles" is the AI coding-agent workflow group's key, fixed by the stack
+// icon enum in src/lib/portfolioContent.ts. It is exclusive to that group, so it
+// renders the agent glyph instead of the decorative Lucide Sparkles.
+const agentsIcon: ComponentType<LucideProps> = ({ size, className }) =>
+  createElement(StackIcon, {
+    name: "agents",
+    size: typeof size === "number" ? size : undefined,
+    className,
+  });
 
 /**
- * Resolve icon string key to Lucide component.
+ * Resolve icon string key to a component.
  * This keeps data files free of JSX imports.
  */
-const iconMap: Record<string, LucideIcon> = {
+const iconMap: Record<string, IconRenderer> = {
   cloud: Cloud,
   database: Database,
   terminal: Terminal,
-  sparkles: Sparkles,
   cpu: Cpu,
+  sparkles: agentsIcon,
 };
 
-export function resolveIcon(key: string): LucideIcon {
+export function resolveIcon(key: string): IconRenderer {
   return iconMap[key] ?? Terminal;
 }
 

@@ -9,6 +9,8 @@ import { magneticSpring } from "@/lib/animations";
 // Writes to motion values (no per-pixel React re-render) and returns
 // spring-smoothed x/y. Recomputes the resting rect on enter/scroll/resize so
 // the magnet stays anchored when content scrolls under a stationary cursor.
+// Only attached on fine pointer + hover devices; off for touch and reduced
+// motion (the pull would fight the OS animation preference).
 // =============================================================================
 
 interface MagneticHover {
@@ -16,6 +18,9 @@ interface MagneticHover {
   x: MotionValue<number>;
   y: MotionValue<number>;
 }
+
+const FINE_HOVER_QUERY = "(hover: hover) and (pointer: fine)";
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 export function useMagneticHover(strength = 0.25): MagneticHover {
   const ref = useRef<HTMLElement>(null);
@@ -27,6 +32,9 @@ export function useMagneticHover(strength = 0.25): MagneticHover {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    const fineHover = window.matchMedia(FINE_HOVER_QUERY);
+    const reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY);
 
     let rect = el.getBoundingClientRect();
     const recompute = () => {
@@ -44,18 +52,40 @@ export function useMagneticHover(strength = 0.25): MagneticHover {
       rawY.set(0);
     };
 
-    el.addEventListener("mouseenter", recompute);
-    el.addEventListener("mousemove", handleMouseMove);
-    el.addEventListener("mouseleave", handleMouseLeave);
-    window.addEventListener("scroll", recompute, { passive: true });
-    window.addEventListener("resize", recompute);
+    let detach = () => {};
+
+    const syncInputCapability = () => {
+      detach();
+      detach = () => {};
+
+      if (!fineHover.matches || reducedMotion.matches) {
+        handleMouseLeave();
+        return;
+      }
+
+      el.addEventListener("mouseenter", recompute);
+      el.addEventListener("mousemove", handleMouseMove);
+      el.addEventListener("mouseleave", handleMouseLeave);
+      window.addEventListener("scroll", recompute, { passive: true });
+      window.addEventListener("resize", recompute);
+
+      detach = () => {
+        el.removeEventListener("mouseenter", recompute);
+        el.removeEventListener("mousemove", handleMouseMove);
+        el.removeEventListener("mouseleave", handleMouseLeave);
+        window.removeEventListener("scroll", recompute);
+        window.removeEventListener("resize", recompute);
+      };
+    };
+
+    syncInputCapability();
+    fineHover.addEventListener("change", syncInputCapability);
+    reducedMotion.addEventListener("change", syncInputCapability);
 
     return () => {
-      el.removeEventListener("mouseenter", recompute);
-      el.removeEventListener("mousemove", handleMouseMove);
-      el.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("scroll", recompute);
-      window.removeEventListener("resize", recompute);
+      fineHover.removeEventListener("change", syncInputCapability);
+      reducedMotion.removeEventListener("change", syncInputCapability);
+      detach();
     };
   }, [strength, rawX, rawY]);
 

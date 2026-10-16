@@ -36,10 +36,6 @@
   position: relative;
 }
 
-.contactSpecSheet :global(.spec-header) {
-  color: var(--color-panel-accent, #F4BEBB);
-}
-
 .heading {
   margin-bottom: 0.8rem;
   color: var(--color-on-panel, #EDE6DA);
@@ -57,11 +53,6 @@
   }
 }
 
-.headingFlip,
-.headingFlipToken {
-  display: inline-block;
-}
-
 .callout {
   margin-bottom: 1.5rem;
   color: var(--color-panel-accent, #F4BEBB);
@@ -70,11 +61,6 @@
   letter-spacing: 0.16em;
   line-height: 1.55;
   text-transform: uppercase;
-}
-
-.calloutFlip,
-.calloutFlipToken {
-  display: inline-block;
 }
 
 .ctaContainer {

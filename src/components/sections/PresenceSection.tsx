@@ -1,13 +1,11 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { PersonalData, PresenceNode, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import LiveClock from "@/components/ui/LiveClock";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import FlipRevealText from "@/components/ui/FlipRevealText";
 import TimezoneMap from "@/components/art/TimezoneMap";
 import styles from "./PresenceSection.module.css";
 
@@ -47,12 +45,6 @@ function PresenceSectionContent({
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isSectionActive, setIsSectionActive] = useState(false);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : sectionRef,
-    offset: ["start end", "end start"],
-  });
-  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
-  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
 
   useEffect(() => {
     const node = sectionRef.current;
@@ -84,33 +76,12 @@ function PresenceSectionContent({
         data-presence-active={isSectionActive ? "true" : "false"}
       >
         <div className="col-4">
-          <m.h2 style={{ y: prefersReducedMotion ? 0 : headingY }} className={styles.heading}>
-            <FlipRevealText flat
-              overprint
-              text="Presence"
-              mode="char"
-              progress={scrollYProgress}
-              window={[0.16, 0.3]}
-              holdUntil={0.84}
-              stagger={0.028}
-              perspective={900}
-              className={styles.headingFlip}
-              tokenClassName={styles.headingFlipToken}
-            />
-          </m.h2>
-          <m.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-            <FlipRevealText flat
-              text="Signals across time zones"
-              mode="word"
-              progress={scrollYProgress}
-              window={[0.24, 0.38]}
-              holdUntil={0.8}
-              stagger={0.03}
-              perspective={860}
-              className={styles.calloutFlip}
-              tokenClassName={styles.calloutFlipToken}
-            />
-          </m.p>
+          <h2 className={styles.heading}>
+            Presence
+          </h2>
+          <p className={styles.callout}>
+            Signals across time zones
+          </p>
           <div className={styles.clockWrapper}>
             <LiveClock
               city={personal.location.city}
