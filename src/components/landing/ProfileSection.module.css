@@ -1,11 +1,11 @@
 /* =============================================================================
-   ProfileSection - dark precision portrait stage
+   ProfileSection - editorial identity handoff: monogram plate + proof block
    ============================================================================= */
 
 .profileSection {
   position: relative;
-  padding-top: clamp(3.4rem, 6vw, 5.6rem);
-  padding-bottom: clamp(3.2rem, 6vw, 5rem);
+  padding-top: clamp(3.6rem, 7vw, 6rem);
+  padding-bottom: clamp(3.4rem, 6.5vw, 5.6rem);
   scroll-snap-align: start;
   overflow: clip;
   background: transparent;
@@ -29,15 +29,8 @@
 
 .storyGrid {
   display: grid;
-  gap: clamp(1.4rem, 4vw, 3rem);
-  align-items: center;
-}
-
-@media (min-width: 1024px) {
-  .storyGrid {
-    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
-    align-items: center;
-  }
+  gap: clamp(1.8rem, 5vw, 2.8rem);
+  align-items: start;
 }
 
 .portraitColumn {
@@ -45,22 +38,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  width: min(88vw, 410px);
+  width: min(86vw, 340px);
   margin-inline: auto;
   transform-origin: 42% 58%;
 }
 
-@media (min-width: 1024px) {
-  .portraitColumn {
-    width: min(31vw, 410px);
-    margin-inline: 0;
-    justify-self: start;
-  }
-}
-
 .portraitArtwork {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  grid-template-columns: minmax(0, 1.32fr) minmax(0, 0.68fr);
   align-items: center;
   gap: clamp(0.45rem, 1.4vw, 1rem);
 }
@@ -115,20 +100,99 @@
   transform: scale(1.03);
 }
 
+/* Desktop: give the intro copy the dominant column, keep the plate compact. */
+@media (min-width: 1024px) {
+  .storyGrid {
+    grid-template-columns: minmax(0, clamp(272px, 25vw, 356px)) minmax(0, 1fr);
+    gap: clamp(2.4rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+
+  .portraitColumn {
+    width: 100%;
+    margin-inline: 0;
+    justify-self: start;
+  }
+}
+
 .copyColumn {
-  max-width: 42rem;
-  margin-inline: auto;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
 }
 
 @media (min-width: 1024px) {
   .copyColumn {
-    margin-inline: 0;
-    text-align: left;
-    justify-self: start;
-    align-self: center;
-    transform: translateY(0);
+    max-width: 47rem;
   }
+}
+
+.headline {
+  max-width: 22ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 540;
+  font-size: clamp(1.9rem, 1.2rem + 2.35vw, 3.1rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+
+.proofList {
+  display: grid;
+  width: 100%;
+  max-width: 44rem;
+  margin: clamp(1.6rem, 3vw, 2.1rem) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.proofItem {
+  display: grid;
+  grid-template-columns: 0.5rem minmax(0, 1fr);
+  gap: 0.95rem;
+  align-items: start;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.proofItem:last-child {
+  border-bottom: 0;
+  padding-bottom: 0.2rem;
+}
+
+.proofMark {
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-top: 0.62rem;
+  background: var(--color-lead);
+}
+
+.proofText {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-secondary-text);
+}
+
+.proofLead {
+  font-weight: 620;
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .proofText {
+    font-size: 1.0625rem;
+  }
+}
+
+.stackStrip {
+  margin-top: clamp(1.9rem, 3.6vw, 2.6rem);
 }
 
 .hintCopy {
@@ -171,40 +235,9 @@
   color: #0B1011;
 }
 
-.taglineBlock {
-  max-width: 42rem;
-  margin: 1.35rem auto 0;
-}
-
-.profileTagline {
-  font-family: var(--font-headline);
-  font-weight: 450;
-  font-size: clamp(1.15rem, 1.7vw, 1.55rem);
-  color: rgba(11, 16, 17, 0.92);
-  line-height: 1.5;
-}
-
-.profileSubtitle {
-  margin-top: 1.3rem;
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: clamp(1rem, 1vw, 1.0625rem);
-  line-height: 1.6;
-  max-width: 62ch;
-  margin-inline: auto;
-  color: var(--color-secondary-text);
-}
-
-@media (min-width: 1024px) {
-  .taglineBlock,
-  .profileSubtitle {
-    margin-inline: 0;
-  }
-}
-
 @media (max-width: 520px) {
   .portraitColumn {
-    width: min(88vw, 410px);
+    width: min(84vw, 320px);
   }
 
   .portraitArtwork {
