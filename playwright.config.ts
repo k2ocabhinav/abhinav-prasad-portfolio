@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const responsiveSpec = /portfolio-responsive\.spec\.ts/;
+const port = process.env.PLAYWRIGHT_PORT ?? "3000";
 
 export default defineConfig({
   testDir: "./tests",
@@ -9,7 +10,7 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: `http://127.0.0.1:${port}`,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
@@ -66,8 +67,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev -- --hostname 127.0.0.1 --port 3000",
-    url: "http://127.0.0.1:3000",
+    command: `npm run dev -- --hostname 127.0.0.1 --port ${port}`,
+    url: `http://127.0.0.1:${port}`,
     reuseExistingServer: true,
     timeout: 120_000,
   },
