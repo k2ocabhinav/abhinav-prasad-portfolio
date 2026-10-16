@@ -22,9 +22,12 @@ const nextConfig: NextConfig = {
     // default 2048/3840 entries only widened every srcset for nothing.
     deviceSizes: [360, 640, 750, 828, 1080, 1200, 1440, 1920],
     imageSizes: [64, 96, 128, 256, 384],
-    // Optimized variants are keyed by (url, width, quality) and are safe to
-    // hold for a year; the default four hours forced repeat re-fetches.
-    minimumCacheTTL: 31536000,
+    // Optimized variants are keyed by (url, width, quality), but the URL carries
+    // no hash of the source bytes: replacing a project image under the same
+    // filename would keep serving the old variant for the whole TTL. A day of
+    // CDN caching still removes the repeat re-fetches the four-hour default
+    // caused, while a replaced image is corrected within a day.
+    minimumCacheTTL: 86400,
   },
   async headers() {
     return [

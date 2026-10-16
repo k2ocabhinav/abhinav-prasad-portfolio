@@ -289,7 +289,10 @@ function readTechBuckets(data: Frontmatter, filePath: string): ProjectTechBucket
 }
 
 function readStoryboard(data: Frontmatter, filePath: string): ProjectDetailStory {
-  const visuals = objectArray(data, "visuals", filePath).map((visual): ProjectStoryVisual => {
+  // The build preflight (scripts/check-portfolio-content.mjs) rejects an empty
+  // storyboard; the runtime loader is the authoritative schema, so it enforces
+  // the same minimums here and a bad storyboard cannot reach a route.
+  const visuals = nonEmptyObjectArray(data, "visuals", filePath).map((visual): ProjectStoryVisual => {
     const image = readImage(visual, filePath);
     const theme = visual.theme === undefined
       ? undefined
@@ -310,7 +313,7 @@ function readStoryboard(data: Frontmatter, filePath: string): ProjectDetailStory
   ensureUnique(visualIds, "storyboard visual id");
   const visualById = new Map(visuals.map((visual) => [visual.id, visual]));
 
-  const chapters = objectArray(data, "chapters", filePath).map((chapter): ProjectStoryChapter => ({
+  const chapters = nonEmptyObjectArray(data, "chapters", filePath).map((chapter): ProjectStoryChapter => ({
     id: stringValue(chapter, "id", filePath),
     eyebrow: stringValue(chapter, "eyebrow", filePath),
     title: stringValue(chapter, "title", filePath),
@@ -354,6 +357,9 @@ function readStoryboard(data: Frontmatter, filePath: string): ProjectDetailStory
     label: stringValue(option, "label", filePath),
     visualId: stringValue(option, "visualId", filePath),
   }));
+  if (options.length < 2) {
+    fail(filePath, 'storyboard "tenantSwitcher.options" must contain at least two tenants');
+  }
   ensureUnique(options.map((option) => option.id), "storyboard tenant id");
   if (!options.some((option) => option.id === defaultId)) {
     fail(filePath, `storyboard default tenant "${defaultId}" is not in tenantSwitcher.options`);

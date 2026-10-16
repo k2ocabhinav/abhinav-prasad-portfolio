@@ -105,7 +105,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
     <div className={styles.pageShell}>
       <header className={styles.chrome}>
         <div className={`content-container ${styles.chromeInner}`}>
-          <Link href="/#work" className={styles.backLink}>
+          <Link href="/#work" prefetch={false} className={styles.backLink}>
             ← Back to Works
           </Link>
           <span className={styles.chromeLabel}>Project file</span>
@@ -132,7 +132,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                 preload
                 fetchPriority="high"
                 className={styles.heroImage}
-                sizes="(max-width: 767px) 100vw, (max-width: 1100px) 54vw, 650px"
+                sizes="(max-width: 767px) calc(100vw - 3.25rem), (max-width: 1023px) 43vw, (max-width: 1100px) 54vw, 650px"
               />
             </div>
             <figcaption className={styles.figureCaption}>{detail.heroImage.caption}</figcaption>
