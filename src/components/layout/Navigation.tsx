@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import * as m from "motion/react-m";
+import { AnimatePresence, useReducedMotion } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
@@ -194,7 +195,7 @@ export default function Navigation() {
               >
                 {item.label}
               </span>
-              <motion.div
+              <m.div
                 whileHover={{ scale: 1.5 }}
                 className={cn(
                   styles.railDot,
@@ -215,7 +216,7 @@ export default function Navigation() {
               <span className={cn(styles.railLabel, styles.railLabelRoute)}>
                 {item.label}
               </span>
-              <motion.div
+              <m.div
                 whileHover={{ scale: 1.15 }}
                 className={cn(styles.railDot, styles.railDotRoute)}
               />
@@ -266,7 +267,7 @@ export default function Navigation() {
       >
         {isMobileMenuOpen && (
           <>
-            <motion.button
+            <m.button
               type="button"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -277,7 +278,7 @@ export default function Navigation() {
               className={styles.mobileBackdrop}
               onClick={closeMobileMenu}
             />
-            <motion.div
+            <m.div
               ref={mobileMenuRef}
               id="mobile-navigation-panel"
               role="dialog"
@@ -337,7 +338,7 @@ export default function Navigation() {
                   )
                 )}
               </nav>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>

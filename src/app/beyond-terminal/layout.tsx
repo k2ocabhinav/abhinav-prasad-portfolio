@@ -21,7 +21,7 @@ const body = Plus_Jakarta_Sans({
 const mono = Space_Mono({
   subsets: ["latin"],
   variable: "--font-beyond-mono",
-  weight: ["400", "700"],
+  weight: "400",
   display: "swap",
 });
 

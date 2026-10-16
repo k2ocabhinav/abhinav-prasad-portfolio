@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import type { SectionTone, StackGroup } from "@/types";
 import { useCardTilt } from "@/hooks/useCardTilt";
@@ -45,7 +46,7 @@ function TechStackSectionContent({
     <SectionWrapper id="stack" tone={tone} className={styles.stackSection}>
       <div ref={sectionRef} className={`grid-12 ${styles.headerGrid}`}>
         <div className="col-4">
-          <motion.h2
+          <m.h2
             style={{ y: prefersReducedMotion ? 0 : headingY }}
             className={styles.heading}
           >
@@ -62,20 +63,20 @@ function TechStackSectionContent({
               className={styles.headingFlip}
               tokenClassName={styles.headingFlipToken}
             />
-          </motion.h2>
-          <motion.p
+          </m.h2>
+          <m.p
             className={styles.callout}
             style={{ y: prefersReducedMotion ? 0 : calloutY }}
           >
             Tools I use across work and projects
-          </motion.p>
+          </m.p>
         </div>
         <div className="col-8">
           <StackLayersPlate />
         </div>
       </div>
 
-      <motion.div
+      <m.div
         variants={staggerContainer(0.1)}
         initial="hidden"
         animate={prefersReducedMotion ? "visible" : undefined}
@@ -87,7 +88,7 @@ function TechStackSectionContent({
         {techCategories.map((item) => (
           <TechCard key={item.id} item={item} />
         ))}
-      </motion.div>
+      </m.div>
     </SectionWrapper>
   );
 }
@@ -97,7 +98,7 @@ function TechCard({ item }: { item: StackGroup }) {
   const { ref: tiltRef, tilt } = useCardTilt(1.5);
 
   return (
-    <motion.article
+    <m.article
       ref={prefersReducedMotion ? undefined : tiltRef}
       variants={staggerItem}
       animate={prefersReducedMotion ? undefined : { rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
@@ -119,6 +120,6 @@ function TechCard({ item }: { item: StackGroup }) {
           <li key={technology}>{technology}</li>
         ))}
       </ul>
-    </motion.article>
+    </m.article>
   );
 }

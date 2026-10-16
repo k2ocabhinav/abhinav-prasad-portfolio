@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   devIndicators: false,
   experimental: {
+    // Keep inlineCss on: on throttled mobile it removes a render-blocking CSS
+    // round trip. Measured (Lighthouse mobile ×3 medians, Fast-3G-ish):
+    // on → home FCP 1016 ms / beyond 875 ms; off → 1763 ms / 2111 ms.
     inlineCss: true,
   },
   images: {
@@ -40,6 +43,34 @@ const nextConfig: NextConfig = {
         // one hashed asset Next does not already cache immutably.
         source: "/favicon.ico",
         headers: [{ key: "Cache-Control", value: IMMUTABLE_CACHE }],
+      },
+      {
+        // Social card: a stable, unhashed public file. Next served it
+        // `max-age=0`, so every crawler and link preview re-fetched ~53 KB. It
+        // only changes on redeploy, so a day of browser caching with a
+        // revalidating ETag is safe.
+        source: "/og-image.jpg",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, must-revalidate",
+          },
+        ],
+      },
+      {
+        // Prerendered HTML. Next emits `s-maxage=31536000` with no browser
+        // `max-age`, so every repeat navigation revalidates. A short browser
+        // `max-age` lets a returning tab reuse its copy for a minute while the
+        // ETag still revalidates promptly after a deploy; the long CDN
+        // `s-maxage` is preserved. The negative lookahead keeps hashed assets,
+        // images and dotted files off this rule.
+        source: "/((?!_next/|favicon.ico|og-image.jpg|.*\\..*).*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=60, s-maxage=31536000",
+          },
+        ],
       },
     ];
   },

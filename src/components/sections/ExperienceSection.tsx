@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import type { ChronicleEntry, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -63,7 +64,7 @@ function ExperienceSectionContent({
           className={styles.sectionHeader}
           data-experience-header="true"
         >
-          <motion.div
+          <m.div
             className={styles.titleCluster}
             style={{ y: prefersReducedMotion ? 0 : clusterY }}
           >
@@ -94,9 +95,9 @@ function ExperienceSectionContent({
                 className={styles.experienceArc}
               />
             </span>
-          </motion.div>
+          </m.div>
 
-          <motion.p
+          <m.p
             className={styles.callout}
             style={
               prefersReducedMotion
@@ -105,7 +106,7 @@ function ExperienceSectionContent({
             }
           >
             Where the business rules live and the releases ship.
-          </motion.p>
+          </m.p>
         </header>
 
         <div className={styles.dossierList}>
@@ -134,7 +135,7 @@ function ExperienceSectionContent({
                 </header>
 
                 <div className={styles.narrativeDeck}>
-                  <motion.p
+                  <m.p
                     className={styles.backendThesis}
                     initial={{ opacity: 0, y: 10 }}
                     animate={prefersReducedMotion ? { opacity: 1, y: 0 } : undefined}
@@ -146,7 +147,7 @@ function ExperienceSectionContent({
                     }}
                   >
                     <OpeningSentence text={experience.backendThesis} />
-                  </motion.p>
+                  </m.p>
                   <p className={styles.functionality}>
                     <strong className={styles.functionalityLead}>
                       Functionality breadth
@@ -191,7 +192,7 @@ function ExperienceSectionContent({
                     </h4>
                     <div className={styles.workstreamList}>
                       {experience.workstreams.map((workstream, index) => (
-                        <motion.article
+                        <m.article
                           key={workstream.id}
                           className={styles.workstream}
                           data-experience-workstream={workstream.id}
@@ -228,7 +229,7 @@ function ExperienceSectionContent({
                               <li key={tool}>{tool}</li>
                             ))}
                           </ul>
-                        </motion.article>
+                        </m.article>
                       ))}
                     </div>
                   </section>

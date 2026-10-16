@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  motion,
-  useMotionValue,
-  useMotionValueEvent,
-  useTransform,
-} from "motion/react";
+import * as m from "motion/react-m";
+import { useMotionValue, useMotionValueEvent, useTransform } from "motion/react";
 import type { MotionValue } from "motion/react";
 import { useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -110,7 +106,7 @@ function FlipToken({
 
   return (
     <span className={styles.clip}>
-      <motion.span
+      <m.span
         className={cn(styles.token, className)}
         style={
           flat
@@ -119,7 +115,7 @@ function FlipToken({
         }
       >
         {value}
-      </motion.span>
+      </m.span>
     </span>
   );
 }
@@ -238,7 +234,7 @@ export default function FlipRevealText({
 
         return (
           <span key={token.key} className={styles.clip}>
-            <motion.span
+            <m.span
               className={cn(styles.token, tokenClassName)}
               initial={
                 disableFlip
@@ -263,7 +259,7 @@ export default function FlipRevealText({
               style={disableFlip ? undefined : { transformOrigin: "50% 100%" }}
             >
               {token.value}
-            </motion.span>
+            </m.span>
           </span>
         );
       })}

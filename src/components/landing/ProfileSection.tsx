@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import StillLifePlate from "@/components/art/StillLifePlate";
@@ -100,7 +101,7 @@ export default function ProfileSection({
       <div className={styles.profileStageWash} aria-hidden="true" />
       <div className={`content-container ${styles.profileContent}`}>
         <div className={styles.storyGrid}>
-          <motion.div
+          <m.div
             className={styles.portraitColumn}
             animate={
               reduceMotion
@@ -120,7 +121,7 @@ export default function ProfileSection({
           >
             <div className={styles.portraitHalo} />
             <div className={styles.portraitArtwork}>
-              <motion.div
+              <m.div
                 initial={reduceMotion ? false : { scale: 0.9, opacity: 0 }}
                 animate={reduceMotion ? { scale: 1, opacity: 1 } : undefined}
                 whileInView={
@@ -138,12 +139,12 @@ export default function ProfileSection({
                   className={styles.heroImage}
                   priority={false}
                 />
-              </motion.div>
+              </m.div>
               <div className={styles.stillLife}>
                 <StillLifePlate />
               </div>
             </div>
-            <motion.div
+            <m.div
               className={styles.hintCopy}
               data-secret-hint="true"
               style={reduceMotion ? undefined : { opacity: hintOpacity, y: hintY }}
@@ -151,10 +152,10 @@ export default function ProfileSection({
             >
               <span className={styles.hintKicker}>Personal layer</span>
               <span className={styles.hintText}>v opens it</span>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             className={styles.copyColumn}
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={reduceMotion ? { opacity: 1, y: 0 } : undefined}
@@ -180,7 +181,7 @@ export default function ProfileSection({
             </ul>
 
             <StackStrip items={stackItems} className={styles.stackStrip} />
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>

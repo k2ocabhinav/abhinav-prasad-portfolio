@@ -57,9 +57,25 @@
   color: var(--color-on-surface);
   user-select: none;
   isolation: isolate;
+  animation: letterSettle 600ms var(--motion-ease-out) backwards;
+  animation-delay: var(--letter-delay, 0s);
   transition:
     transform 280ms var(--motion-ease-out),
     color 180ms var(--motion-ease-out);
+}
+
+/* First-paint entrance: transform only, so the server-rendered wordmark is
+   never blank while JS hydrates. Scaling up from a near-baseline origin keeps
+   every frame inside the clip box, and the backwards fill holds the small start
+   state during each letter's delay. The animation releases transform control
+   when it ends, so the hover transitions below are unaffected. */
+@keyframes letterSettle {
+  from {
+    transform: scale(0.94);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 .letterStage[data-hovered="true"] {
@@ -227,6 +243,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .letterStage {
+    animation: none;
+  }
+
   .letterStage,
   .editorialGlyph,
   .hoverAura,
@@ -238,4 +258,9 @@
   .letterStage[data-hovered="true"] {
     transform: none;
   }
+}
+
+/* The prop-driven path (parent forces reduced motion) skips the entrance. */
+.nameRow[data-reduce-motion="true"] .letterStage {
+  animation: none;
 }

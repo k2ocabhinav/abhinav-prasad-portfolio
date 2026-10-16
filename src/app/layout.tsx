@@ -21,25 +21,48 @@ import "./globals.css";
 // opsz 144 / WONK 1 via font-variation-settings in AnimatedName.module.css, so
 // only opsz and WONK are requested: SOFT is never set to anything but its
 // default (0), and that unused axis alone was ~121 KB of the build. Fraunces
-// is used above the fold (wordmark + hero role line), so it stays preloaded.
+// roman carries the wordmark (and the roman face is the heaviest above-the-fold
+// need), so it is preloaded. The italic is a hero accent only, so it is a
+// separate non-preloaded instance: it downloads on first use instead of
+// competing with the roman for Fast-3G bandwidth. Both instances resolve to the
+// same `Fraunces` family, so `--font-display` still covers italic text.
 const fraunces = Fraunces({
   subsets: ["latin"],
   axes: ["opsz", "WONK"],
-  style: ["normal", "italic"],
+  style: "normal",
   variable: "--font-display",
   display: "swap",
 });
 
+const frauncesItalic = Fraunces({
+  subsets: ["latin"],
+  axes: ["opsz", "WONK"],
+  style: "italic",
+  variable: "--font-display",
+  display: "swap",
+  preload: false,
+});
+
 // Prose serif — editorial reading moments and italic accents. Newsreader's
 // optical-size axis is load-bearing (prose runs from 1rem standfirsts up to
-// 3rem section headings), so it is kept. The roman face is the hero standfirst
-// that paints the LCP, hence preload.
+// 3rem section headings), so it is kept. The roman face paints the hero value
+// sentence that becomes the LCP, hence preload; the italic is a marquee and
+// bridge accent, so it loads on use.
 const newsreader = Newsreader({
   subsets: ["latin"],
   axes: ["opsz"],
-  style: ["normal", "italic"],
+  style: "normal",
   variable: "--font-headline",
   display: "swap",
+});
+
+const newsreaderItalic = Newsreader({
+  subsets: ["latin"],
+  axes: ["opsz"],
+  style: "italic",
+  variable: "--font-headline",
+  display: "swap",
+  preload: false,
 });
 
 // UI + body workhorse. Weights 400 (body) and 600 (bold `strong` runs) are
@@ -146,7 +169,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${fraunces.variable} ${newsreader.variable} ${hankenGrotesk.variable} ${fragmentMono.variable}`}
+      className={`${fraunces.variable} ${frauncesItalic.variable} ${newsreader.variable} ${newsreaderItalic.variable} ${hankenGrotesk.variable} ${fragmentMono.variable}`}
     >
       <body>
         <AppProviders>{children}</AppProviders>

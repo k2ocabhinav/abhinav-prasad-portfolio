@@ -1,8 +1,6 @@
 "use client";
 
-import { useAnimate } from "motion/react-mini";
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useState, type CSSProperties, type PointerEvent } from "react";
 import { usePortalNavigation } from "@/hooks/usePortalNavigation";
 import type { PortalTransitionIntent } from "@/types";
 import styles from "./AnimatedName.module.css";
@@ -13,7 +11,9 @@ import styles from "./AnimatedName.module.css";
 // Performance strategy:
 //   1. Keep each letter anchored in its own lightweight stage
 //   2. Keep every hover layer CSS-driven so the engine stays responsive
-//   3. Use WAAPI only for initial entrance so hover stays CSS-driven
+//   3. The entrance is a first-paint CSS keyframe on transform only: the
+//      server-rendered letters are final at first paint and never blank while
+//      JS hydrates.
 // =============================================================================
 
 // Single matte accent — every letter hovers in the lead ink (burgundy).
@@ -27,7 +27,6 @@ const HOVER_COLORS = [
   "var(--color-lead, #6A2135)",
 ] as const;
 
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const PORTAL_LETTER_INDEX = 6;
 
 interface AnimatedNameProps {
@@ -41,60 +40,21 @@ interface AnimatedNameProps {
   };
 }
 
-function cancelAnimations(...elements: Array<Element | null>) {
-  for (const element of elements) {
-    element?.getAnimations().forEach((animation) => animation.cancel());
-  }
-}
-
 export default function AnimatedName({
   name,
   reduceMotion = false,
   portalTrigger,
 }: AnimatedNameProps) {
-  const prefersReducedMotion = useReducedMotion() || reduceMotion;
   const letters = name.split("");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [scope, animate] = useAnimate();
-  const stageRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const { getTriggerProps, isTransitioning } = usePortalNavigation();
   const triggerProps = portalTrigger ? getTriggerProps(portalTrigger) : null;
 
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      return;
-    }
-
-    const nodes = stageRefs.current.filter((node): node is HTMLSpanElement => node !== null);
-    if (nodes.length === 0) {
-      return;
-    }
-
-    nodes.forEach((node, index) => {
-      cancelAnimations(node);
-      void animate(
-        node,
-        {
-          opacity: [0, 1],
-          transform: [
-            "translate3d(0, 34px, 0) scale(0.975)",
-            "translate3d(0, 0, 0) scale(1)",
-          ],
-        },
-        {
-          delay: 0.08 + index * 0.065,
-          duration: 0.65,
-          ease: EASE,
-        }
-      );
-    });
-  }, [animate, prefersReducedMotion]);
-
   const nameMarkup = (
     <span
-      ref={scope}
       className={styles.nameRow}
       data-home-hero-wordmark="true"
+      data-reduce-motion={reduceMotion ? "true" : "false"}
     >
       {letters.map((letter, index) => {
         const hoverColor = HOVER_COLORS[index] ?? "var(--color-lead, #6A2135)";
@@ -104,6 +64,7 @@ export default function AnimatedName({
         const stageStyle = {
           ["--letter-color" as string]: hoverColor,
           ["--letter-line" as string]: "#0B1011",
+          ["--letter-delay" as string]: `${0.05 + index * 0.055}s`,
         } as CSSProperties;
 
         const handlePointerEnter = (event: PointerEvent<HTMLSpanElement>) => {
@@ -122,9 +83,6 @@ export default function AnimatedName({
 
         const letterStage = (
           <span
-            ref={(node) => {
-              stageRefs.current[index] = node;
-            }}
             className={styles.letterStage}
             style={stageStyle}
             data-animated-letter-index={index}

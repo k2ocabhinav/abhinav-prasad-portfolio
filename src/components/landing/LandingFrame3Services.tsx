@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import type { ServiceEntry } from "@/types";
 import { landingStagger, staggerItem } from "@/lib/animations";
 import ServiceTile from "./ServiceTile";
@@ -46,7 +46,7 @@ export default function LandingFrame3Services({
     <section className={styles.frame} aria-label="Services">
       <div className={styles.container}>
         <h2 className={styles.sectionLabel}>What I do</h2>
-        <motion.div
+        <m.div
           className={styles.grid}
           variants={landingStagger(0.1)}
           initial="hidden"
@@ -54,11 +54,11 @@ export default function LandingFrame3Services({
           viewport={{ once: true, amount: 0.2 }}
         >
           {services.map((service, index) => (
-            <motion.div key={service.id} variants={staggerItem} className={styles.gridItem}>
+            <m.div key={service.id} variants={staggerItem} className={styles.gridItem}>
               <ServiceTile service={service} index={index} />
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );
