@@ -1,74 +1,57 @@
 /* =============================================================================
-   HeroTextColumn — Editorial hero stack
+   HeroTextColumn — the hero's text stack.
+   The wordmark fills its column; the stack below is optically aligned to the
+   wordmark's left edge through the container-query inset, so the masthead and
+   the copy share one margin at every width.
    ============================================================================= */
 
 .textColumn {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: clamp(1rem, 1.9vw, 1.7rem);
-  padding: 0.4rem 0 2.2rem;
-  text-align: center;
+  align-items: flex-start;
   width: 100%;
-  /* Gentle upward nudge only — the previous -4.25rem pulled the oversized
-     name's ascenders above the viewport top in short windows (clipping that
-     read as broken). */
-  transform: translateY(clamp(-1.5rem, -4vh, -2.5rem));
+  container-type: inline-size;
+}
+
+/* The wordmark sits about 1.2cqw inside its column (see AnimatedName:
+   31cqw of a 3.2em-wide word). */
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(0.5rem, 1.1vh, 0.85rem);
+  width: 100%;
+  margin-top: clamp(0.4rem, 1.4vh, 1rem);
+  padding-inline: 1.2cqw;
 }
 
 .roleLine {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 0.35em;
+  margin: 0;
   font-family: var(--font-display);
-  font-style: normal;
-  font-weight: 500;
-  font-size: clamp(1rem, 2vw, 1.7rem);
-  color: color-mix(in srgb, var(--color-on-surface) 82%, var(--color-secondary-text) 18%);
-  letter-spacing: 0;
-  margin-top: 0.1rem;
-}
-
-.cyclerOuter {
-  display: inline-flex;
-  position: relative;
-  overflow: hidden;
-  height: 1.15em;
-  justify-content: flex-start;
-}
-
-/* Fraunces italic accent word — the editorial signature, AA-large vermilion. */
-.cyclerWord,
-.cyclerWordStatic {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1.15em;
-  font-family: var(--font-display);
-  color: var(--color-primary-brand);
   font-style: italic;
   font-weight: 550;
-  white-space: nowrap;
+  font-size: clamp(1.15rem, 1.7vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--color-lead);
 }
 
-.accentLine {
-  font-family: var(--font-label);
-  font-style: normal;
-  font-weight: 400;
-  font-size: clamp(0.72rem, 1vw, 0.92rem);
-  color: var(--color-secondary-text);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-/* Newsreader prose moment — reads like a print standfirst. */
-.supportingCopy {
+/* Newsreader standfirst — the one value sentence. */
+.value {
+  margin: 0;
   font-family: var(--font-headline);
   font-weight: 420;
-  font-size: clamp(1.0625rem, 1.3vw, 1.2rem);
-  color: rgba(11, 16, 17, 0.8);
-  line-height: 1.6;
-  max-width: 62ch;
+  font-size: clamp(1.0625rem, 1.15vw, 1.25rem);
+  line-height: 1.55;
+  color: rgba(11, 16, 17, 0.82);
+  max-width: 48ch;
+}
+
+.currentRole {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 1vw, 1.0625rem);
+  line-height: 1.45;
+  color: var(--color-secondary-text);
 }
 
 .ctaGroup {
@@ -76,8 +59,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 1.25rem;
-  margin-top: 0.65rem;
-  justify-content: center;
+  margin-top: clamp(0.5rem, 1.4vh, 0.9rem);
 }
 
 .secondaryCta {
@@ -97,33 +79,51 @@
 }
 
 .secondaryCta:hover {
-  color: #C42117;
-  border-color: #C42117;
+  color: var(--color-lead);
+  border-color: var(--color-lead);
 }
 
-@media (max-width: 767px) {
+/* Stacked layouts centre the whole stack, so the optical inset is symmetric
+   and the copy stays centred under a centred masthead. */
+@media (max-width: 1279px) {
   .textColumn {
-    gap: 0.95rem;
-    padding: 0.2rem 0 1.5rem;
-    transform: translateY(-1.25rem);
+    align-items: center;
   }
 
-  .roleLine {
-    font-size: clamp(1rem, 4.5vw, 1.48rem);
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .accentLine {
-    font-size: clamp(0.82rem, 3vw, 1.08rem);
+  .stack {
+    align-items: center;
+    text-align: center;
   }
 
-  .supportingCopy {
-    font-size: 1rem;
-    padding: 0 0.5rem;
-    line-height: 1.55;
+  .value {
+    max-width: 46ch;
   }
 
   .ctaGroup {
-    gap: 0.75rem;
+    justify-content: center;
+  }
+}
+
+/* Short viewports: tighter leading keeps the dispatch board in the fold. */
+@media (max-width: 767px) {
+  .stack {
+    gap: 0.45rem;
+  }
+
+  .roleLine {
+    font-size: 1.1rem;
+  }
+
+  .value {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+/* Narrow phones break the role line onto two lines. Reserving both keeps the
+   Fraunces swap from growing the column and shifting the dispatch board (CLS). */
+@media (max-width: 26rem) {
+  .roleLine {
+    min-height: 2.4em;
   }
 }

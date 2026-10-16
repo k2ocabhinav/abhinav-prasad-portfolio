@@ -1,0 +1,104 @@
+/* =============================================================================
+   DispatchTicket — a dispatch slip on the ledger sheet.
+   State is carried by colour, a lane-coloured edge and a 0-blur print offset;
+   no state change alters the slip's size, so the board never shifts.
+   ============================================================================= */
+
+.slip {
+  min-width: 0;
+}
+
+.button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--color-hairline);
+  border-left: 3px solid var(--color-hairline);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    background-color 220ms var(--motion-ease-out),
+    border-color 220ms var(--motion-ease-out),
+    box-shadow 180ms var(--motion-ease-out),
+    translate 140ms var(--motion-ease-out);
+}
+
+.button:hover {
+  border-color: color-mix(in srgb, var(--lane-ink-text) 40%, var(--color-hairline));
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-lead-deep);
+  outline-offset: 2px;
+}
+
+.button:active {
+  translate: 2px 2px;
+  box-shadow: 0 0 0 rgba(53, 30, 40, 0.16);
+}
+
+.stub {
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--lane-ink-text);
+  opacity: 0.72;
+}
+
+.title {
+  font-family: var(--font-body);
+  font-size: clamp(0.84rem, 0.92vw, 0.95rem);
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+  color: var(--color-secondary-text);
+}
+
+/* Landed — the slip has moved on; the lane edge records it. */
+.slip[data-state="landed"] .button {
+  border-left-color: var(--lane-ink-text);
+}
+
+.slip[data-state="landed"] .title {
+  color: var(--color-on-surface);
+}
+
+/* In flight — the one slip carrying ink and the print offset. */
+.slip[data-state="inflight"] .button {
+  background: var(--paper-bone, #F0EEE9);
+  border-color: color-mix(in srgb, var(--lane-ink-text) 32%, var(--color-hairline));
+  border-left-color: var(--lane-ink-text);
+  box-shadow: var(--print-offset-sm);
+}
+
+.slip[data-state="inflight"] .title {
+  color: var(--color-on-surface);
+}
+
+.slip[data-state="inflight"] .stub {
+  opacity: 1;
+}
+
+@media (max-width: 767px) {
+  .button {
+    padding: 0.45rem 0.55rem;
+  }
+
+  .title {
+    font-size: 0.82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+}

@@ -1,0 +1,157 @@
+/* =============================================================================
+   DispatchBoard — a linen ledger sheet holding four lanes.
+   Flat inks, hairline rules and one 0-blur print offset. No glow, no blur.
+   ============================================================================= */
+
+.board {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: clamp(15rem, 27vh, 19rem);
+  padding: clamp(0.8rem, 1.1vw, 1.05rem);
+  background: var(--paper-linen);
+  border: 1px solid var(--color-hairline);
+  border-radius: 4px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.stamp {
+  display: block;
+  flex: none;
+  width: clamp(2.9rem, 4vw, 3.9rem);
+  overflow: clip;
+}
+
+.stamp svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.caption {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 0.95vw, 0.9rem);
+  line-height: 1.4;
+  color: var(--color-secondary-text);
+}
+
+.readout {
+  flex: none;
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--color-secondary-text);
+}
+
+.readoutStrong {
+  color: var(--color-lead-deep);
+}
+
+.readoutSlash {
+  padding-inline: 0.15em;
+  color: var(--color-hairline);
+}
+
+/* Four lanes in a 2x2 grid: wide enough for a slip's step name to sit on one
+   line at every width, and identical on phones and desktop. */
+.lanes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The current step's explanation. The reserved two-line height keeps the sheet
+   from resizing as the board plays through. */
+.detail {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding: 0.7rem 0.75rem 0;
+  border-top: 1px solid var(--color-hairline);
+  --lane-ink-text: var(--color-lead-deep);
+}
+
+.detail[data-ink="petrol"] {
+  --lane-ink-text: var(--color-petrol-deep);
+}
+
+.detail[data-ink="cornflower"] {
+  --lane-ink-text: var(--color-cornflower-deep);
+}
+
+.detail[data-ink="lovebird"] {
+  --lane-ink-text: var(--color-lovebird-deep);
+}
+
+.detail[data-ink="burgundy"] {
+  --lane-ink-text: var(--color-lead-deep);
+}
+
+.detailStub {
+  flex: none;
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--lane-ink-text);
+}
+
+.detailText {
+  min-width: 0;
+  min-height: 2.9em;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 0.9vw, 0.875rem);
+  line-height: 1.45;
+  color: var(--color-secondary-text);
+}
+
+/* Visually hidden: the board announces user-initiated steps only, so the
+   play-through never chatters at a screen reader. */
+.status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Phones: a tighter sheet, so the whole board clears the fold. */
+@media (max-width: 767px) {
+  .board {
+    padding: 0.7rem;
+  }
+
+  .header {
+    gap: 0.55rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .stamp {
+    width: 2.5rem;
+  }
+
+  .detail {
+    padding-top: 0.55rem;
+  }
+}

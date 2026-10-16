@@ -80,8 +80,12 @@
   font-family: var(--font-wordmark);
   font-weight: 600;
   font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
-  /* "Abhinav" in Fraunces ≈ 3.2em wide → 27vw fills ~88-92% of the viewport. */
-  font-size: clamp(3rem, 28vw, 34rem);
+  /* "Abhinav" in Fraunces measures 3.2em wide, so 31cqw fills about 99% of the
+     column the hero gives it. Sizing against that column (not the viewport)
+     keeps all seven letters inside the frame at every width. The hero grid
+     decides how wide the column is: ~52% of the viewport on desktop, ~86% on
+     phones. */
+  font-size: 31cqw;
   line-height: 0.95;
   letter-spacing: -0.02em;
   text-transform: none;
@@ -189,6 +193,23 @@
   background: #E42A1D;
 }
 
+/* Stacked hero layouts put the dispatch board under the masthead, so the
+   wordmark is also capped by viewport height to keep the board in the first
+   screen. The width cap still comes from the column, so containment holds. */
+@media (max-width: 1279px) {
+  .editorialGlyph {
+    font-size: min(31cqw, 26vh);
+  }
+}
+
+/* Tablets stack too, but with a wider column: a slightly smaller cap keeps the
+   whole board and the proof band inside the first screen. */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .editorialGlyph {
+    font-size: min(28cqw, 22vh);
+  }
+}
+
 @media (max-width: 767px) {
   .nameRow {
     width: 100%;
@@ -197,7 +218,6 @@
   }
 
   .editorialGlyph {
-    font-size: clamp(2.4rem, 26vw, 12rem);
     line-height: 1;
   }
 
