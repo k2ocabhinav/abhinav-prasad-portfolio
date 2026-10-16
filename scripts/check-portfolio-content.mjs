@@ -15,6 +15,10 @@ const codeTones = new Set(["lime", "ember", "split"]);
 const beyondKinds = new Set(["photo", "event", "quote", "person", "project"]);
 const beyondColors = new Set(["cobalt", "coral", "lemon", "amber", "lilac", "pink"]);
 const beyondSizes = new Set(["hero", "wide", "tall", "square"]);
+const projectStoryViewports = new Set(["desktop", "mobile"]);
+const projectStoryThemes = new Set(["day", "night"]);
+const projectTenantIds = new Set(["velo-business", "saffron-routes"]);
+const projectTripRoles = new Set(["rider", "dispatch", "driver"]);
 
 function rel(filePath) {
   return path.relative(root, filePath);
@@ -159,6 +163,80 @@ function validateImage(image, filePath, requireSrc = true) {
   }
 }
 
+// P4 storyboard validation — begin
+function validateStoryboard(storyboard, filePath) {
+  const visuals = objectArray(storyboard, "visuals", filePath);
+  if (visuals.length === 0) fail(filePath, 'storyboard "visuals" must contain at least one visual');
+  visuals.forEach((visual) => {
+    stringValue(visual, "id", filePath);
+    enumValue(visual, "viewport", projectStoryViewports, filePath);
+    optionalEnum(visual, "theme", projectStoryThemes, "day", filePath);
+    optionalEnum(visual, "tenant", projectTenantIds, "velo-business", filePath);
+    validateImage(visual, filePath);
+  });
+  const visualIds = visuals.map((visual) => stringValue(visual, "id", filePath));
+  unique(visualIds, "storyboard visual id");
+  const visualById = new Map(visuals.map((visual) => [stringValue(visual, "id", filePath), visual]));
+
+  const chapters = objectArray(storyboard, "chapters", filePath);
+  if (chapters.length === 0) fail(filePath, 'storyboard "chapters" must contain at least one chapter');
+  chapters.forEach((chapter) => {
+    stringValue(chapter, "id", filePath);
+    stringValue(chapter, "eyebrow", filePath);
+    stringValue(chapter, "title", filePath);
+    stringValue(chapter, "summary", filePath);
+    const references = stringArray(chapter, "visualIds", filePath);
+    if (references.length === 0) fail(filePath, 'storyboard chapter "visualIds" must not be empty');
+    references.forEach((visualId) => {
+      if (!visualById.has(visualId)) {
+        fail(filePath, `storyboard chapter references missing visual "${visualId}"`);
+      }
+    });
+  });
+  unique(chapters.map((chapter) => stringValue(chapter, "id", filePath)), "storyboard chapter id");
+
+  const steps = objectArray(storyboard, "tripSteps", filePath);
+  if (steps.length !== projectTripRoles.size) {
+    fail(filePath, 'storyboard "tripSteps" must contain one step for rider, dispatch, and driver');
+  }
+  const roles = steps.map((step) => enumValue(step, "role", projectTripRoles, filePath));
+  unique(roles, "storyboard trip role");
+  for (const role of projectTripRoles) {
+    if (!roles.includes(role)) fail(filePath, `storyboard tripSteps is missing the "${role}" role`);
+  }
+  steps.forEach((step) => {
+    stringValue(step, "label", filePath);
+    stringValue(step, "summary", filePath);
+    const visualId = stringValue(step, "visualId", filePath);
+    if (!visualById.has(visualId)) {
+      fail(filePath, `storyboard trip step references missing visual "${visualId}"`);
+    }
+  });
+
+  const switcher = objectValue(storyboard, "tenantSwitcher", filePath);
+  stringValue(switcher, "label", filePath);
+  const defaultId = enumValue(switcher, "defaultId", projectTenantIds, filePath);
+  const options = objectArray(switcher, "options", filePath);
+  if (options.length < 2) fail(filePath, 'storyboard "tenantSwitcher.options" must contain at least two tenants');
+  const optionIds = options.map((option) => enumValue(option, "id", projectTenantIds, filePath));
+  unique(optionIds, "storyboard tenant id");
+  if (!optionIds.includes(defaultId)) {
+    fail(filePath, `storyboard default tenant "${defaultId}" is not in tenantSwitcher.options`);
+  }
+  options.forEach((option, index) => {
+    stringValue(option, "label", filePath);
+    const visualId = stringValue(option, "visualId", filePath);
+    const visual = visualById.get(visualId);
+    if (!visual) {
+      fail(filePath, `storyboard tenant option references missing visual "${visualId}"`);
+    }
+    if (visual.tenant !== optionIds[index]) {
+      fail(filePath, `storyboard tenant visual "${visualId}" must be tagged for "${optionIds[index]}"`);
+    }
+  });
+}
+// P4 storyboard validation — end
+
 function validateProfile() {
   const filePath = path.join(contentRoot, "profile.mdx");
   const data = read(filePath);
@@ -268,6 +346,11 @@ function validateProjects() {
         stringValue(reference, "label", filePath);
         optionalNullableString(reference, "href", filePath);
       });
+      // P4 storyboard field — begin
+      if (detail.storyboard !== undefined) {
+        validateStoryboard(objectValue(detail, "storyboard", filePath), filePath);
+      }
+      // P4 storyboard field — end
     }
     return data;
   });

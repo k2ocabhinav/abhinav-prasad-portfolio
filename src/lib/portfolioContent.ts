@@ -21,8 +21,16 @@ import type {
   PortfolioProject,
   PortfolioStatus,
   ProjectDetail,
+  ProjectDetailStory,
   ProjectLink,
+  ProjectStoryChapter,
+  ProjectStoryTheme,
+  ProjectStoryViewport,
+  ProjectTenantId,
+  ProjectTripRole,
   ProjectTechBucket,
+  ProjectTenantOption,
+  ProjectStoryVisual,
   ProjectVisual,
   ServiceEntry,
   StackContext,
@@ -46,6 +54,10 @@ const beyondKinds = ["photo", "event", "quote", "person", "project"] as const;
 const beyondColors = ["cobalt", "coral", "lemon", "amber", "lilac", "pink"] as const;
 const beyondSizes = ["hero", "wide", "tall", "square"] as const;
 const socialPlatforms = ["github", "linkedin", "email"] as const;
+const projectStoryViewports = ["desktop", "mobile"] as const;
+const projectStoryThemes = ["day", "night"] as const;
+const projectTenantIds = ["velo-business", "saffron-routes"] as const;
+const projectTripRoles = ["rider", "dispatch", "driver"] as const;
 
 function fail(filePath: string, message: string): never {
   throw new Error(`[portfolio-content] ${path.relative(process.cwd(), filePath)}: ${message}`);
@@ -267,6 +279,98 @@ function readTechBuckets(data: Frontmatter, filePath: string): ProjectTechBucket
   }));
 }
 
+function readStoryboard(data: Frontmatter, filePath: string): ProjectDetailStory {
+  const visuals = objectArray(data, "visuals", filePath).map((visual): ProjectStoryVisual => {
+    const image = readImage(visual, filePath);
+    const theme = visual.theme === undefined
+      ? undefined
+      : enumValue(visual, "theme", projectStoryThemes, filePath) as ProjectStoryTheme;
+    const tenant = visual.tenant === undefined
+      ? undefined
+      : enumValue(visual, "tenant", projectTenantIds, filePath) as ProjectTenantId;
+
+    return {
+      id: stringValue(visual, "id", filePath),
+      viewport: enumValue(visual, "viewport", projectStoryViewports, filePath) as ProjectStoryViewport,
+      ...(theme ? { theme } : {}),
+      ...(tenant ? { tenant } : {}),
+      ...image,
+    };
+  });
+  const visualIds = visuals.map((visual) => visual.id);
+  ensureUnique(visualIds, "storyboard visual id");
+  const visualById = new Map(visuals.map((visual) => [visual.id, visual]));
+
+  const chapters = objectArray(data, "chapters", filePath).map((chapter): ProjectStoryChapter => ({
+    id: stringValue(chapter, "id", filePath),
+    eyebrow: stringValue(chapter, "eyebrow", filePath),
+    title: stringValue(chapter, "title", filePath),
+    summary: stringValue(chapter, "summary", filePath),
+    visualIds: nonEmptyStringArray(chapter, "visualIds", filePath),
+  }));
+  ensureUnique(chapters.map((chapter) => chapter.id), "storyboard chapter id");
+  chapters.forEach((chapter) => {
+    chapter.visualIds.forEach((visualId) => {
+      if (!visualById.has(visualId)) {
+        fail(filePath, `storyboard chapter "${chapter.id}" references missing visual "${visualId}"`);
+      }
+    });
+  });
+
+  const tripSteps = objectArray(data, "tripSteps", filePath).map((step) => ({
+    role: enumValue(step, "role", projectTripRoles, filePath) as ProjectTripRole,
+    label: stringValue(step, "label", filePath),
+    summary: stringValue(step, "summary", filePath),
+    visualId: stringValue(step, "visualId", filePath),
+  }));
+  if (tripSteps.length !== projectTripRoles.length) {
+    fail(filePath, 'storyboard "tripSteps" must contain one step for rider, dispatch, and driver');
+  }
+  ensureUnique(tripSteps.map((step) => step.role), "storyboard trip role");
+  projectTripRoles.forEach((role) => {
+    if (!tripSteps.some((step) => step.role === role)) {
+      fail(filePath, `storyboard tripSteps is missing the "${role}" role`);
+    }
+  });
+  tripSteps.forEach((step) => {
+    if (!visualById.has(step.visualId)) {
+      fail(filePath, `storyboard trip step "${step.role}" references missing visual "${step.visualId}"`);
+    }
+  });
+
+  const tenantSwitcher = objectValue(data, "tenantSwitcher", filePath);
+  const defaultId = enumValue(tenantSwitcher, "defaultId", projectTenantIds, filePath) as ProjectTenantId;
+  const options = objectArray(tenantSwitcher, "options", filePath).map((option): ProjectTenantOption => ({
+    id: enumValue(option, "id", projectTenantIds, filePath) as ProjectTenantId,
+    label: stringValue(option, "label", filePath),
+    visualId: stringValue(option, "visualId", filePath),
+  }));
+  ensureUnique(options.map((option) => option.id), "storyboard tenant id");
+  if (!options.some((option) => option.id === defaultId)) {
+    fail(filePath, `storyboard default tenant "${defaultId}" is not in tenantSwitcher.options`);
+  }
+  options.forEach((option) => {
+    const visual = visualById.get(option.visualId);
+    if (!visual) {
+      fail(filePath, `storyboard tenant "${option.id}" references missing visual "${option.visualId}"`);
+    }
+    if (visual.tenant !== option.id) {
+      fail(filePath, `storyboard tenant visual "${option.visualId}" must be tagged for "${option.id}"`);
+    }
+  });
+
+  return {
+    visuals,
+    chapters,
+    tripSteps,
+    tenantSwitcher: {
+      label: stringValue(tenantSwitcher, "label", filePath),
+      defaultId,
+      options,
+    },
+  };
+}
+
 function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefined {
   const detail = optionalObject(data, "detail");
   if (!detail || !booleanValue(detail, "enabled", false)) {
@@ -276,6 +380,10 @@ function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefi
   const heroImage = readImage(objectValue(detail, "heroImage", filePath), filePath);
   const gallery = objectArray(detail, "gallery", filePath).map((item) => readImage(item, filePath));
   gallery.forEach((item) => validatePublicAsset(item.src, filePath));
+
+  const storyboardData = detail.storyboard === undefined
+    ? undefined
+    : objectValue(detail, "storyboard", filePath);
 
   return {
     slug: stringValue(detail, "slug", filePath),
@@ -293,6 +401,7 @@ function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefi
     stackBuckets: readTechBuckets(detail, filePath),
     qualityHighlights: stringArray(detail, "qualityHighlights", filePath),
     references: readLinks(detail, filePath, "references"),
+    ...(storyboardData ? { storyboard: readStoryboard(storyboardData, filePath) } : {}),
   };
 }
 
