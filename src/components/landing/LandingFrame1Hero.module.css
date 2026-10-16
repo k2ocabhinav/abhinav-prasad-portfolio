@@ -6,6 +6,7 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -13,6 +14,10 @@
   padding: 0 var(--content-padding-x);
   overflow: hidden;
   isolation: isolate;
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-burgundy, #6A2135);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-linen, #FCF8F2);
 }
 
 .content {
@@ -24,4 +29,72 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.artwork {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ledger {
+  position: absolute;
+  left: max(var(--content-padding-x), calc((100vw - var(--content-max-width)) / 2));
+  bottom: 2.4rem;
+  width: clamp(15rem, 22vw, 20rem);
+}
+
+.planes {
+  position: absolute;
+  right: max(var(--content-padding-x), calc((100vw - var(--content-max-width)) / 2));
+  bottom: 7.5rem;
+  width: clamp(8.5rem, 13vw, 11.5rem);
+}
+
+.floorBand {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1.1rem;
+  background: var(--color-burgundy, #6A2135);
+  border-top: 1px solid var(--color-black-cherry, #351E28);
+}
+
+@media (max-width: 767px) {
+  .frame {
+    min-height: max(100svh, 52rem);
+    justify-content: flex-start;
+    padding-top: 4.8rem;
+    padding-bottom: 2rem;
+  }
+
+  .artwork {
+    position: absolute;
+    top: auto;
+    right: 0;
+    bottom: 1.45rem;
+    left: 0;
+    width: min(100%, 28rem);
+    height: 11.8rem;
+    margin-inline: auto;
+  }
+
+  .ledger {
+    left: 0.4rem;
+    bottom: 0;
+    width: min(62vw, 14.5rem);
+  }
+
+  .planes {
+    right: 0.3rem;
+    bottom: 4.5rem;
+    width: min(37vw, 8rem);
+  }
+
+  .floorBand {
+    height: 0.85rem;
+  }
 }
