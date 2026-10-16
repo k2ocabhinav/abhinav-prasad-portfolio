@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 import type { Project, SectionTone } from "@/types";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
+import { tiltSpring } from "@/lib/animations";
 import { renderIcon, cn } from "@/lib/utils";
 import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -43,66 +43,34 @@ function WorksSectionContent({
   projects,
   tone,
 }: WorksSectionProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : sectionRef,
-    offset: ["start end", "end start"],
-  });
-  const headingY = useTransform(scrollYProgress, [0, 1], [20, -20]);
-  const calloutY = useTransform(scrollYProgress, [0, 1], [12, -10]);
-
   return (
     <SectionWrapper
       id="work"
       tone={tone}
       className={styles.worksSection}
     >
-      <div ref={sectionRef} className={styles.sectionHeader}>
+      <div className={styles.sectionHeader}>
         <RisoMark variant="discs" />
-        <m.h2
-          style={{ y: prefersReducedMotion ? 0 : headingY }}
-          className={styles.heading}
-        >
-          <FlipRevealText flat
+        <h2 className={styles.heading}>
+          <FlipRevealText
+            static
             overprint
             text="Selected work"
             mode="word"
-            progress={scrollYProgress}
-            window={[0.14, 0.28]}
-            holdUntil={0.84}
-            stagger={0.03}
-            perspective={900}
             className={styles.headingFlip}
             tokenClassName={styles.headingFlipToken}
           />
-        </m.h2>
-        <m.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
-          <FlipRevealText flat
-            text="Systems that ship"
-            mode="word"
-            progress={scrollYProgress}
-            window={[0.24, 0.38]}
-            holdUntil={0.8}
-            stagger={0.03}
-            perspective={860}
-            className={styles.calloutFlip}
-            tokenClassName={styles.calloutFlipToken}
-          />
-        </m.p>
+        </h2>
+        <p className={styles.callout}>
+          Systems that ship
+        </p>
       </div>
 
-      <m.div
-        variants={staggerContainer(0.12)}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-80px" }}
-        className={styles.projectsList}
-      >
+      <div className={styles.projectsList}>
         {projects.map((project) => (
           <WorkCard key={project.id} project={project} />
         ))}
-      </m.div>
+      </div>
     </SectionWrapper>
   );
 }
@@ -133,7 +101,7 @@ function WorkCard({ project }: { project: Project }) {
   const isVeloProject = project.detailSlug === "velo";
 
   return (
-    <m.div variants={staggerItem} className={styles.workCard}>
+    <div className={styles.workCard}>
       {/* Visual Panel */}
       <m.div
         ref={prefersReducedMotion ? undefined : tiltRef}
@@ -294,6 +262,6 @@ function WorkCard({ project }: { project: Project }) {
           </span>
         ) : null}
       </div>
-    </m.div>
+    </div>
   );
 }

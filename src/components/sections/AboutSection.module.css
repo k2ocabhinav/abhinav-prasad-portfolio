@@ -11,10 +11,6 @@
   --plate-paper: #EDE6DA;
 }
 
-.aboutPanel :global(.spec-header) {
-  color: var(--color-panel-accent, #F4BEBB);
-}
-
 .heading {
   font-family: var(--font-display);
   font-style: normal;
@@ -25,33 +21,8 @@
   color: var(--color-panel-accent, #F4BEBB);
 }
 
-.headingFlip {
-  display: inline-block;
-}
-
-.headingFlipToken {
-  display: inline-block;
-}
-
-.callout {
-  margin-top: 0.95rem;
-  font-family: var(--font-label);
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-secondary-text);
-}
-
 .cutawayWrap {
   margin-top: clamp(1.6rem, 3vw, 2.6rem);
-}
-
-.calloutFlip {
-  display: inline-block;
-}
-
-.calloutFlipToken {
-  display: inline-block;
 }
 
 .contentCol {
@@ -72,10 +43,6 @@
 @media (max-width: 767px) {
   .aboutGrid {
     gap: 1.75rem;
-  }
-
-  .callout {
-    font-size: 12px;
   }
 
   .cutawayWrap {

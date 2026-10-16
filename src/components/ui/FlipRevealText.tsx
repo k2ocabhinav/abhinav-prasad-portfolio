@@ -23,6 +23,8 @@ interface FlipRevealTextProps {
   flat?: boolean;
   /** Misregistered accent copy behind the text; large section titles only. */
   overprint?: boolean;
+  /** Render the final state immediately, with no reveal. */
+  static?: boolean;
   className?: string;
   tokenClassName?: string;
 }
@@ -133,11 +135,12 @@ export default function FlipRevealText({
   reduceMotion,
   flat = false,
   overprint = false,
+  static: isStatic = false,
   className,
   tokenClassName,
 }: FlipRevealTextProps) {
   const prefersReducedMotion = useReducedMotion();
-  const shouldReduceMotion = reduceMotion ?? prefersReducedMotion;
+  const shouldReduceMotion = isStatic || (reduceMotion ?? prefersReducedMotion);
   const disableFlip = flat || shouldReduceMotion;
   const idleProgress = useMotionValue(0);
   const progressSource = progress ?? idleProgress;
@@ -190,7 +193,11 @@ export default function FlipRevealText({
     return (
       <span className={cn(styles.root, className)} role="img" aria-label={text}>
         {overprintLayer}
-        <span className={cn(styles.token, tokenClassName)}>{text}</span>
+        {tokens.map((token) => (
+          <span key={token.key} className={styles.clip}>
+            <span className={cn(styles.token, tokenClassName)}>{token.value}</span>
+          </span>
+        ))}
       </span>
     );
   }
