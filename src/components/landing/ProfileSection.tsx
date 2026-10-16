@@ -4,7 +4,9 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import StillLifePlate from "@/components/art/StillLifePlate";
-import type { PersonalData } from "@/types";
+import StackStrip, { type StackStripItem } from "@/components/art/stack-icons/StackStrip";
+import type { StackIconName } from "@/components/art/stack-icons/icons";
+import type { PersonalData, ProfileIntroContent } from "@/types";
 import styles from "./ProfileSection.module.css";
 
 // =============================================================================
@@ -13,11 +15,37 @@ import styles from "./ProfileSection.module.css";
 
 interface ProfileSectionProps {
   personal: PersonalData;
+  intro: ProfileIntroContent;
   reduceMotion?: boolean;
+}
+
+// The intro stack list is content-driven; each validated label maps to its
+// own glyph so a reordered or trimmed list still renders correctly.
+const STACK_ICON_BY_LABEL: Record<string, StackIconName> = {
+  java: "java",
+  spring: "spring",
+  postgresql: "postgresql",
+  python: "python",
+  typescript: "typescript",
+  react: "react",
+  "next.js": "nextjs",
+  aws: "aws",
+  docker: "docker",
+  agents: "agents",
+};
+
+function splitProofLead(line: string): { lead: string; rest: string } {
+  const separator = line.indexOf(": ");
+  if (separator === -1) {
+    return { lead: line, rest: "" };
+  }
+
+  return { lead: line.slice(0, separator + 1), rest: line.slice(separator + 2) };
 }
 
 export default function ProfileSection({
   personal,
+  intro,
   reduceMotion = false,
 }: ProfileSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -31,6 +59,11 @@ export default function ProfileSection({
   const portraitX = useTransform(scrollYProgress, [0, 0.62, 1], [4, 0, -4]);
   const hintOpacity = useTransform(scrollYProgress, [0, 0.82, 1], [0.72, 1, 0.78]);
   const hintY = useTransform(scrollYProgress, [0, 0.76, 1], [6, 0, -4]);
+
+  const stackItems: StackStripItem[] = intro.stackItems.map((label) => ({
+    name: STACK_ICON_BY_LABEL[label.toLowerCase()] ?? "api",
+    label,
+  }));
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -121,19 +154,33 @@ export default function ProfileSection({
             </motion.div>
           </motion.div>
 
-          <div className={styles.copyColumn}>
-            <motion.div
-              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-              animate={reduceMotion ? { opacity: 1, y: 0 } : undefined}
-              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={reduceMotion ? undefined : { once: true }}
-              transition={reduceMotion ? undefined : { delay: 0.32 }}
-              className={styles.taglineBlock}
-            >
-              <p className={styles.profileTagline}>{personal.tagline}</p>
-              <p className={styles.profileSubtitle}>{personal.subtitle}</p>
-            </motion.div>
-          </div>
+          <motion.div
+            className={styles.copyColumn}
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={reduceMotion ? { opacity: 1, y: 0 } : undefined}
+            whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={reduceMotion ? undefined : { once: true }}
+            transition={reduceMotion ? undefined : { delay: 0.24 }}
+          >
+            <h2 className={styles.headline}>{intro.headline}</h2>
+
+            <ul className={styles.proofList}>
+              {intro.proofLines.map((line) => {
+                const { lead, rest } = splitProofLead(line);
+                return (
+                  <li key={line} className={styles.proofItem}>
+                    <span className={styles.proofMark} aria-hidden="true" />
+                    <span className={styles.proofText}>
+                      <strong className={styles.proofLead}>{lead}</strong>
+                      {rest ? ` ${rest}` : ""}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <StackStrip items={stackItems} className={styles.stackStrip} />
+          </motion.div>
         </div>
       </div>
     </section>
