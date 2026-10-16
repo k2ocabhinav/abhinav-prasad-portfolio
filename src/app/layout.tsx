@@ -17,17 +17,23 @@ import "./globals.css";
 // Hanken Grotesk (UI + body), Fragment Mono (meta labels).
 // =============================================================================
 
-// Display + wordmark — expressive high-contrast serif; the wordmark forces
-// opsz 144 / WONK 1 via font-variation-settings in AnimatedName.module.css.
+// Display + wordmark — expressive high-contrast serif. The wordmark forces
+// opsz 144 / WONK 1 via font-variation-settings in AnimatedName.module.css, so
+// only opsz and WONK are requested: SOFT is never set to anything but its
+// default (0), and that unused axis alone was ~121 KB of the build. Fraunces
+// is used above the fold (wordmark + hero role line), so it stays preloaded.
 const fraunces = Fraunces({
   subsets: ["latin"],
-  axes: ["opsz", "SOFT", "WONK"],
+  axes: ["opsz", "WONK"],
   style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });
 
-// Prose serif — editorial reading moments and italic accents.
+// Prose serif — editorial reading moments and italic accents. Newsreader's
+// optical-size axis is load-bearing (prose runs from 1rem standfirsts up to
+// 3rem section headings), so it is kept. The roman face is the hero standfirst
+// that paints the LCP, hence preload.
 const newsreader = Newsreader({
   subsets: ["latin"],
   axes: ["opsz"],
@@ -36,15 +42,20 @@ const newsreader = Newsreader({
   display: "swap",
 });
 
-// UI + body workhorse.
+// UI + body workhorse. Weights 400 (body) and 600 (bold `strong` runs) are
+// used, with 500 kept so mid-weight highlights never fall back to faux bold.
+// Body copy starts below the hero on every route, so this face is not preloaded
+// — it loads on first use instead of competing with the LCP fonts.
 const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-body",
   display: "swap",
+  preload: false,
 });
 
-// Meta/eyebrow labels — mono, uppercase, tracked.
+// Meta/eyebrow labels — mono, uppercase, tracked. Used by the nav and hero
+// eyebrow, so it stays preloaded.
 const fragmentMono = Fragment_Mono({
   subsets: ["latin"],
   weight: "400",

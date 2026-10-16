@@ -3,6 +3,12 @@ import { defineConfig, devices } from "@playwright/test";
 const responsiveSpec = /portfolio-responsive\.spec\.ts/;
 const port = process.env.PLAYWRIGHT_PORT ?? "3000";
 
+// PLAYWRIGHT_PROD=1 runs the suite against a real production build. The build
+// happens inside the webServer command so the served bundle always matches the
+// working tree; an existing server is never reused in that mode, otherwise a
+// stale dev server could silently stand in for the build under test.
+const prod = process.env.PLAYWRIGHT_PROD === "1";
+
 export default defineConfig({
   testDir: "./tests",
   timeout: 60_000,
@@ -67,9 +73,11 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npm run dev -- --hostname 127.0.0.1 --port ${port}`,
+    command: prod
+      ? `npm run build && npm run start -- --hostname 127.0.0.1 --port ${port}`
+      : `npm run dev -- --hostname 127.0.0.1 --port ${port}`,
     url: `http://127.0.0.1:${port}`,
-    reuseExistingServer: true,
-    timeout: 120_000,
+    reuseExistingServer: !prod,
+    timeout: prod ? 300_000 : 120_000,
   },
 });
