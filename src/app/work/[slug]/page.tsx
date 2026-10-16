@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProjectDetailPage from "@/components/sections/ProjectDetailPage";
 import {
+  getChronicleEntries,
   getProjectDetailBySlug,
   getProjectDetailSlugs,
   getProfileContent,
 } from "@/lib/portfolioContent";
 import { absoluteUrl } from "@/lib/siteConfig";
+import { buildProjectJsonLd, projectSeoTitle, serializeJsonLd } from "@/lib/structuredData";
 
 interface WorkDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -22,7 +24,7 @@ export async function generateMetadata({ params }: WorkDetailPageProps): Promise
     return {};
   }
 
-  const title = detail.title;
+  const title = projectSeoTitle(detail);
   const imageUrl = absoluteUrl(detail.heroImage.src);
   const canonicalUrl = absoluteUrl(`/work/${detail.slug}`);
 
@@ -50,7 +52,7 @@ export async function generateMetadata({ params }: WorkDetailPageProps): Promise
       card: "summary_large_image",
       title,
       description: detail.subtitle,
-      images: [imageUrl],
+      images: [{ url: imageUrl, alt: detail.heroImage.alt }],
     },
   };
 }
@@ -67,5 +69,15 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
     notFound();
   }
 
-  return <ProjectDetailPage detail={detail} personal={getProfileContent().personal} />;
+  const profile = getProfileContent();
+  const structuredData = buildProjectJsonLd(detail, profile, getChronicleEntries());
+
+  return (
+    <>
+      <script id="project-structured-data" type="application/ld+json">
+        {serializeJsonLd(structuredData)}
+      </script>
+      <ProjectDetailPage detail={detail} personal={profile.personal} />
+    </>
+  );
 }
