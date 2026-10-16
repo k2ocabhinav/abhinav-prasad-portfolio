@@ -11,6 +11,7 @@ const prod = process.env.PLAYWRIGHT_PROD === "1";
 
 export default defineConfig({
   testDir: "./tests",
+  outputDir: process.env.PLAYWRIGHT_OUTPUT_DIR ?? "test-results",
   timeout: 60_000,
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),

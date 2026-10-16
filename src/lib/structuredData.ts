@@ -117,7 +117,6 @@ export function buildProjectJsonLd(
   const projectId = `${pageUrl}#project`;
   const referencedRepository = detail.references?.find(
     (reference) =>
-      reference.label === "Source" &&
       reference.href?.startsWith("https://github.com/")
   )?.href;
   const repository = referencedRepository ?? PUBLIC_PROJECT_REPOSITORIES[detail.slug];
@@ -162,7 +161,7 @@ export function buildProjectJsonLd(
 
 export function projectSeoTitle(detail: ProjectDetail): string {
   const titles: Record<string, string> = {
-    velo: "Velo, a white-label dispatch platform",
+    velo: "Velo, a white-label dispatch prototype",
     "portfolio-platform": "Interactive engineering portfolio and content platform",
   };
   return titles[detail.slug] ?? detail.title.replace(/\s*\u2014\s*/g, ", ");

@@ -55,6 +55,33 @@ async function settlePage() {
   await page.waitForTimeout(180);
 }
 
+async function writeWebpScreenshot(outputPath) {
+  const png = await page.screenshot({
+    animations: "disabled",
+    scale: "css",
+  });
+  const webpDataUrl = await page.evaluate(async (pngBase64) => {
+    const image = new Image();
+    image.src = `data:image/png;base64,${pngBase64}`;
+    await image.decode();
+
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Could not create a canvas context for WebP capture");
+    context.drawImage(image, 0, 0);
+
+    return canvas.toDataURL("image/webp", 0.9);
+  }, png.toString("base64"));
+
+  const [mime, encoded] = webpDataUrl.split(",", 2);
+  if (!mime?.startsWith("data:image/webp") || !encoded) {
+    throw new Error(`WebP capture failed for ${outputPath}`);
+  }
+  fs.writeFileSync(outputPath, Buffer.from(encoded, "base64"));
+}
+
 for (const capture of captures) {
   await page.goto(new URL(capture.route, baseUrl).toString(), {
     waitUntil: "domcontentloaded",
@@ -69,13 +96,7 @@ for (const capture of captures) {
   }
   await settlePage();
 
-  await page.screenshot({
-    path: path.join(projectOutput, capture.file),
-    type: "webp",
-    quality: 90,
-    animations: "disabled",
-    scale: "css",
-  });
+  await writeWebpScreenshot(path.join(projectOutput, capture.file));
 }
 
 await page.setViewportSize({ width: 1200, height: 630 });

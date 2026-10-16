@@ -15,7 +15,7 @@ export default function AboutSection({
   intro,
   tone,
 }: AboutSectionProps) {
-  const proofLines = intro.proofLines.slice(1);
+  const proofLines = intro.proofLines;
 
   return (
     <SectionWrapper id="about" tone={tone} className={styles.aboutSection}>

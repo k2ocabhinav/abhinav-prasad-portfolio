@@ -70,7 +70,7 @@
 }
 
 .hintCopy span:first-child {
-  color: var(--color-secondary-text, #63605A);
+  color: #4D5659;
 }
 
 .copyColumn {

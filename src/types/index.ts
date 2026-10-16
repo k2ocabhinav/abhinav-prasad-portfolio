@@ -365,7 +365,13 @@ export interface LandingHeroContent {
   ctas: LandingCTA[];
 }
 
-export type LandingProofBeatLabel = "Problem" | "My Role" | "Shipped" | "Impact";
+export type LandingProofBeatLabel =
+  | "Problem"
+  | "My Role"
+  | "Shipped"
+  | "Impact"
+  | "Built"
+  | "Prototype scope";
 
 export interface LandingProofBeat {
   label: LandingProofBeatLabel;

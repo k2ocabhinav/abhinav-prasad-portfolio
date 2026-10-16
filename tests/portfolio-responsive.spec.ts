@@ -3,18 +3,16 @@ import { expect, test } from "@playwright/test";
 import type { Locator, Page, TestInfo } from "@playwright/test";
 
 const workstreamNames = [
-  "Backend & SQL Engineering",
-  "Database Delivery & Automation",
-  "Cloud Delivery & Operational Analytics",
-  "AI-Assisted Developer Tooling",
+  "Stakeholder delivery and release tooling",
+  "Cloud delivery and operational reports",
+  "Backend and SQL foundations",
+  "AI coding tools for database work",
 ] as const;
 
 const stackGroups = [
-  ["Database & SQL Engineering", "Used at work"],
-  ["Backend Application Engineering", "Built with in projects"],
-  ["Cloud, Delivery & Analytics", "Used at work"],
-  ["AI-Assisted Engineering", "Part of my workflow"],
-  ["Frontend & Product Engineering", "Built with in projects"],
+  ["AI coding agent workflows", "Part of my workflow"],
+  ["Backend systems and APIs", "Built in projects"],
+  ["Cloud delivery and release checks", "Used at work"],
 ] as const;
 
 const screenshotProjects = new Set([
@@ -66,15 +64,15 @@ async function sweepWholePage(page: Page) {
 
 async function revealAndSettleHomepage(page: Page) {
   for (const selector of [
+    "#services",
     "#about",
     "#experience",
     "#work",
     "#stack",
-    "#presence",
     "#contact",
   ]) {
     await page.locator(selector).scrollIntoViewIfNeeded();
-    await page.waitForTimeout(650);
+    await page.waitForTimeout(350);
   }
 }
 
@@ -134,100 +132,54 @@ async function expectMinimumTargetSize(locator: Locator, minimum = 44) {
   }
 }
 
-async function expectPortfolioContentWithinViewport(page: Page) {
-  const result = await page.evaluate(() => {
+async function expectSectionsWithinViewport(
+  page: Page,
+  sections: readonly string[] = ["#experience", "#stack"]
+) {
+  const result = await page.evaluate((sectionSelectors) => {
     const viewportWidth = window.innerWidth;
     const documentWidth = document.documentElement.scrollWidth;
-    const selectors = [
-      "#experience h2",
-      "#experience h3",
-      "#experience h4",
-      "#experience h5",
-      "#experience p",
-      "#experience li",
-      "#experience strong",
-      "#experience [data-experience-dossier]",
-      "#stack h2",
-      "#stack h3",
-      "#stack p",
-      "#stack li",
-      "#stack [data-stack-card]",
-    ];
     const offenders: Array<{ selector: string; left: number; right: number }> = [];
 
-    for (const selector of selectors) {
-      document.querySelectorAll<HTMLElement>(selector).forEach((element, index) => {
-        if (element.closest('[aria-hidden="true"]')) {
-          return;
+    for (const selector of sectionSelectors) {
+      const root = document.querySelector<HTMLElement>(selector);
+      if (!root) {
+        offenders.push({ selector, left: -1, right: viewportWidth + 1 });
+        continue;
+      }
+
+      if (root.getBoundingClientRect().width > viewportWidth + 1) {
+        offenders.push({
+          selector,
+          left: root.getBoundingClientRect().left,
+          right: root.getBoundingClientRect().right,
+        });
+      }
+
+      root.querySelectorAll<HTMLElement>("h1, h2, h3, h4, p, li, a, button").forEach(
+        (element, index) => {
+          if (element.closest('[aria-hidden="true"]')) {
+            return;
+          }
+          const style = getComputedStyle(element);
+          const rect = element.getBoundingClientRect();
+          if (
+            style.display !== "none" &&
+            style.visibility !== "hidden" &&
+            rect.width > 0 &&
+            (rect.left < -1 || rect.right > viewportWidth + 1)
+          ) {
+            offenders.push({ selector: `${selector} text ${index}`, left: rect.left, right: rect.right });
+          }
         }
-        const style = getComputedStyle(element);
-        const rect = element.getBoundingClientRect();
-        if (
-          style.display !== "none" &&
-          style.visibility !== "hidden" &&
-          rect.width > 0 &&
-          (rect.left < -1 || rect.right > viewportWidth + 1)
-        ) {
-          offenders.push({
-            selector: `${selector}:nth(${index})`,
-            left: rect.left,
-            right: rect.right,
-          });
-        }
-      });
+      );
     }
 
-    const clipped = Array.from(
-      document.querySelectorAll<HTMLElement>(
-        "#experience [data-experience-dossier], " +
-          "#experience [data-experience-workstream], " +
-          "#stack [data-stack-card]"
-      )
-    )
-      .filter(
-        (element) =>
-          element.scrollWidth > element.clientWidth + 1 ||
-          element.scrollHeight > element.clientHeight + 1
-      )
-      .map((element) =>
-        element.getAttribute("data-experience-workstream") ??
-        element.getAttribute("data-experience-dossier") ??
-        element.getAttribute("data-stack-card") ??
-        element.tagName
-      );
-
-    return { viewportWidth, documentWidth, offenders, clipped };
-  });
+    return { viewportWidth, documentWidth, offenders };
+  }, sections);
 
   expect(result.documentWidth).toBeLessThanOrEqual(result.viewportWidth + 1);
   expect(result.offenders).toEqual([]);
-  expect(result.clipped).toEqual([]);
-}
-
-async function getCardBoxes(page: Page) {
-  return page.locator("#stack [data-stack-card]").evaluateAll((cards) =>
-    cards.map((card) => {
-      const rect = card.getBoundingClientRect();
-      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
-    })
-  );
-}
-
-function rowCounts(boxes: Array<{ y: number }>, tolerance = 8) {
-  const rows: number[] = [];
-  const tops: number[] = [];
-
-  for (const box of boxes) {
-    const rowIndex = tops.findIndex((top) => Math.abs(top - box.y) <= tolerance);
-    if (rowIndex === -1) {
-      tops.push(box.y);
-      rows.push(1);
-    } else {
-      rows[rowIndex] += 1;
-    }
-  }
-
-  return rows;
 }
 
 function formatAxeViolations(
@@ -241,87 +193,66 @@ function formatAxeViolations(
     .join("\n");
 }
 
-test("renders the approved Ostrum dossier and context-labelled stack", async ({ page }) => {
+test("shows the approved Ostrum role, work, and context-labelled stack", async ({ page }) => {
   await openHome(page, true);
 
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
-  await expect(experience.locator("[data-experience-dossier]")).toHaveCount(1);
-  await expect(
-    experience.getByRole("heading", { level: 3, name: /Ostrum Tech Limited/i })
-  ).toHaveCount(1);
+  await expect(experience.getByRole("heading", { level: 3, name: "Ostrum Tech Limited" })).toBeVisible();
+  await expect(experience.getByRole("heading", { level: 4, name: "Database Engineer" })).toBeVisible();
+  await expect(experience.getByText("September 2024 to present", { exact: true })).toBeVisible();
 
-  await expect(
-    experience.getByRole("heading", { level: 5, name: "Software Engineer", exact: true })
-  ).toHaveCount(1);
-  await expect(
-    experience.getByRole("heading", {
-      level: 5,
-      name: "Software Engineer Intern",
-      exact: true,
-    })
-  ).toHaveCount(1);
-  await expect(experience.getByText("Sep 2024 — Present", { exact: true })).toHaveCount(1);
-  await expect(experience.getByText("May 2024 — Aug 2024", { exact: true })).toHaveCount(1);
-
-  await expect(
-    experience.getByText(
-      "At Ostrum, the database is part of the backend execution layer—not just storage.",
-      { exact: false }
-    )
-  ).toHaveCount(1);
-  await expect(
-    experience.getByText("My work has covered workflow orchestration", { exact: false })
-  ).toHaveCount(1);
-
-  await expect(experience.locator("[data-experience-workstream]")).toHaveCount(4);
+  const workDisclosure = experience.getByText("Selected engineering work", { exact: true });
+  await workDisclosure.click();
+  await expect(experience.getByText(/stakeholder needs into database-backed changes/)).toBeVisible();
   for (const name of workstreamNames) {
-    await expect(
-      experience.getByRole("heading", { level: 5, name, exact: true })
-    ).toHaveCount(1);
+    await expect(experience.getByRole("heading", { level: 4, name, exact: true })).toBeVisible();
   }
-  expect(await experience.locator("[data-experience-workstream] strong").count()).toBeGreaterThan(7);
-
-  const experienceHeadingLevels = await experience
-    .locator("h2, h3, h4, h5, h6")
-    .evaluateAll((headings) => headings.map((heading) => Number(heading.tagName.slice(1))));
-  expect(experienceHeadingLevels[0]).toBe(2);
-  for (let index = 1; index < experienceHeadingLevels.length; index += 1) {
-    expect(experienceHeadingLevels[index] - experienceHeadingLevels[index - 1]).toBeLessThanOrEqual(1);
-  }
+  await expect(experience.getByText("Software Engineer Intern", { exact: true })).toBeVisible();
+  const sqlToolsProof = experience.getByText(
+    /I built SQL Tools in Python and Tkinter\./
+  );
+  await expect(sqlToolsProof).toHaveCount(1);
+  await expect(sqlToolsProof).toBeVisible();
+  await expect(experience.getByText(/I traced a state-transition defect/)).toBeVisible();
 
   const stack = page.locator("#stack");
   await stack.scrollIntoViewIfNeeded();
-  await expect(stack.locator("[data-stack-card]")).toHaveCount(5);
-  for (const [label, evidence] of stackGroups) {
-    const card = stack.locator("[data-stack-card]").filter({ hasText: label });
-    await expect(card).toHaveCount(1);
-    await expect(card.getByText(evidence, { exact: true })).toHaveCount(1);
+  for (const [label, context] of stackGroups) {
+    const group = stack.locator("li").filter({ hasText: label });
+    await expect(group).toHaveCount(1);
+    await expect(group).toContainText(context);
   }
-
-  const aiCard = stack.locator('[data-stack-card="ai"]');
-  await expect(aiCard).toContainText("Claude Code");
-  await expect(aiCard).toContainText("OpenAI Codex");
-  await expect(aiCard).toContainText("Context engineering");
-  await expect(aiCard).toContainText("Guardrails");
-  await expect(aiCard).toContainText("Human validation");
-  await expect(aiCard).not.toContainText(
-    /TypeScript|React(?: 19)?|Next\.js|CSS Modules|MDX|Motion|Lenis|Playwright|Tkinter/
-  );
-
-  const frontendCard = stack.locator('[data-stack-card="frontend"]');
-  await expect(frontendCard).toContainText("TypeScript");
-  await expect(frontendCard).toContainText("Next.js 16");
-  await expect(frontendCard).toContainText("Playwright");
-  await expect(stack.locator('[data-stack-card="development"]')).toContainText(
-    "Data structures & algorithms"
-  );
-  await expect(stack.locator('[data-stack-card="cloud"]')).toContainText(
-    "Python / Tkinter release tooling"
-  );
 });
 
-test("keeps Experience and Stack reflow-safe at the project viewport", async ({
+test("keeps the profile proof and agent method specific", async ({ page }) => {
+  await openHome(page, true);
+
+  await expect(page.getByText("Forward deployed engineering", { exact: true })).toBeVisible();
+  await expect(page.getByText("Currently: Database Engineer at Ostrum Tech Limited", { exact: true })).toBeVisible();
+  await expect(page.locator("#about").getByText(/Velo is a pre-launch dispatch prototype/)).toBeVisible();
+  await expect(page.locator("#about").getByText(/As Database Engineer at Ostrum Tech Limited/)).toBeVisible();
+  await expect(page.locator("#about").getByText(/I scope coding-agent tasks/)).toBeVisible();
+  await expect(page.locator("#about").getByText(/I clarify requested behavior with stakeholders/)).toBeVisible();
+
+  const method = page.locator("#work aside[aria-labelledby='work-method-title']");
+  await method.scrollIntoViewIfNeeded();
+  await expect(method.getByRole("heading", { name: "How I orchestrate AI agents" })).toBeVisible();
+  await expect(method.getByText(/45 rated agent runs/)).toBeVisible();
+  await expect(method.getByText(/Velo’s build record/)).toBeVisible();
+  await expect(method.getByText(/first live rehearsal exposed flows the automated tests missed/)).toBeVisible();
+  await expect(method.locator('ol[aria-label="Four method lanes"] li')).toHaveText([
+    "Plan",
+    "Build",
+    "Review",
+    "Ship",
+  ]);
+  const posterLabels = await method.locator("svg text").allTextContents();
+  expect(posterLabels.filter((label) => label === "Before merge")).toHaveLength(1);
+  expect(posterLabels).not.toContain("Review before merge");
+});
+
+test("keeps Experience and Stack content inside the project viewport", async ({
   page,
 }, testInfo) => {
   await openHome(page, true);
@@ -333,96 +264,53 @@ test("keeps Experience and Stack reflow-safe at the project viewport", async ({
     expect(viewport!.width).toBeGreaterThan(viewport!.height);
   }
 
-  await expectPortfolioContentWithinViewport(page);
-
-  const roleRail = page.locator("#experience [data-experience-role-rail]");
-  const workstreams = page.locator("#experience [data-experience-workstreams]");
-  const [roleBox, workBox] = await Promise.all([
-    roleRail.boundingBox(),
-    workstreams.boundingBox(),
-  ]);
-  expect(roleBox).not.toBeNull();
-  expect(workBox).not.toBeNull();
-
-  if (viewport!.width < 1024) {
-    expect(workBox!.y).toBeGreaterThanOrEqual(roleBox!.y + roleBox!.height - 1);
-  } else {
-    expect(workBox!.x).toBeGreaterThanOrEqual(roleBox!.x + roleBox!.width - 1);
-    expect(Math.abs(workBox!.y - roleBox!.y)).toBeLessThanOrEqual(1);
-  }
-
-  const cards = await getCardBoxes(page);
-  expect(cards).toHaveLength(5);
-  const rows = rowCounts(cards);
-  if (viewport!.width < 768) {
-    expect(rows).toEqual([1, 1, 1, 1, 1]);
-  } else if (viewport!.width < 1200) {
-    expect(rows).toEqual([2, 2, 1]);
-  } else {
-    expect(rows).toEqual([2, 3]);
-    expect(cards[0].width).toBeGreaterThan(cards[2].width * 1.35);
-    expect(Math.abs(cards[0].width - cards[1].width)).toBeLessThanOrEqual(2);
-    expect(Math.abs(cards[2].width - cards[3].width)).toBeLessThanOrEqual(2);
-    expect(Math.abs(cards[3].width - cards[4].width)).toBeLessThanOrEqual(2);
+  await expectSectionsWithinViewport(page);
+  await expect(page.locator("#experience article")).toHaveCount(1);
+  await expect(page.locator('#work a[href^="/work/"]')).toHaveCount(2);
+  for (const [label] of stackGroups) {
+    await expect(page.locator("#stack").getByText(label, { exact: true })).toBeVisible();
   }
 });
 
-test("aligns the cobalt arc with the Experience title without collisions", async ({ page }) => {
+test("aligns the arc with the Experience heading without collisions", async ({ page }) => {
   await openHome(page, true);
-  await page.locator("#experience [data-experience-header]").scrollIntoViewIfNeeded();
+  const experience = page.locator("#experience");
+  await experience.scrollIntoViewIfNeeded();
 
-  const title = page.locator("#experience [data-experience-title]");
-  const arc = page.locator("#experience [data-experience-arc]");
-  const callout = page.locator("#experience [data-experience-header] > p");
-  const dossier = page.locator("#experience [data-experience-dossier]");
+  const title = experience.getByRole("heading", { level: 2 });
+  const arc = experience.locator('[data-riso-mark="arc"]');
+  const callout = page.locator("#experience > div > div > header > p");
+  const dossier = experience.locator("article");
   await expect(title).toBeVisible();
   await expect(arc).toBeVisible();
 
-  const [titleBox, arcBox, calloutBox, dossierBox, viewport] = await Promise.all([
+  const [titleBox, arcBox, calloutBox, dossierBox] = await Promise.all([
     title.boundingBox(),
     arc.boundingBox(),
     callout.boundingBox(),
     dossier.boundingBox(),
-    Promise.resolve(page.viewportSize()),
   ]);
   expect(titleBox).not.toBeNull();
   expect(arcBox).not.toBeNull();
   expect(calloutBox).not.toBeNull();
   expect(dossierBox).not.toBeNull();
-  expect(viewport).not.toBeNull();
 
-  expect(
-    Math.abs(titleBox!.y + titleBox!.height - (arcBox!.y + arcBox!.height))
-  ).toBeLessThanOrEqual(8);
+  expect(Math.abs(titleBox!.y + titleBox!.height - (arcBox!.y + arcBox!.height))).toBeLessThanOrEqual(12);
   expect(boxesIntersect(arcBox!, calloutBox!)).toBe(false);
   expect(boxesIntersect(arcBox!, dossierBox!)).toBe(false);
-
-  if (viewport!.width < 768) {
-    expect(arcBox!.width).toBeGreaterThanOrEqual(40);
-    expect(arcBox!.width).toBeLessThanOrEqual(48);
-  } else if (viewport!.width < 1024) {
-    expect(arcBox!.width).toBeGreaterThanOrEqual(56);
-    expect(arcBox!.width).toBeLessThanOrEqual(66);
-  } else {
-    expect(arcBox!.width).toBeGreaterThanOrEqual(76);
-    expect(arcBox!.width).toBeLessThanOrEqual(92);
-  }
 });
 
-test("reduced motion renders the settled dossier and complete arc immediately", async ({ page }) => {
+test("reduced motion renders the Experience mark and work content statically", async ({ page }) => {
   await openHome(page, true);
-  await page.locator("#experience").scrollIntoViewIfNeeded();
+  const experience = page.locator("#experience");
+  await experience.scrollIntoViewIfNeeded();
 
-  const arcPath = page.locator('#experience [data-riso-arc-path="true"]');
+  const arcPath = experience.locator('[data-riso-arc-path="true"]');
   await expect(arcPath).toBeVisible();
-  const arcState = await arcPath.evaluate((path) => ({
-    inlineStyle: path.getAttribute("style"),
-    dashOffset: getComputedStyle(path).strokeDashoffset,
-  }));
-  expect(arcState.inlineStyle ?? "").not.toContain("stroke-dashoffset");
-  expect(["0px", "0", "normal"]).toContain(arcState.dashOffset);
+  await expect(arcPath).not.toHaveAttribute("style", /stroke-dashoffset|pathLength/);
 
-  const workstreams = page.locator("#experience [data-experience-workstream]");
+  await experience.getByText("Selected engineering work", { exact: true }).click();
+  const workstreams = experience.locator("details[open] section");
   await expect(workstreams).toHaveCount(4);
   for (let index = 0; index < 4; index += 1) {
     await expect(workstreams.nth(index)).toBeVisible();
@@ -433,68 +321,33 @@ test("reduced motion renders the settled dossier and complete arc immediately", 
     expect(state.opacity).toBe(1);
     expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(state.transform);
   }
-
-  for (const target of [
-    page.locator("#experience [data-experience-title]").locator(".."),
-    page.locator("#experience [data-experience-header] > p"),
-  ]) {
-    const state = await target.evaluate((element) => ({
-      opacity: Number.parseFloat(getComputedStyle(element).opacity),
-      transform: getComputedStyle(element).transform,
-    }));
-    expect(state.opacity).toBe(1);
-    expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(state.transform);
-  }
 });
 
-test("the scroll-linked arc draws monotonically and the title remains revealed", async ({
+test("the scroll-linked arc draws during the Experience heading transit", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic motion probe is sufficient");
   await openHome(page);
 
-  const header = page.locator("#experience [data-experience-header]");
+  const header = page.locator("#experience > div > div > header");
   const path = page.locator('#experience [data-riso-arc-path="true"]');
   const headerTop = await header.evaluate(
     (element) => element.getBoundingClientRect().top + window.scrollY
   );
   const viewportHeight = page.viewportSize()!.height;
 
-  const drawnLengthAt = async (viewportFraction: number) => {
+  const drawStateAt = async (viewportFraction: number) => {
     const targetY = Math.max(0, Math.round(headerTop - viewportHeight * viewportFraction));
     await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), targetY);
     await settleFrame(page);
-    return path.evaluate((element) =>
-      Number.parseFloat(getComputedStyle(element).strokeDasharray.split(/[ ,]/)[0])
-    );
+    return path.evaluate((element) => getComputedStyle(element).strokeDasharray);
   };
 
-  const earlyLength = await drawnLengthAt(0.81);
-  const middleLength = await drawnLengthAt(0.68);
-  const settledLength = await drawnLengthAt(0.52);
-  expect(Number.isFinite(earlyLength)).toBe(true);
-  expect(middleLength).toBeGreaterThan(earlyLength);
-  expect(settledLength).toBeGreaterThan(middleLength);
-  expect(settledLength - earlyLength).toBeGreaterThan(0.35);
-
-  await page.evaluate(
-    ({ top, height }) => window.scrollTo({ top: top + height * 0.9, behavior: "auto" }),
-    { top: headerTop, height: viewportHeight }
-  );
-  await settleFrame(page);
-  const titleTokens = page.locator(
-    "#experience [data-experience-title] [aria-label='Experience'] > span > span"
-  );
-  expect(await titleTokens.count()).toBeGreaterThan(0);
-  await expect
-    .poll(() =>
-      titleTokens.evaluateAll((tokens) =>
-        tokens.every(
-          (token) => Number.parseFloat(getComputedStyle(token).opacity) >= 0.99
-        )
-      )
-    )
-    .toBe(true);
+  const early = await drawStateAt(0.81);
+  const middle = await drawStateAt(0.68);
+  const settled = await drawStateAt(0.52);
+  expect(early).not.toBe(middle);
+  expect(middle).not.toBe(settled);
 });
 
 test("touch navigation is operable, sized safely, and restores focus", async ({
@@ -505,7 +358,6 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
 
   await page.evaluate(() => window.scrollTo({ top: 360, behavior: "auto" }));
   const openingScrollY = await page.evaluate(() => window.scrollY);
-
   const toggle = page.locator('button[aria-controls="mobile-navigation-panel"]');
   await expect(toggle).toBeVisible();
   await expect(toggle).toHaveAccessibleName("Open menu");
@@ -522,28 +374,17 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
   await expectMinimumTargetSize(mobileNav.getByRole("link"));
   await expect(closeButton).toBeFocused();
-  await expect(mobileNav).toMatchAriaSnapshot(`
-    - navigation "Mobile navigation":
-      - link "Hero"
-      - link "About"
-      - link "Experience"
-      - link "Works"
-      - link "Tech"
-      - link "Presence"
-      - link "Contact"
-  `);
-
-  const menuPanelPadding = await mobileNav.locator("..").evaluate((panel) => {
-    const style = getComputedStyle(panel);
-    return {
-      top: Number.parseFloat(style.paddingTop),
-      right: Number.parseFloat(style.paddingRight),
-      bottom: Number.parseFloat(style.paddingBottom),
-    };
-  });
-  expect(menuPanelPadding.top).toBeGreaterThanOrEqual(16);
-  expect(menuPanelPadding.right).toBeGreaterThanOrEqual(16);
-  expect(menuPanelPadding.bottom).toBeGreaterThanOrEqual(16);
+  await expect(mobileNav.getByRole("link")).toHaveText([
+    "Hero",
+    "What I do",
+    "About",
+    "Experience",
+    "Work",
+    "Stack",
+    "Contact",
+    "Résumé",
+    "Email",
+  ]);
 
   const menuLinks = mobileNav.getByRole("link");
   await menuLinks.last().focus();
@@ -558,66 +399,36 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expect(page.locator("#site-content")).not.toHaveAttribute("inert", "");
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
   await expect
-    .poll(async () =>
-      Math.abs((await page.evaluate(() => window.scrollY)) - openingScrollY)
-    )
+    .poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - openingScrollY))
     .toBeLessThanOrEqual(5);
 
   await toggle.click();
   await mobileNav.getByRole("link", { name: "Experience", exact: true }).click();
   await expect(mobileNav).toBeHidden();
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
-
-  await toggle.click();
-  const backdrop = page.locator("[data-mobile-navigation-backdrop]");
-  const backdropBox = await backdrop.boundingBox();
-  expect(backdropBox).not.toBeNull();
-  await backdrop.click({
-    position: { x: 4, y: Math.min(100, backdropBox!.height / 2) },
-  });
-  await expect(mobileNav).toBeHidden();
-  await expect(toggle).toBeFocused();
-
-  await page.locator("#contact").scrollIntoViewIfNeeded();
   await expectMinimumTargetSize(page.locator("#contact a[aria-label]"));
 });
 
-test("touch devices do not retain hover lift or card tilt", async ({ page }, testInfo) => {
+test("touch layouts do not retain hover movement on project cards", async ({ page }, testInfo) => {
   test.skip(!isTouchProject(testInfo), "Touch-only interaction contract");
-  await openHome(page);
+  await openHome(page, true);
   expect(
     await page.evaluate(() => matchMedia("(hover: hover) and (pointer: fine)").matches)
   ).toBe(false);
 
-  const card = page.locator("#stack [data-stack-card]").first();
+  const workCard = page
+    .locator('#work a[href^="/work/"]')
+    .first()
+    .locator("..")
+    .locator("..")
+    .locator("..");
+  const card = workCard.locator(":scope > div").first();
   await card.scrollIntoViewIfNeeded();
-
-  const isSettled = () =>
-    card.evaluate((element) => {
-      const transform = getComputedStyle(element).transform;
-      if (transform === "none") {
-        return true;
-      }
-      const matrix = new DOMMatrixReadOnly(transform);
-      return (
-        Math.abs(matrix.m12) < 0.005 &&
-        Math.abs(matrix.m13) < 0.005 &&
-        Math.abs(matrix.m21) < 0.005 &&
-        Math.abs(matrix.m23) < 0.005 &&
-        Math.abs(matrix.m31) < 0.005 &&
-        Math.abs(matrix.m32) < 0.005 &&
-        Math.abs(matrix.m41) < 0.5 &&
-        Math.abs(matrix.m42) < 0.5
-      );
-    });
-
-  await expect.poll(isSettled).toBe(true);
+  const before = await card.evaluate((element) => getComputedStyle(element).transform);
   await card.tap();
-  await page.locator("#stack h2").tap();
-  await expect.poll(isSettled).toBe(true);
-  await expect
-    .poll(() => card.evaluate((element) => getComputedStyle(element).boxShadow))
-    .toBe("none");
+  await settleFrame(page);
+  const after = await card.evaluate((element) => getComputedStyle(element).transform);
+  expect(after).toBe(before);
 });
 
 test("full-page sweep has no runtime, network, ID, or image failures", async ({

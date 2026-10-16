@@ -13,12 +13,10 @@ import styles from "./Marquee.module.css";
 // pauses whenever a pointer or keyboard focus enters the band (WCAG 2.2.2).
 // =============================================================================
 
-// Named after the work this portfolio actually shows: the Velo dispatch
-// platform, agent orchestration, release and database delivery, and the
-// browser QA rehearsals behind the case studies. Plain, sentence case, no
-// capability-list filler.
+// Names concrete work shown across the portfolio: agent orchestration,
+// operational workflows, release and database delivery, and browser QA.
 const ITEMS = [
-  "Velo dispatch flows",
+  "Operational workflows",
   "Agent orchestration",
   "Release automation",
   "Database delivery",

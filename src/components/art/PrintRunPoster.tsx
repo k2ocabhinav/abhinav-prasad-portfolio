@@ -50,7 +50,7 @@ export default function PrintRunPoster({
           fontSize="13"
           letterSpacing="1.2"
         >
-          VELO / BUILD LOOP
+          BUILD LOOP
         </text>
         <text
           x="350"
@@ -102,10 +102,10 @@ export default function PrintRunPoster({
           letterSpacing=".15"
           textAnchor="middle"
         >
-          <text x="82" y="171">SCOPE</text>
-          <text x="162" y="171">ISOLATE</text>
+          <text x="82" y="171">PLAN</text>
+          <text x="162" y="171">BUILD</text>
           <text x="242" y="171">REVIEW</text>
-          <text x="322" y="171">REHEARSE</text>
+          <text x="322" y="171">SHIP</text>
         </g>
         <path d="M68 192h284" stroke="var(--plate-ink)" className={strokes.fine} />
         <path d="M68 192h284" stroke="url(#print-run-halftone)" className={strokes.bold} opacity=".55" />
@@ -152,15 +152,11 @@ export default function PrintRunPoster({
           fontSize="9"
           letterSpacing=".6"
         >
-          VELO
+          CHANGE SET
         </text>
-        <path d="M264 267h64l11 12v27h-76v-31z" fill="var(--plate-accent)" stroke="var(--plate-ink)" className={strokes.mid} />
-        <path d="M272 274h25v11h-25zm31 0h18l10 11h-28z" fill="var(--plate-paper)" stroke="var(--plate-ink)" className={strokes.fine} />
-        <path d="M264 294h75" stroke="var(--plate-ink)" className={strokes.mid} />
-        <circle cx="280" cy="306" r="6" fill="var(--plate-ink)" />
-        <circle cx="324" cy="306" r="6" fill="var(--plate-ink)" />
-        <circle cx="280" cy="306" r="2" fill="var(--plate-paper)" />
-        <circle cx="324" cy="306" r="2" fill="var(--plate-paper)" />
+        <path d="M264 258h75v62h-75z" fill="var(--plate-accent)" stroke="var(--plate-ink)" className={strokes.mid} />
+        <path d="M273 270h34m-34 9h50m-50 9h42m-42 9h25" fill="none" stroke="var(--plate-paper)" className={strokes.fine} />
+        <path d="m314 301 5 5 10-13" fill="none" stroke="var(--plate-ink)" className={strokes.mid} />
         <text
           x="266"
           y="337"
@@ -169,23 +165,12 @@ export default function PrintRunPoster({
           fontSize="8.5"
           letterSpacing=".1"
         >
-          BROWSER RUN
+          DIFF REVIEW
         </text>
       </m.g>
 
       <m.g className={styles.registrationLayer} style={{ y: reducedMotion ? 0 : registrationY }}>
         <path d="M68 397h284" stroke="var(--plate-ink)" className={strokes.mid} />
-        <text
-          x="68"
-          y="422"
-          fill="var(--plate-second)"
-          fontFamily="var(--font-display, serif)"
-          fontSize="25"
-          fontWeight="600"
-          letterSpacing="-.8"
-        >
-          Review before merge
-        </text>
         <path d="M330 418h20m-10-10v20M340 438v10m-10-5h20" fill="none" stroke="var(--plate-accent)" className={strokes.mid} />
         <path d="M68 450h-14v-14m287 14h14v-14M68 48H54V34m287 14h14V34" fill="none" stroke="var(--plate-accent)" className={strokes.mid} />
       </m.g>
