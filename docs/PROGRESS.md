@@ -4,7 +4,7 @@ One line per item. `[x]` done (with short commit hash), `[ ]` open. Edit in plac
 
 ## Now: Print Run (decision 0001)
 - [x] Playwright port configurable via `PLAYWRIGHT_PORT`
-- [ ] Palette v2 tokens, paper stocks, legacy aliases; remove gradient and blurred shadows
+- [x] Palette v2 tokens, paper stocks, legacy aliases (feat/tokens-v2)
 - [ ] Illustration plates and landing composition (hero, services, bridge poster)
 - [ ] Illustration plates and section composition (about, experience, works, stack, presence, contact, footer)
 - [ ] Interactions: registration cursor, press buttons, overprint headings; perf fixes (cursor, headings, marquee, wordmark)
