@@ -5,7 +5,7 @@ One line per item. `[x]` done (with short commit hash), `[ ]` open. Edit in plac
 ## Now: Print Run (decision 0001)
 - [x] Playwright port configurable via `PLAYWRIGHT_PORT`
 - [x] Palette v2 tokens, paper stocks, legacy aliases (feat/tokens-v2)
-- [ ] Illustration plates and landing composition (hero, services, bridge poster)
+- [x] Illustration plates and landing composition (feat/art-landing)
 - [ ] Illustration plates and section composition (about, experience, works, stack, presence, contact, footer)
 - [x] Interactions: registration cursor, press buttons, overprint headings; perf fixes (feat/print-interactions)
 - [ ] Velo case study "Dispatch Atlas" with new captures; Java 21 and positioning fixes
