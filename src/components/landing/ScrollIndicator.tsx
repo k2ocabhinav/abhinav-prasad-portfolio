@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import { useEffect, useState } from "react";
 import styles from "./ScrollIndicator.module.css";
 
@@ -29,19 +30,19 @@ export default function ScrollIndicator() {
   return (
     // Decorative only — hidden from assistive tech and fades out as the user
     // begins exploring the landing sequence so it never competes with content.
-    <motion.div
+    <m.div
       data-scroll-indicator="true"
       className={styles.scrollIndicator}
       style={{ opacity, y }}
       aria-hidden="true"
     >
       <div className={styles.line}>
-        <motion.span
+        <m.span
           className={styles.dot}
           animate={{ y: [0, 28, 0] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
-    </motion.div>
+    </m.div>
   );
 }

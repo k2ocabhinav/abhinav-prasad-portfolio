@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import type { PersonalData, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -45,7 +46,7 @@ export default function AboutSection({
   return (
     <SectionWrapper id="about" tone={tone}>
       <div ref={riseRef}>
-      <motion.div
+      <m.div
         className={`spec-sheet ${styles.aboutPanel}`}
         style={{
           y: prefersReducedMotion ? 0 : sheetY,
@@ -58,7 +59,7 @@ export default function AboutSection({
         </div>
         <div ref={sectionRef} className={cn("spec-body grid-12", styles.aboutGrid)}>
           <div className="col-4">
-            <motion.h2
+            <m.h2
               style={{ y: prefersReducedMotion ? 0 : headingY }}
               className={styles.heading}
             >
@@ -74,8 +75,8 @@ export default function AboutSection({
                 className={styles.headingFlip}
                 tokenClassName={styles.headingFlipToken}
               />
-            </motion.h2>
-            <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
+            </m.h2>
+            <m.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
               <FlipRevealText flat
                 text="Operating principle."
                 mode="word"
@@ -87,13 +88,13 @@ export default function AboutSection({
                 className={styles.calloutFlip}
                 tokenClassName={styles.calloutFlipToken}
               />
-            </motion.p>
+            </m.p>
             <div className={styles.cutawayWrap}>
               <SpecSheetCutaway />
             </div>
           </div>
           <div className={`col-8 ${styles.contentCol}`}>
-            <motion.div
+            <m.div
               initial={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.35 }}
@@ -104,10 +105,10 @@ export default function AboutSection({
               }
             >
               <p className={styles.philosophyText}>{personal.philosophy}</p>
-            </motion.div>
+            </m.div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
       </div>
     </SectionWrapper>
   );

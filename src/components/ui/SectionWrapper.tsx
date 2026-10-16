@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import type { SectionTone } from "@/types";
 import { cn } from "@/lib/utils";
 import styles from "./SectionWrapper.module.css";
@@ -40,7 +40,7 @@ export default function SectionWrapper({
   className = "",
 }: SectionWrapperProps) {
   return (
-    <motion.section
+    <m.section
       id={id}
       className={cn(
         styles.section,
@@ -53,6 +53,6 @@ export default function SectionWrapper({
       <div className={cn("content-container", styles.inner)}>
         {children}
       </div>
-    </motion.section>
+    </m.section>
   );
 }

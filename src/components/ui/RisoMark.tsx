@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import type { MotionValue } from "motion/react";
 import { useRef } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -66,7 +67,7 @@ export default function RisoMark({
     >
       {variant === "arc" && (
         <svg viewBox="0 0 96 96" fill="none">
-          <motion.path
+          <m.path
             data-riso-arc-path="true"
             d="M 8 88 A 80 80 0 0 1 88 8"
             stroke="currentColor"
@@ -74,7 +75,7 @@ export default function RisoMark({
             strokeLinecap="butt"
             style={staticMode ? undefined : { pathLength: draw }}
           />
-          <motion.circle
+          <m.circle
             className={styles.arcDot}
             cx="8"
             cy="88"
@@ -87,14 +88,14 @@ export default function RisoMark({
 
       {variant === "discs" && (
         <svg viewBox="0 0 96 96" fill="none">
-          <motion.circle
+          <m.circle
             cx="38"
             cy="48"
             r="26"
             fill="currentColor"
             style={staticMode ? undefined : { x: driftLeft }}
           />
-          <motion.circle
+          <m.circle
             cx="60"
             cy="48"
             r="26"
@@ -113,7 +114,7 @@ export default function RisoMark({
             { y: 58, mv: barThree },
             { y: 76, mv: barFour },
           ].map(({ y, mv }) => (
-            <motion.rect
+            <m.rect
               key={y}
               x="8"
               y={y}
@@ -128,7 +129,7 @@ export default function RisoMark({
       )}
 
       {variant === "asterisk" && (
-        <motion.svg
+        <m.svg
           viewBox="0 0 96 96"
           fill="none"
           style={staticMode ? undefined : { rotate }}
@@ -146,7 +147,7 @@ export default function RisoMark({
             />
           ))}
           <circle cx="48" cy="48" r="6" fill="var(--color-paper, #F0EEE9)" />
-        </motion.svg>
+        </m.svg>
       )}
     </span>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Mail } from "lucide-react";
 import type { PersonalData, SectionTone } from "@/types";
@@ -90,7 +91,7 @@ export default function ContactSection({
         <span />
       </span>
       <div ref={riseRef}>
-      <motion.div
+      <m.div
         className={cn("spec-sheet", styles.contactSpecSheet)}
         style={{
           y: prefersReducedMotion ? 0 : sheetY,
@@ -102,7 +103,7 @@ export default function ContactSection({
           <span>STATUS: ONLINE</span>
         </div>
         <div ref={sectionRef} className={cn("spec-body", styles.contactMotionRoot)}>
-          <motion.h2
+          <m.h2
             style={{ y: prefersReducedMotion ? 0 : headingY }}
             className={styles.heading}
           >
@@ -118,8 +119,8 @@ export default function ContactSection({
               className={styles.headingFlip}
               tokenClassName={styles.headingFlipToken}
             />
-          </motion.h2>
-          <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
+          </m.h2>
+          <m.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
             <FlipRevealText flat
               text="From idea to shipped system."
               mode="word"
@@ -131,7 +132,7 @@ export default function ContactSection({
               className={styles.calloutFlip}
               tokenClassName={styles.calloutFlipToken}
             />
-          </motion.p>
+          </m.p>
 
           <div className={styles.ctaContainer}>
             <MagneticButton
@@ -149,7 +150,7 @@ export default function ContactSection({
                 </a>
                 <div className={styles.socials}>
                   {personal.socials.map((social, i) => (
-                    <motion.a
+                    <m.a
                       key={i}
                       href={social.href}
                       target={social.href.startsWith("http") ? "_blank" : undefined}
@@ -163,7 +164,7 @@ export default function ContactSection({
                       className={styles.socialIcon}
                     >
                       {socialIcons[social.platform]}
-                    </motion.a>
+                    </m.a>
                   ))}
                 </div>
               </div>
@@ -175,7 +176,7 @@ export default function ContactSection({
             <p className={styles.taglineText}>{personal.footerTagline}</p>
           </div>
         </div>
-      </motion.div>
+      </m.div>
       </div>
       </div>
     </SectionWrapper>

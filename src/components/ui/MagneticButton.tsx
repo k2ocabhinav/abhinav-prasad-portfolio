@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { useMagneticHover } from "@/hooks/useMagneticHover";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { ReactNode, RefObject } from "react";
@@ -29,7 +29,7 @@ export default function MagneticButton({
   const { ref, x, y } = useMagneticHover(0.04);
 
   return (
-    <motion.a
+    <m.a
       ref={prefersReducedMotion ? undefined : (ref as RefObject<HTMLAnchorElement>)}
       href={href}
       download={download}
@@ -37,6 +37,6 @@ export default function MagneticButton({
       className={`${styles.magneticButton} ${styles[variant]} ${className}`}
     >
       {children}
-    </motion.a>
+    </m.a>
   );
 }

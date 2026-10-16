@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
 import type { Project, SectionTone } from "@/types";
@@ -59,7 +60,7 @@ function WorksSectionContent({
     >
       <div ref={sectionRef} className={styles.sectionHeader}>
         <RisoMark variant="discs" />
-        <motion.h2
+        <m.h2
           style={{ y: prefersReducedMotion ? 0 : headingY }}
           className={styles.heading}
         >
@@ -75,8 +76,8 @@ function WorksSectionContent({
             className={styles.headingFlip}
             tokenClassName={styles.headingFlipToken}
           />
-        </motion.h2>
-        <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
+        </m.h2>
+        <m.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
           <FlipRevealText flat
             text="Systems that ship"
             mode="word"
@@ -88,10 +89,10 @@ function WorksSectionContent({
             className={styles.calloutFlip}
             tokenClassName={styles.calloutFlipToken}
           />
-        </motion.p>
+        </m.p>
       </div>
 
-      <motion.div
+      <m.div
         variants={staggerContainer(0.12)}
         initial="hidden"
         whileInView="visible"
@@ -101,7 +102,7 @@ function WorksSectionContent({
         {projects.map((project) => (
           <WorkCard key={project.id} project={project} />
         ))}
-      </motion.div>
+      </m.div>
     </SectionWrapper>
   );
 }
@@ -132,9 +133,9 @@ function WorkCard({ project }: { project: Project }) {
   const isVeloProject = project.detailSlug === "velo";
 
   return (
-    <motion.div variants={staggerItem} className={styles.workCard}>
+    <m.div variants={staggerItem} className={styles.workCard}>
       {/* Visual Panel */}
-      <motion.div
+      <m.div
         ref={prefersReducedMotion ? undefined : tiltRef}
         animate={prefersReducedMotion ? {} : { rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
         whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
@@ -186,7 +187,7 @@ function WorkCard({ project }: { project: Project }) {
         ) : (
           <>
             <div className={`dot-grid ${styles.dotOverlay}`} />
-            <motion.div
+            <m.div
               whileHover={prefersReducedMotion ? undefined : { scale: 1.1, rotate: 5 }}
               className={styles.iconWrapper}
             >
@@ -194,10 +195,10 @@ function WorkCard({ project }: { project: Project }) {
                 size: 48,
                 style: { color: "rgba(var(--color-primary-brand-rgb), 0.58)" },
               })}
-            </motion.div>
+            </m.div>
           </>
         )}
-      </motion.div>
+      </m.div>
 
       {/* Content Panel — also the scroll anchor for the visual parallax */}
       <div
@@ -296,6 +297,6 @@ function WorkCard({ project }: { project: Project }) {
           </span>
         ) : null}
       </div>
-    </motion.div>
+    </m.div>
   );
 }

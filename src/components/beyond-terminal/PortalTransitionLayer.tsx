@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 import type { PortalTransitionIntent, PortalTransitionPhase } from "@/types";
@@ -59,7 +59,7 @@ export default function PortalTransitionLayer({
     : { duration: 0.62, ease: cinematicEase };
 
   return (
-    <motion.div
+    <m.div
       aria-hidden="true"
       data-portal-phase={phase}
       data-portal-variant={intent.variant}
@@ -75,7 +75,7 @@ export default function PortalTransitionLayer({
       transition={isRevealing ? revealTransition : coverTransition}
     >
       <div className={styles.canvas} style={originStyles}>
-        <motion.div
+        <m.div
           className={styles.cover}
           initial={{
             clipPath: isAccessibleFade
@@ -92,7 +92,7 @@ export default function PortalTransitionLayer({
           transition={isRevealing ? revealTransition : coverTransition}
         />
 
-        <motion.div
+        <m.div
           className={styles.blur}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{
@@ -102,7 +102,7 @@ export default function PortalTransitionLayer({
           transition={isRevealing ? revealTransition : coverTransition}
         />
 
-        <motion.div
+        <m.div
           className={styles.frame}
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{
@@ -112,14 +112,14 @@ export default function PortalTransitionLayer({
           transition={isRevealing ? revealTransition : coverTransition}
         />
 
-        <motion.div
+        <m.div
           className={styles.grain}
           initial={{ opacity: 0 }}
           animate={{ opacity: isRevealing ? 0 : 0.08 }}
           transition={isRevealing ? revealTransition : coverTransition}
         />
 
-        <motion.div
+        <m.div
           className={styles.content}
           initial={{ opacity: 0, y: 24 }}
           animate={{
@@ -131,8 +131,8 @@ export default function PortalTransitionLayer({
           <span className={styles.eyebrow}>{content.eyebrow}</span>
           <h2 className={styles.title}>{content.title}</h2>
           <p className={styles.description}>{content.description}</p>
-        </motion.div>
+        </m.div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

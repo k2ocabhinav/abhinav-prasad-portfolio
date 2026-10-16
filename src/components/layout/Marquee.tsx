@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  motion,
-  useInView,
-  useMotionValue,
-  useScroll,
-  useTransform,
-  useVelocity,
-} from "motion/react";
+import * as m from "motion/react-m";
+import { useInView, useMotionValue, useScroll, useTransform, useVelocity } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "./Marquee.module.css";
@@ -83,7 +77,7 @@ export default function Marquee() {
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
     >
-      <motion.div
+      <m.div
         className={styles.track}
         aria-hidden="true"
         style={{ x, skewX: running ? skewX : 0 }}
@@ -98,7 +92,7 @@ export default function Marquee() {
             ))}
           </div>
         ))}
-      </motion.div>
+      </m.div>
     </section>
   );
 }

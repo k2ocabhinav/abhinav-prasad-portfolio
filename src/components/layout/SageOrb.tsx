@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useMotionValue, useSpring, useTransform } from "motion/react";
 import { useEffect, useState } from "react";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { navSpyTargets } from "@/data/navigation";
@@ -93,7 +94,7 @@ export default function SageOrb() {
   }
 
   return (
-    <motion.div
+    <m.div
       data-site-chrome="cursor-orb"
       className={styles.orb}
       style={{ x: markX, y: markY, scale, color: accent }}
@@ -120,6 +121,6 @@ export default function SageOrb() {
           y2={MARK_SIZE / 2}
         />
       </svg>
-    </motion.div>
+    </m.div>
   );
 }

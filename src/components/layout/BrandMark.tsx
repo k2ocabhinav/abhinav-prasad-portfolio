@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { useLandingNavMode } from "@/hooks/useLandingNavMode";
 import styles from "./BrandMark.module.css";
 
@@ -9,7 +9,7 @@ export default function BrandMark() {
   const isVisible = navMode === "glass";
 
   return (
-    <motion.a
+    <m.a
       href="#hero"
       aria-label="Back to Abhinav hero"
       data-site-chrome="brand"
@@ -24,6 +24,6 @@ export default function BrandMark() {
     >
       <span className={styles.initial}>A</span>
       <span className={styles.name}>Abhinav</span>
-    </motion.a>
+    </m.a>
   );
 }

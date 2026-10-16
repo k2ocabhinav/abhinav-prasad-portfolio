@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { PersonalData, PresenceNode, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -83,7 +84,7 @@ function PresenceSectionContent({
         data-presence-active={isSectionActive ? "true" : "false"}
       >
         <div className="col-4">
-          <motion.h2 style={{ y: prefersReducedMotion ? 0 : headingY }} className={styles.heading}>
+          <m.h2 style={{ y: prefersReducedMotion ? 0 : headingY }} className={styles.heading}>
             <FlipRevealText flat
               overprint
               text="Presence"
@@ -96,8 +97,8 @@ function PresenceSectionContent({
               className={styles.headingFlip}
               tokenClassName={styles.headingFlipToken}
             />
-          </motion.h2>
-          <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
+          </m.h2>
+          <m.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
             <FlipRevealText flat
               text="Signals across time zones"
               mode="word"
@@ -109,7 +110,7 @@ function PresenceSectionContent({
               className={styles.calloutFlip}
               tokenClassName={styles.calloutFlipToken}
             />
-          </motion.p>
+          </m.p>
           <div className={styles.clockWrapper}>
             <LiveClock
               city={personal.location.city}
@@ -134,7 +135,7 @@ function PresenceSectionContent({
               >
                 <div className={styles.nodeCenter}>
                   {node.active && !prefersReducedMotion && isSectionActive && (
-                    <motion.div
+                    <m.div
                       animate={{
                         scale: [1, 2, 1],
                         opacity: [0.3, 0.1, 0.3],

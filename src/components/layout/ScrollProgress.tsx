@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useSpring } from "motion/react";
+import * as m from "motion/react-m";
+import { useScroll, useSpring } from "motion/react";
 import { progressSpring } from "@/lib/animations";
 import styles from "./ScrollProgress.module.css";
 
@@ -13,7 +14,7 @@ export default function ScrollProgress() {
   const scaleX = useSpring(scrollYProgress, progressSpring);
 
   return (
-    <motion.div
+    <m.div
       data-site-chrome="scroll-progress"
       className={styles.progressBar}
       style={{ scaleX, transformOrigin: "left" }}
