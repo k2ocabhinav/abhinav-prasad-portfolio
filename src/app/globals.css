@@ -40,6 +40,12 @@
   --print-offset-md: 6px 6px 0 rgba(53, 30, 40, 0.16);
   --print-offset-lg: 10px 10px 0 rgba(53, 30, 40, 0.14);
 
+  /* Illustration plate stroke scale — three weights shared by every plate, so
+     no plate mixes seven near-identical line weights. */
+  --plate-stroke-fine: 1;
+  --plate-stroke-mid: 1.6;
+  --plate-stroke-bold: 2.2;
+
   /* Neutral and legacy role aliases. */
   --color-ink: #0B1011;            /* text ink (was dark bg — meaning flipped) */
   --color-graphite: #E9E5DC;       /* paper-alt: raised card surface */
@@ -196,6 +202,13 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* The mobile chrome is fixed at the top edge; keep anchored jumps clear of it. */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-top: 4.5rem;
+  }
+}
+
 body {
   font-family: var(--font-body);
   font-weight: 400;
@@ -257,6 +270,15 @@ button {
   margin-right: auto;
   padding-left: var(--content-padding-x);
   padding-right: var(--content-padding-x);
+}
+
+/* The section rail is fixed over the right edge of the home surface, so home
+   content reserves a matching gutter on both sides. Centred compositions stay
+   centred and the rail's labels never sit over body copy. */
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+  .site-home .content-container {
+    padding-inline: calc(var(--content-padding-x) + 6.5rem);
+  }
 }
 
 @supports (content-visibility: auto) {

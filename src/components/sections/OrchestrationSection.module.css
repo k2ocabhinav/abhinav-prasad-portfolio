@@ -41,47 +41,13 @@
   box-shadow: 7px 7px 0 rgba(53, 30, 40, 0.15);
 }
 
-.steps {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem 2rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.step {
-  display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: 0.9rem;
-  align-items: start;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(237, 230, 218, 0.28);
-}
-
-.stepNumber {
-  color: var(--color-panel-accent, #F4BEBB);
-  font-family: var(--font-label, monospace);
-  font-size: 1.0625rem;
-  line-height: 1.5;
-}
-
-.stepTitle {
+.method {
+  max-width: 58ch;
   margin: 0;
   color: var(--color-on-panel, #EDE6DA);
   font-family: var(--font-body, sans-serif);
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.stepDescription {
-  max-width: 55ch;
-  margin: 0.35rem 0 0;
-  color: var(--color-on-panel, #EDE6DA);
-  font-family: var(--font-body, sans-serif);
-  font-size: 1.0625rem;
-  line-height: 1.55;
+  font-size: clamp(1.0625rem, 1.3vw, 1.1875rem);
+  line-height: 1.6;
 }
 
 .evidence {
@@ -101,7 +67,7 @@
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
   margin: 0;
   padding: 0;
@@ -148,11 +114,6 @@
     font-size: 1rem;
   }
 
-  .steps {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-  }
-
   .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -162,10 +123,5 @@
   .panel {
     padding: 1rem;
     box-shadow: 4px 4px 0 rgba(53, 30, 40, 0.15);
-  }
-
-  .step {
-    grid-template-columns: 2rem minmax(0, 1fr);
-    gap: 0.65rem;
   }
 }

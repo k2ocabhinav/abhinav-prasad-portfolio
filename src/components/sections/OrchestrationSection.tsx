@@ -22,19 +22,7 @@ export default function OrchestrationSection({ content }: OrchestrationSectionPr
         </header>
 
         <div className={styles.panel}>
-          <ol className={styles.steps}>
-            {content.steps.map((step, index) => (
-              <li className={styles.step} key={step.title}>
-                <span className={styles.stepNumber} aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <h3 className={styles.stepTitle}>{step.title}</h3>
-                  <p className={styles.stepDescription}>{step.description}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <p className={styles.method}>{content.method}</p>
 
           <div className={styles.evidence}>
             <h3 className={styles.evidenceHeading}>{content.metricsContext}</h3>

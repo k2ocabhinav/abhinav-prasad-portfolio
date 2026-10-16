@@ -41,43 +41,53 @@
   text-transform: uppercase;
 }
 
-.cardsGrid {
+/* ─── Ruled index ────────────────────────────────────────────────────
+   One ruled row per group: icon, label, evidence context, then the items as
+   a hairline-separated run. Deliberately not a second icon-card grid. */
+
+.groupList {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.card {
-  min-width: 0;
-  padding: clamp(1.5rem, 3vw, 2.25rem);
-  border: 1px solid var(--section-panel-border);
-  border-radius: 3px;
-  background: var(--paper-linen, #FCF8F2);
-  cursor: default;
-  transition:
-    border-color var(--motion-duration-short) var(--motion-ease-out),
-    box-shadow var(--motion-duration-short) var(--motion-ease-out),
-    background-color var(--motion-duration-short) var(--motion-ease-out);
-}
-
-.cardTopline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 1.2rem;
-  border-bottom: 1px solid var(--color-hairline);
-}
-
-.cardIcon {
+.group {
   display: grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  color: var(--color-on-surface);
+  gap: 0.85rem;
+  padding-block: clamp(1.35rem, 2.6vw, 1.9rem);
+  border-top: 1px solid var(--color-hairline);
+}
+
+.groupHead {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+}
+
+.groupIcon {
+  display: inline-flex;
+  flex: none;
+  align-self: flex-start;
+  margin-top: 0.3rem;
+  color: var(--color-lovebird-deep, #4E5312);
+}
+
+.groupLabel {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: var(--color-black-cherry, #351E28);
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+  font-weight: 580;
+  letter-spacing: -0.018em;
+  line-height: 1.2;
 }
 
 .context {
+  flex: none;
   color: var(--color-lovebird-deep, #4E5312);
   font-family: var(--font-label);
   font-size: 0.62rem;
@@ -85,75 +95,41 @@
   line-height: 1.5;
   text-align: right;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.cardLabel {
-  max-width: 28rem;
-  margin-top: 1.45rem;
-  color: var(--color-black-cherry, #351E28);
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2vw, 1.65rem);
-  font-weight: 590;
-  letter-spacing: -0.018em;
-  line-height: 1.22;
-}
-
-.cardItems {
+.groupItems {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem 0.65rem;
-  margin: 1.35rem 0 0;
+  align-items: baseline;
+  margin: 0;
   padding: 0;
   color: var(--color-black-cherry, #351E28);
   font-size: 1.0625rem;
-  line-height: 1.55;
+  line-height: 1.6;
   list-style: none;
 }
 
-.cardItems li {
+.groupItems li {
   display: inline-flex;
   align-items: center;
-  min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.cardItems li:not(:last-child)::after {
-  content: "·";
-  margin-left: 0.65rem;
-  color: var(--color-lovebird-deep, #4E5312);
+/* A hairline rule leads each item after the first, so a wrapped line never
+   ends on a dangling separator. */
+.groupItems li + li::before {
+  content: "";
+  width: 1px;
+  height: 0.9em;
+  margin-inline: 0.7rem;
+  background: var(--color-hairline);
 }
 
-@media (min-width: 768px) {
-  .cardsGrid {
+@media (min-width: 900px) {
+  .groupList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .cardsGrid {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-  }
-
-  .card {
-    grid-column: span 4;
-  }
-
-  .card:nth-child(-n + 2) {
-    grid-column: span 6;
-  }
-}
-
-/* Print offsets belong to pointing devices; touch cards stay flat. */
-@media (hover: hover) and (pointer: fine) {
-  .card {
-    box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
-  }
-
-  .card:hover {
-    border-color: rgba(11, 16, 17, 0.38);
-    background: var(--paper-linen, #FCF8F2);
-    box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
+    column-gap: clamp(2.5rem, 5vw, 4.5rem);
   }
 }
 
@@ -163,21 +139,14 @@
     font-size: 12px;
   }
 
-  .cardItems {
+  .groupItems {
     font-size: 1rem;
   }
 }
 
 @media (max-width: 374px) {
-  .card {
-    padding-inline: 1.3rem;
-  }
-
-  .cardTopline {
-    align-items: flex-start;
-  }
-
   .context {
     max-width: 9rem;
+    white-space: normal;
   }
 }

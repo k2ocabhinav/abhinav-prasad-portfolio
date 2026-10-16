@@ -325,17 +325,6 @@
   line-height: 1.65;
 }
 
-.scopeSummary {
-  max-width: 65ch;
-  margin-top: 0.85rem;
-  font-family: var(--font-display);
-  font-weight: 420;
-  color: rgba(var(--color-on-surface-rgb), 0.78);
-  line-height: 1.55;
-  border-left: 2px solid var(--tone-accent, #6A2135);
-  padding-left: 0.75rem;
-}
-
 .projectTags {
   display: flex;
   flex-wrap: wrap;

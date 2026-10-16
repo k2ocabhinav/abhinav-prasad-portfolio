@@ -17,7 +17,7 @@ interface HeroProofPoint {
 const proofPoints: HeroProofPoint[] = [
   {
     id: "velo",
-    lead: "Velo, working demo",
+    lead: "Velo, working prototype",
     detail: "Multi-tenant dispatch with live maps and realtime updates.",
   },
   {

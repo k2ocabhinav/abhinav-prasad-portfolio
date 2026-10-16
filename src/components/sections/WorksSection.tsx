@@ -66,7 +66,7 @@ function WorksSectionContent({
         >
           <FlipRevealText flat
             overprint
-            text="Selected Works"
+            text="Selected work"
             mode="word"
             progress={scrollYProgress}
             window={[0.14, 0.28]}
@@ -129,7 +129,7 @@ function WorkCard({ project }: { project: Project }) {
   const isTeaserOnly = hasDeepDive;
   const visibleSupportShots = isTeaserOnly ? [] : supportScreenshots.slice(0, 2);
   const showProjectLinks = hasProjectLinks && !hasDeepDive;
-  const deepDiveLabel = project.detailCtaLabel ?? "Open Deep Dive";
+  const deepDiveLabel = project.detailCtaLabel ?? "Open deep dive";
   const isVeloProject = project.detailSlug === "velo";
 
   return (
@@ -214,9 +214,6 @@ function WorkCard({ project }: { project: Project }) {
         </div>
         <h3 className={styles.projectTitle}>{project.title}</h3>
         <p className={styles.projectDesc}>{project.description}</p>
-        {project.scopeSummary && (
-          <p className={styles.scopeSummary}>{project.scopeSummary}</p>
-        )}
         {project.tags.length > 0 && (
           <div className={styles.projectTags}>
             {project.tags.map((tag) => (
@@ -227,7 +224,7 @@ function WorkCard({ project }: { project: Project }) {
 
         {!isTeaserOnly && project.architectureHighlights?.length ? (
           <div className={styles.infoBlock}>
-            <h4 className={styles.infoTitle}>Architecture Highlights</h4>
+            <h4 className={styles.infoTitle}>Architecture highlights</h4>
             <ul className={styles.infoList}>
               {project.architectureHighlights.map((highlight) => (
                 <li key={highlight}>{highlight}</li>
@@ -238,7 +235,7 @@ function WorkCard({ project }: { project: Project }) {
 
         {!isTeaserOnly && project.techBuckets?.length ? (
           <div className={styles.infoBlock}>
-            <h4 className={styles.infoTitle}>Technology Coverage</h4>
+            <h4 className={styles.infoTitle}>Technology coverage</h4>
             <div className={styles.techBuckets}>
               {project.techBuckets.map((bucket) => (
                 <div key={bucket.label} className={styles.techBucket}>
@@ -293,7 +290,7 @@ function WorkCard({ project }: { project: Project }) {
           </div>
         ) : !hasDeepDive ? (
           <span className={styles.caseStudyLink} title="Coming soon">
-            View Case Study <ChevronRight size={18} />
+            View case study <ChevronRight size={18} />
           </span>
         ) : null}
       </div>

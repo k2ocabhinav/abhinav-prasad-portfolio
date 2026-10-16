@@ -53,7 +53,7 @@ export default function HomePage({ content }: HomePageProps) {
       <main
         id="site-content"
         tabIndex={-1}
-        className="deferred-section deferred-section-deep"
+        className="deferred-section deferred-section-deep site-home"
         style={{
           position: "relative",
           zIndex: 1,
@@ -84,7 +84,10 @@ export default function HomePage({ content }: HomePageProps) {
       <SageOrb />
       <ScrollProgress />
 
-      <Navigation />
+      <Navigation
+        resumeHref={profile.personal.resumeHref}
+        email={profile.personal.email}
+      />
     </>
   );
 }
