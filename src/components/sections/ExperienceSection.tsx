@@ -23,7 +23,7 @@ function getKeyPoints(experience: ChronicleEntry): ExperiencePoint[] {
     (workstream) => workstream.id === "ai-tooling"
   );
 
-  return [delivery?.points[0], delivery?.points[2], aiTooling?.points[0]].filter(
+  return [delivery?.points[0], delivery?.points[1], aiTooling?.points[0]].filter(
     (point): point is ExperiencePoint => Boolean(point)
   );
 }

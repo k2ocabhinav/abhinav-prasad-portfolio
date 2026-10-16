@@ -27,14 +27,12 @@ import styles from "./WorksSection.module.css";
 interface WorksSectionProps {
   projects: Project[];
   orchestration: OrchestrationContent;
-  featuredProofLine?: string;
   tone?: SectionTone;
 }
 
 export default function WorksSection({
   projects,
   orchestration,
-  featuredProofLine,
   tone,
 }: WorksSectionProps) {
   if (projects.length === 0) {
@@ -45,7 +43,6 @@ export default function WorksSection({
     <WorksSectionContent
       projects={projects}
       orchestration={orchestration}
-      featuredProofLine={featuredProofLine}
       tone={tone}
     />
   );
@@ -54,7 +51,6 @@ export default function WorksSection({
 function WorksSectionContent({
   projects,
   orchestration,
-  featuredProofLine,
   tone,
 }: WorksSectionProps) {
   return (
@@ -69,14 +65,14 @@ function WorksSectionContent({
           <FlipRevealText
             static
             overprint
-            text="Selected work"
+            text="Selected projects"
             mode="word"
             className={styles.headingFlip}
             tokenClassName={styles.headingFlipToken}
           />
         </h2>
         <p className={styles.callout}>
-          Systems that ship
+          Dispatch prototype, publishing platform, and the method behind both.
         </p>
       </div>
 
@@ -86,20 +82,15 @@ function WorksSectionContent({
         ))}
       </div>
 
-      <OrchestrationEvidence
-        content={orchestration}
-        featuredProofLine={featuredProofLine}
-      />
+      <OrchestrationEvidence content={orchestration} />
     </SectionWrapper>
   );
 }
 
 function OrchestrationEvidence({
   content,
-  featuredProofLine,
 }: {
   content: OrchestrationContent;
-  featuredProofLine?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const posterRef = useRef<HTMLDivElement>(null);
@@ -124,16 +115,13 @@ function OrchestrationEvidence({
       </div>
 
       <div className={styles.evidenceContent}>
-        {featuredProofLine ? (
-          <p className={styles.featuredProof}>{featuredProofLine}</p>
-        ) : null}
         <p className={styles.orchestrationIntro}>{content.intro}</p>
         <p className={styles.method}>{content.method}</p>
         <ol className={styles.methodLanes} aria-label="Four method lanes">
-          <li>Scope</li>
-          <li>Isolate</li>
+          <li>Plan</li>
+          <li>Build</li>
           <li>Review</li>
-          <li>Rehearse</li>
+          <li>Ship</li>
         </ol>
 
         <ul className={styles.metrics}>

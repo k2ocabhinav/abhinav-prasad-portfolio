@@ -113,7 +113,6 @@
   line-height: 1.45;
 }
 
-.featuredProof,
 .orchestrationIntro,
 .method,
 .lesson {
@@ -121,10 +120,6 @@
   color: var(--color-on-panel, #EDE6DA);
   font-size: 0.94rem;
   line-height: 1.5;
-}
-
-.featuredProof {
-  color: var(--color-panel-accent, #F4BEBB);
 }
 
 .method {

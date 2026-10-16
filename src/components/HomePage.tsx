@@ -72,7 +72,6 @@ export default function HomePage({ content }: HomePageProps) {
         <WorksSection
           projects={content.projects}
           orchestration={profile.orchestration}
-          featuredProofLine={profile.profileIntro.proofLines[0]}
           tone="pastel-blush"
         />
         <Marquee />

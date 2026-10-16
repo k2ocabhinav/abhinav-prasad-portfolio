@@ -48,7 +48,14 @@ const stackIcons = ["cloud", "cpu", "database", "terminal", "sparkles"] as const
 const stackContextValues = ["Used at work", "Part of my workflow", "Built in projects"] as const;
 const accents = ["sage", "peach", "sky", "sand"] as const;
 const statusValues = ["draft", "published"] as const;
-const proofLabels = ["Problem", "My Role", "Shipped", "Impact"] as const;
+const proofLabels = [
+  "Problem",
+  "My Role",
+  "Shipped",
+  "Impact",
+  "Built",
+  "Prototype scope",
+] as const;
 const visualKinds = ["screenshot", "system", "type"] as const;
 const codeTones = ["lime", "ember", "split"] as const;
 const beyondKinds = ["photo", "event", "quote", "person", "project"] as const;

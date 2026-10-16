@@ -16,19 +16,19 @@ interface HeroProofPoint {
 
 const proofPoints: HeroProofPoint[] = [
   {
-    id: "velo",
-    lead: "Velo, working prototype",
-    detail: "Multi-tenant dispatch with live maps and realtime updates.",
+    id: "ostrum",
+    lead: "Release prep, 2 h → 20 min",
+    detail: "Python/Tkinter tooling prepares migration files, backups, and reports.",
   },
   {
     id: "runs",
-    lead: "74 rated runs",
-    detail: "AI coding runs scored and compared before a model is picked.",
+    lead: "AI model selection",
+    detail: "I scored and compared 74 AI coding runs before choosing a model.",
   },
   {
     id: "relocation",
     lead: "Open to relocation",
-    detail: "Remote from India, open to global roles.",
+    detail: "Remote from India and open to employer-sponsored relocation.",
   },
 ];
 

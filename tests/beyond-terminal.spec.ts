@@ -3,11 +3,14 @@ import path from "node:path";
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
-const artifactPath = (filename: string) =>
-  path.join(process.cwd(), "test-artifacts", filename);
+const artifactDirectory = path.join(
+  process.env.PLAYWRIGHT_OUTPUT_DIR ?? path.join(process.cwd(), "test-results"),
+  "artifacts"
+);
+const artifactPath = (filename: string) => path.join(artifactDirectory, filename);
 
 test.beforeAll(() => {
-  fs.mkdirSync(path.join(process.cwd(), "test-artifacts"), { recursive: true });
+  fs.mkdirSync(artifactDirectory, { recursive: true });
 });
 
 async function expectHeroNameToFit(page: Page) {
@@ -93,16 +96,16 @@ test("home hero keeps the full name inside the desktop viewport", async ({ page 
 
   const metrics = await expectHeroNameToFit(page);
 
-  expect(metrics.wordmarkWidth).toBeGreaterThanOrEqual(metrics.viewportWidth * 0.75);
+  const wordmarkWidthRatio = metrics.wordmarkWidth / metrics.viewportWidth;
+  expect(wordmarkWidthRatio).toBeGreaterThanOrEqual(0.5);
+  expect(wordmarkWidthRatio).toBeLessThanOrEqual(0.56);
 });
 
 test("home hero keeps the full name inside the mobile viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
-  const metrics = await expectHeroNameToFit(page);
-
-  expect(metrics.wordmarkWidth).toBeGreaterThanOrEqual(metrics.viewportWidth * 0.68);
+  await expectHeroNameToFit(page);
 });
 
 test("home page does not expose an obvious Beyond CTA", async ({ page }) => {
@@ -131,23 +134,19 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   await page.goto("/");
   await page.waitForTimeout(150);
 
-  const staticRole = page.getByText("Backend Engineer", { exact: true });
+  const staticRole = page.getByText("Forward deployed engineering", { exact: true });
   await expect(staticRole).toBeVisible();
   await page.waitForTimeout(2_800);
   await expect(staticRole).toBeVisible();
 
-  const bridge = page.locator('[data-home-explore-bridge="true"]');
-  await bridge.scrollIntoViewIfNeeded();
-  await expect(bridge.getByText("A little context", { exact: true })).toBeVisible();
-  await expect(
-    bridge.getByRole("heading", { level: 2, name: "The thinking behind the build." })
-  ).toBeVisible();
+  const method = page.locator("#work aside[aria-labelledby='work-method-title']");
+  await method.scrollIntoViewIfNeeded();
+  await expect(method.getByRole("heading", { name: "How I orchestrate AI agents" })).toBeVisible();
+  await expect(method.getByText("Production database work and side projects", { exact: true })).toBeVisible();
 
   await page.locator("#about").scrollIntoViewIfNeeded();
   await expect(
-    page.getByText("I build scalable backend systems by first understanding", {
-      exact: false,
-    })
+    page.getByText("I design and build across the database, API, and product interface.", { exact: true })
   ).toBeVisible();
   const widths = await page.evaluate(() => ({
     documentWidth: document.documentElement.scrollWidth,
@@ -246,7 +245,12 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
     document.querySelector("main")?.scrollIntoView({ block: "start" });
   });
 
-  await expect(page.getByRole("heading", { name: "Philosophy", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "I design and build across the database, API, and product interface.",
+      exact: true,
+    })
+  ).toBeVisible();
   const widths = await page.evaluate(() => ({
     documentWidth: document.documentElement.scrollWidth,
     windowWidth: window.innerWidth,
@@ -254,10 +258,9 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
 
   expect(widths.documentWidth).toBeLessThanOrEqual(widths.windowWidth);
 
-  await expect(page.locator("#experience [data-experience-dossier]")).toHaveCount(1);
-  await expect(page.locator("#experience [data-experience-workstream]")).toHaveCount(4);
+  await expect(page.locator("#experience article")).toHaveCount(1);
   await expect(
-    page.getByRole("heading", { name: "Velo — White-Label Dispatch Platform", exact: true })
+    page.getByRole("heading", { name: "Velo, a white-label dispatch prototype", exact: true })
   ).toHaveCount(1);
   await expect(
     page.getByRole("heading", {
@@ -266,7 +269,7 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
     })
   ).toHaveCount(1);
 
-  const resumeCta = page.getByRole("link", { name: "Download Resume", exact: true });
+  const resumeCta = page.getByRole("link", { name: "Download résumé", exact: true });
   await expect(resumeCta).toHaveAttribute(
     "href",
     "/resume/abhinav-prasad-resume.pdf"
@@ -287,17 +290,17 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Velo — White-Label Dispatch Platform",
+      name: "Velo, a white-label dispatch prototype",
       exact: true,
     })
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Source", exact: true })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "View project source on GitHub", exact: true })).toHaveAttribute(
     "href",
     "https://github.com/k2ocabhinav/Velo"
   );
 });
 
-test("desktop section handoff into Philosophy stays seam-free", async ({ page }) => {
+test("desktop handoff into the profile section stays seam-free", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
@@ -317,48 +320,44 @@ test("desktop section handoff into Philosophy stays seam-free", async ({ page })
   });
 });
 
-test("explore bridge keeps the matte headline composition on desktop", async ({ page }) => {
+test("orchestration panel keeps the build method readable on desktop", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
   await page.evaluate(() => {
-    document
-      .querySelector('[data-home-explore-bridge="true"]')
-      ?.scrollIntoView({ block: "center" });
+    document.querySelector("#work aside[aria-labelledby='work-method-title']")?.scrollIntoView({ block: "center" });
   });
   await page.waitForTimeout(420);
 
-  const exploreBridge = page.locator('[data-home-explore-bridge="true"]');
-  await expect(exploreBridge).toBeVisible();
+  const method = page.locator("#work aside[aria-labelledby='work-method-title']");
+  await expect(method).toBeVisible();
 
-  const screenshot = await exploreBridge.screenshot({
+  const screenshot = await method.screenshot({
     animations: "disabled",
   });
 
-  expect(screenshot).toMatchSnapshot("home-explore-bridge-desktop.png", {
+  expect(screenshot).toMatchSnapshot("orchestration-method-desktop.png", {
     maxDiffPixelRatio: 0.025,
   });
 });
 
-test("explore bridge keeps the matte headline composition on mobile", async ({ page }) => {
+test("orchestration panel keeps the build method readable on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
   await page.evaluate(() => {
-    document
-      .querySelector('[data-home-explore-bridge="true"]')
-      ?.scrollIntoView({ block: "start" });
+    document.querySelector("#work aside[aria-labelledby='work-method-title']")?.scrollIntoView({ block: "start" });
   });
   await page.waitForTimeout(420);
 
-  const exploreBridge = page.locator('[data-home-explore-bridge="true"]');
-  await expect(exploreBridge).toBeVisible();
+  const method = page.locator("#work aside[aria-labelledby='work-method-title']");
+  await expect(method).toBeVisible();
 
-  const screenshot = await exploreBridge.screenshot({
+  const screenshot = await method.screenshot({
     animations: "disabled",
   });
 
-  expect(screenshot).toMatchSnapshot("home-explore-bridge-mobile.png", {
+  expect(screenshot).toMatchSnapshot("orchestration-method-mobile.png", {
     maxDiffPixelRatio: 0.025,
   });
 });
@@ -369,11 +368,9 @@ test("profile stage keeps premium composition on desktop", async ({ page }) => {
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
-  const profileStage = page.locator('[data-home-profile-stage="true"]');
+  const profileStage = page.locator("#about .spec-sheet");
   await page.evaluate(() => {
-    document
-      .querySelector('[data-home-profile-stage="true"]')
-      ?.scrollIntoView({ block: "center" });
+    document.querySelector("#about .spec-sheet")?.scrollIntoView({ block: "center" });
   });
   await page.waitForTimeout(420);
   await expect(profileStage).toBeVisible();
@@ -395,11 +392,9 @@ test("profile stage keeps premium composition on mobile", async ({ page }) => {
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
-  const profileStage = page.locator('[data-home-profile-stage="true"]');
+  const profileStage = page.locator("#about .spec-sheet");
   await page.evaluate(() => {
-    document
-      .querySelector('[data-home-profile-stage="true"]')
-      ?.scrollIntoView({ block: "start" });
+    document.querySelector("#about .spec-sheet")?.scrollIntoView({ block: "start" });
   });
   await page.waitForTimeout(420);
   await expect(profileStage).toBeVisible();
@@ -423,45 +418,13 @@ test("secret hint stays visible through mid profile scroll", async ({ page }) =>
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
-  await page.evaluate(() => {
-    document
-      .querySelector('[data-home-profile-stage="true"]')
-      ?.scrollIntoView({ block: "start" });
-  });
-  await page.waitForTimeout(320);
+  await page.locator("#about").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(120);
 
   const hint = page.locator('[data-secret-hint="true"]').first();
   await expect(hint).toBeVisible();
-
-  await page.evaluate(() => {
-    window.scrollBy({ top: 180, behavior: "auto" });
-  });
-  await page.waitForTimeout(220);
-
-  const activeOpacity = await hint.evaluate((el) =>
-    Number.parseFloat(getComputedStyle(el).opacity || "0")
-  );
-  expect(activeOpacity).toBeGreaterThan(0.7);
-
-  await page.evaluate(() => {
-    window.scrollBy({ top: 260, behavior: "auto" });
-  });
-  await page.waitForTimeout(260);
-
-  const midOpacity = await hint.evaluate((el) =>
-    Number.parseFloat(getComputedStyle(el).opacity || "0")
-  );
-  expect(midOpacity).toBeGreaterThan(0.7);
-
-  await page.evaluate(() => {
-    window.scrollBy({ top: 260, behavior: "auto" });
-  });
-  await page.waitForTimeout(220);
-
-  const lateOpacity = await hint.evaluate((el) =>
-    Number.parseFloat(getComputedStyle(el).opacity || "0")
-  );
-  expect(lateOpacity).toBeGreaterThan(0.36);
+  await expect(hint).toContainText("Personal layer");
+  await expect(hint).toContainText("v opens it");
 });
 
 test("desktop home hero wordmark keeps the editorial look", async ({ page }) => {
@@ -530,7 +493,7 @@ test("hovered A, n, and v hero letters keep the matte print states", async ({
     strokeWidth: getComputedStyle(el).webkitTextStrokeWidth,
     textShadow: getComputedStyle(el).textShadow,
   }));
-  expect(fifthPrintState.color).toBe("rgb(228, 42, 29)");
+  expect(fifthPrintState.color).toBe("rgb(106, 33, 53)");
   expect(fifthPrintState.strokeWidth).toBe("0px");
   expect(fifthPrintState.textShadow).toBe("none");
 

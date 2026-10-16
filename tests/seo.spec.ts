@@ -10,12 +10,12 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   const html = await response.text();
 
   expect(html).toContain("Abhinav Prasad");
-  expect(html).toContain("I turn operational needs into working software with sound system design and human-reviewed AI workflows.");
-  expect(html).toContain("Forward Deployed Engineer · AI orchestration");
+  expect(html).toMatch(/Forward deployed engineering/i);
+  expect(html).toMatch(/operational workflows into tested software/i);
   expect(html).toContain("Currently: Database Engineer at Ostrum Tech Limited");
   expect(html).toContain("How I orchestrate AI agents");
   expect(html).toContain("Software Engineer Intern");
-  expect(html).toContain("How I turn requests into software");
+  expect(html).toContain("Selected projects");
 
   await page.goto("/");
   const jsonLd = await page
@@ -43,9 +43,11 @@ test("serves recruiter-readable content and structured data in the initial HTML"
 
   const title = await page.title();
   const description = await page.locator('meta[name="description"]').getAttribute("content");
-  expect(title).toBe("Abhinav Prasad | Forward Deployed Engineer");
+  expect(title).toContain("Abhinav Prasad");
+  expect(title).toMatch(/Forward Deployed/i);
   expect(title.length).toBeLessThanOrEqual(60);
-  expect(description).toBe("Full-stack software engineer targeting Forward Deployed Engineer roles, with AI agent orchestration and end-to-end system design and delivery.");
+  expect(description).toMatch(/operational workflows/i);
+  expect(description).toMatch(/Database Engineer at Ostrum Tech Limited/i);
   expect(description?.length ?? 0).toBeLessThanOrEqual(155);
 });
 
@@ -106,19 +108,20 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   const sitemapResponse = await request.get("/sitemap.xml");
   expect(sitemapResponse.ok()).toBeTruthy();
   const sitemap = await sitemapResponse.text();
-  for (const route of ["/", "/beyond-terminal", "/work/velo", "/work/portfolio-platform"]) {
+  for (const route of ["/", "/work/velo", "/work/portfolio-platform"]) {
     expect(sitemap).toContain(`http://localhost:3000${route}`);
   }
+  expect(sitemap).not.toContain("/beyond-terminal");
 
   const llmsResponse = await request.get("/llms.txt");
   expect(llmsResponse.ok()).toBeTruthy();
   expect(llmsResponse.headers()["content-type"]).toContain("text/plain");
   const llms = await llmsResponse.text();
   expect(llms).toContain("# Abhinav Prasad");
-  expect(llms).toContain("> Full-stack software engineer targeting Forward Deployed Engineer roles");
+  expect(llms).toMatch(/Forward deployed engineering/i);
   expect(llms).toContain("Currently: Database Engineer at Ostrum Tech Limited.");
   expect(llms).toContain("## Professional experience");
-  expect(llms).toContain("[Velo, a white-label dispatch platform]");
+  expect(llms).toContain("[Velo, a white-label dispatch prototype]");
   expect(llms).not.toContain("\u2014");
   expect(llms).toContain("[GitHub](https://github.com/k2ocabhinav/abhinav-prasad-portfolio)");
   expect(llms).not.toMatch(/JIRA-|airport name|client name/i);
@@ -161,6 +164,10 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   );
 
   await page.goto("/beyond-terminal");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    /noindex,\s*nofollow/i
+  );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     "http://localhost:3000/beyond-terminal"

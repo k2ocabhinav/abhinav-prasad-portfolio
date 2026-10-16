@@ -6,7 +6,14 @@ const root = process.cwd();
 const contentRoot = path.join(root, "src/content/portfolio");
 const publicRoot = path.join(root, "public");
 const statuses = new Set(["draft", "published"]);
-const proofLabels = new Set(["Problem", "My Role", "Shipped", "Impact"]);
+const proofLabels = new Set([
+  "Problem",
+  "My Role",
+  "Shipped",
+  "Impact",
+  "Built",
+  "Prototype scope",
+]);
 const projectIcons = new Set(["terminal", "cloud", "database", "sparkles", "cpu"]);
 const stackIcons = new Set(["cloud", "cpu", "database", "terminal", "sparkles"]);
 const stackContextValues = new Set(["Used at work", "Part of my workflow", "Built in projects"]);

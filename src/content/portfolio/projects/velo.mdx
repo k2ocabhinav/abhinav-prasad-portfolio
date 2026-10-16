@@ -5,16 +5,16 @@ featured: true
 featuredOrder: 1
 worksOrder: 1
 id: "01"
-title: "Velo — White-Label Dispatch Platform"
-description: "A pre-launch working demo of a dispatch desk for pre-booked business and hotel transfers."
+title: "Velo, a white-label dispatch prototype"
+description: "A pre-launch dispatch prototype for rider bookings, admin dispatch, and driver trip controls."
 scopeSummary: "Java 21, Spring Boot, PostgreSQL/PostGIS, Next.js"
 icon: "cpu"
 accent: "sage"
 projectCodeTone: "split"
 eyebrow: "Product Build"
-claim: "One dispatch core. Three roles. Two brands."
-summary: "A tenant-aware dispatch platform connecting rider bookings, admin dispatch, and driver trip controls."
-note: "Pre-launch working demo. No production claims."
+claim: "A dispatch prototype for rider, dispatcher, and driver workflows."
+summary: "A pre-launch dispatch prototype for rider bookings, admin dispatch, and driver trip controls."
+note: "Pre-launch working prototype. No public demo is linked yet."
 tags:
   - "Java 21"
   - "Spring Boot"
@@ -43,18 +43,18 @@ proofBeats:
   - label: "My Role"
     short: "Built the backend and product workspaces."
     detail: "Designed the tenant model, dispatch flow, rider and driver screens, and admin tools."
-  - label: "Shipped"
-    short: "Live fleet map, simulator, and weekly trip templates."
-    detail: "The working demo includes a live fleet map, simulated traffic, a trip sheet, tenant tariffs, and service areas."
-  - label: "Impact"
-    short: "One core supports two branded tenants."
+  - label: "Built"
+    short: "Includes a fleet map with simulated traffic, a trip simulator, and weekly trip templates."
+    detail: "The prototype includes a dispatch map, trip simulator, trip sheet, tenant tariffs, and service areas."
+  - label: "Prototype scope"
+    short: "One dispatch core runs two branded workspaces. The second is a demo tenant."
     detail: "Velo Business and Saffron Routes use the same dispatch core. Saffron Routes is a demo tenant."
 detail:
   enabled: true
   slug: "velo"
   eyebrow: "Velo / Dispatch Atlas"
-  title: "Velo — White-Label Dispatch Platform"
-  subtitle: "One dispatch core. Three roles. Two brands. A dispatch desk for pre-booked business and hotel transfers."
+  title: "Velo, a white-label dispatch prototype"
+  subtitle: "A pre-launch dispatch prototype for rider bookings, admin dispatch, and driver trip controls."
   scopeSummary: "Weekly trip templates, a trip sheet, per-tenant tariffs, and service areas."
   detailCtaLabel: "Read the Dispatch Atlas"
   detailCtaSubline: "One transfer, from booking to driver offer."
@@ -114,12 +114,12 @@ detail:
         - "Docker Compose"
         - "OWASP Dependency-Check"
   qualityHighlights:
-    - "334 backend tests across 67 suites were recorded on 16 Oct 2026; one test was skipped."
+    - "For Velo, I split work into isolated coding tasks, review agent changes, and rehearse the flows in a browser."
     - "Tenant checks, database rules, and guarded state changes cover assignment and payment flows."
     - "Redis-backed location and dashboard caches have fallback behavior and record hit, miss, and error counts."
     - "Vitest and Playwright checks cover the rider, driver, and admin workspaces."
   references:
-    - label: "Source"
+    - label: "View project source on GitHub"
       href: "https://github.com/k2ocabhinav/Velo"
   sectionIntros:
     architecture:
@@ -134,7 +134,7 @@ detail:
       title: "What the checks cover."
     references:
       eyebrow: "08 / Source"
-      title: "Read the project source."
+      title: "View project source on GitHub."
   storyboard:
     visuals:
       - id: "livery-day"
