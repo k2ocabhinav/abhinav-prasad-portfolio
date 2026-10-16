@@ -21,6 +21,7 @@ import type {
   PortfolioProject,
   PortfolioStatus,
   ProjectDetail,
+  ProjectDetailSectionIntro,
   ProjectDetailStory,
   ProjectLink,
   ProjectStoryChapter,
@@ -272,6 +273,14 @@ function readLinks(data: Frontmatter, filePath: string, key = "links"): ProjectL
   }));
 }
 
+function readSectionIntro(data: Frontmatter, filePath: string): ProjectDetailSectionIntro {
+  return {
+    eyebrow: stringValue(data, "eyebrow", filePath),
+    title: stringValue(data, "title", filePath),
+    summary: optionalString(data, "summary"),
+  };
+}
+
 function readTechBuckets(data: Frontmatter, filePath: string): ProjectTechBucket[] {
   return objectArray(data, "stackBuckets", filePath).map((bucket) => ({
     label: stringValue(bucket, "label", filePath),
@@ -385,6 +394,9 @@ function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefi
     ? undefined
     : objectValue(detail, "storyboard", filePath);
 
+  // P4 section intros — per-project headings for the trailing sections.
+  const sectionIntros = objectValue(detail, "sectionIntros", filePath);
+
   return {
     slug: stringValue(detail, "slug", filePath),
     eyebrow: stringValue(detail, "eyebrow", filePath),
@@ -401,6 +413,12 @@ function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefi
     stackBuckets: readTechBuckets(detail, filePath),
     qualityHighlights: stringArray(detail, "qualityHighlights", filePath),
     references: readLinks(detail, filePath, "references"),
+    sectionIntros: {
+      architecture: readSectionIntro(objectValue(sectionIntros, "architecture", filePath), filePath),
+      stack: readSectionIntro(objectValue(sectionIntros, "stack", filePath), filePath),
+      quality: readSectionIntro(objectValue(sectionIntros, "quality", filePath), filePath),
+      references: readSectionIntro(objectValue(sectionIntros, "references", filePath), filePath),
+    },
     ...(storyboardData ? { storyboard: readStoryboard(storyboardData, filePath) } : {}),
   };
 }
