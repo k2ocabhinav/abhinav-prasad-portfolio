@@ -1,8 +1,13 @@
 "use client";
 
-import { motion, useMotionValue, useMotionValueEvent } from "motion/react";
+import {
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useTransform,
+} from "motion/react";
 import type { MotionValue } from "motion/react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import styles from "./FlipRevealText.module.css";
@@ -20,11 +25,25 @@ interface FlipRevealTextProps {
   reduceMotion?: boolean;
   /** Matte mode: masked rise (overflow-clip + translate), no 3D rotation. */
   flat?: boolean;
+  /** Misregistered accent copy behind the text (paper sections only). */
+  overprint?: boolean;
   className?: string;
   tokenClassName?: string;
 }
 
-function buildTokens(text: string, mode: "word" | "char") {
+interface Token {
+  key: string;
+  value: string;
+  isSpace: boolean;
+}
+
+interface StagedToken extends Token {
+  start: number;
+  peak: number;
+  hold: number;
+}
+
+function buildTokens(text: string, mode: "word" | "char"): Token[] {
   if (mode === "char") {
     return Array.from(text).map((char, index) => ({
       key: `char-${index}-${char}`,
@@ -34,7 +53,7 @@ function buildTokens(text: string, mode: "word" | "char") {
   }
 
   const words = text.trim().split(/\s+/);
-  const output: Array<{ key: string; value: string; isSpace: boolean }> = [];
+  const output: Token[] = [];
 
   words.forEach((word, index) => {
     output.push({ key: `word-${index}-${word}`, value: word, isSpace: false });
@@ -44,6 +63,65 @@ function buildTokens(text: string, mode: "word" | "char") {
   });
 
   return output;
+}
+
+/** Strictly-increasing [start, peak, hold, end] stops for useTransform. */
+function buildRange(
+  start: number,
+  peak: number,
+  hold: number
+): [number, number, number, number] {
+  const safeStart = Math.min(0.98, Math.max(0, start));
+  const safePeak = Math.min(0.995, Math.max(safeStart + 0.0001, peak));
+  const safeHold = Math.min(0.998, Math.max(safePeak + 0.0001, hold));
+  return [safeStart, safePeak, safeHold, 1];
+}
+
+interface FlipTokenProps {
+  value: string;
+  progress: MotionValue<number>;
+  range: [number, number, number, number];
+  startY: number;
+  startRotate: number;
+  persist: boolean;
+  flat: boolean;
+  className?: string;
+}
+
+/** One word/char driven purely by motion values — no React renders per frame. */
+function FlipToken({
+  value,
+  progress,
+  range,
+  startY,
+  startRotate,
+  persist,
+  flat,
+  className,
+}: FlipTokenProps) {
+  const opacity = useTransform(progress, range, [0, 1, 1, persist ? 1 : 0]);
+  const y = useTransform(progress, range, [startY, 0, 0, persist ? 0 : -8]);
+  const rotateX = useTransform(progress, range, [
+    startRotate,
+    0,
+    0,
+    persist ? 0 : -8,
+  ]);
+
+  return (
+    <span className={styles.clip}>
+      <motion.span
+        className={cn(styles.token, className)}
+        style={
+          flat
+            ? { opacity, y }
+            : { opacity, y, rotateX, transformOrigin: "50% 100%" }
+        }
+      >
+        {value}
+      </motion.span>
+    </span>
+  );
 }
 
 export default function FlipRevealText({
@@ -58,6 +136,7 @@ export default function FlipRevealText({
   perspective = 920,
   reduceMotion,
   flat = false,
+  overprint = true,
   className,
   tokenClassName,
 }: FlipRevealTextProps) {
@@ -66,42 +145,84 @@ export default function FlipRevealText({
   const disableFlip = flat || shouldReduceMotion;
   const idleProgress = useMotionValue(0);
   const progressSource = progress ?? idleProgress;
-  const [progressValue, setProgressValue] = useState(() => progress?.get() ?? 0);
   const useScrollLinked = Boolean(progress);
   const startY = flat ? 20 : disableFlip ? 10 : 16;
   const startRotate = disableFlip ? 0 : -112;
   const windowRange = window ?? triggerRange;
   const holdWindowEnd = holdUntil ?? Math.min(1, windowRange[1] + 0.34);
-  const tokens = buildTokens(text, mode);
-  const revealWindow = Math.max(0.15, windowRange[1] - windowRange[0]);
   const viewportAmount = Math.min(0.95, Math.max(0.3, windowRange[1]));
+  const tokens = useMemo(() => buildTokens(text, mode), [text, mode]);
 
-  useMotionValueEvent(progressSource, "change", (latest) => {
-    setProgressValue(latest);
-  });
-
-  const stagedTokens = useMemo(() => {
+  const stagedTokens = useMemo<StagedToken[]>(() => {
     const staggerStep = Math.max(0.002, stagger * 0.2);
 
-    return tokens.map((token, index) => {
-      const tokenStart = Math.min(0.98, windowRange[0] + index * staggerStep);
-      const tokenPeak = Math.min(0.995, windowRange[1] + index * staggerStep);
-      const tokenHold = Math.min(
+    return tokens.map((token, index) => ({
+      ...token,
+      start: Math.min(0.98, windowRange[0] + index * staggerStep),
+      peak: Math.min(0.995, windowRange[1] + index * staggerStep),
+      hold: Math.min(
         0.998,
-        Math.max(tokenPeak, holdWindowEnd + index * staggerStep * 0.26)
-      );
-
-      return {
-        ...token,
-        tokenStart,
-        tokenPeak,
-        tokenHold,
-      };
-    });
+        Math.max(
+          windowRange[1] + index * staggerStep,
+          holdWindowEnd + index * staggerStep * 0.26
+        )
+      ),
+    }));
   }, [tokens, stagger, windowRange, holdWindowEnd]);
 
+  // will-change only while a reveal is in flight (scroll-linked mode). The ref
+  // guard means React state (and the attribute write) only happens on boundary
+  // crossings, never on every scroll frame.
+  const [animating, setAnimating] = useState(false);
+  const animatingRef = useRef(false);
+  useMotionValueEvent(progressSource, "change", (latest) => {
+    if (!useScrollLinked || shouldReduceMotion) {
+      return;
+    }
+    const next = latest > windowRange[0] - 0.02 && latest < holdWindowEnd + 0.02;
+    if (next !== animatingRef.current) {
+      animatingRef.current = next;
+      setAnimating(next);
+    }
+  });
+
+  const overprintLayer = overprint ? (
+    <span className={styles.overprint} data-overprint={text} aria-hidden="true" />
+  ) : null;
+
   if (shouldReduceMotion) {
-    return <span className={className}>{text}</span>;
+    return (
+      <span className={cn(styles.root, className)} aria-label={text}>
+        {overprintLayer}
+        <span className={cn(styles.token, tokenClassName)}>{text}</span>
+      </span>
+    );
+  }
+
+  if (useScrollLinked) {
+    return (
+      <span
+        className={cn(styles.root, className)}
+        style={{ ["--flip-perspective" as string]: `${perspective}px` }}
+        aria-label={text}
+        data-flip-animating={animating ? "true" : undefined}
+      >
+        {overprintLayer}
+        {stagedTokens.map((token) => (
+          <FlipToken
+            key={token.key}
+            value={token.value}
+            progress={progressSource}
+            range={buildRange(token.start, token.peak, token.hold)}
+            startY={startY}
+            startRotate={startRotate}
+            persist={persist}
+            flat={disableFlip}
+            className={tokenClassName}
+          />
+        ))}
+      </span>
+    );
   }
 
   return (
@@ -110,72 +231,34 @@ export default function FlipRevealText({
       style={{ ["--flip-perspective" as string]: `${perspective}px` }}
       aria-label={text}
     >
-      {stagedTokens.map((token, index) => {
+      {overprintLayer}
+      {tokens.map((token, index) => {
         const isAnimatedToken = !token.isSpace;
         const delay = isAnimatedToken ? index * stagger : 0;
-        const progressLocal = useScrollLinked ? progressValue : 0;
-        const peakRange = Math.max(0.0001, token.tokenPeak - token.tokenStart);
-        const tReveal = Math.min(
-          1,
-          Math.max(0, (progressLocal - token.tokenStart) / peakRange)
-        );
-        const fadeRange = Math.max(0.0001, 1 - token.tokenHold);
-        const tExit = persist
-          ? 0
-          : Math.min(1, Math.max(0, (progressLocal - token.tokenHold) / fadeRange));
-        const stagedOpacity = progressLocal < token.tokenStart
-          ? 0
-          : progressLocal <= token.tokenPeak
-            ? tReveal
-            : persist || progressLocal <= token.tokenHold
-              ? 1
-              : 1 - tExit;
-        const stagedY = progressLocal < token.tokenPeak
-          ? startY * (1 - tReveal)
-          : persist || progressLocal <= token.tokenHold
-            ? 0
-            : -8 * tExit;
-        const stagedRotateX = disableFlip
-          ? 0
-          : progressLocal < token.tokenPeak
-            ? startRotate * (1 - tReveal)
-            : persist || progressLocal <= token.tokenHold
-              ? 0
-              : -8 * tExit;
-        const scrollLinkedTarget = disableFlip
-          ? { opacity: stagedOpacity, y: stagedY }
-          : { opacity: stagedOpacity, y: stagedY, rotateX: stagedRotateX };
 
         return (
           <span key={token.key} className={styles.clip}>
             <motion.span
               className={cn(styles.token, tokenClassName)}
               initial={
-                useScrollLinked
-                  ? false
-                  : disableFlip
-                    ? { opacity: 0, y: startY }
-                    : { opacity: 0, rotateX: startRotate, y: startY }
+                disableFlip
+                  ? { opacity: 0, y: startY }
+                  : { opacity: 0, rotateX: startRotate, y: startY }
               }
               whileInView={
-                useScrollLinked
-                  ? undefined
-                  : disableFlip
-                    ? { opacity: 1, y: 0 }
-                    : { opacity: 1, rotateX: 0, y: 0 }
+                disableFlip
+                  ? { opacity: 1, y: 0 }
+                  : { opacity: 1, rotateX: 0, y: 0 }
               }
-              animate={useScrollLinked ? scrollLinkedTarget : undefined}
-              viewport={useScrollLinked ? undefined : { once: true, amount: viewportAmount }}
+              viewport={{ once: true, amount: viewportAmount }}
               transition={{
-                duration: useScrollLinked
-                  ? 0.14
-                  : disableFlip
-                    ? flat
-                      ? 0.5
-                      : 0.34
-                    : Math.min(0.54, revealWindow + 0.14),
-                delay: useScrollLinked ? 0 : delay,
-                ease: useScrollLinked ? "linear" : "easeOut",
+                duration: disableFlip
+                  ? flat
+                    ? 0.5
+                    : 0.34
+                  : Math.min(0.54, Math.max(0.15, windowRange[1] - windowRange[0]) + 0.14),
+                delay,
+                ease: "easeOut",
               }}
               style={disableFlip ? undefined : { transformOrigin: "50% 100%" }}
             >

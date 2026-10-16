@@ -109,14 +109,6 @@
   transform: translate3d(0, 0, 0);
 }
 
-/* Retired glow layers — spans still render from the TSX; keep them inert. */
-.hoverColorWash,
-.scanSlice,
-.glowShardOne,
-.glowShardTwo {
-  display: none;
-}
-
 /* Hairline underline — flat vermilion, draws in from the left. */
 .hoverAccentBar {
   position: absolute;
