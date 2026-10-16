@@ -5,3 +5,4 @@ Choices that are costly to reverse or likely to prompt "why?". Records are appen
 | # | Decision | Status |
 |---|---|---|
 | [0001](0001-print-run-visual-direction.md) | "Print Run" visual direction and palette v2 (burgundy lead) | accepted |
+| [0002](0002-forward-deployed-positioning.md) | Lead with forward-deployed engineering; backend and data as proof | accepted |
