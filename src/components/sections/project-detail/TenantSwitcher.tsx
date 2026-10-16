@@ -50,7 +50,7 @@ export default function TenantSwitcher({ label, defaultId, options, visuals }: T
                 src={visual.src}
                 alt={visual.alt}
                 fill
-                sizes="(max-width: 767px) 360px, 1104px"
+                sizes="(max-width: 767px) 360px, 1296px"
                 className={styles.image}
               />
             </div>

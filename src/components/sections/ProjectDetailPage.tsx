@@ -116,7 +116,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{detail.eyebrow}</p>
-            {storyboard ? <p className={styles.statusStamp}>Pre-launch working demo</p> : null}
+            {storyboard ? <p className={styles.statusStamp}>Pre-launch working prototype</p> : null}
             <h1 className={styles.title}>{detail.title}</h1>
             <p className={styles.subtitle}>{detail.subtitle}</p>
             <p className={styles.scopeSummary}>{detail.scopeSummary}</p>
@@ -141,7 +141,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
 
         {storyboard ? (
           <div className={styles.factRail} aria-label="Project facts">
-            <p><span>Stage</span>Pre-launch working demo</p>
+            <p><span>Stage</span>Pre-launch working prototype</p>
             <p><span>Product</span>Dispatch for pre-booked transfers</p>
             <p><span>Quality</span>334 backend tests, 16 Oct 2026</p>
           </div>

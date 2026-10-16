@@ -18,7 +18,7 @@ const FRAME_RATIO: Record<ProjectStoryViewport, string> = {
 
 const FRAME_SIZES: Record<ProjectStoryViewport, string> = {
   mobile: "(max-width: 767px) 340px, 360px",
-  desktop: "(max-width: 767px) 360px, (max-width: 1100px) 92vw, 1200px",
+  desktop: "(max-width: 767px) 360px, (max-width: 1100px) 92vw, 1296px",
 };
 
 export default function DispatchReel({ steps, visuals }: DispatchReelProps) {
