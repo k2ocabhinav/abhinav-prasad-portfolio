@@ -54,16 +54,23 @@
   margin: 0;
 }
 
+/* Matches the 1440x750 dispatch capture, so the whole screen (sidebar, fleet
+   map, side panel) is framed without cropping. */
 .frame {
   position: relative;
-  aspect-ratio: 1100 / 1034;
   overflow: hidden;
   border: 1px solid var(--detail-hairline);
   background: var(--paper-linen, #FCF8F2);
 }
 
+.frameInner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1440 / 750;
+}
+
 .image {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .caption {
@@ -71,4 +78,17 @@
   color: var(--detail-muted);
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  /* A 1440-wide desk cannot shrink to a phone legibly. Crop to the fleet map at
+     the centre of the screen, which is the whole point of the comparison. */
+  .frameInner {
+    aspect-ratio: 1 / 1;
+  }
+
+  .image {
+    object-fit: cover;
+    object-position: 35% center;
+  }
 }

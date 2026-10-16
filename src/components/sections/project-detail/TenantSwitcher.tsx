@@ -40,15 +40,20 @@ export default function TenantSwitcher({ label, defaultId, options, visuals }: T
 
       {visual && selected ? (
         <figure className={styles.figure}>
+          {/* One frame, one ratio: both tenants share it exactly, so switching
+              compares like for like. Desktop shows the whole 1440x750 desk;
+              phones pan out to the fleet map at the centre of the screen. */}
           <div className={styles.frame}>
-            <Image
-              key={visual.id}
-              src={visual.src}
-              alt={visual.alt}
-              fill
-              sizes="(max-width: 767px) 100vw, 1200px"
-              className={styles.image}
-            />
+            <div className={styles.frameInner}>
+              <Image
+                key={visual.id}
+                src={visual.src}
+                alt={visual.alt}
+                fill
+                sizes="(max-width: 767px) 360px, 1104px"
+                className={styles.image}
+              />
+            </div>
           </div>
           <figcaption className={styles.caption}>{visual.caption}</figcaption>
         </figure>
