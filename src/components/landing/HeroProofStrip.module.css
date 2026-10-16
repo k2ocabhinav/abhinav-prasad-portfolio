@@ -83,6 +83,7 @@
   .lead {
     display: inline;
     margin-right: 0.4rem;
+    font-size: 1rem;
   }
 
   /* Phones run the lead and the detail as one sentence. */
@@ -92,6 +93,7 @@
 
   .detail {
     display: inline;
+    font-size: 1rem;
   }
 
   .planes {

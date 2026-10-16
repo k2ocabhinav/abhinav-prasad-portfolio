@@ -101,6 +101,9 @@
 }
 
 .emailLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--color-panel-accent, #F4BEBB);
   font-family: var(--font-display);
   font-size: clamp(1rem, 3vw, 1.5rem);
@@ -269,6 +272,7 @@
     grid-row: 1;
     grid-column: 1 / -1;
     font-size: 1.1rem;
+    justify-content: center;
     text-align: center;
     white-space: nowrap;
   }
@@ -284,6 +288,7 @@
   }
 
   .taglineText {
+    font-size: 12px;
     letter-spacing: 0.18em;
   }
 

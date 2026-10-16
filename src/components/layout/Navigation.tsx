@@ -251,7 +251,11 @@ export default function Navigation() {
             navMode === "transparent" && styles.hamburgerButtonTransparent
           )}
         >
-          {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          {isMobileMenuOpen ? (
+            <X size={20} aria-hidden="true" focusable="false" />
+          ) : (
+            <Menu size={20} aria-hidden="true" focusable="false" />
+          )}
         </button>
       </div>
 
@@ -271,7 +275,7 @@ export default function Navigation() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              aria-label="Dismiss navigation overlay"
+              aria-label="Close navigation"
               tabIndex={-1}
               data-mobile-navigation-backdrop
               className={styles.mobileBackdrop}
@@ -300,7 +304,7 @@ export default function Navigation() {
                 }}
                 onClick={closeMobileMenu}
               >
-                <X size={20} />
+                <X size={20} aria-hidden="true" focusable="false" />
               </button>
               <nav className={styles.mobileNav} aria-label="Mobile navigation">
                 {navigationItems.map((item) =>

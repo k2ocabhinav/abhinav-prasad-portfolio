@@ -160,6 +160,10 @@
   .description {
     font-size: 1rem;
   }
+
+  .tags :global(.tag) {
+    font-size: 12px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

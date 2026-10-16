@@ -22,7 +22,7 @@ export default function ChangeLedgerPlate({ id }: ChangeLedgerPlateProps) {
       {[99, 149, 199, 249].map((y, index) => (
         <g key={y}>
           <circle cx="65" cy={y} r="7" fill={index === 3 ? "var(--plate-accent)" : "var(--plate-paper)"} stroke="var(--plate-accent)" strokeWidth="2" />
-          <text x="83" y={y + 4} fill="var(--plate-accent)" fontFamily="var(--font-label, monospace)" fontSize="10">0{index + 1}</text>
+          <text x="83" y={y + 4} fill="var(--plate-accent)" fontFamily="var(--font-label, monospace)" fontSize="12">0{index + 1}</text>
           <path d={`M108 ${y - 2}h133M108 ${y + 10}h107M108 ${y + 21}h77`} stroke="var(--plate-ink)" strokeWidth="1.3" strokeOpacity=".55" />
         </g>
       ))}

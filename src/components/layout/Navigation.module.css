@@ -25,7 +25,7 @@
 
 .railLabel {
   font-family: var(--font-label);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   opacity: 0;
@@ -35,7 +35,8 @@
   transition: all 0.3s ease;
 }
 
-.railItem:hover .railLabel {
+.railItem:hover .railLabel,
+.railItem:focus-visible .railLabel {
   opacity: 1;
   transform: translateX(0);
 }
@@ -205,7 +206,7 @@
   min-height: 44px;
   padding: 0.7rem 0.25rem;
   font-family: var(--font-label);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.35;
   text-align: left;
   letter-spacing: 0.1em;

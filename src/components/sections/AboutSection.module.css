@@ -74,6 +74,10 @@
     gap: 1.75rem;
   }
 
+  .callout {
+    font-size: 12px;
+  }
+
   .cutawayWrap {
     margin-top: 1.25rem;
   }

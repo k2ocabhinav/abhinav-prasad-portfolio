@@ -123,7 +123,7 @@ export default function DispatchBoard() {
         <p className={styles.caption}>Every change moves through four lanes.</p>
         <p className={styles.readout} aria-hidden="true">
           <span className={styles.readoutStrong}>{formatStep(detailIndex + 1)}</span>
-          <span className={styles.readoutSlash}>/</span>
+          <span className={styles.readoutSlash} aria-hidden="true">/</span>
           <span>{formatStep(total)}</span>
         </p>
       </header>

@@ -82,6 +82,10 @@
     padding: 0.7rem 0.6rem 0.75rem;
   }
 
+  .label {
+    font-size: 0.75rem;
+  }
+
   .tickets {
     gap: 0.4rem;
   }

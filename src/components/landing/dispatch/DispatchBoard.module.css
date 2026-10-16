@@ -142,6 +142,14 @@
     padding: 0.7rem;
   }
 
+  .caption {
+    font-size: 1rem;
+  }
+
+  .readout {
+    font-size: 0.75rem;
+  }
+
   .header {
     gap: 0.55rem;
     padding-bottom: 0.6rem;
@@ -153,5 +161,13 @@
 
   .detail {
     padding-top: 0.55rem;
+  }
+
+  .detailStub {
+    font-size: 0.75rem;
+  }
+
+  .detailText {
+    font-size: 1rem;
   }
 }

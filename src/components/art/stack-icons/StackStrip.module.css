@@ -55,3 +55,9 @@
      light registration mark instead, or it disappears into the panel. */
   --stack-offset: 3px 3px 0 rgba(237, 230, 218, 0.22);
 }
+
+@media (max-width: 767px) {
+  .chip {
+    font-size: 12px;
+  }
+}
