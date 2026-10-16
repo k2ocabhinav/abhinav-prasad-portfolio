@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { PersonalData, ProjectDetail, ProjectStoryChapter, ProjectStoryVisual, ProjectTenantOption } from "@/types";
+import type { PersonalData, ProjectDetail, ProjectStoryVisual, ProjectTenantOption } from "@/types";
 import Footer from "@/components/layout/Footer";
 import DispatchReel from "@/components/sections/project-detail/DispatchReel";
 import TenantSwitcher from "@/components/sections/project-detail/TenantSwitcher";
@@ -14,12 +14,18 @@ interface ProjectDetailPageProps {
   personal: PersonalData;
 }
 
-function SectionIntro({ chapter, headingId }: { chapter: ProjectStoryChapter; headingId: string }) {
+interface SectionIntroContent {
+  eyebrow: string;
+  title: string;
+  summary?: string;
+}
+
+function SectionIntro({ intro, headingId }: { intro: SectionIntroContent; headingId: string }) {
   return (
     <div className={styles.sectionIntro}>
-      <p className={styles.eyebrow}>{chapter.eyebrow}</p>
-      <h2 id={headingId} className={styles.sectionTitle}>{chapter.title}</h2>
-      <p className={styles.sectionSummary}>{chapter.summary}</p>
+      <p className={styles.eyebrow}>{intro.eyebrow}</p>
+      <h2 id={headingId} className={styles.sectionTitle}>{intro.title}</h2>
+      {intro.summary ? <p className={styles.sectionSummary}>{intro.summary}</p> : null}
     </div>
   );
 }
@@ -156,7 +162,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
 
             {tenantChapter ? (
               <section className={`${styles.section} ${styles.tenantSection}`} aria-labelledby="tenant-story-title">
-                <SectionIntro chapter={tenantChapter} headingId="tenant-story-title" />
+                <SectionIntro intro={tenantChapter} headingId="tenant-story-title" />
                 <TenantSwitcher
                   label={storyboard.tenantSwitcher.label}
                   defaultId={storyboard.tenantSwitcher.defaultId}
@@ -168,7 +174,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
 
             {liveryChapter && dayVisual && nightVisual ? (
               <section className={styles.section} aria-labelledby="livery-story-title">
-                <SectionIntro chapter={liveryChapter} headingId="livery-story-title" />
+                <SectionIntro intro={liveryChapter} headingId="livery-story-title" />
                 <div className={styles.liveryPair}>
                   <VisualFigure
                     visual={dayVisual}
@@ -207,7 +213,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
 
             {scheduleChapter && brandingVisual && tripSheetVisual ? (
               <section className={styles.section} aria-labelledby="weekly-work-title">
-                <SectionIntro chapter={scheduleChapter} headingId="weekly-work-title" />
+                <SectionIntro intro={scheduleChapter} headingId="weekly-work-title" />
                 <div className={styles.featureRow}>
                   <div>
                     <h3 className={styles.featureTitle}>Each tenant has its own identity and operating rules.</h3>
@@ -241,11 +247,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         )}
 
         <section className={styles.section} aria-labelledby="architecture-title">
-          <div className={styles.sectionIntro}>
-            <p className={styles.eyebrow}>05 / Under the map</p>
-            <h2 id="architecture-title" className={styles.sectionTitle}>How the system is put together.</h2>
-            <p className={styles.sectionSummary}>One shared backend supports each branded workspace and the trip lifecycle.</p>
-          </div>
+          <SectionIntro intro={detail.sectionIntros.architecture} headingId="architecture-title" />
           <div className={styles.architectureGrid}>
             {detail.architectureSections.map((section, index) => (
               <article className={styles.architectureCard} key={section.title}>
@@ -261,10 +263,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         </section>
 
         <section className={`${styles.section} ${styles.systemsBand}`} aria-labelledby="stack-title">
-          <div className={styles.sectionIntro}>
-            <p className={styles.eyebrow}>06 / Tools</p>
-            <h2 id="stack-title" className={styles.sectionTitle}>Tools behind the demo.</h2>
-          </div>
+          <SectionIntro intro={detail.sectionIntros.stack} headingId="stack-title" />
           <div className={styles.stackGrid}>
             {detail.stackBuckets.map((bucket) => (
               <article className={styles.stackCard} key={bucket.label}>
@@ -279,8 +278,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
 
         <section className={`${styles.section} ${styles.qualitySection}`} aria-labelledby="quality-title">
           <div className={styles.qualityPanel}>
-            <p className={styles.eyebrow}>07 / Quality</p>
-            <h2 id="quality-title" className={styles.sectionTitle}>What the checks cover.</h2>
+            <SectionIntro intro={detail.sectionIntros.quality} headingId="quality-title" />
             <ul className={styles.qualityList}>
               {detail.qualityHighlights.map((item) => <li key={item}>{item}</li>)}
             </ul>
@@ -289,8 +287,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
 
         {detail.references?.length ? (
           <section className={styles.section} aria-labelledby="references-title">
-            <p className={styles.eyebrow}>08 / Source</p>
-            <h2 id="references-title" className={styles.sectionTitle}>Read the project source.</h2>
+            <SectionIntro intro={detail.sectionIntros.references} headingId="references-title" />
             <div className={styles.referenceLinks}>
               {detail.references.map((reference) => reference.href ? (
                 <a
@@ -306,6 +303,34 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
             </div>
           </section>
         ) : null}
+
+        <section className={`${styles.section} ${styles.contactBand}`} aria-labelledby="detail-contact-title">
+          <h2 id="detail-contact-title" className={styles.sectionTitle}>Let&apos;s build.</h2>
+          <p className={styles.sectionSummary}>
+            I build and ship systems like this end to end. Email me, or start from the résumé.
+          </p>
+          <div className={styles.contactActions}>
+            <a className={styles.contactPrimary} href={`mailto:${personal.email}`}>
+              Email Abhinav
+            </a>
+            <a className={styles.contactSecondary} href={personal.resumeHref} download>
+              Download résumé
+            </a>
+            {personal.socials
+              .filter((social) => social.platform !== "email")
+              .map((social) => (
+                <a
+                  key={social.platform}
+                  className={styles.contactSecondary}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {social.label}
+                </a>
+              ))}
+          </div>
+        </section>
       </main>
 
       <Footer personal={personal} />

@@ -98,6 +98,18 @@
   text-wrap: balance;
 }
 
+/* The hero H1 is Newsreader italic, which is intentionally not preloaded, so the
+   first paint uses the metric-matched serif fallback. At phone widths that
+   fallback sets the title one line taller than the italic does, and when the
+   italic arrives the hero figure below it jumps (CLS). Reserving the taller line
+   box keeps the figure in place; the reserve is a no-op above this band, where
+   both faces already break to the same number of lines. */
+@media (max-width: 479px) {
+  .title {
+    min-height: 3lh;
+  }
+}
+
 .subtitle {
   max-width: 52ch;
   margin-top: 1.15rem;
@@ -437,6 +449,43 @@
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+/* End-of-file hand-off: the case-study routes are otherwise dead ends, so they
+   close on the same contact affordances as the rest of the site. */
+.contactBand {
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 2px solid var(--detail-burgundy);
+}
+
+.contactActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+}
+
+.contactPrimary,
+.contactSecondary {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  border: 1px solid var(--detail-burgundy);
+  padding: 0.55rem 1rem;
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contactPrimary {
+  background: var(--detail-burgundy);
+  color: var(--detail-on-panel);
+}
+
+.contactSecondary {
+  color: var(--detail-burgundy);
 }
 
 .legacyGallery {

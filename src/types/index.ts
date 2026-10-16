@@ -233,6 +233,13 @@ export interface ProjectDetailSection {
   points: string[];
 }
 
+/** Heading copy for a trailing project-detail section (architecture, stack, quality, source). */
+export interface ProjectDetailSectionIntro {
+  eyebrow: string;
+  title: string;
+  summary?: string;
+}
+
 export type ProjectStoryViewport = "desktop" | "mobile";
 export type ProjectStoryTheme = "day" | "night";
 export type ProjectTenantId = "velo-business" | "saffron-routes";
@@ -289,6 +296,13 @@ export interface ProjectDetail {
   stackBuckets: ProjectTechBucket[];
   qualityHighlights: string[];
   references?: ProjectLink[];
+  /** Per-project headings for the trailing sections, so no slug renders another project's copy. */
+  sectionIntros: {
+    architecture: ProjectDetailSectionIntro;
+    stack: ProjectDetailSectionIntro;
+    quality: ProjectDetailSectionIntro;
+    references: ProjectDetailSectionIntro;
+  };
   storyboard?: ProjectDetailStory;
 }
 

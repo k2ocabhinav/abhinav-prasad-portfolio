@@ -339,6 +339,15 @@ function validateProjects() {
         stringValue(reference, "label", filePath);
         optionalNullableString(reference, "href", filePath);
       });
+      // P4 section intros field — begin
+      const sectionIntros = objectValue(detail, "sectionIntros", filePath);
+      ["architecture", "stack", "quality", "references"].forEach((key) => {
+        const intro = objectValue(sectionIntros, key, filePath);
+        stringValue(intro, "eyebrow", filePath);
+        stringValue(intro, "title", filePath);
+        optionalString(intro, "summary");
+      });
+      // P4 section intros field — end
       // P4 storyboard field — begin
       if (detail.storyboard !== undefined) {
         validateStoryboard(objectValue(detail, "storyboard", filePath), filePath);
