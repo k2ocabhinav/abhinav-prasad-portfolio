@@ -7,6 +7,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import FlipRevealText from "@/components/ui/FlipRevealText";
+import SpecSheetCutaway from "@/components/art/SpecSheetCutaway";
 import styles from "./AboutSection.module.css";
 
 // =============================================================================
@@ -40,18 +41,16 @@ export default function AboutSection({
   });
   const sheetY = useTransform(riseProgress, [0, 1], [48, 0]);
   const sheetScale = useTransform(riseProgress, [0, 1], [0.97, 1]);
-  const sheetRadius = useTransform(riseProgress, [0, 1], [12, 4]);
 
   return (
     <SectionWrapper id="about" tone={tone}>
       <div ref={riseRef}>
       <motion.div
-        className="spec-sheet"
-        style={
-          prefersReducedMotion
-            ? undefined
-            : { y: sheetY, scale: sheetScale, borderRadius: sheetRadius }
-        }
+        className={`spec-sheet ${styles.aboutPanel}`}
+        style={{
+          y: prefersReducedMotion ? 0 : sheetY,
+          scale: prefersReducedMotion ? 1 : sheetScale,
+        }}
       >
         <div className="spec-header">
           <span>SPEC-01 // PHILOSOPHY</span>
@@ -88,6 +87,9 @@ export default function AboutSection({
                 tokenClassName={styles.calloutFlipToken}
               />
             </motion.p>
+            <div className={styles.cutawayWrap}>
+              <SpecSheetCutaway />
+            </div>
           </div>
           <div className={`col-8 ${styles.contentCol}`}>
             <motion.div

@@ -7,6 +7,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
+import ChangeLedgerPlate from "@/components/art/ChangeLedgerPlate";
 import styles from "./ExperienceSection.module.css";
 
 interface ExperienceSectionProps {
@@ -159,6 +160,7 @@ function ExperienceSectionContent({
                     aria-labelledby={rolesHeadingId}
                     data-experience-role-rail="true"
                   >
+                    <div className={styles.roleRailContent}>
                     <h4 id={rolesHeadingId} className={styles.columnLabel}>
                       Role progression
                     </h4>
@@ -174,6 +176,8 @@ function ExperienceSectionContent({
                         </li>
                       ))}
                     </ol>
+                    <ChangeLedgerPlate id={experience.slug} />
+                    </div>
                   </section>
 
                   <section

@@ -8,8 +8,8 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
 import { renderIcon } from "@/lib/utils";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
+import StackLayersPlate from "@/components/art/StackLayersPlate";
 import styles from "./TechStackSection.module.css";
 
 interface TechStackSectionProps {
@@ -42,9 +42,8 @@ function TechStackSectionContent({
   const calloutY = useTransform(scrollYProgress, [0, 1], [10, -8]);
 
   return (
-    <SectionWrapper id="stack" tone={tone}>
+    <SectionWrapper id="stack" tone={tone} className={styles.stackSection}>
       <div ref={sectionRef} className={`grid-12 ${styles.headerGrid}`}>
-        <RisoMark variant="bars" />
         <div className="col-4">
           <motion.h2
             style={{ y: prefersReducedMotion ? 0 : headingY }}
@@ -69,6 +68,9 @@ function TechStackSectionContent({
           >
             Tools I use across work and projects
           </motion.p>
+        </div>
+        <div className="col-8">
+          <StackLayersPlate />
         </div>
       </div>
 

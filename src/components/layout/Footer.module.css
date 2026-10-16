@@ -2,6 +2,10 @@
   padding: 3rem 1.5rem;
   text-align: center;
   border-top: 1px solid var(--color-hairline);
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-lead, #6A2135);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-linen, #FCF8F2);
 }
 
 .copyright {
@@ -14,10 +18,30 @@
 
 /* Colophon — the print-journal sign-off. */
 .colophon {
-  margin-top: 0.6rem;
+  margin: 0;
   font-family: var(--font-label);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #63605A;
+}
+
+.colophonRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
+}
+
+@media (max-width: 480px) {
+  .colophonRow {
+    gap: 0.45rem;
+  }
+
+  .colophon {
+    max-width: 17rem;
+    font-size: 9px;
+    line-height: 1.5;
+  }
 }

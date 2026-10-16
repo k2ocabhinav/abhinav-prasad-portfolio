@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import FlipRevealText from "@/components/ui/FlipRevealText";
+import EnvelopeStamp from "@/components/art/EnvelopeStamp";
 import styles from "./ContactSection.module.css";
 
 // =============================================================================
@@ -67,23 +68,34 @@ export default function ContactSection({
   });
   const sheetY = useTransform(riseProgress, [0, 1], [48, 0]);
   const sheetScale = useTransform(riseProgress, [0, 1], [0.97, 1]);
-  const sheetRadius = useTransform(riseProgress, [0, 1], [12, 4]);
 
   return (
     <SectionWrapper
       id="contact"
       tone={tone}
-      fullHeight
       centered
+      className={styles.contactSection}
     >
+      <div className={styles.contactScene}>
+      <div className={styles.trimMarks} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+      <span className={`${styles.registrationMark} ${styles.registrationMarkLeft}`} aria-hidden="true">
+        <span />
+      </span>
+      <span className={`${styles.registrationMark} ${styles.registrationMarkRight}`} aria-hidden="true">
+        <span />
+      </span>
       <div ref={riseRef}>
       <motion.div
         className={cn("spec-sheet", styles.contactSpecSheet)}
-        style={
-          prefersReducedMotion
-            ? undefined
-            : { y: sheetY, scale: sheetScale, borderRadius: sheetRadius }
-        }
+        style={{
+          y: prefersReducedMotion ? 0 : sheetY,
+          scale: prefersReducedMotion ? 1 : sheetScale,
+        }}
       >
         <div className="spec-header">
           <span>SPEC-02 // ROUTING_GATEWAY</span>
@@ -129,27 +141,30 @@ export default function ContactSection({
             </MagneticButton>
 
             <div className={styles.contactLinks}>
-              <a href={`mailto:${personal.email}`} className={styles.emailLink}>
-                {personal.email}
-              </a>
-              <div className={styles.socials}>
-                {personal.socials.map((social, i) => (
-                  <motion.a
-                    key={i}
-                    href={social.href}
-                    target={social.href.startsWith("http") ? "_blank" : undefined}
-                    rel={
-                      social.href.startsWith("http")
-                        ? "noopener noreferrer"
-                        : undefined
-                    }
-                    whileHover={prefersReducedMotion ? undefined : { y: -5 }}
-                    aria-label={social.label}
-                    className={styles.socialIcon}
-                  >
-                    {socialIcons[social.platform]}
-                  </motion.a>
-                ))}
+              <EnvelopeStamp />
+              <div className={styles.contactInfo}>
+                <a href={`mailto:${personal.email}`} className={styles.emailLink}>
+                  {personal.email}
+                </a>
+                <div className={styles.socials}>
+                  {personal.socials.map((social, i) => (
+                    <motion.a
+                      key={i}
+                      href={social.href}
+                      target={social.href.startsWith("http") ? "_blank" : undefined}
+                      rel={
+                        social.href.startsWith("http")
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      whileHover={prefersReducedMotion ? undefined : { y: -5 }}
+                      aria-label={social.label}
+                      className={styles.socialIcon}
+                    >
+                      {socialIcons[social.platform]}
+                    </motion.a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -160,6 +175,7 @@ export default function ContactSection({
           </div>
         </div>
       </motion.div>
+      </div>
       </div>
     </SectionWrapper>
   );
