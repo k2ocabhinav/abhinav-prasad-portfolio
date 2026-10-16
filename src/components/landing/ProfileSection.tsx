@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import StillLifePlate from "@/components/art/StillLifePlate";
 import type { PersonalData } from "@/types";
 import styles from "./ProfileSection.module.css";
 
@@ -85,25 +86,30 @@ export default function ProfileSection({
             }
           >
             <div className={styles.portraitHalo} />
-            <motion.div
-              initial={reduceMotion ? false : { scale: 0.9, opacity: 0 }}
-              animate={reduceMotion ? { scale: 1, opacity: 1 } : undefined}
-              whileInView={
-                reduceMotion ? undefined : { scale: 1, opacity: 1 }
-              }
-              viewport={reduceMotion ? undefined : { once: true }}
-              transition={reduceMotion ? undefined : { duration: 0.82, delay: 0.08 }}
-              className={styles.imageFrame}
-            >
-              <Image
-                src={personal.heroPhoto}
-                alt={`${personal.fullName} editorial monogram`}
-                width={640}
-                height={640}
-                className={styles.heroImage}
-                priority={false}
-              />
-            </motion.div>
+            <div className={styles.portraitArtwork}>
+              <motion.div
+                initial={reduceMotion ? false : { scale: 0.9, opacity: 0 }}
+                animate={reduceMotion ? { scale: 1, opacity: 1 } : undefined}
+                whileInView={
+                  reduceMotion ? undefined : { scale: 1, opacity: 1 }
+                }
+                viewport={reduceMotion ? undefined : { once: true }}
+                transition={reduceMotion ? undefined : { duration: 0.82, delay: 0.08 }}
+                className={styles.imageFrame}
+              >
+                <Image
+                  src={personal.heroPhoto}
+                  alt={`${personal.fullName} editorial monogram`}
+                  width={640}
+                  height={640}
+                  className={styles.heroImage}
+                  priority={false}
+                />
+              </motion.div>
+              <div className={styles.stillLife}>
+                <StillLifePlate />
+              </div>
+            </div>
             <motion.div
               className={styles.hintCopy}
               data-secret-hint="true"

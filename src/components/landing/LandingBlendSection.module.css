@@ -1,23 +1,37 @@
 /* =============================================================================
-   LandingBlendSection - dark bridge from landing to profile
+   LandingBlendSection — sticky print-run bridge from landing to profile
    ============================================================================= */
 
 .blend {
-  min-height: clamp(18vh, 24vh, 30vh);
+  min-height: 155svh;
   margin-bottom: -1px;
-  display: grid;
-  place-items: center;
-  padding: clamp(1.8rem, 4vw, 3rem) var(--content-padding-x);
   position: relative;
-  overflow: hidden;
-  background: transparent;
+  overflow: clip;
+  isolation: isolate;
+  background: var(--color-burgundy, #6A2135);
+  color: var(--color-on-lead, #EDE6DA);
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-petrol, #1A5D74);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-linen, #FCF8F2);
 }
 
 .inner {
   width: 100%;
   max-width: var(--content-max-width);
+  height: 88svh;
   margin-inline: auto;
-  text-align: center;
+  padding-inline: var(--content-padding-x);
+  position: sticky;
+  top: 6svh;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(20rem, 0.8fr);
+  align-items: center;
+  gap: clamp(2rem, 7vw, 6rem);
+}
+
+.copy {
+  max-width: 36rem;
   position: relative;
   z-index: 1;
 }
@@ -25,27 +39,96 @@
 .eyebrow {
   display: inline-block;
   font-family: var(--font-label);
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-secondary-text);
+  color: var(--color-on-lead, #EDE6DA);
+  opacity: 0.86;
 }
 
-/* Newsreader italic bridge line — sentence case, editorial. */
 .label {
-  margin: 0.7rem 0 0;
+  margin: 1.2rem 0 0;
   font-family: var(--font-headline);
   font-style: italic;
   font-weight: 450;
-  font-size: clamp(1.25rem, 3vw, 2.4rem);
-  line-height: 1.06;
+  font-size: clamp(2rem, 4.8vw, 4.4rem);
+  line-height: 1.08;
   letter-spacing: 0;
   text-transform: none;
-  color: rgba(11, 16, 17, 0.92);
+  color: var(--color-on-lead, #EDE6DA);
+  max-width: 12ch;
+}
+
+.posterColumn {
+  width: min(100%, 25rem);
+  justify-self: end;
+  position: relative;
+  z-index: 0;
+}
+
+@supports (animation-timeline: view()) {
+  .blend {
+    view-timeline-name: --print-run-scroll;
+    view-timeline-axis: block;
+  }
+
+  .posterColumn :global(svg g) {
+    animation-timeline: --print-run-scroll;
+  }
 }
 
 @media (max-width: 767px) {
-  .label {
-    font-size: clamp(1.35rem, 8vw, 2.1rem);
+  .blend {
+    min-height: 0;
+    padding: 4.4rem var(--content-padding-x) 4.8rem;
   }
+
+  .inner {
+    height: auto;
+    padding: 0;
+    position: relative;
+    top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2rem;
+  }
+
+  .copy {
+    max-width: 32rem;
+  }
+
+  .posterColumn {
+    width: min(88%, 23rem);
+    align-self: center;
+  }
+
+  .label {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blend {
+    min-height: auto;
+  }
+
+  .inner {
+    height: auto;
+    position: relative;
+    top: auto;
+    padding-block: 4rem;
+  }
+
+  .posterColumn :global(svg g) {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.blend[data-reduced-motion="true"] .posterColumn :global(svg g) {
+  animation: none;
+  opacity: 1;
+  transform: none;
 }

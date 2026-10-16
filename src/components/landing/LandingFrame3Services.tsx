@@ -31,9 +31,9 @@ export default function LandingFrame3Services({
         <div className={styles.container}>
           <h2 className={styles.sectionLabel}>(01) — What I do</h2>
           <div className={styles.grid}>
-            {services.map((service) => (
+          {services.map((service, index) => (
               <div key={service.id} className={styles.gridItem}>
-                <ServiceTile service={service} />
+              <ServiceTile service={service} index={index} />
               </div>
             ))}
           </div>
@@ -53,9 +53,9 @@ export default function LandingFrame3Services({
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          {services.map((service) => (
+          {services.map((service, index) => (
             <motion.div key={service.id} variants={staggerItem} className={styles.gridItem}>
-              <ServiceTile service={service} />
+              <ServiceTile service={service} index={index} />
             </motion.div>
           ))}
         </motion.div>

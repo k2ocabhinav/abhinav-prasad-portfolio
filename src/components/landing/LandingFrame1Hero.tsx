@@ -5,6 +5,8 @@ import HeroTextColumn from "./HeroTextColumn";
 import ScrollIndicator from "./ScrollIndicator";
 import type { LandingHeroContent } from "@/types";
 import { landingStagger } from "@/lib/animations";
+import DispatchLedgerPlate from "@/components/art/DispatchLedgerPlate";
+import PaperPlanes from "@/components/art/PaperPlanes";
 import styles from "./LandingFrame1Hero.module.css";
 
 // =============================================================================
@@ -37,6 +39,17 @@ export default function LandingFrame1Hero({
       <div className={styles.content}>
         <HeroTextColumn hero={hero} name={name} reduceMotion={reduceMotion} />
       </div>
+
+      <div className={styles.artwork} aria-hidden="true">
+        <div className={styles.ledger}>
+          <DispatchLedgerPlate />
+        </div>
+        <div className={styles.planes}>
+          <PaperPlanes />
+        </div>
+      </div>
+
+      <div className={styles.floorBand} aria-hidden="true" />
 
       {showScrollIndicator ? <ScrollIndicator /> : null}
     </m.div>

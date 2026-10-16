@@ -13,7 +13,7 @@
   /* Gentle upward nudge only — the previous -4.25rem pulled the oversized
      name's ascenders above the viewport top in short windows (clipping that
      read as broken). */
-  transform: translateY(clamp(-0.5rem, -2.5vh, -2rem));
+  transform: translateY(clamp(-1.5rem, -4vh, -2.5rem));
 }
 
 .roleLine {
@@ -65,10 +65,10 @@
 .supportingCopy {
   font-family: var(--font-headline);
   font-weight: 420;
-  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  font-size: clamp(1.0625rem, 1.3vw, 1.2rem);
   color: rgba(11, 16, 17, 0.8);
-  line-height: 1.72;
-  max-width: 40rem;
+  line-height: 1.6;
+  max-width: 62ch;
 }
 
 .ctaGroup {
@@ -105,7 +105,7 @@
   .textColumn {
     gap: 0.95rem;
     padding: 0.2rem 0 1.5rem;
-    transform: translateY(-1rem);
+    transform: translateY(-1.25rem);
   }
 
   .roleLine {
@@ -118,8 +118,9 @@
   }
 
   .supportingCopy {
-    font-size: 0.88rem;
+    font-size: 1rem;
     padding: 0 0.5rem;
+    line-height: 1.55;
   }
 
   .ctaGroup {
