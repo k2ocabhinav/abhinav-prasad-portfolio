@@ -136,10 +136,7 @@ export default function AnimatedName({
               data-letter-aura="true"
               aria-hidden="true"
             >
-              <span className={styles.hoverColorWash} />
               <span className={styles.hoverAccentBar} />
-              <span className={styles.glowShardOne} />
-              <span className={styles.glowShardTwo} />
             </span>
 
             <span
@@ -149,7 +146,6 @@ export default function AnimatedName({
               {letter}
             </span>
 
-            <span className={styles.scanSlice} aria-hidden="true" />
             <span className={styles.cornerTop} aria-hidden="true" />
             <span className={styles.cornerBottom} aria-hidden="true" />
           </span>

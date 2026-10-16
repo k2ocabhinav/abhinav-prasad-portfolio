@@ -7,11 +7,22 @@
   font-weight: 400;
   letter-spacing: 0.15em;
   text-transform: uppercase;
+  /* Print-press ink: ink on paper, bone inside the dark spec-sheet panels. */
+  --press-ink: color-mix(in srgb, var(--color-on-surface, #0B1011) 16%, transparent);
+  /* `translate` composes with the magnetic motion `transform` (a separate
+     property), so the press offset never fights the pointer pull. */
   transition:
     background-color 220ms var(--motion-ease-out),
     border-color 220ms var(--motion-ease-out),
-    color 220ms var(--motion-ease-out);
+    color 220ms var(--motion-ease-out),
+    translate 140ms var(--motion-ease-out),
+    box-shadow 140ms var(--motion-ease-out);
   cursor: pointer;
+}
+
+.magneticButton:focus-visible {
+  outline: 2px solid var(--color-on-surface, #0B1011);
+  outline-offset: 3px;
 }
 
 /* Variants are token-driven so buttons adapt to their surface scope:
@@ -25,11 +36,19 @@
   border-radius: 2px;
   color: var(--color-on-surface, #0B1011);
   background: transparent;
+  box-shadow: 6px 6px 0 var(--press-ink);
 }
 
 .outline:hover {
   background-color: var(--color-on-surface, #0B1011);
   color: var(--color-surface, #F0EEE9);
+  translate: -1px -1px;
+  box-shadow: 7px 7px 0 var(--press-ink);
+}
+
+.outline:active {
+  translate: 6px 6px;
+  box-shadow: 0 0 0 var(--press-ink);
 }
 
 /* Ghost — underlined text link. */
@@ -56,12 +75,20 @@
   border-radius: 2px;
   color: var(--color-surface, #F0EEE9);
   background: var(--color-on-surface, #0B1011);
+  box-shadow: 6px 6px 0 var(--press-ink);
 }
 
 .glow:hover {
   background: #C42117;
   border-color: #C42117;
   color: #F0EEE9;
+  translate: -1px -1px;
+  box-shadow: 7px 7px 0 var(--press-ink);
+}
+
+.glow:active {
+  translate: 6px 6px;
+  box-shadow: 0 0 0 var(--press-ink);
 }
 
 @media (max-width: 520px) {
@@ -73,5 +100,12 @@
   .outline,
   .glow {
     padding: 1rem 1.5rem;
+  }
+}
+
+/* The press states stay (they are state, not motion) but snap instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .magneticButton {
+    transition: none;
   }
 }

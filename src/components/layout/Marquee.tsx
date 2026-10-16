@@ -2,18 +2,20 @@
 
 import {
   motion,
-  useAnimationFrame,
+  useInView,
   useMotionValue,
   useScroll,
   useTransform,
   useVelocity,
 } from "motion/react";
+import { useEffect, useRef } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "./Marquee.module.css";
 
 // =============================================================================
-// Marquee — scroll-velocity ribbon divider. Drifts left continuously and
-// speeds up / skews with scroll velocity (Lenis already smooths the input).
+// Marquee — scroll-velocity ribbon. Solid burgundy print band; the track
+// drifts left continuously and skews with scroll velocity (Lenis smooths the
+// input). The rAF loop is paused while off-screen and under reduced motion.
 // =============================================================================
 
 const ITEMS = [
@@ -32,6 +34,8 @@ function wrapValue(min: number, max: number, value: number): number {
 
 export default function Marquee() {
   const prefersReducedMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { amount: 0.01 });
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
@@ -41,20 +45,33 @@ export default function Marquee() {
     clamp: true,
   });
 
-  useAnimationFrame((_, delta) => {
-    if (prefersReducedMotion) return;
-    const dt = delta / 1000;
-    const velocity = scrollVelocity.get();
-    // base leftward drift + a boost proportional to scroll speed
-    const moveBy = -3.5 * dt - (velocity / 220) * dt;
-    baseX.set(baseX.get() + moveBy);
-  });
+  const running = isInView && !prefersReducedMotion;
+
+  useEffect(() => {
+    if (!running) {
+      return;
+    }
+
+    let frameId = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const velocity = scrollVelocity.get();
+      baseX.set(baseX.get() - 3.5 * dt - (velocity / 220) * dt);
+      frameId = window.requestAnimationFrame(tick);
+    };
+
+    frameId = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [running, baseX, scrollVelocity]);
 
   return (
-    <section className={styles.marquee} aria-hidden="true">
+    <section ref={sectionRef} className={styles.marquee} aria-hidden="true">
       <motion.div
         className={styles.track}
-        style={{ x, skewX: prefersReducedMotion ? 0 : skewX }}
+        style={{ x, skewX: running ? skewX : 0 }}
       >
         {[0, 1].map((dup) => (
           <div className={styles.group} key={dup}>
