@@ -5,27 +5,37 @@ import { sections } from "@/data/navigation";
 import styles from "./BackdropCanvas.module.css";
 
 // =============================================================================
-// BackdropCanvas — warm-paper canvas with tinted "stock" rooms.
+// BackdropCanvas — palette v2 canvas with bone, linen and pink paper rooms.
 // As each section crosses the viewport midline the canvas fades (0.8s CSS
-// transition) to that section's paper stock — like turning pages of different
-// paper. Snap-per-section, never continuous interpolation (muddy midpoints).
+// transition) to its paper stock. Fields are painted by their sections.
+// Snap-per-section, never continuous interpolation (muddy midpoints).
 // The grain layer is the single page-wide texture (feTurbulence, multiply).
 // =============================================================================
 
 const SECTION_STOCKS: Record<string, string> = {
   hero: "bone",
+  services: "linen",
+  bridge: "bone",
+  profile: "bone",
   about: "bone",
-  experience: "cool",
-  work: "blush",
-  stack: "flax",
-  presence: "celadon",
+  experience: "linen",
+  work: "pink",
+  stack: "bone",
+  presence: "bone",
   contact: "bone",
 };
+
+const LANDING_STOCK_TARGETS: ReadonlyArray<readonly [string, string]> = [
+  ["section[aria-label=\"Services\"]", SECTION_STOCKS.services],
+  ["[data-home-explore-bridge]", SECTION_STOCKS.bridge],
+  ["[data-home-profile-stage]", SECTION_STOCKS.profile],
+];
 
 export default function BackdropCanvas() {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const observedStocks = new Map<Element, string>();
     // rootMargin -50%/-50% collapses the observation band to the viewport
     // midline: exactly one section is ever "dominant", so the stock snaps
     // once per crossing — no edge flicker on slow scrolls.
@@ -33,17 +43,25 @@ export default function BackdropCanvas() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && canvasRef.current) {
-            canvasRef.current.dataset.stock =
-              SECTION_STOCKS[entry.target.id] ?? "bone";
+            canvasRef.current.dataset.stock = observedStocks.get(entry.target) ?? "bone";
           }
         });
       },
       { rootMargin: "-50% 0% -50% 0%" }
     );
 
+    const observe = (element: Element | null, stock: string) => {
+      if (!element) return;
+      observedStocks.set(element, stock);
+      observer.observe(element);
+    };
+
     sections.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
+      observe(document.getElementById(id), SECTION_STOCKS[id] ?? "bone");
+    });
+
+    LANDING_STOCK_TARGETS.forEach(([selector, stock]) => {
+      observe(document.querySelector(selector), stock);
     });
 
     return () => observer.disconnect();

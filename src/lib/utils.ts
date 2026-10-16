@@ -51,19 +51,19 @@ export function cn(...classes: (string | false | null | undefined)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
-// Matte single-accent system: tile icons render ink; vermilion appears only
-// through hover states. `sand` stays muted for tertiary marks.
+// Landing accents use the palette v2 section inks. `sand` stays muted for
+// tertiary marks.
 const landingAccentColorMap: Record<LandingAccentKey, string> = {
-  sage: "#0B1011",
-  peach: "#0B1011",
-  sky: "#0B1011",
+  sage: "#6A2135",
+  peach: "#4E5312",
+  sky: "#25447B",
   sand: "#63605A",
 };
 
 const landingAccentRgbMap: Record<LandingAccentKey, string> = {
-  sage: "11, 16, 17",
-  peach: "11, 16, 17",
-  sky: "11, 16, 17",
+  sage: "106, 33, 53",
+  peach: "78, 83, 18",
+  sky: "37, 68, 123",
   sand: "99, 96, 90",
 };
 

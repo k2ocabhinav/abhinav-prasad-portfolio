@@ -1,5 +1,5 @@
 /* =============================================================================
-   LandingExperience - matte warm-paper landing wrapper
+   LandingExperience - palette v2 matte paper landing wrapper
    ============================================================================= */
 
 .landing {
@@ -13,15 +13,15 @@
   --color-on-surface: #0B1011;
   --color-on-surface-rgb: 11, 16, 17;
   --color-secondary-text: #63605A;
-  --color-primary-brand: #E42A1D;
-  --color-primary-brand-rgb: 228, 42, 29;
-  --color-sage: #C42117;
-  --color-sage-rgb: 196, 33, 23;
+  --color-primary-brand: var(--color-lead);
+  --color-primary-brand-rgb: var(--color-lead-rgb);
+  --color-sage: var(--color-lead-deep);
+  --color-sage-rgb: var(--color-lead-deep-rgb);
   --color-accent-brown: #0B1011;
   --landing-glass-bg: #E9E5DC;
   --landing-glass-border: rgba(11, 16, 17, 0.14);
-  --landing-glass-border-active: rgba(196, 33, 23, 0.55);
-  --landing-glass-shadow: 0 1px 2px rgba(11, 16, 17, 0.06);
+  --landing-glass-border-active: rgba(var(--color-lead-deep-rgb), 0.55);
+  --landing-glass-shadow: none;
 }
 
 .heroFrame {

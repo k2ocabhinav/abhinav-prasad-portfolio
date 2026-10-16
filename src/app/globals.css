@@ -7,52 +7,80 @@
 /* ─── Design Tokens ──────────────────────────────────────────────── */
 
 :root {
-  /* Colors — Matte "Warm Paper" editorial palette.
-     Flat paper surfaces, ink text, hairline rules, ONE vermilion accent.
-     #E42A1D is AA-large only on paper (~3.9:1) — use --color-accent-deep
-     (#C42117, ~5.1:1) for body-size accent text and links. */
+  /* Canonical palette tokens follow decision 0001. */
+  /* Palette v2 — decision 0001 */
+  --color-burgundy: #6A2135;        --color-burgundy-rgb: 106, 33, 53;
+  --color-black-cherry: #351E28;    --color-black-cherry-rgb: 53, 30, 40;
+  --color-glacier: #D7EFFF;         --color-glacier-rgb: 215, 239, 255;
+  --color-petrol: #1A5D74;          --color-petrol-deep: #174F61;   --color-petrol-rgb: 26, 93, 116;
+  --color-cornflower: #94B6EF;      --color-cornflower-deep: #25447B; --color-cornflower-rgb: 148, 182, 239;
+  --color-lovebird: #C5DE48;        --color-lovebird-deep: #4E5312;   --color-lovebird-rgb: 197, 222, 72;
+  --color-pink: #F4BEBB;            --color-pink-rgb: 244, 190, 187;
+
+  /* Roles */
+  --color-lead: var(--color-burgundy);          --color-lead-rgb: var(--color-burgundy-rgb);
+  --color-lead-deep: #6A2135;                   /* text-safe on all papers (>= 9:1) */
+  --color-on-lead: #EDE6DA;                     /* text on a burgundy field, 9.0:1 */
+  --color-on-glacier: #351E28;
+  --color-panel: var(--color-black-cherry);     /* dark spec-sheet panels */
+  --color-on-panel: #EDE6DA;
+  --color-panel-accent: #F4BEBB;                /* small accent on panels (replaces #FF5F4A), 9.45:1 */
+
+  /* Papers */
+  --paper-bone: #F0EEE9; --paper-linen: #FCF8F2; --paper-pink: #F4BEBB; --paper-glacier: #D7EFFF;
+
+  /* Illustration plate inks (art components read ONLY these; sections override per section) */
+  --plate-ink: var(--color-black-cherry);
+  --plate-accent: var(--color-lead);
+  --plate-second: var(--color-cornflower);
+  --plate-paper: var(--paper-linen);
+
+  /* Print offsets (0-blur only) */
+  --print-offset-sm: 3px 3px 0 rgba(53, 30, 40, 0.16);
+  --print-offset-md: 6px 6px 0 rgba(53, 30, 40, 0.16);
+  --print-offset-lg: 10px 10px 0 rgba(53, 30, 40, 0.14);
+
+  /* Neutral and legacy role aliases. */
   --color-ink: #0B1011;            /* text ink (was dark bg — meaning flipped) */
   --color-graphite: #E9E5DC;       /* paper-alt: raised card surface */
   --color-elevated: #FFFFFF;       /* brightest surface (rare) */
-  --color-paper: #F0EEE9;
+  --color-paper: var(--paper-bone);
   --color-hairline: rgba(11, 16, 17, 0.14);
-  --color-surface: #F0EEE9;
-  --color-on-surface: #0B1011;
+  --color-surface: var(--paper-bone);
+  --color-on-surface: var(--color-ink);
   --color-secondary-text: #63605A;
-  --color-primary-brand: #E42A1D;
-  --color-accent-deep: #C42117;
-  --color-espresso: #16130F;
-  --color-bone: #EDE6DA;
+  --color-primary-brand: var(--color-lead);
+  --color-accent-deep: var(--color-lead-deep);
+  --color-espresso: var(--color-panel);
+  --color-bone: var(--color-on-panel);
 
-  /* Riso print accents — per-section identity ("deep" = small-text/link
-     variant). Ochre #B8860B is 2.8:1 on paper — marks/fills only, NEVER text. */
-  --color-cobalt: #2244C7;
-  --color-cobalt-deep: #1B3699;
-  --color-racing-green: #206B4E;
-  --color-racing-green-deep: #174F3A;
-  --color-ochre: #B8860B;
-  --color-ochre-deep: #8A6508;
+  /* Historical riso names resolve to the palette v2 section inks. */
+  --color-cobalt: var(--color-cornflower-deep);
+  --color-cobalt-deep: var(--color-cornflower-deep);
+  --color-racing-green: var(--color-petrol);
+  --color-racing-green-deep: var(--color-petrol-deep);
+  --color-ochre: var(--color-lovebird);
+  --color-ochre-deep: var(--color-lovebird-deep);
 
-  /* Paper stocks — tinted "rooms" the backdrop fades between (ink ≥16:1 on all) */
-  --paper-bone: #F0EEE9;
-  --paper-blush: #F2ECE5;
-  --paper-celadon: #ECEFE9;
-  --paper-flax: #F1EDE0;
-  --paper-cool: #EBEDF1;
-
-  /* Retired hues — aliased into the matte set so nothing dangles */
-  --color-teal: #C42117;
+  /* Retired hues kept as aliases for consumers that still use old names. */
+  --color-teal: var(--color-lead-deep);
   --color-gold: #63605A;
-  --color-accent-ember: #E42A1D;
-  --color-sage: #C42117;
+  --color-accent-ember: var(--color-lead);
+  --color-sage: var(--color-lead-deep);
   --color-accent-brown: #0B1011;
-  --color-accent-peach-soft: #C42117;
-  --color-accent-sky-soft: #C42117;
+  --color-accent-peach-soft: var(--color-lead-deep);
+  --color-accent-sky-soft: var(--color-lead-deep);
   --color-accent-sand-soft: #63605A;
-  --color-accent-gold: #C42117;
-  --color-accent-lavender: #C42117;
-  --color-accent-rose: #C42117;
-  --color-accent-sky: #C42117;
+  --color-accent-gold: var(--color-lead-deep);
+  --color-accent-lavender: var(--color-lead-deep);
+  --color-accent-rose: var(--color-lead-deep);
+  --color-accent-sky: var(--color-lead-deep);
+
+  /* Historical stock names alias the three paper rooms. */
+  --paper-blush: var(--paper-pink);
+  --paper-celadon: var(--paper-bone);
+  --paper-flax: var(--paper-linen);
+  --paper-cool: var(--paper-bone);
 
   /* Typography — next/font in layout.tsx injects the optimised font-family
      string via a class on <html>, overriding these :root values at runtime.
@@ -70,7 +98,7 @@
   --glass-bg: #E9E5DC;
   --glass-border: var(--color-hairline);
   --glass-blur: 0px;
-  --glass-shadow: 0 1px 2px rgba(11, 16, 17, 0.06);
+  --glass-shadow: none;
 
   /* Display Font — loaded via next/font, variable injected on <html>.
      The wordmark shares Fraunces (opsz 144 forced in AnimatedName). */
@@ -93,42 +121,44 @@
   --motion-section-shift: 550ms;
   --motion-jitter-duration: 2s;
 
-  /* ─── Espresso Panel Palette ────────────────────────────────────
-     Dark tokens now describe the espresso inversion panels
-     (About "Philosophy" / Contact spec-sheets on paper). */
-  --color-surface-dark: #16130F;
-  --color-surface-dark-rgb: 22, 19, 15;
-  --color-on-surface-dark: #EDE6DA;
+  /* ─── Dark Panel Legacy Aliases ───────────────────────────────── */
+  --color-surface-dark: var(--color-panel);
+  --color-surface-dark-rgb: var(--color-black-cherry-rgb);
+  --color-on-surface-dark: var(--color-on-panel);
   --color-on-surface-dark-rgb: 237, 230, 218;
   --color-secondary-text-dark: #A39A8B;
-  --color-accent-mint: #FF5F4A;
-  --color-accent-mint-rgb: 255, 95, 74;
+  --color-accent-mint: var(--color-panel-accent);
+  --color-accent-mint-rgb: var(--color-pink-rgb);
 
   /* ─── Landing Cards (legacy "glass" names; flat matte values) ─── */
   --landing-glass-bg: #E9E5DC;
   --landing-glass-blur: none;
   --landing-glass-border: rgba(11, 16, 17, 0.14);
-  --landing-glass-border-active: rgba(196, 33, 23, 0.55);
-  --landing-glass-shadow: 0 1px 2px rgba(11, 16, 17, 0.06);
+  --landing-glass-border-active: rgba(var(--color-lead-deep-rgb), 0.55);
+  --landing-glass-shadow: none;
   --landing-glass-radius: 4px;
 
   /* ─── RGB Channels ───────────────────────────────────────────────
      Needed so CSS Modules can build rgba() with opacity overrides
      without hardcoding hex values. */
   --color-surface-rgb: 240, 238, 233;
-  --color-primary-brand-rgb: 228, 42, 29;
-  --color-accent-deep-rgb: 196, 33, 23;
-  --color-cobalt-rgb: 34, 68, 199;
-  --color-racing-green-rgb: 32, 107, 78;
-  --color-ochre-rgb: 184, 134, 11;
-  --color-teal-rgb: 196, 33, 23;
+  --color-primary-brand-rgb: var(--color-lead-rgb);
+  --color-accent-deep-rgb: var(--color-lead-deep-rgb);
+  --color-cobalt-rgb: 37, 68, 123;
+  --color-cobalt-deep-rgb: 37, 68, 123;
+  --color-racing-green-rgb: var(--color-petrol-rgb);
+  --color-racing-green-deep-rgb: 23, 79, 97;
+  --color-ochre-rgb: var(--color-lovebird-rgb);
+  --color-ochre-deep-rgb: 78, 83, 18;
+  --color-teal-rgb: var(--color-lead-deep-rgb);
   --color-gold-rgb: 99, 96, 90;
-  --color-accent-ember-rgb: 228, 42, 29;
+  --color-accent-ember-rgb: var(--color-lead-rgb);
   --color-on-surface-rgb: 11, 16, 17;
-  --color-sage-rgb: 196, 33, 23;
-  --color-accent-peach-rgb: 196, 33, 23;
-  --color-accent-sky-rgb: 196, 33, 23;
+  --color-sage-rgb: var(--color-lead-deep-rgb);
+  --color-accent-peach-rgb: var(--color-lead-deep-rgb);
+  --color-accent-sky-rgb: var(--color-lead-deep-rgb);
   --color-accent-sand-rgb: 99, 96, 90;
+  --color-lead-deep-rgb: 106, 33, 53;
 
   /* Section continuity tones — all paper (differentiation is editorial) */
   --surface-tone-hero-light: var(--color-paper);
@@ -329,30 +359,28 @@ button {
   transform-origin: left;
 }
 
-/* Spec Sheet Panel — espresso inversion beat: dark ink panels on paper */
+/* Spec Sheet Panel — black-cherry inversion beat: dark panels on paper */
 .spec-sheet {
-  background-color: #16130F;
-  color: #EDE6DA;
-  border: 1px solid rgba(11, 16, 17, 0.2);
+  background-color: var(--color-panel);
+  color: var(--color-on-panel);
+  border: 1px solid rgba(237, 230, 218, 0.16);
   border-radius: 4px;
-  /* Hard-edge print offset (0 blur) — misregistration idiom, not a glow. */
-  box-shadow: 8px 8px 0 rgba(11, 16, 17, 0.1);
+  box-shadow: var(--print-offset-md);
   overflow: hidden;
   position: relative;
   width: 100%;
   max-width: 100%;
 
-  /* Scoped tokens — bone on espresso; #E42A1D only for large text here,
-     #FF5F4A (≈6:1) for body-size accent */
-  --color-surface: #16130F;
-  --color-surface-rgb: 22, 19, 15;
-  --color-on-surface: #EDE6DA;
+  /* Scoped tokens — palette v2 roles keep the dark panel readable. */
+  --color-surface: var(--color-panel);
+  --color-surface-rgb: var(--color-black-cherry-rgb);
+  --color-on-surface: var(--color-on-panel);
   --color-on-surface-rgb: 237, 230, 218;
   --color-secondary-text: #A39A8B;
-  --color-primary-brand: #FF5F4A;
-  --color-primary-brand-rgb: 255, 95, 74;
-  --color-sage: #FF5F4A;
-  --color-sage-rgb: 255, 95, 74;
+  --color-primary-brand: var(--color-panel-accent);
+  --color-primary-brand-rgb: var(--color-pink-rgb);
+  --color-sage: var(--color-panel-accent);
+  --color-sage-rgb: var(--color-pink-rgb);
   --color-hairline: rgba(237, 230, 218, 0.16);
   --color-accent-brown: #EDE6DA;
 }
@@ -413,7 +441,7 @@ button {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #C42117;
+  background: var(--color-lead-deep);
 }
 
 /* ─── Accessibility ──────────────────────────────────────────────── */
@@ -430,7 +458,7 @@ button {
 
 /* Focus visible ring for keyboard navigation */
 :focus-visible {
-  outline: 2px solid #C42117;
+  outline: 2px solid var(--color-lead-deep);
   outline-offset: 3px;
 }
 

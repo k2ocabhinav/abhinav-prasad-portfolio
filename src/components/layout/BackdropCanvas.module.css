@@ -8,21 +8,13 @@
   transition: background-color 0.8s ease;
 }
 
-/* Tinted paper stocks — value-matched rooms (ink stays ~16:1 on all) */
-.canvas[data-stock="cool"] {
-  background: var(--paper-cool, #EBEDF1);
+/* Palette v2 paper rooms. Glacier and burgundy are section-painted fields. */
+.canvas[data-stock="linen"] {
+  background: var(--paper-linen, #FCF8F2);
 }
 
-.canvas[data-stock="blush"] {
-  background: var(--paper-blush, #F2ECE5);
-}
-
-.canvas[data-stock="flax"] {
-  background: var(--paper-flax, #F1EDE0);
-}
-
-.canvas[data-stock="celadon"] {
-  background: var(--paper-celadon, #ECEFE9);
+.canvas[data-stock="pink"] {
+  background: var(--paper-pink, #F4BEBB);
 }
 
 @media (prefers-reduced-motion: reduce) {
