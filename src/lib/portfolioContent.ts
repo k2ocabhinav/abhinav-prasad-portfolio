@@ -13,6 +13,8 @@ import type {
   LandingProofBeatLabel,
   LandingStory,
   LandingStoryVisual,
+  OrchestrationContent,
+  ProfileIntroContent,
   PersonalData,
   PortfolioBeyondAlbumItem,
   PortfolioProfile,
@@ -355,6 +357,9 @@ function readProfile(): PortfolioProfile {
   const personalData = objectValue(data, "personal", filePath);
   const hero = objectValue(data, "hero", filePath);
   const bridge = objectValue(data, "bridge", filePath);
+  // P7: Structured, editable copy for the human-reviewed orchestration section.
+  const orchestrationData = objectValue(data, "orchestration", filePath);
+  const profileIntroData = objectValue(data, "profileIntro", filePath);
   const seo = optionalObject(data, "seo");
 
   const personal: PersonalData = {
@@ -408,6 +413,29 @@ function readProfile(): PortfolioProfile {
     })),
   };
 
+  // P7: Keep the process steps and evidence in the same validated profile source.
+  const profileIntro: ProfileIntroContent = {
+    headline: stringValue(profileIntroData, "headline", filePath),
+    proofLines: nonEmptyStringArray(profileIntroData, "proofLines", filePath),
+    stackItems: nonEmptyStringArray(profileIntroData, "stackItems", filePath),
+  };
+  if (profileIntro.proofLines.length !== 3) {
+    fail(filePath, '"profileIntro.proofLines" must contain three proof lines');
+  }
+  const orchestration: OrchestrationContent = {
+    intro: stringValue(orchestrationData, "intro", filePath),
+    steps: objectArray(orchestrationData, "steps", filePath).map((step) => ({
+      title: stringValue(step, "title", filePath),
+      description: stringValue(step, "description", filePath),
+    })),
+    metricsContext: stringValue(orchestrationData, "metricsContext", filePath),
+    metrics: objectArray(orchestrationData, "metrics", filePath).map((metric) => ({
+      value: stringValue(metric, "value", filePath),
+      label: stringValue(metric, "label", filePath),
+    })),
+    lesson: stringValue(orchestrationData, "lesson", filePath),
+  };
+
   return {
     personal,
     hero: heroContent,
@@ -423,6 +451,8 @@ function readProfile(): PortfolioProfile {
       active: booleanValue(node, "active", false),
     })),
     knowsAbout,
+    orchestration,
+    profileIntro,
     seo: seo
       ? {
           title: stringValue(seo, "title", filePath),

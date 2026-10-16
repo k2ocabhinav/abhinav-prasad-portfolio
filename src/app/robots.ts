@@ -1,8 +1,32 @@
 import type { MetadataRoute } from "next";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 
-export default function robots(): MetadataRoute.Robots {
-  if (!siteConfig.isIndexable) {
+const ALLOWED_AGENTS = [
+  "GPTBot",
+  "OAI-SearchBot",
+  "ChatGPT-User",
+  "ClaudeBot",
+  "Claude-SearchBot",
+  "Claude-User",
+  "Googlebot",
+  "Google-Extended",
+  "Bingbot",
+  "Applebot",
+  "Applebot-Extended",
+  "Meta-WebIndexer",
+  "Meta-ExternalAgent",
+  "Meta-ExternalFetcher",
+  "PerplexityBot",
+  "Perplexity-User",
+  "DuckAssistBot",
+  "Amazonbot",
+  "Amzn-SearchBot",
+  "Amzn-User",
+  "CCBot",
+] as const;
+
+export function buildRobots(isIndexable: boolean): MetadataRoute.Robots {
+  if (!isIndexable) {
     return {
       rules: {
         userAgent: "*",
@@ -18,15 +42,14 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
       {
-        userAgent: "OAI-SearchBot",
+        userAgent: [...ALLOWED_AGENTS],
         allow: "/",
-      },
-      {
-        userAgent: "GPTBot",
-        disallow: "/",
       },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),
-    host: siteConfig.origin,
   };
+}
+
+export default function robots(): MetadataRoute.Robots {
+  return buildRobots(siteConfig.isIndexable);
 }

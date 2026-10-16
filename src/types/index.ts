@@ -163,6 +163,34 @@ export interface PortfolioProfile {
   presenceNodes: PresenceNode[];
   knowsAbout: string[];
   seo?: SEOData;
+  orchestration: OrchestrationContent;
+  profileIntro: ProfileIntroContent;
+}
+
+// ─── P7: Profile intro and AI coding-tool orchestration ────────────────────
+
+export interface ProfileIntroContent {
+  headline: string;
+  proofLines: string[];
+  stackItems: string[];
+}
+
+export interface OrchestrationStep {
+  title: string;
+  description: string;
+}
+
+export interface OrchestrationMetric {
+  value: string;
+  label: string;
+}
+
+export interface OrchestrationContent {
+  intro: string;
+  steps: OrchestrationStep[];
+  metricsContext: string;
+  metrics: OrchestrationMetric[];
+  lesson: string;
 }
 
 export interface PortfolioProject extends Project {

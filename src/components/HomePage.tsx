@@ -11,6 +11,7 @@ import LandingExperience from "@/components/landing/LandingExperience";
 import AboutSection from "@/components/sections/AboutSection";
 import ExperienceSection from "@/components/sections/ExperienceSection";
 import WorksSection from "@/components/sections/WorksSection";
+import OrchestrationSection from "@/components/sections/OrchestrationSection";
 import TechStackSection from "@/components/sections/TechStackSection";
 import PresenceSection from "@/components/sections/PresenceSection";
 import ContactSection from "@/components/sections/ContactSection";
@@ -62,6 +63,7 @@ export default function HomePage({ content }: HomePageProps) {
           <AboutSection personal={profile.personal} tone="pastel-cream" />
           <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
           <WorksSection projects={content.projects} tone="pastel-blush" />
+          <OrchestrationSection content={profile.orchestration} />
           <Marquee />
           <TechStackSection techCategories={content.stackGroups} tone="pastel-peach" />
           <PresenceSection

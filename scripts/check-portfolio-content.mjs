@@ -184,6 +184,33 @@ function validateProfile() {
     stringValue(cta, "href", filePath);
     enumValue(cta, "variant", new Set(["primary", "secondary"]), filePath);
   });
+  // P7: Validate the method content that powers the human-reviewed orchestration section.
+  const profileIntro = objectValue(data, "profileIntro", filePath);
+  stringValue(profileIntro, "headline", filePath);
+  if (stringArray(profileIntro, "proofLines", filePath).length !== 3) {
+    fail(filePath, '"profileIntro.proofLines" must contain three proof lines');
+  }
+  unique(stringArray(profileIntro, "stackItems", filePath), "profile intro stack item");
+  const orchestration = objectValue(data, "orchestration", filePath);
+  stringValue(orchestration, "intro", filePath);
+  const steps = objectArray(orchestration, "steps", filePath);
+  if (steps.length !== 5) {
+    fail(filePath, '"orchestration.steps" must contain five ordered steps');
+  }
+  steps.forEach((step) => {
+    stringValue(step, "title", filePath);
+    stringValue(step, "description", filePath);
+  });
+  stringValue(orchestration, "metricsContext", filePath);
+  const metrics = objectArray(orchestration, "metrics", filePath);
+  if (metrics.length < 3 || metrics.length > 5) {
+    fail(filePath, '"orchestration.metrics" must contain three to five proof points');
+  }
+  metrics.forEach((metric) => {
+    stringValue(metric, "value", filePath);
+    stringValue(metric, "label", filePath);
+  });
+  stringValue(orchestration, "lesson", filePath);
   const bridge = objectValue(data, "bridge", filePath);
   stringValue(bridge, "eyebrow", filePath);
   stringValue(bridge, "title", filePath);
