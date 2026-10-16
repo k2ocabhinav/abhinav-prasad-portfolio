@@ -23,7 +23,7 @@ Option 3 with a burgundy lead.
 | Second field | Glacier `#D7EFFF` | Pale blue field; black-cherry text on it |
 | Dark panels | Black Cherry `#351E28` | Replaces espresso `#16130F`; bone text 12.4:1 |
 | Secondary inks | Petrol `#1A5D74`, Cornflower `#94B6EF` (text `#25447B`), Love Bird `#C5DE48` (text `#4E5312`), Pale Pink `#F4BEBB` | Section accents and illustration inks |
-| Papers | Bone `#F0EEE9`, Linen `#FCF8F2`, Pale Pink, Glacier | Section stocks that visibly differ |
+| Papers | Bone `#F0EEE9`, Linen `#FCF8F2`, Glacier | Section stocks; pale pink is an ink for art and accents only, never a background (owner, 2026-10-16) |
 | Text | Ink `#0B1011` | Unchanged |
 
 Rules that change: large flat accent fields are allowed; original illustrations keep their spot colours at rest; screenshots in case studies stay full colour. Rules that stay: no glow, glass, gradients, blurred shadows or `text-shadow`; hard 0-blur print offsets only; every animation has a static reduced-motion path.
