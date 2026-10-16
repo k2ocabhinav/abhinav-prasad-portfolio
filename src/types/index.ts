@@ -175,11 +175,6 @@ export interface ProfileIntroContent {
   stackItems: string[];
 }
 
-export interface OrchestrationStep {
-  title: string;
-  description: string;
-}
-
 export interface OrchestrationMetric {
   value: string;
   label: string;
@@ -187,7 +182,7 @@ export interface OrchestrationMetric {
 
 export interface OrchestrationContent {
   intro: string;
-  steps: OrchestrationStep[];
+  method: string;
   metricsContext: string;
   metrics: OrchestrationMetric[];
   lesson: string;
@@ -298,7 +293,7 @@ export interface ProjectDetail {
 }
 
 /** Tech stack category */
-export type StackContext = "Used at work" | "Part of my workflow" | "Built with in projects";
+export type StackContext = "Used at work" | "Part of my workflow" | "Built in projects";
 
 export interface TechCategory {
   icon: "cloud" | "cpu" | "database" | "terminal" | "sparkles";

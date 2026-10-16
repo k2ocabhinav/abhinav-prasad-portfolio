@@ -36,8 +36,10 @@
   color: #0B1011;
 }
 
+/* Phones carry the menu button only: a floating brand chip here would sit on
+   top of body copy. The hero wordmark does the branding on the first screen. */
 @media (max-width: 767px) {
-  .name {
+  .brandMark {
     display: none;
   }
 }

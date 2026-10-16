@@ -38,10 +38,20 @@ export function renderIcon(key: string, props?: LucideProps) {
 }
 
 /**
- * Smooth scroll to a section by ID
+ * Smooth scroll to a section by ID, and mirror it in the URL hash so sections
+ * stay linkable and bookmarkable.
  */
 export function scrollToSection(id: string): void {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const target = document.getElementById(id);
+  if (!target) {
+    return;
+  }
+
+  target.scrollIntoView({ behavior: "smooth" });
+
+  if (window.location.hash !== `#${id}`) {
+    window.history.replaceState(null, "", `#${id}`);
+  }
 }
 
 /**

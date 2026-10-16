@@ -5,7 +5,7 @@ import styles from "./StackStrip.module.css";
 
 // =============================================================================
 // StackStrip — a row of print-style chips (icon + mono label).
-// Static by design: hairline border, 0-blur registration offset, no hover.
+// Static by design: hairline border, no shadow, no hover.
 // `paper` sits on a paper stock; `panel` sits inside a black-cherry .spec-sheet.
 // =============================================================================
 

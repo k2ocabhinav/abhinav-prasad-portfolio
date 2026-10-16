@@ -57,7 +57,7 @@ export default function DispatchTicket({
         type="button"
         className={styles.button}
         data-dispatch-ticket={ticket.id}
-        aria-current={state === "inflight" ? "step" : undefined}
+        aria-pressed={state === "inflight"}
         onClick={onSelect}
         onFocus={onSelect}
         onKeyDown={handleKeyDown}

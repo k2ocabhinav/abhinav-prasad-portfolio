@@ -1,0 +1,14 @@
+/* One stroke scale for every illustration plate: hairline detail, object
+   outline, and emphasis. Plates pick from these three weights instead of
+   inventing seven near-identical numbers. */
+.fine {
+  stroke-width: var(--plate-stroke-fine, 1);
+}
+
+.mid {
+  stroke-width: var(--plate-stroke-mid, 1.6);
+}
+
+.bold {
+  stroke-width: var(--plate-stroke-bold, 2.2);
+}

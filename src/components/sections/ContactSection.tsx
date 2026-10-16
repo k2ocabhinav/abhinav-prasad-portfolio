@@ -139,7 +139,7 @@ export default function ContactSection({
               href={personal.resumeHref}
               download
             >
-              Download Resume
+              Download résumé
             </MagneticButton>
 
             <div className={styles.contactLinks}>

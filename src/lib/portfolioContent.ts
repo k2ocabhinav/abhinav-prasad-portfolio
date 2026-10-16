@@ -44,7 +44,7 @@ type Frontmatter = Record<string, unknown>;
 
 const projectIcons = ["terminal", "cloud", "database", "sparkles", "cpu"] as const;
 const stackIcons = ["cloud", "cpu", "database", "terminal", "sparkles"] as const;
-const stackContextValues = ["Used at work", "Part of my workflow", "Built with in projects"] as const;
+const stackContextValues = ["Used at work", "Part of my workflow", "Built in projects"] as const;
 const accents = ["sage", "peach", "sky", "sand"] as const;
 const statusValues = ["draft", "published"] as const;
 const proofLabels = ["Problem", "My Role", "Shipped", "Impact"] as const;
@@ -533,10 +533,7 @@ function readProfile(): PortfolioProfile {
   }
   const orchestration: OrchestrationContent = {
     intro: stringValue(orchestrationData, "intro", filePath),
-    steps: objectArray(orchestrationData, "steps", filePath).map((step) => ({
-      title: stringValue(step, "title", filePath),
-      description: stringValue(step, "description", filePath),
-    })),
+    method: stringValue(orchestrationData, "method", filePath),
     metricsContext: stringValue(orchestrationData, "metricsContext", filePath),
     metrics: objectArray(orchestrationData, "metrics", filePath).map((metric) => ({
       value: stringValue(metric, "value", filePath),

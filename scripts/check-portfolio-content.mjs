@@ -9,7 +9,7 @@ const statuses = new Set(["draft", "published"]);
 const proofLabels = new Set(["Problem", "My Role", "Shipped", "Impact"]);
 const projectIcons = new Set(["terminal", "cloud", "database", "sparkles", "cpu"]);
 const stackIcons = new Set(["cloud", "cpu", "database", "terminal", "sparkles"]);
-const stackContextValues = new Set(["Used at work", "Part of my workflow", "Built with in projects"]);
+const stackContextValues = new Set(["Used at work", "Part of my workflow", "Built in projects"]);
 const accents = new Set(["sage", "peach", "sky", "sand"]);
 const codeTones = new Set(["lime", "ember", "split"]);
 const beyondKinds = new Set(["photo", "event", "quote", "person", "project"]);
@@ -271,14 +271,7 @@ function validateProfile() {
   unique(stringArray(profileIntro, "stackItems", filePath), "profile intro stack item");
   const orchestration = objectValue(data, "orchestration", filePath);
   stringValue(orchestration, "intro", filePath);
-  const steps = objectArray(orchestration, "steps", filePath);
-  if (steps.length !== 5) {
-    fail(filePath, '"orchestration.steps" must contain five ordered steps');
-  }
-  steps.forEach((step) => {
-    stringValue(step, "title", filePath);
-    stringValue(step, "description", filePath);
-  });
+  stringValue(orchestration, "method", filePath);
   stringValue(orchestration, "metricsContext", filePath);
   const metrics = objectArray(orchestration, "metrics", filePath);
   if (metrics.length < 3 || metrics.length > 5) {

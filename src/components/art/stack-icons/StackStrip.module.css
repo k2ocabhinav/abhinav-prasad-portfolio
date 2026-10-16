@@ -17,10 +17,6 @@
   border: 1px solid var(--chip-border, var(--color-hairline));
   border-radius: 3px;
   background: transparent;
-  box-shadow: var(
-    --stack-offset,
-    var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16))
-  );
   color: var(--chip-ink, var(--color-ink));
   font-family: var(--font-label);
   font-size: 10.5px;
@@ -51,9 +47,6 @@
   --chip-ink: var(--color-on-panel, #EDE6DA);
   --chip-icon: var(--color-panel-accent, #F4BEBB);
   --chip-border: rgba(237, 230, 218, 0.24);
-  /* The paper offset is a dark ink on paper; on black cherry it must read as a
-     light registration mark instead, or it disappears into the panel. */
-  --stack-offset: 3px 3px 0 rgba(237, 230, 218, 0.22);
 }
 
 @media (max-width: 767px) {

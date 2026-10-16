@@ -4,9 +4,8 @@ import * as m from "motion/react-m";
 import { useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import type { SectionTone, StackGroup } from "@/types";
-import { useCardTilt } from "@/hooks/useCardTilt";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { staggerContainer, staggerItem, tiltSpring } from "@/lib/animations";
+import { staggerContainer, staggerItem } from "@/lib/animations";
 import { renderIcon } from "@/lib/utils";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import FlipRevealText from "@/components/ui/FlipRevealText";
@@ -17,6 +16,12 @@ interface TechStackSectionProps {
   techCategories: StackGroup[];
   tone?: SectionTone;
 }
+
+// =============================================================================
+// TechStackSection — grouped coverage as a ruled index, not a second card grid.
+// Each group is a ruled row: icon, label, evidence context, then its items as
+// a hairline-separated run. Services keeps the icon-card grid to itself.
+// =============================================================================
 
 export default function TechStackSection({
   techCategories,
@@ -76,50 +81,43 @@ function TechStackSectionContent({
         </div>
       </div>
 
-      <m.div
-        variants={staggerContainer(0.1)}
+      <m.ul
+        variants={staggerContainer(0.08)}
         initial="hidden"
         animate={prefersReducedMotion ? "visible" : undefined}
         whileInView={prefersReducedMotion ? undefined : "visible"}
         viewport={{ once: true, amount: 0.08 }}
-        className={styles.cardsGrid}
-        data-stack-grid="true"
+        className={styles.groupList}
+        data-stack-list="true"
       >
         {techCategories.map((item) => (
-          <TechCard key={item.id} item={item} />
+          <StackRow key={item.id} item={item} />
         ))}
-      </m.div>
+      </m.ul>
     </SectionWrapper>
   );
 }
 
-function TechCard({ item }: { item: StackGroup }) {
-  const prefersReducedMotion = useReducedMotion();
-  const { ref: tiltRef, tilt } = useCardTilt(1.5);
-
+function StackRow({ item }: { item: StackGroup }) {
   return (
-    <m.article
-      ref={prefersReducedMotion ? undefined : tiltRef}
+    <m.li
       variants={staggerItem}
-      animate={prefersReducedMotion ? undefined : { rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
-      transition={tiltSpring}
-      style={{ transformPerspective: 700 }}
-      className={styles.card}
+      className={styles.group}
       data-stack-card={item.id}
       data-stack-context={item.context}
     >
-      <div className={styles.cardTopline}>
-        <div className={styles.cardIcon} aria-hidden="true">
-          {renderIcon(item.icon, { size: 20 })}
-        </div>
+      <div className={styles.groupHead}>
+        <span className={styles.groupIcon} aria-hidden="true">
+          {renderIcon(item.icon, { size: 18 })}
+        </span>
+        <h3 className={styles.groupLabel}>{item.label}</h3>
         <span className={styles.context}>{item.context}</span>
       </div>
-      <h3 className={styles.cardLabel}>{item.label}</h3>
-      <ul className={styles.cardItems} aria-label={`${item.label} technologies`}>
+      <ul className={styles.groupItems} aria-label={`${item.label} technologies`}>
         {item.items.map((technology) => (
           <li key={technology}>{technology}</li>
         ))}
       </ul>
-    </m.article>
+    </m.li>
   );
 }

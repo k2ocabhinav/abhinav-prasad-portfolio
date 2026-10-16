@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   },
   description:
     "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.",
+  robots: {
+    index: false,
+    follow: false,
+  },
   alternates: {
     canonical: absoluteUrl("/beyond-terminal"),
   },

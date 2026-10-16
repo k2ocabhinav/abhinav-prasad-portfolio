@@ -2,7 +2,7 @@
 
 import * as m from "motion/react-m";
 import { AnimatePresence, useReducedMotion } from "motion/react";
-import { Menu, X } from "lucide-react";
+import { FileText, Mail, Menu, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
 import { navigationItems, navSpyTargets } from "@/data/navigation";
@@ -17,7 +17,14 @@ const DESKTOP_RAIL_QUERY =
 const MENU_FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export default function Navigation() {
+interface NavigationProps {
+  /** Resume PDF path, offered on the first screen from the rail and menu. */
+  resumeHref: string;
+  /** Contact email, offered on the first screen from the rail and menu. */
+  email: string;
+}
+
+export default function Navigation({ resumeHref, email }: NavigationProps) {
   const { activeId: activeSection, dark: overDarkField } =
     useScrollSpy(navSpyTargets);
   const navMode = useLandingNavMode(80);
@@ -223,6 +230,38 @@ export default function Navigation() {
             </PortalEntryTrigger>
           )
         )}
+
+        <span className={styles.railRule} aria-hidden="true" />
+
+        <a
+          href={resumeHref}
+          download
+          className={cn(styles.railItem, styles.railAction)}
+        >
+          <span className={cn(styles.railLabel, styles.railLabelRoute)}>
+            Résumé
+          </span>
+          <FileText
+            size={14}
+            className={styles.railIcon}
+            aria-hidden="true"
+            focusable="false"
+          />
+        </a>
+        <a
+          href={`mailto:${email}`}
+          className={cn(styles.railItem, styles.railAction)}
+        >
+          <span className={cn(styles.railLabel, styles.railLabelRoute)}>
+            Email
+          </span>
+          <Mail
+            size={14}
+            className={styles.railIcon}
+            aria-hidden="true"
+            focusable="false"
+          />
+        </a>
       </nav>
 
       <div
@@ -341,6 +380,24 @@ export default function Navigation() {
                     </PortalEntryTrigger>
                   )
                 )}
+
+                <span className={styles.mobileDivider} aria-hidden="true" />
+
+                <a
+                  href={resumeHref}
+                  download
+                  onClick={closeMobileMenu}
+                  className={cn(styles.mobileNavItem, styles.mobileNavRoute)}
+                >
+                  Résumé
+                </a>
+                <a
+                  href={`mailto:${email}`}
+                  onClick={closeMobileMenu}
+                  className={cn(styles.mobileNavItem, styles.mobileNavRoute)}
+                >
+                  Email
+                </a>
               </nav>
             </m.div>
           </>

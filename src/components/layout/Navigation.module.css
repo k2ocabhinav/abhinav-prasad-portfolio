@@ -1,12 +1,12 @@
 .desktopRail {
   position: fixed;
-  right: 2rem;
+  right: max(1.25rem, env(safe-area-inset-right));
   top: 50%;
   transform: translateY(-50%);
   z-index: var(--z-nav);
   display: none;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   align-items: flex-end;
 }
 
@@ -16,23 +16,27 @@
   }
 }
 
+/* Every rail item clears the 24x24 minimum target size. */
 .railItem {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  min-height: 24px;
   transition: all 0.3s ease;
 }
 
 .railLabel {
   font-family: var(--font-label);
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0;
   transform: translateX(1rem);
   pointer-events: none;
   color: var(--color-secondary-text);
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .railItem:hover .railLabel,
@@ -96,10 +100,40 @@
   background: var(--color-lead);
 }
 
+/* Résumé and email — always-labelled actions below a hairline rule, so the
+   two first-screen actions stay readable rather than being bare icons. */
+.railAction {
+  min-height: 28px;
+}
+
+.railRule {
+  width: 1.5rem;
+  height: 1px;
+  margin-block: 0.1rem;
+  background: var(--color-hairline);
+}
+
+.railIcon {
+  flex: none;
+  color: var(--color-lead-deep);
+}
+
 /* Over the burgundy bridge field the rail flips to bone ink so the active
    label and dots stay legible on the dark ink. */
 .desktopRail[data-nav-tone="dark"] .railLabel {
   color: var(--color-on-lead);
+}
+
+.desktopRail[data-nav-tone="dark"] .railLabelRoute {
+  color: var(--color-on-lead);
+}
+
+.desktopRail[data-nav-tone="dark"] .railIcon {
+  color: var(--color-on-lead);
+}
+
+.desktopRail[data-nav-tone="dark"] .railRule {
+  background: rgba(237, 230, 218, 0.4);
 }
 
 .desktopRail[data-nav-tone="dark"] .railLabelActive {
@@ -222,6 +256,13 @@
 
 .mobileNavRoute {
   color: var(--color-lead-deep);
+}
+
+.mobileDivider {
+  width: 100%;
+  height: 1px;
+  margin-block: 0.55rem;
+  background: var(--color-hairline);
 }
 
 /* "Transparent" mode (over the hero) — the hero is paper now, so this mode

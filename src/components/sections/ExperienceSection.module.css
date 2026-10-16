@@ -215,8 +215,6 @@
 
 .backendThesis {
   max-width: 65ch;
-  padding-left: clamp(1rem, 2vw, 1.5rem);
-  border-left: 3px solid var(--cassette-cobalt);
   color: var(--cassette-ink);
   font-size: clamp(1.08rem, 2.1vw, 1.42rem);
   font-weight: 440;
@@ -421,9 +419,11 @@
   overflow-wrap: anywhere;
 }
 
-.toolList li:not(:last-child)::after {
+/* The separator leads each item after the first, so a wrapped line never ends
+   on a lone "·". */
+.toolList li + li::before {
   content: "·";
-  margin-left: 0.55rem;
+  margin-right: 0.55rem;
   color: rgba(27, 54, 153, 0.46);
 }
 
