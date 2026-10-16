@@ -1,19 +1,22 @@
 /* =============================================================================
-   LandingFrame1Hero - contained wordmark hero frame
+   LandingFrame1Hero — masthead, text stack, dispatch board and the proof band.
+   Desktop is a two-column grid; phones and tablets stack the board under the
+   copy. The wordmark column decides the wordmark size (see AnimatedName).
    ============================================================================= */
 
 .frame {
   position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   min-height: 100vh;
   min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   padding: 0 var(--content-padding-x);
-  overflow: hidden;
-  isolation: isolate;
+  overflow: clip;
+  /* The scroll hint and the band share this height, so the hint always rides
+     clear of the burgundy field. */
+  --hero-band-height: clamp(4.5rem, 8vh, 5.75rem);
   --plate-ink: var(--color-black-cherry, #351E28);
   --plate-accent: var(--color-burgundy, #6A2135);
   --plate-second: var(--color-cornflower, #94B6EF);
@@ -21,80 +24,66 @@
 }
 
 .content {
-  position: relative;
-  z-index: 2;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(1.5rem, 2.4vw, 2.25rem);
   width: 100%;
   max-width: var(--content-max-width);
+  margin-inline: auto;
+  padding-block: clamp(4.75rem, 12vh, 7.5rem) clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.boardColumn {
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+/* The desktop rail floats over the right edge, so the board keeps its own
+   gutter clear of the rail's labels. */
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+  .boardColumn {
+    padding-right: 4rem;
+  }
+}
+
+.band {
+  position: relative;
+  display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.artwork {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  pointer-events: none;
-}
-
-.ledger {
-  position: absolute;
-  left: max(var(--content-padding-x), calc((100vw - var(--content-max-width)) / 2));
-  bottom: 2.4rem;
-  width: clamp(15rem, 22vw, 20rem);
-}
-
-.planes {
-  position: absolute;
-  right: max(var(--content-padding-x), calc((100vw - var(--content-max-width)) / 2));
-  bottom: 7.5rem;
-  width: clamp(8.5rem, 13vw, 11.5rem);
-}
-
-.floorBand {
-  position: absolute;
-  z-index: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 1.1rem;
+  min-height: var(--hero-band-height);
+  margin-inline: calc(-1 * var(--content-padding-x));
   background: var(--color-burgundy, #6A2135);
+  color: var(--color-on-lead, #EDE6DA);
   border-top: 1px solid var(--color-black-cherry, #351E28);
 }
 
-@media (max-width: 767px) {
-  .frame {
-    min-height: max(100svh, 52rem);
-    justify-content: flex-start;
-    padding-top: 4.8rem;
-    padding-bottom: 2rem;
+/* Decorative scroll hint: parked above the band, never on the burgundy. */
+.frame [data-scroll-indicator="true"] {
+  bottom: calc(var(--hero-band-height) + 0.75rem);
+}
+
+@media (max-width: 1279px) {
+  .content {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    justify-items: center;
+    row-gap: clamp(1.25rem, 3vh, 2rem);
+    padding-block: clamp(3.75rem, 7vh, 5.5rem) clamp(1.25rem, 3vh, 1.75rem);
   }
 
-  .artwork {
-    position: absolute;
-    top: auto;
-    right: 0;
-    bottom: 1.45rem;
-    left: 0;
-    width: min(100%, 28rem);
-    height: 11.8rem;
-    margin-inline: auto;
+  .boardColumn {
+    justify-content: center;
+    width: 100%;
   }
+}
 
-  .ledger {
-    left: 0.4rem;
-    bottom: 0;
-    width: min(62vw, 14.5rem);
-  }
-
-  .planes {
-    right: 0.3rem;
-    bottom: 4.5rem;
-    width: min(37vw, 8rem);
-  }
-
-  .floorBand {
-    height: 0.85rem;
+/* Under the stacked layout the board is centred, so the rail gutter is needed
+   on both sides to keep it optically centred. */
+@media (min-width: 768px) and (max-width: 1279px) and (hover: hover) and (pointer: fine) {
+  .boardColumn {
+    padding-left: 4rem;
   }
 }
