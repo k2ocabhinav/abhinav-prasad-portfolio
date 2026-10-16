@@ -104,7 +104,7 @@ function ExperienceSectionContent({
                 : { opacity: deckOpacity, y: deckY }
             }
           >
-            Backend systems · business logic · reliable delivery
+            Where the business rules live and the releases ship.
           </motion.p>
         </header>
 
