@@ -1,0 +1,5 @@
+.plate {
+  display: block;
+  width: min(100%, 21rem);
+  height: auto;
+}

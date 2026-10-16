@@ -210,6 +210,50 @@ export interface ProjectDetailSection {
   points: string[];
 }
 
+export type ProjectStoryViewport = "desktop" | "mobile";
+export type ProjectStoryTheme = "day" | "night";
+export type ProjectTenantId = "velo-business" | "saffron-routes";
+export type ProjectTripRole = "rider" | "dispatch" | "driver";
+
+export interface ProjectStoryVisual extends ProjectVisual {
+  id: string;
+  viewport: ProjectStoryViewport;
+  theme?: ProjectStoryTheme;
+  tenant?: ProjectTenantId;
+}
+
+export interface ProjectStoryChapter {
+  id: string;
+  eyebrow: string;
+  title: string;
+  summary: string;
+  visualIds: string[];
+}
+
+export interface ProjectTripStep {
+  role: ProjectTripRole;
+  label: string;
+  summary: string;
+  visualId: string;
+}
+
+export interface ProjectTenantOption {
+  id: ProjectTenantId;
+  label: string;
+  visualId: string;
+}
+
+export interface ProjectDetailStory {
+  visuals: ProjectStoryVisual[];
+  chapters: ProjectStoryChapter[];
+  tripSteps: ProjectTripStep[];
+  tenantSwitcher: {
+    label: string;
+    defaultId: ProjectTenantId;
+    options: ProjectTenantOption[];
+  };
+}
+
 export interface ProjectDetail {
   slug: string;
   eyebrow: string;
@@ -222,6 +266,7 @@ export interface ProjectDetail {
   stackBuckets: ProjectTechBucket[];
   qualityHighlights: string[];
   references?: ProjectLink[];
+  storyboard?: ProjectDetailStory;
 }
 
 /** Tech stack category */
