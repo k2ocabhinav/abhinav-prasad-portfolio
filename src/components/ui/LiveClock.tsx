@@ -37,7 +37,7 @@ export default function LiveClock({ city, countryCode, timezone }: LiveClockProp
 
   return (
     <span className={styles.clock}>
-      {city}, {countryCode} — {formatted} IST
+      {city}, {countryCode} ({formatted} IST)
     </span>
   );
 }

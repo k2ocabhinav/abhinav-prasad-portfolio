@@ -74,6 +74,7 @@ function ExperienceSectionContent({
             >
               <FlipRevealText
                 flat
+                overprint
                 persist
                 text="Experience"
                 mode="char"

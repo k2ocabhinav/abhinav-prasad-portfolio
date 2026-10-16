@@ -12,10 +12,14 @@
   color: var(--color-on-lead, #EDE6DA);
 }
 
+.marquee:focus-visible {
+  outline: 2px solid var(--color-on-lead, #EDE6DA);
+  outline-offset: -4px;
+}
+
 .track {
   display: flex;
   width: max-content;
-  will-change: transform;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
@@ -39,9 +43,11 @@
   padding-left: 1.4rem;
 }
 
+/* Register-mark separator: a small flat ink block rather than punctuation. */
 .sep {
-  font-style: normal;
-  color: var(--color-pink, #F4BEBB);
-  font-size: 0.7em;
-  padding-left: 1.4rem;
+  align-self: center;
+  width: 0.26em;
+  height: 0.26em;
+  margin-left: 1.4rem;
+  background: var(--color-pink, #F4BEBB);
 }

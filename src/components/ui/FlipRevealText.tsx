@@ -25,7 +25,7 @@ interface FlipRevealTextProps {
   reduceMotion?: boolean;
   /** Matte mode: masked rise (overflow-clip + translate), no 3D rotation. */
   flat?: boolean;
-  /** Misregistered accent copy behind the text (paper sections only). */
+  /** Misregistered accent copy behind the text; large section titles only. */
   overprint?: boolean;
   className?: string;
   tokenClassName?: string;
@@ -136,7 +136,7 @@ export default function FlipRevealText({
   perspective = 920,
   reduceMotion,
   flat = false,
-  overprint = true,
+  overprint = false,
   className,
   tokenClassName,
 }: FlipRevealTextProps) {

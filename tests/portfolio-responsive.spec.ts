@@ -622,9 +622,13 @@ test("touch devices do not retain hover lift or card tilt", async ({ page }, tes
 
 test("full-page sweep has no runtime, network, ID, or image failures", async ({
   page,
+  baseURL,
 }) => {
   const runtimeErrors: string[] = [];
   const failedRequests: string[] = [];
+  const homeOrigin = baseURL ? new URL(baseURL).origin : null;
+  const isHomeRequest = (url: string) =>
+    homeOrigin !== null && new URL(url).origin === homeOrigin;
 
   page.on("pageerror", (error) => runtimeErrors.push(error.message));
   page.on("console", (message) => {
@@ -633,15 +637,12 @@ test("full-page sweep has no runtime, network, ID, or image failures", async ({
     }
   });
   page.on("requestfailed", (request) => {
-    if (new URL(request.url()).origin === "http://127.0.0.1:3000") {
+    if (isHomeRequest(request.url())) {
       failedRequests.push(`${request.method()} ${request.url()}: ${request.failure()?.errorText}`);
     }
   });
   page.on("response", (response) => {
-    if (
-      new URL(response.url()).origin === "http://127.0.0.1:3000" &&
-      response.status() >= 400
-    ) {
+    if (isHomeRequest(response.url()) && response.status() >= 400) {
       failedRequests.push(`${response.status()} ${response.url()}`);
     }
   });

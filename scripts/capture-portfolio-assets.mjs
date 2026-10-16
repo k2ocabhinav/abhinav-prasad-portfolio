@@ -9,12 +9,12 @@ const publicOgOutput = path.join(root, "public/og-image.jpg");
 const appOgOutput = path.join(root, "src/app/opengraph-image.jpg");
 
 const captures = [
-  { file: "01-hero-wordmark.png", route: "/", target: "#hero" },
-  { file: "02-about-philosophy.png", route: "/", target: "#about" },
-  { file: "03-works-case-study.png", route: "/", target: "#work" },
-  { file: "04-stack-riso.png", route: "/", target: "#stack" },
-  { file: "05-contact-espresso.png", route: "/", target: "#contact" },
-  { file: "06-velo-case-study.png", route: "/work/velo" },
+  { file: "01-hero-wordmark.webp", route: "/", target: "#hero" },
+  { file: "02-about-philosophy.webp", route: "/", target: "#about" },
+  { file: "03-works-case-study.webp", route: "/", target: "#work" },
+  { file: "04-stack-riso.webp", route: "/", target: "#stack" },
+  { file: "05-contact-espresso.webp", route: "/", target: "#contact" },
+  { file: "06-velo-case-study.webp", route: "/work/velo" },
 ];
 
 fs.mkdirSync(projectOutput, { recursive: true });
@@ -71,6 +71,8 @@ for (const capture of captures) {
 
   await page.screenshot({
     path: path.join(projectOutput, capture.file),
+    type: "webp",
+    quality: 90,
     animations: "disabled",
     scale: "css",
   });

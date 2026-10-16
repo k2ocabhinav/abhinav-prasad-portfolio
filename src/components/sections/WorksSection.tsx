@@ -64,6 +64,7 @@ function WorksSectionContent({
           className={styles.heading}
         >
           <FlipRevealText flat
+            overprint
             text="Selected Works"
             mode="word"
             progress={scrollYProgress}
@@ -77,7 +78,7 @@ function WorksSectionContent({
         </motion.h2>
         <motion.p className={styles.callout} style={{ y: prefersReducedMotion ? 0 : calloutY }}>
           <FlipRevealText flat
-            text="(03) — Systems that ship"
+            text="Systems that ship"
             mode="word"
             progress={scrollYProgress}
             window={[0.24, 0.38]}

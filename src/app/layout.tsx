@@ -65,7 +65,7 @@ const fragmentMono = Fragment_Mono({
 
 const profile = getProfileContent();
 const seo = profile.seo;
-const title = seo?.title ?? `${profile.personal.fullName} — Engineering Portfolio`;
+const title = seo?.title ?? `${profile.personal.fullName} | Engineering Portfolio`;
 const description = seo?.description ?? profile.personal.subtitle;
 const author = seo?.author ?? profile.personal.fullName;
 const openGraphImage = seo?.ogImage ?? "/og-image.jpg";
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     template: `%s | ${profile.personal.fullName}`,
   },
   description,
-  applicationName: `${profile.personal.fullName} — Engineering Portfolio`,
+  applicationName: `${profile.personal.fullName} | Engineering Portfolio`,
   keywords: seo?.keywords,
   authors: [{ name: author, url: absoluteUrl("/") }],
   creator: profile.personal.fullName,
@@ -109,7 +109,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    siteName: `${profile.personal.fullName} — Engineering Portfolio`,
+    siteName: `${profile.personal.fullName} | Engineering Portfolio`,
     title,
     description,
     url: absoluteUrl("/"),

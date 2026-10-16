@@ -19,7 +19,7 @@
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
-  background: #E42A1D;
+  background: var(--color-lead);
   color: #F0EEE9;
   font-family: var(--font-wordmark);
   font-size: 1.05rem;

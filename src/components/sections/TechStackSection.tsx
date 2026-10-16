@@ -51,6 +51,7 @@ function TechStackSectionContent({
           >
             <FlipRevealText
               flat
+              overprint
               persist
               text="Stack"
               mode="word"
