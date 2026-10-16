@@ -120,7 +120,7 @@
   right: 0.02em;
   bottom: 0.03em;
   height: 2px;
-  background: #E42A1D;
+  background: var(--color-lead, #6A2135);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 220ms var(--motion-ease-out);
@@ -190,7 +190,7 @@
 
 .letterStage[data-portal-letter="true"] .hoverAccentBar {
   height: 3px;
-  background: #E42A1D;
+  background: var(--color-lead, #6A2135);
 }
 
 /* Stacked hero layouts put the dispatch board under the masthead, so the

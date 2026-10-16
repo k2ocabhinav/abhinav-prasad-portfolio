@@ -16,15 +16,15 @@ import styles from "./AnimatedName.module.css";
 //   3. Use WAAPI only for initial entrance so hover stays CSS-driven
 // =============================================================================
 
-// Single matte accent — every letter hovers vermilion.
+// Single matte accent — every letter hovers in the lead ink (burgundy).
 const HOVER_COLORS = [
-  "#E42A1D",
-  "#E42A1D",
-  "#E42A1D",
-  "#E42A1D",
-  "#E42A1D",
-  "#E42A1D",
-  "#E42A1D",
+  "var(--color-lead, #6A2135)",
+  "var(--color-lead, #6A2135)",
+  "var(--color-lead, #6A2135)",
+  "var(--color-lead, #6A2135)",
+  "var(--color-lead, #6A2135)",
+  "var(--color-lead, #6A2135)",
+  "var(--color-lead, #6A2135)",
 ] as const;
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -97,7 +97,7 @@ export default function AnimatedName({
       data-home-hero-wordmark="true"
     >
       {letters.map((letter, index) => {
-        const hoverColor = HOVER_COLORS[index] ?? "#E42A1D";
+        const hoverColor = HOVER_COLORS[index] ?? "var(--color-lead, #6A2135)";
         const isHovered = hoveredIndex === index;
         const isPortalLetter =
           Boolean(portalTrigger && triggerProps) && index === PORTAL_LETTER_INDEX;
