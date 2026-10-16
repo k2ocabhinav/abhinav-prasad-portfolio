@@ -27,7 +27,7 @@
   --color-panel-accent: #F4BEBB;                /* small accent on panels (replaces #FF5F4A), 9.45:1 */
 
   /* Papers */
-  --paper-bone: #F0EEE9; --paper-linen: #FCF8F2; --paper-pink: #F4BEBB; --paper-glacier: #D7EFFF;
+  --paper-bone: #F0EEE9; --paper-linen: #FCF8F2; --paper-pink: var(--paper-linen); /* pink is ink-only: never a page background (owner, 2026-10-16) */ --paper-glacier: #D7EFFF;
 
   /* Illustration plate inks (art components read ONLY these; sections override per section) */
   --plate-ink: var(--color-black-cherry);
@@ -77,7 +77,7 @@
   --color-accent-sky: var(--color-lead-deep);
 
   /* Historical stock names alias the three paper rooms. */
-  --paper-blush: var(--paper-pink);
+  --paper-blush: var(--paper-linen);
   --paper-celadon: var(--paper-bone);
   --paper-flax: var(--paper-linen);
   --paper-cool: var(--paper-bone);

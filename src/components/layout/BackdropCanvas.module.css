@@ -13,9 +13,6 @@
   background: var(--paper-linen, #FCF8F2);
 }
 
-.canvas[data-stock="pink"] {
-  background: var(--paper-pink, #F4BEBB);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .canvas {

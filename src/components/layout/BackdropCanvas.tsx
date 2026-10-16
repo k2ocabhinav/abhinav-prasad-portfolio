@@ -5,7 +5,7 @@ import { sections } from "@/data/navigation";
 import styles from "./BackdropCanvas.module.css";
 
 // =============================================================================
-// BackdropCanvas — palette v2 canvas with bone, linen and pink paper rooms.
+// BackdropCanvas — palette v2 canvas with bone and linen paper rooms (pink is an ink, never a page background).
 // As each section crosses the viewport midline the canvas fades (0.8s CSS
 // transition) to its paper stock. Fields are painted by their sections.
 // Snap-per-section, never continuous interpolation (muddy midpoints).
@@ -19,7 +19,7 @@ const SECTION_STOCKS: Record<string, string> = {
   profile: "bone",
   about: "bone",
   experience: "linen",
-  work: "pink",
+  work: "linen",
   stack: "bone",
   presence: "bone",
   contact: "bone",
