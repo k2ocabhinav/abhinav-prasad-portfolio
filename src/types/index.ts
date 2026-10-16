@@ -70,12 +70,6 @@ export interface PersonalData {
   footerTagline: string;
 }
 
-/** Editable handoff between the landing sequence and the profile story */
-export interface ProfileBridgeContent {
-  eyebrow: string;
-  title: string;
-}
-
 /** Hero section image annotations */
 export interface HeroAnnotation {
   label: string;
@@ -159,7 +153,6 @@ export interface Project {
 export interface PortfolioProfile {
   personal: PersonalData;
   hero: LandingHeroContent;
-  bridge: ProfileBridgeContent;
   presenceNodes: PresenceNode[];
   knowsAbout: string[];
   seo?: SEOData;

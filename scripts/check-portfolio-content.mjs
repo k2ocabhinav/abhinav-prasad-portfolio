@@ -282,9 +282,6 @@ function validateProfile() {
     stringValue(metric, "label", filePath);
   });
   stringValue(orchestration, "lesson", filePath);
-  const bridge = objectValue(data, "bridge", filePath);
-  stringValue(bridge, "eyebrow", filePath);
-  stringValue(bridge, "title", filePath);
   unique(stringArray(data, "knowsAbout", filePath), "knowsAbout value");
   const seo = objectValue(data, "seo", filePath);
   ["title", "description", "author", "ogImage"].forEach((key) => stringValue(seo, key, filePath));

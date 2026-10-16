@@ -4,19 +4,20 @@ import * as m from "motion/react-m";
 import { useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Mail } from "lucide-react";
-import type { PersonalData, SectionTone } from "@/types";
+import type { PersonalData, PresenceNode } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import EnvelopeStamp from "@/components/art/EnvelopeStamp";
+import TimezoneMap from "@/components/art/TimezoneMap";
 import styles from "./ContactSection.module.css";
 
-// =============================================================================
-// ContactSection — CTA with resume download, email, and social links
-// =============================================================================
+interface ContactSectionProps {
+  personal: PersonalData;
+  presenceNodes: PresenceNode[];
+}
 
-// Brand SVG icons (removed from lucide-react v1.7+)
 function GithubIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
@@ -42,106 +43,101 @@ const socialIcons: Record<string, React.ReactNode> = {
   email: <Mail size={20} aria-hidden="true" focusable="false" />,
 };
 
-interface ContactSectionProps {
-  personal: PersonalData;
-  tone?: SectionTone;
-}
-
 export default function ContactSection({
   personal,
-  tone,
+  presenceNodes,
 }: ContactSectionProps) {
   const prefersReducedMotion = useReducedMotion();
-
-  // Sheet rise — anchored to an untransformed wrapper (no scrub feedback).
   const riseRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: riseProgress } = useScroll({
+  const { scrollYProgress } = useScroll({
     target: prefersReducedMotion ? undefined : riseRef,
     offset: ["start end", "start 0.55"],
   });
-  const sheetY = useTransform(riseProgress, [0, 1], [48, 0]);
-  const sheetScale = useTransform(riseProgress, [0, 1], [0.97, 1]);
+  const sheetY = useTransform(scrollYProgress, [0, 1], [32, 0]);
+  const sheetScale = useTransform(scrollYProgress, [0, 1], [0.98, 1]);
 
   return (
-    <SectionWrapper
-      id="contact"
-      tone={tone}
-      centered
-      className={styles.contactSection}
-    >
+    <SectionWrapper id="contact" className={styles.contactSection}>
       <div className={styles.contactScene}>
-      <div className={styles.trimMarks} aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
-      <span className={`${styles.registrationMark} ${styles.registrationMarkLeft}`} aria-hidden="true">
-        <span />
-      </span>
-      <span className={`${styles.registrationMark} ${styles.registrationMarkRight}`} aria-hidden="true">
-        <span />
-      </span>
-      <div ref={riseRef}>
-      <m.div
-        className={cn("spec-sheet", styles.contactSpecSheet)}
-        style={{
-          y: prefersReducedMotion ? 0 : sheetY,
-          scale: prefersReducedMotion ? 1 : sheetScale,
-        }}
-      >
-        <div className={cn("spec-body", styles.contactMotionRoot)}>
-          <h2 className={styles.heading}>
-            Let&apos;s build.
-          </h2>
-          <p className={styles.callout}>
-            From idea to shipped system.
-          </p>
+        <div className={styles.trimMarks} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
 
-          <div className={styles.ctaContainer}>
-            <MagneticButton
-              href={personal.resumeHref}
-              download
+        <div className={styles.contactComposition}>
+          <div className={styles.presenceBlock}>
+            <div className={styles.mapContainer} aria-hidden="true">
+              <TimezoneMap />
+              {presenceNodes.map((node) => (
+                <span
+                  key={`${node.label}-${node.top}-${node.left}`}
+                  className={cn(
+                    styles.mapNode,
+                    node.active ? styles.mapNodeActive : styles.mapNodeInactive
+                  )}
+                  style={{ top: node.top, left: node.left }}
+                />
+              ))}
+            </div>
+            <p className={styles.location}>
+              {personal.location.city}, {personal.location.country}
+            </p>
+            <p className={styles.presenceDescription}>
+              {personal.presenceDescription}
+            </p>
+          </div>
+
+          <div ref={riseRef}>
+            <m.div
+              className={cn("spec-sheet", styles.contactSpecSheet)}
+              style={{
+                y: prefersReducedMotion ? 0 : sheetY,
+                scale: prefersReducedMotion ? 1 : sheetScale,
+              }}
             >
-              Download résumé
-            </MagneticButton>
+              <div className={cn("spec-body", styles.contactMotionRoot)}>
+                <h2 className={styles.heading}>Let&apos;s build.</h2>
+                <p className={styles.callout}>From idea to shipped system.</p>
 
-            <div className={styles.contactLinks}>
-              <EnvelopeStamp />
-              <div className={styles.contactInfo}>
-                <a href={`mailto:${personal.email}`} className={styles.emailLink}>
-                  {personal.email}
-                </a>
-                <div className={styles.socials}>
-                  {personal.socials.map((social, i) => (
-                    <m.a
-                      key={i}
-                      href={social.href}
-                      target={social.href.startsWith("http") ? "_blank" : undefined}
-                      rel={
-                        social.href.startsWith("http")
-                          ? "noopener noreferrer"
-                          : undefined
-                      }
-                      whileHover={prefersReducedMotion ? undefined : { y: -5 }}
-                      aria-label={social.label}
-                      className={styles.socialIcon}
-                    >
-                      {socialIcons[social.platform]}
-                    </m.a>
-                  ))}
+                <div className={styles.ctaContainer}>
+                  <MagneticButton href={personal.resumeHref} download>
+                    Download résumé
+                  </MagneticButton>
+
+                  <div className={styles.contactLinks}>
+                    <EnvelopeStamp />
+                    <div className={styles.contactInfo}>
+                      <a href={`mailto:${personal.email}`} className={styles.emailLink}>
+                        {personal.email}
+                      </a>
+                      <div className={styles.socials}>
+                        {personal.socials.map((social) => (
+                          <m.a
+                            key={social.platform}
+                            href={social.href}
+                            target={social.href.startsWith("http") ? "_blank" : undefined}
+                            rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                            whileHover={prefersReducedMotion ? undefined : { y: -5 }}
+                            aria-label={social.label}
+                            className={styles.socialIcon}
+                          >
+                            {socialIcons[social.platform]}
+                          </m.a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.footerTagline}>
+                  <p className={styles.taglineText}>{personal.footerTagline}</p>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Footer tagline */}
-          <div className={styles.footerTagline}>
-            <p className={styles.taglineText}>{personal.footerTagline}</p>
+            </m.div>
           </div>
         </div>
-      </m.div>
-      </div>
       </div>
     </SectionWrapper>
   );

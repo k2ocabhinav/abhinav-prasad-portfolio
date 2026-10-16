@@ -483,7 +483,6 @@ function readProfile(): PortfolioProfile {
   const data = readFrontmatter(filePath);
   const personalData = objectValue(data, "personal", filePath);
   const hero = objectValue(data, "hero", filePath);
-  const bridge = objectValue(data, "bridge", filePath);
   // P7: Structured, editable copy for the human-reviewed orchestration section.
   const orchestrationData = objectValue(data, "orchestration", filePath);
   const profileIntroData = objectValue(data, "profileIntro", filePath);
@@ -563,10 +562,6 @@ function readProfile(): PortfolioProfile {
   return {
     personal,
     hero: heroContent,
-    bridge: {
-      eyebrow: stringValue(bridge, "eyebrow", filePath),
-      title: stringValue(bridge, "title", filePath),
-    },
     presenceNodes: objectArray(data, "presenceNodes", filePath).map((node) => ({
       top: stringValue(node, "top", filePath),
       left: stringValue(node, "left", filePath),

@@ -1,57 +1,194 @@
-.aboutGrid {
-  position: relative;
-  align-items: stretch;
+.aboutSection {
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-burgundy, #6A2135);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-linen, #FCF8F2);
 }
 
-.aboutPanel.aboutPanel {
-  background-color: var(--color-panel, #351E28);
-  --plate-ink: var(--color-black-cherry, #351E28);
-  --plate-accent: var(--color-panel-accent, #F4BEBB);
-  --plate-second: var(--color-pink, #F4BEBB);
-  --plate-paper: #EDE6DA;
+.composition {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.38fr) minmax(0, 0.62fr);
+  max-width: 72rem;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid rgba(11, 16, 17, 0.14);
+  border-radius: 3px;
+  background: var(--color-black-cherry, #351E28);
+  box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
+}
+
+.portraitColumn {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  place-items: center;
+  padding: clamp(1.1rem, 3vw, 2.4rem);
+  background: var(--paper-linen, #FCF8F2);
+}
+
+.imageFrame {
+  position: relative;
+  width: min(100%, 18rem);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--color-hairline);
+  border-radius: 2px;
+  background: #E9E5DC;
+  box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 28%;
+}
+
+.stillLife {
+  position: absolute;
+  right: 3%;
+  bottom: 12%;
+  width: 36%;
+  z-index: 1;
+}
+
+.hintCopy {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--color-hairline);
+  background: var(--paper-bone, #F0EEE9);
+  color: var(--color-ink, #0B1011);
+  font-family: var(--font-label);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.hintCopy span:first-child {
+  color: var(--color-secondary-text, #63605A);
+}
+
+.copyColumn {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  color: var(--color-on-panel, #EDE6DA);
 }
 
 .heading {
-  font-family: var(--font-display);
-  font-style: normal;
-  font-weight: 550;
-  font-size: clamp(2.35rem, 10vw, 3rem);
-  line-height: 1.05;
-  letter-spacing: -0.01em;
+  max-width: 18ch;
+  margin: 0;
   color: var(--color-panel-accent, #F4BEBB);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.6vw, 3.5rem);
+  font-weight: 550;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  text-wrap: balance;
 }
 
-.cutawayWrap {
-  margin-top: clamp(1.6rem, 3vw, 2.6rem);
+.proofList {
+  display: grid;
+  gap: 0;
+  margin: clamp(1.1rem, 2vw, 1.6rem) 0 0;
+  padding: 0;
+  border-top: 1px solid rgba(237, 230, 218, 0.3);
+  list-style: none;
 }
 
-.contentCol {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.proofList li {
+  position: relative;
+  padding: 0.75rem 0 0.75rem 1.1rem;
+  border-bottom: 1px solid rgba(237, 230, 218, 0.22);
+  color: var(--color-on-panel, #EDE6DA);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.proofList li::before {
+  position: absolute;
+  top: 1.35rem;
+  left: 0;
+  width: 0.38rem;
+  height: 0.38rem;
+  background: var(--color-panel-accent, #F4BEBB);
+  content: "";
 }
 
 .philosophyText {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 1.125rem;
-  line-height: 1.75;
-  color: var(--color-on-panel, #EDE6DA);
   max-width: 65ch;
+  margin: 1.1rem 0 0;
+  color: var(--color-on-panel, #EDE6DA);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 @media (max-width: 767px) {
-  .aboutGrid {
-    gap: 1.75rem;
+  .composition {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
   }
 
-  .cutawayWrap {
-    margin-top: 1.25rem;
+  .portraitColumn {
+    grid-row: 1;
+    height: 5.5rem;
+    justify-items: start;
+    margin: 1rem 0 0 1rem;
+    padding: 0;
+    background: transparent;
   }
-}
 
-@media (min-width: 768px) {
+  .imageFrame {
+    width: 5rem;
+  }
+
+  .stillLife {
+    right: auto;
+    bottom: -0.15rem;
+    left: 3.8rem;
+    width: 2.8rem;
+  }
+
+  .hintCopy {
+    display: none;
+  }
+
+  .copyColumn {
+    grid-row: 2;
+    padding: 0.75rem 1.25rem 1.35rem;
+  }
+
+  .heading {
+    font-size: clamp(1.55rem, 6vw, 2.05rem);
+  }
+
+  .proofList {
+    margin-top: 0.85rem;
+  }
+
+  .proofList li,
   .philosophyText {
-    font-size: 1.25rem;
+    font-size: 0.96rem;
+  }
+
+  .proofList li {
+    padding-block: 0.65rem;
+  }
+
+  .proofList li::before {
+    top: 1.18rem;
+  }
+
+  .philosophyText {
+    margin-top: 0.85rem;
   }
 }

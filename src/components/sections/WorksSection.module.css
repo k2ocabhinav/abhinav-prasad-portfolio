@@ -45,7 +45,143 @@
 .projectsList {
   display: flex;
   flex-direction: column;
-  gap: clamp(3.25rem, 6vw, 5rem);
+  gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+.orchestrationStrip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid rgba(53, 30, 40, 0.22);
+  border-radius: 3px;
+  background: var(--color-black-cherry, #351E28);
+  color: var(--color-on-panel, #EDE6DA);
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-burgundy, #6A2135);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-linen, #FCF8F2);
+  --plate-glacier: var(--paper-linen, #FCF8F2);
+}
+
+.orchestrationLead {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.2fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+}
+
+.posterColumn {
+  width: min(100%, 11rem);
+  margin-inline: auto;
+}
+
+.posterColumn svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.evidenceContent {
+  min-width: 0;
+}
+
+.evidenceHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.3rem 1rem;
+}
+
+.evidenceHeading h3 {
+  margin: 0;
+  color: var(--color-panel-accent, #F4BEBB);
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+  font-weight: 560;
+  line-height: 1.15;
+}
+
+.evidenceHeading p {
+  margin: 0;
+  color: var(--color-on-panel, #EDE6DA);
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  letter-spacing: 0.07em;
+  line-height: 1.45;
+}
+
+.featuredProof,
+.orchestrationIntro,
+.method,
+.lesson {
+  margin: 0.7rem 0 0;
+  color: var(--color-on-panel, #EDE6DA);
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.featuredProof {
+  color: var(--color-panel-accent, #F4BEBB);
+}
+
+.method {
+  margin-top: 0.9rem;
+  font-weight: 600;
+}
+
+.methodLanes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0.75rem 0 0;
+  padding: 0 0 0.7rem;
+  border-bottom: 1px solid rgba(237, 230, 218, 0.3);
+  color: var(--color-on-panel, #EDE6DA);
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  list-style: none;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.metrics li {
+  display: grid;
+  align-content: start;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.metricValue {
+  color: var(--color-panel-accent, #F4BEBB);
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.metricLabel {
+  color: var(--color-on-panel, #EDE6DA);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.lesson {
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(237, 230, 218, 0.3);
 }
 
 /* ─── Work Card Grid ─────────────────────────────────── */
@@ -494,7 +630,9 @@
 
   .deepDiveLink {
     min-height: 44px;
-    font-size: 1rem;
+    padding-inline: 0.72rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .mediaCaption {
@@ -502,6 +640,64 @@
     right: 0.5rem;
     bottom: 0.5rem;
     padding: 0.3rem 0.45rem;
+    font-size: 12px;
+  }
+
+  .orchestrationStrip {
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .projectsList {
+    gap: 2rem;
+  }
+
+  .orchestrationLead {
+    grid-template-columns: minmax(5rem, 0.2fr) minmax(0, 0.8fr);
+    align-items: start;
+    gap: 0.75rem;
+  }
+
+  .posterColumn {
+    width: min(100%, 6rem);
+  }
+
+  .evidenceHeading {
+    display: block;
+  }
+
+  .evidenceHeading h3 {
+    font-size: 1.25rem;
+  }
+
+  .evidenceHeading p {
+    margin-top: 0.35rem;
+    font-size: 12px;
+  }
+
+  .featuredProof,
+  .orchestrationIntro,
+  .method,
+  .lesson {
+    font-size: 0.86rem;
+  }
+
+  .methodLanes {
+    gap: 0.2rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+  }
+
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem 0.4rem;
+  }
+
+  .metricValue {
+    font-size: 1.08rem;
+  }
+
+  .metricLabel {
     font-size: 12px;
   }
 }

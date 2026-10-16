@@ -2,7 +2,7 @@
 
 import { useScroll } from "motion/react";
 import { useRef } from "react";
-import type { ChronicleEntry, SectionTone } from "@/types";
+import type { ChronicleEntry, ExperiencePoint, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
@@ -15,18 +15,16 @@ interface ExperienceSectionProps {
   tone?: SectionTone;
 }
 
-function OpeningSentence({ text }: { text: string }) {
-  const sentenceEnd = text.indexOf(".");
+function getKeyPoints(experience: ChronicleEntry): ExperiencePoint[] {
+  const delivery = experience.workstreams.find(
+    (workstream) => workstream.id === "database-delivery"
+  );
+  const aiTooling = experience.workstreams.find(
+    (workstream) => workstream.id === "ai-tooling"
+  );
 
-  if (sentenceEnd < 0) {
-    return <strong>{text}</strong>;
-  }
-
-  return (
-    <>
-      <strong>{text.slice(0, sentenceEnd + 1)}</strong>
-      {text.slice(sentenceEnd + 1)}
-    </>
+  return [delivery?.points[0], delivery?.points[2], aiTooling?.points[0]].filter(
+    (point): point is ExperiencePoint => Boolean(point)
   );
 }
 
@@ -34,40 +32,23 @@ export default function ExperienceSection({
   experiences,
   tone,
 }: ExperienceSectionProps) {
-  if (experiences.length === 0) {
-    return null;
-  }
-
-  return <ExperienceSectionContent experiences={experiences} tone={tone} />;
-}
-
-function ExperienceSectionContent({
-  experiences,
-  tone,
-}: ExperienceSectionProps) {
   const prefersReducedMotion = useReducedMotion();
-  // The section mark still draws with its header's transit; the copy itself is
-  // static, so the arc is the one motion moment on this screen.
   const headerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: headerProgress } = useScroll({
+  const { scrollYProgress } = useScroll({
     target: prefersReducedMotion ? undefined : headerRef,
     offset: ["start 0.86", "start 0.50"],
   });
 
+  if (experiences.length === 0) {
+    return null;
+  }
+
   return (
     <SectionWrapper id="experience" tone={tone} className={styles.experienceSection}>
       <div className={styles.experienceRoot}>
-        <header
-          ref={headerRef}
-          className={styles.sectionHeader}
-          data-experience-header="true"
-        >
+        <header ref={headerRef} className={styles.sectionHeader}>
           <div className={styles.titleCluster}>
-            <h2
-              id="experience-title"
-              className={styles.heading}
-              data-experience-title="true"
-            >
+            <h2 className={styles.heading}>
               <FlipRevealText
                 static
                 overprint
@@ -77,16 +58,13 @@ function ExperienceSectionContent({
                 tokenClassName={styles.headingFlipToken}
               />
             </h2>
-            <span className={styles.arcAnchor} data-experience-arc="true">
-              <RisoMark
-                variant="arc"
-                placement="inline"
-                progress={headerProgress}
-                className={styles.experienceArc}
-              />
-            </span>
+            <RisoMark
+              variant="arc"
+              placement="inline"
+              progress={scrollYProgress}
+              className={styles.experienceArc}
+            />
           </div>
-
           <p className={styles.callout}>
             Where the business rules live and the releases ship.
           </p>
@@ -94,109 +72,90 @@ function ExperienceSectionContent({
 
         <div className={styles.dossierList}>
           {experiences.map((experience) => {
+            const primaryRole = experience.roles[0];
+            const keyPoints = getKeyPoints(experience);
             const employerHeadingId = `${experience.slug}-employer`;
-            const rolesHeadingId = `${experience.slug}-roles`;
-            const workHeadingId = `${experience.slug}-work`;
+
+            if (!primaryRole) {
+              return null;
+            }
 
             return (
               <article
                 key={experience.slug}
                 className={styles.dossier}
                 aria-labelledby={employerHeadingId}
-                data-experience-dossier={experience.slug}
               >
                 <header className={styles.employerLabel}>
                   <div className={styles.employerLine}>
                     <h3 id={employerHeadingId} className={styles.employerName}>
                       {experience.company}
-                      <span className={styles.employerDivision}>· Airport Assistance</span>
                     </h3>
                     <span className={styles.period}>{experience.period}</span>
                   </div>
                   <p className={styles.companyContext}>{experience.companyContext}</p>
                 </header>
 
-                <div className={styles.narrativeDeck}>
-                  <p className={styles.backendThesis}>
-                    <OpeningSentence text={experience.backendThesis} />
-                  </p>
-                  <p className={styles.functionality}>
-                    <strong className={styles.functionalityLead}>
-                      Functionality breadth
-                    </strong>
-                    <span>{experience.functionality}</span>
-                  </p>
+                <div className={styles.roleSummary}>
+                  <div className={styles.roleHeading}>
+                    <h4 className={styles.roleTitle}>{primaryRole.title}</h4>
+                    <p className={styles.roleDate}>{primaryRole.date}</p>
+                  </div>
+                  <ul className={styles.pointList}>
+                    {keyPoints.map((point) => (
+                      <li key={`${point.lead}-${point.detail}`}>
+                        <strong>{point.lead}.</strong> {point.detail}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <div className={styles.dossierBody}>
-                  <section
-                    className={styles.roleRail}
-                    aria-labelledby={rolesHeadingId}
-                    data-experience-role-rail="true"
-                  >
-                    <div className={styles.roleRailContent}>
-                    <h4 id={rolesHeadingId} className={styles.columnLabel}>
-                      Role progression
-                    </h4>
-                    <ol className={styles.roleList}>
-                      {experience.roles.map((role) => (
-                        <li key={`${role.title}-${role.date}`} className={styles.roleItem}>
-                          <span className={styles.roleMarker} aria-hidden="true" />
-                          <div>
-                            <h5 className={styles.roleTitle}>{role.title}</h5>
-                            <p className={styles.roleDate}>{role.date}</p>
-                            {role.note ? <p className={styles.roleNote}>{role.note}</p> : null}
-                          </div>
-                        </li>
-                      ))}
-                    </ol>
-                    <ChangeLedgerPlate id={experience.slug} />
-                    </div>
-                  </section>
+                <details className={styles.detailDisclosure}>
+                  <summary>Selected engineering work</summary>
+                  <div className={styles.detailContent}>
+                    <p className={styles.backendThesis}>{experience.backendThesis}</p>
+                    <p className={styles.functionality}>{experience.functionality}</p>
 
-                  <section
-                    className={styles.engineeringWork}
-                    aria-labelledby={workHeadingId}
-                    data-experience-workstreams="true"
-                  >
-                    <h4 id={workHeadingId} className={styles.columnLabel}>
-                      Selected engineering work
-                    </h4>
-                    <div className={styles.workstreamList}>
-                      {experience.workstreams.map((workstream) => (
-                        <article
-                          key={workstream.id}
-                          className={styles.workstream}
-                          data-experience-workstream={workstream.id}
-                        >
-                          <div className={styles.workstreamHeader}>
-                            <h5 className={styles.workstreamTitle}>{workstream.title}</h5>
-                            <p className={styles.workstreamSummary}>{workstream.summary}</p>
-                          </div>
+                    {experience.roles.length > 1 ? (
+                      <div className={styles.roleHistory}>
+                        <h4>Role progression</h4>
+                        <ol>
+                          {experience.roles.slice(1).map((role) => (
+                            <li key={`${role.title}-${role.date}`}>
+                              <strong>{role.title}</strong>
+                              <span>{role.date}</span>
+                              {role.note ? <p>{role.note}</p> : null}
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    ) : null}
 
-                          <ul className={styles.pointList}>
-                            {workstream.points.map((point) => (
-                              <li key={`${workstream.id}-${point.lead}`}>
-                                <span>
+                    <div className={styles.detailGrid}>
+                      <div className={styles.ledgerPlate}>
+                        <ChangeLedgerPlate id={experience.slug} />
+                      </div>
+                      <div className={styles.workstreamList}>
+                        {experience.workstreams.map((workstream) => (
+                          <section key={workstream.id} className={styles.workstream}>
+                            <h4>{workstream.title}</h4>
+                            <p>{workstream.summary}</p>
+                            <ul>
+                              {workstream.points.map((point) => (
+                                <li key={`${point.lead}-${point.detail}`}>
                                   <strong>{point.lead}.</strong> {point.detail}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-
-                          <ul
-                            className={styles.toolList}
-                            aria-label={`${workstream.title} tools and practices`}
-                          >
-                            {workstream.tools.map((tool) => (
-                              <li key={tool}>{tool}</li>
-                            ))}
-                          </ul>
-                        </article>
-                      ))}
+                                </li>
+                              ))}
+                            </ul>
+                            <p className={styles.toolList}>
+                              {workstream.tools.join(", ")}
+                            </p>
+                          </section>
+                        ))}
+                      </div>
                     </div>
-                  </section>
-                </div>
+                  </div>
+                </details>
               </article>
             );
           })}

@@ -15,21 +15,12 @@ import styles from "./BackdropCanvas.module.css";
 const SECTION_STOCKS: Record<string, string> = {
   hero: "bone",
   services: "linen",
-  bridge: "bone",
-  profile: "bone",
   about: "bone",
   experience: "linen",
   work: "linen",
   stack: "bone",
-  presence: "bone",
   contact: "bone",
 };
-
-const LANDING_STOCK_TARGETS: ReadonlyArray<readonly [string, string]> = [
-  ["section[aria-label=\"Services\"]", SECTION_STOCKS.services],
-  ["[data-home-explore-bridge]", SECTION_STOCKS.bridge],
-  ["[data-home-profile-stage]", SECTION_STOCKS.profile],
-];
 
 export default function BackdropCanvas() {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -58,10 +49,6 @@ export default function BackdropCanvas() {
 
     sections.forEach(({ id }) => {
       observe(document.getElementById(id), SECTION_STOCKS[id] ?? "bone");
-    });
-
-    LANDING_STOCK_TARGETS.forEach(([selector, stock]) => {
-      observe(document.querySelector(selector), stock);
     });
 
     return () => observer.disconnect();
