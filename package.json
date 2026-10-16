@@ -21,6 +21,7 @@
     "capture:portfolio": "node scripts/capture-portfolio-assets.mjs",
     "start": "next start",
     "test:e2e": "playwright test",
+    "test:e2e:prod": "PLAYWRIGHT_PROD=1 playwright test",
     "test:e2e:responsive": "playwright test tests/portfolio-responsive.spec.ts",
     "test:lighthouse": "npm run build:lighthouse && LIGHTHOUSE_CI=1 lhci autorun",
     "verify": "npm run check:content && npm run typecheck && npm run lint && npm run check:dead && npm run check:assets && npm run check:security && npm run build && npm run test:e2e && npm run test:lighthouse"
