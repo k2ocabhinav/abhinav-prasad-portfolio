@@ -1,4 +1,5 @@
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import AgentMethodPlate from "@/components/art/AgentMethodPlate";
 import type { OrchestrationContent } from "@/types";
 import styles from "./OrchestrationSection.module.css";
 
@@ -22,7 +23,18 @@ export default function OrchestrationSection({ content }: OrchestrationSectionPr
         </header>
 
         <div className={styles.panel}>
-          <p className={styles.method}>{content.method}</p>
+          <div className={styles.methodRow}>
+            <p className={styles.method}>{content.method}</p>
+            <div className={styles.methodDiagram}>
+              <AgentMethodPlate />
+              <ol className={styles.methodLanes} aria-label="Four method lanes">
+                <li>Scope</li>
+                <li>Isolate</li>
+                <li>Review</li>
+                <li>Rehearse</li>
+              </ol>
+            </div>
+          </div>
 
           <div className={styles.evidence}>
             <h3 className={styles.evidenceHeading}>{content.metricsContext}</h3>

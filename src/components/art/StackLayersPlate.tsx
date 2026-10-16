@@ -16,9 +16,9 @@ export default function StackLayersPlate() {
       <path d="m105 152 207-17 43 24-207 18z" fill="var(--plate-paper)" stroke="var(--plate-ink)" className={strokes.mid} />
       <path d="m148 177 207-18v7l-207 18z" fill="var(--plate-accent)" stroke="var(--plate-ink)" className={strokes.mid} />
       <path d="m158 157 50-5 30 12 61-5" fill="none" stroke="var(--plate-ink)" className={strokes.bold} strokeDasharray="2 5" />
-      <circle cx="158" cy="157" r="3.5" fill="var(--plate-accent)" stroke="var(--plate-ink)" />
-      <circle cx="238" cy="164" r="3.5" fill="var(--plate-accent)" stroke="var(--plate-ink)" />
-      <circle cx="299" cy="159" r="3.5" fill="var(--plate-accent)" stroke="var(--plate-ink)" />
+      <circle cx="158" cy="157" r="3.5" fill="var(--plate-accent)" stroke="var(--plate-ink)" className={strokes.fine} />
+      <circle cx="238" cy="164" r="3.5" fill="var(--plate-accent)" stroke="var(--plate-ink)" className={strokes.fine} />
+      <circle cx="299" cy="159" r="3.5" fill="var(--plate-accent)" stroke="var(--plate-ink)" className={strokes.fine} />
       <path d="m105 101 207-17 43 24-207 18z" fill="var(--plate-paper)" stroke="var(--plate-ink)" className={strokes.mid} />
       <path d="m148 126 207-18v7l-207 18z" fill="var(--plate-accent)" stroke="var(--plate-ink)" className={strokes.mid} />
       <path d="m153 101 40-3 14 8-40 4zM218 96l40-3 14 8-40 4zM282 91l29-2 14 8-29 3z" fill="var(--plate-ink)" />
