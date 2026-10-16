@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
-import { sections } from "@/data/navigation";
+import { navSpyTargets } from "@/data/navigation";
+import type { NavSpyTarget } from "@/data/navigation";
 import { orbSpring } from "@/lib/animations";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "./SageOrb.module.css";
@@ -19,6 +20,7 @@ import styles from "./SageOrb.module.css";
 // =============================================================================
 
 const MARK_SIZE = 18;
+const NO_TARGETS: readonly NavSpyTarget[] = [];
 const INTERACTIVE_SELECTOR =
   "a, button, [role='button'], input, textarea, select, summary, [data-cursor-grow]";
 
@@ -35,8 +37,6 @@ const ORB_ACCENTS: Record<string, string> = {
 
 export default function SageOrb() {
   const prefersReducedMotion = useReducedMotion();
-  const sectionIds = useMemo(() => sections.map((s) => s.id), []);
-  const emptySectionIds = useMemo<string[]>(() => [], []);
   const [finePointer, setFinePointer] = useState(false);
 
   useEffect(() => {
@@ -83,7 +83,9 @@ export default function SageOrb() {
     };
   }, [pointerEnabled, x, y, targetScale]);
 
-  const activeSection = useScrollSpy(pointerEnabled ? sectionIds : emptySectionIds);
+  const { activeId: activeSection } = useScrollSpy(
+    pointerEnabled ? navSpyTargets : NO_TARGETS
+  );
   const accent = ORB_ACCENTS[activeSection] ?? ORB_ACCENTS.hero;
 
   if (!pointerEnabled) {

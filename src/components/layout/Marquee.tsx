@@ -8,22 +8,25 @@ import {
   useTransform,
   useVelocity,
 } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "./Marquee.module.css";
 
 // =============================================================================
 // Marquee — scroll-velocity ribbon. Solid burgundy print band; the track
 // drifts left continuously and skews with scroll velocity (Lenis smooths the
-// input). The rAF loop is paused while off-screen and under reduced motion.
+// input). The rAF loop stops while off-screen and under reduced motion, and
+// pauses whenever a pointer or keyboard focus enters the band (WCAG 2.2.2).
 // =============================================================================
 
+// Kept sentence-case and led by the orchestration positioning; database
+// engineering stays a single supporting item rather than the headline.
 const ITEMS = [
+  "AI orchestration",
   "Backend systems",
-  "Database engineering",
   "Release automation",
   "Cloud delivery",
-  "Operational analytics",
+  "Database engineering",
   "Design engineering",
 ];
 
@@ -36,6 +39,7 @@ export default function Marquee() {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { amount: 0.01 });
+  const [isPaused, setIsPaused] = useState(false);
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
@@ -45,7 +49,7 @@ export default function Marquee() {
     clamp: true,
   });
 
-  const running = isInView && !prefersReducedMotion;
+  const running = isInView && !prefersReducedMotion && !isPaused;
 
   useEffect(() => {
     if (!running) {
@@ -68,9 +72,20 @@ export default function Marquee() {
   }, [running, baseX, scrollVelocity]);
 
   return (
-    <section ref={sectionRef} className={styles.marquee} aria-hidden="true">
+    <section
+      ref={sectionRef}
+      className={styles.marquee}
+      data-marquee="true"
+      aria-label="Areas of work"
+      tabIndex={0}
+      onPointerEnter={() => setIsPaused(true)}
+      onPointerLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
+    >
       <motion.div
         className={styles.track}
+        aria-hidden="true"
         style={{ x, skewX: running ? skewX : 0 }}
       >
         {[0, 1].map((dup) => (
@@ -78,7 +93,7 @@ export default function Marquee() {
             {ITEMS.map((item) => (
               <span className={styles.item} key={`${item}-${dup}`}>
                 {item}
-                <span className={styles.sep}>—</span>
+                <span className={styles.sep} />
               </span>
             ))}
           </div>

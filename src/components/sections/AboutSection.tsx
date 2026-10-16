@@ -63,6 +63,7 @@ export default function AboutSection({
               className={styles.heading}
             >
               <FlipRevealText flat
+                overprint
                 text="Philosophy"
                 mode="char"
                 progress={scrollYProgress}

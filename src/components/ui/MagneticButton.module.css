@@ -64,8 +64,8 @@
 }
 
 .ghost:hover {
-  color: var(--color-sage, #C42117);
-  text-decoration-color: var(--color-sage, #C42117);
+  color: var(--color-lead-deep, #6A2135);
+  text-decoration-color: var(--color-lead-deep, #6A2135);
 }
 
 /* Solid fill (legacy "glow" class name kept — values are flat matte). */
@@ -79,9 +79,9 @@
 }
 
 .glow:hover {
-  background: #C42117;
-  border-color: #C42117;
-  color: #F0EEE9;
+  background: var(--color-lead);
+  border-color: var(--color-lead);
+  color: var(--color-on-lead);
   translate: -1px -1px;
   box-shadow: 7px 7px 0 var(--press-ink);
 }

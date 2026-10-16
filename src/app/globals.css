@@ -24,7 +24,7 @@
   --color-on-glacier: #351E28;
   --color-panel: var(--color-black-cherry);     /* dark spec-sheet panels */
   --color-on-panel: #EDE6DA;
-  --color-panel-accent: #F4BEBB;                /* small accent on panels (replaces #FF5F4A), 9.45:1 */
+  --color-panel-accent: #F4BEBB;                /* small accent on panels, 9.45:1 */
 
   /* Papers */
   --paper-bone: #F0EEE9; --paper-linen: #FCF8F2; --paper-pink: var(--paper-linen); /* pink is ink-only: never a page background (owner, 2026-10-16) */ --paper-glacier: #D7EFFF;

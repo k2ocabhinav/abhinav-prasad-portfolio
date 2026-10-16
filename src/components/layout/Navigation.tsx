@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
-import { navigationItems, sections } from "@/data/navigation";
+import { navigationItems, navSpyTargets } from "@/data/navigation";
 import { panelSpring } from "@/lib/animations";
 import { scrollToSection, cn } from "@/lib/utils";
 import { useLandingNavMode } from "@/hooks/useLandingNavMode";
@@ -17,8 +17,8 @@ const MENU_FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export default function Navigation() {
-  const sectionIds = sections.map((s) => s.id);
-  const activeSection = useScrollSpy(sectionIds);
+  const { activeId: activeSection, dark: overDarkField } =
+    useScrollSpy(navSpyTargets);
   const navMode = useLandingNavMode(80);
   const prefersReducedMotion = useReducedMotion();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -167,6 +167,7 @@ export default function Navigation() {
     <>
       <nav
         data-site-chrome="navigation-rail"
+        data-nav-tone={overDarkField ? "dark" : "light"}
         className={cn(
           styles.desktopRail,
           navMode === "transparent" && styles.desktopRailTransparent

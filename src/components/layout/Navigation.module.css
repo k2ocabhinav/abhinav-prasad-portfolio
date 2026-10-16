@@ -41,7 +41,7 @@
 }
 
 .railItem:focus-visible {
-  outline: 2px solid #C42117;
+  outline: 2px solid var(--color-lead);
   outline-offset: 4px;
   border-radius: 999px;
 }
@@ -49,7 +49,7 @@
 .railLabelActive {
   opacity: 1;
   transform: translateX(0);
-  color: #C42117;
+  color: var(--color-lead-deep);
 }
 
 .railDot {
@@ -61,7 +61,7 @@
 }
 
 .railItem:hover .railDot {
-  background-color: #C42117;
+  background-color: var(--color-lead);
   width: 6px;
   height: 6px;
 }
@@ -69,7 +69,7 @@
 .railDotActive {
   width: 8px;
   height: 8px;
-  background-color: #E42A1D;
+  background-color: var(--color-lead);
 }
 
 /* Route chips — flat paper, hairline border. */
@@ -92,7 +92,30 @@
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 2px;
-  background: #C42117;
+  background: var(--color-lead);
+}
+
+/* Over the burgundy bridge field the rail flips to bone ink so the active
+   label and dots stay legible on the dark ink. */
+.desktopRail[data-nav-tone="dark"] .railLabel {
+  color: var(--color-on-lead);
+}
+
+.desktopRail[data-nav-tone="dark"] .railLabelActive {
+  color: var(--color-on-lead);
+}
+
+.desktopRail[data-nav-tone="dark"] .railDot {
+  background-color: rgba(237, 230, 218, 0.45);
+}
+
+.desktopRail[data-nav-tone="dark"] .railItem:hover .railDot,
+.desktopRail[data-nav-tone="dark"] .railDotActive {
+  background-color: var(--color-on-lead);
+}
+
+.desktopRail[data-nav-tone="dark"] .railItem:focus-visible {
+  outline-color: var(--color-on-lead);
 }
 
 .mobileHamburger {
@@ -125,7 +148,7 @@
 
 .hamburgerButton:focus-visible,
 .mobileNavItem:focus-visible {
-  outline: 2px solid #C42117;
+  outline: 2px solid var(--color-lead);
   outline-offset: 4px;
 }
 
@@ -193,11 +216,11 @@
 }
 
 .mobileNavItemActive {
-  color: #C42117;
+  color: var(--color-lead-deep);
 }
 
 .mobileNavRoute {
-  color: #C42117;
+  color: var(--color-lead-deep);
 }
 
 /* "Transparent" mode (over the hero) — the hero is paper now, so this mode

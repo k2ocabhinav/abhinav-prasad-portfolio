@@ -107,6 +107,7 @@ export default function ContactSection({
             className={styles.heading}
           >
             <FlipRevealText flat
+              overprint
               text="Let's build."
               mode="char"
               progress={scrollYProgress}
