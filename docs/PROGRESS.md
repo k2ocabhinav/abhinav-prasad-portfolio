@@ -10,4 +10,4 @@ One line per item. `[x]` done (with short commit hash), `[ ]` open. Edit in plac
 - [x] Interactions: registration cursor, press buttons, overprint headings; perf fixes (feat/print-interactions)
 - [x] Velo case study "Dispatch Atlas" with new captures; Java 21 and positioning fixes (feat/velo-atlas)
 - [x] Performance: AVIF/WebP, fonts −26%, Lighthouse on `/work/velo`, production-build e2e (chore/perf-infra)
-- [ ] QA sweep at 375/768/1440 with reduced motion
+- [x] QA sweep at 375/768/1440 with reduced motion (verdict READY, 88/0 e2e)
