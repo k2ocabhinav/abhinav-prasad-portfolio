@@ -25,7 +25,7 @@
   padding-inline: 1.2cqw;
 }
 
-.roleLine {
+.identity {
   margin: 0;
   font-family: var(--font-display);
   font-style: italic;
@@ -46,12 +46,139 @@
   max-width: 48ch;
 }
 
-.currentRole {
-  margin: 0;
+.factSheet {
+  width: 100%;
+  max-width: 44rem;
+  margin-top: 0.15rem;
+}
+
+.factRule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--color-hairline);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.factList {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.factLink {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 0.34fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid var(--color-hairline);
+  color: var(--color-ink, #0B1011);
+  transition:
+    color 160ms var(--motion-ease-out),
+    transform 160ms var(--motion-ease-out),
+    box-shadow 160ms var(--motion-ease-out);
+}
+
+.factLink::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--color-burgundy, #6A2135);
+  content: "";
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 260ms var(--motion-ease-out);
+}
+
+.factLabel {
   font-family: var(--font-body);
-  font-size: clamp(0.9375rem, 1vw, 1.0625rem);
-  line-height: 1.45;
-  color: var(--color-secondary-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-lead, #6A2135);
+}
+
+.factValue {
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.875rem, 0.95vw, 1rem);
+  line-height: 1.4;
+}
+
+.factLink:hover,
+.factLink:focus-visible {
+  color: var(--color-on-lead, #EDE6DA);
+  box-shadow: 2px 2px 0 rgba(53, 30, 40, 0.2);
+}
+
+.factLink:hover::before,
+.factLink:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.factLink:hover .factLabel,
+.factLink:focus-visible .factLabel {
+  color: inherit;
+}
+
+.factLink:focus-visible {
+  outline: 2px solid var(--color-ink, #0B1011);
+  outline-offset: 3px;
+}
+
+.factLink:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+  transition-duration: 80ms;
+}
+
+.factLabel,
+.factValue {
+  position: relative;
+  z-index: 1;
+}
+
+[data-printed="true"] .factRule {
+  animation: rule-print 620ms var(--motion-ease-out) both;
+}
+
+[data-printed="true"] .factLabel {
+  animation: label-print 620ms var(--motion-ease-out) both;
+}
+
+[data-printed="true"] .factLink:nth-child(1) .factLabel {
+  animation-delay: 100ms;
+}
+
+[data-printed="true"] .factLink:nth-child(2) .factLabel {
+  animation-delay: 220ms;
+}
+
+@keyframes rule-print {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes label-print {
+  from {
+    opacity: 0.82;
+    transform: translate(1px, 2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
 }
 
 .ctaGroup {
@@ -99,6 +226,10 @@
     max-width: 46ch;
   }
 
+  .factSheet {
+    text-align: left;
+  }
+
   .ctaGroup {
     justify-content: center;
   }
@@ -110,7 +241,7 @@
     gap: 0.45rem;
   }
 
-  .roleLine {
+  .identity {
     font-size: 1.1rem;
   }
 
@@ -119,19 +250,54 @@
     line-height: 1.5;
   }
 
-  .currentRole {
-    font-size: 1rem;
-  }
-
   .secondaryCta {
     font-size: 1rem;
   }
 }
 
-/* Narrow phones break the role line onto two lines. Reserving both keeps the
-   Fraunces swap from growing the column and shifting the dispatch board (CLS). */
 @media (max-width: 26rem) {
-  .roleLine {
-    min-height: 2.4em;
+  .factLink {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.22rem;
+    padding-inline: 0.55rem;
+  }
+}
+
+.factSheet[data-reduce-motion="true"] .factRule,
+.factSheet[data-reduce-motion="true"] .factLabel {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.factSheet[data-reduce-motion="true"] .factLink::before {
+  transition: none;
+}
+
+.factSheet[data-reduce-motion="true"] .factLink {
+  transition: none;
+}
+
+.factSheet[data-reduce-motion="true"] .factLink:active {
+  transform: none;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .factRule,
+  .factLabel {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .factLink,
+  .factLink::before {
+    transition: none;
+  }
+
+  .factLink:active {
+    transform: none;
+    box-shadow: none;
   }
 }

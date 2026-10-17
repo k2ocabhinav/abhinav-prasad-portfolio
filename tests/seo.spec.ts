@@ -10,9 +10,10 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   const html = await response.text();
 
   expect(html).toContain("Abhinav Prasad");
-  expect(html).toMatch(/Forward deployed engineering/i);
-  expect(html).toMatch(/operational workflows into tested software/i);
-  expect(html).toContain("Currently: Database Engineer at Ostrum Tech Limited");
+  expect(html).toContain("Software engineer");
+  expect(html).toContain("I build products end to end, from the first conversation to release.");
+  expect(html).toContain("Database Engineer, Ostrum Tech Limited");
+  expect(html).toContain("Forward deployed builds: Velo, this site, AI-agent workflows");
   expect(html).toContain("How I orchestrate AI agents");
   expect(html).toContain("Software Engineer Intern");
   expect(html).toContain("Selected projects");
@@ -43,12 +44,12 @@ test("serves recruiter-readable content and structured data in the initial HTML"
 
   const title = await page.title();
   const description = await page.locator('meta[name="description"]').getAttribute("content");
-  expect(title).toContain("Abhinav Prasad");
-  expect(title).toMatch(/Forward Deployed/i);
+  expect(title).toBe("Abhinav Prasad | Software engineer");
   expect(title.length).toBeLessThanOrEqual(60);
-  expect(description).toMatch(/operational workflows/i);
-  expect(description).toMatch(/Database Engineer at Ostrum Tech Limited/i);
+  expect(description).toBe("I build products end to end, from first conversation to release. At work: Database Engineer, Ostrum Tech Limited. On my own: Velo and AI-agent workflows.");
+  expect(description).toMatch(/Database Engineer, Ostrum Tech Limited/);
   expect(description?.length ?? 0).toBeLessThanOrEqual(155);
+  await expect(page.locator('meta[name="keywords"]')).toHaveAttribute("content", /Forward Deployed Engineer/);
 });
 
 test("keeps local and preview surfaces out of search indexes", async ({ page, request }) => {
@@ -118,8 +119,10 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   expect(llmsResponse.headers()["content-type"]).toContain("text/plain");
   const llms = await llmsResponse.text();
   expect(llms).toContain("# Abhinav Prasad");
-  expect(llms).toMatch(/Forward deployed engineering/i);
-  expect(llms).toContain("Currently: Database Engineer at Ostrum Tech Limited.");
+  expect(llms).toContain("Software engineer");
+  expect(llms).toContain("At work: Database Engineer, Ostrum Tech Limited.");
+  expect(llms).toContain("On my own: Velo, this portfolio, and AI-agent workflows.");
+  expect(llms).not.toMatch(/Forward deployed/i);
   expect(llms).toContain("## Professional experience");
   expect(llms).toContain("[Velo, a white-label dispatch prototype]");
   expect(llms).not.toContain("\u2014");

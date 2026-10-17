@@ -260,10 +260,25 @@ function validateProfile() {
     stringValue(social, "href", filePath);
   });
   stringValue(hero, "displayTitle", filePath);
-  stringValue(hero, "displayTitleAccent", filePath);
-  if (stringArray(hero, "roleCycleWords", filePath).length === 0) {
-    fail(filePath, '"hero.roleCycleWords" must contain at least one role');
+  stringValue(hero, "identity", filePath);
+  stringValue(hero, "summary", filePath);
+  const facts = objectArray(hero, "facts", filePath);
+  if (facts.length !== 2) {
+    fail(filePath, '"hero.facts" must contain the two work and personal-build rows');
   }
+  const expectedFactLinks = [
+    { label: "At work", href: "#experience" },
+    { label: "On my own", href: "#work" },
+  ];
+  facts.forEach((fact, index) => {
+    const label = stringValue(fact, "label", filePath);
+    stringValue(fact, "value", filePath);
+    const href = stringValue(fact, "href", filePath);
+    const expected = expectedFactLinks[index];
+    if (expected && (label !== expected.label || href !== expected.href)) {
+      fail(filePath, `"hero.facts[${index}]" must be ${expected.label} linking to ${expected.href}`);
+    }
+  });
   objectArray(hero, "ctas", filePath).forEach((cta) => {
     stringValue(cta, "label", filePath);
     stringValue(cta, "href", filePath);
