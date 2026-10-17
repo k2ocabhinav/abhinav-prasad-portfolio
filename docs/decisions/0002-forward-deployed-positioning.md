@@ -1,6 +1,6 @@
 # 0002 — Lead with forward-deployed engineering; backend and data as proof
 
-- Status: accepted
+- Status: superseded by 0005
 - Date: 2026-10-16
 
 ## Context
