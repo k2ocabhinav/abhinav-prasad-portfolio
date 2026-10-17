@@ -6,7 +6,7 @@
 
 ## Context
 
-0002 led the site with forward-deployed engineering and showed the current job as a "Currently:" line under it. Read together, the two lines suggested forward-deployed engineering was the job title. It is not: the job is Database Engineer at Ostrum Tech Limited, and forward-deployed-style building is what Abhinav does on his own projects.
+0002 led the site with forward-deployed engineering and showed the current job as a "Currently:" line under it. Read together, the two lines suggested forward-deployed engineering was the job title. It is not: the job is Database Engineer at Ostrum Tech Limited, and forward-deployed-style building is how Abhinav works on personal projects.
 
 ## Decision
 
