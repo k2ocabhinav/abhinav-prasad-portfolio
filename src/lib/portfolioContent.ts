@@ -542,9 +542,13 @@ function readProfile(): PortfolioProfile {
 
   const heroContent: LandingHeroContent = {
     displayTitle: stringValue(hero, "displayTitle", filePath),
-    displayTitleAccent: stringValue(hero, "displayTitleAccent", filePath),
-    roleCycleWords: stringArray(hero, "roleCycleWords", filePath),
-    supportingCopy: stringValue(hero, "supportingCopy", filePath),
+    identity: stringValue(hero, "identity", filePath),
+    summary: stringValue(hero, "summary", filePath),
+    facts: objectArray(hero, "facts", filePath).map((fact) => ({
+      label: stringValue(fact, "label", filePath),
+      value: stringValue(fact, "value", filePath),
+      href: stringValue(fact, "href", filePath),
+    })),
     ctas: objectArray(hero, "ctas", filePath).map((cta) => ({
       label: stringValue(cta, "label", filePath),
       href: stringValue(cta, "href", filePath),

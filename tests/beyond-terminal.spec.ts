@@ -134,7 +134,7 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   await page.goto("/");
   await page.waitForTimeout(150);
 
-  const staticRole = page.getByText("Forward deployed engineering", { exact: true });
+  const staticRole = page.getByText("Software engineer", { exact: true });
   await expect(staticRole).toBeVisible();
   await page.waitForTimeout(2_800);
   await expect(staticRole).toBeVisible();
@@ -142,7 +142,7 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await method.scrollIntoViewIfNeeded();
   await expect(method.getByRole("heading", { name: "How I orchestrate AI agents" })).toBeVisible();
-  await expect(method.getByText("Production database work and side projects", { exact: true })).toBeVisible();
+  await expect(method.getByText("From Velo's build record", { exact: true })).toBeVisible();
 
   await page.locator("#about").scrollIntoViewIfNeeded();
   await expect(

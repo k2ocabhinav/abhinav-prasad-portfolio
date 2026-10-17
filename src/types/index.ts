@@ -352,15 +352,21 @@ export interface LandingCTA {
 }
 
 /** Content for the Landing Frame 1 hero section */
+export interface LandingHeroFact {
+  label: string;
+  value: string;
+  href: string;
+}
+
 export interface LandingHeroContent {
   /** Main display title rendered in Fraunces via AnimatedName */
   displayTitle: string;
-  /** Uppercase label-font accent line below the role cycler */
-  displayTitleAccent: string;
-  /** Standalone role phrases cycled every 2.6 seconds */
-  roleCycleWords?: string[];
-  /** 1–2 sentence supporting copy */
-  supportingCopy: string;
+  /** Static professional identity shown below the wordmark */
+  identity: string;
+  /** One-sentence summary of the work */
+  summary: string;
+  /** Separate links for professional work and personal builds */
+  facts: LandingHeroFact[];
   /** CTA buttons rendered in order */
   ctas: LandingCTA[];
 }
