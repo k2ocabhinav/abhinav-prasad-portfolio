@@ -16,9 +16,9 @@ interface HeroProofPoint {
 
 const proofPoints: HeroProofPoint[] = [
   {
-    id: "ostrum",
-    lead: "Release prep, 2 h → 20 min",
-    detail: "Python/Tkinter tooling prepares migration files, backups, and reports.",
+    id: "range",
+    lead: "Database to interface",
+    detail: "Java and Spring Boot APIs, PostgreSQL data, and Next.js interfaces.",
   },
   {
     id: "runs",
