@@ -238,7 +238,7 @@ test("keeps the hero facts separate and the profile proof specific", async ({ pa
   await expect(atWork).not.toContainText(/Forward deployed/i);
   await expect(onMyOwn).toHaveAttribute("href", "#work");
   await expect(onMyOwn).toContainText("On my own");
-  await expect(onMyOwn).toContainText("Forward deployed builds: Velo, this site, AI-agent workflows");
+  await expect(onMyOwn).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
   await expect(page.locator("#about").getByText(/Velo is a pre-launch dispatch prototype/)).toBeVisible();
   await expect(page.locator("#about").getByText(/As Database Engineer at Ostrum Tech Limited/)).toBeVisible();
   await expect(page.locator("#about").getByText(/For my own builds, I scope AI-agent tasks/)).toBeVisible();
@@ -247,19 +247,20 @@ test("keeps the hero facts separate and the profile proof specific", async ({ pa
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await method.scrollIntoViewIfNeeded();
-  await expect(method.getByRole("heading", { name: "How I orchestrate AI agents" })).toBeVisible();
-  await expect(method.getByText(/45 rated agent runs/)).toBeVisible();
-  await expect(method.getByText(/Velo’s build record/)).toBeVisible();
-  await expect(method.getByText(/first live rehearsal exposed flows the automated tests missed/)).toBeVisible();
-  await expect(method.locator('ol[aria-label="Four method lanes"] li')).toHaveText([
+  await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
+  await expect(method.getByText("For my own projects, I use AI coding agents on small, scoped tasks and review every change myself.", { exact: true })).toBeVisible();
+  await expect(method.locator("ol > li h4")).toHaveText([
     "Plan",
     "Build",
     "Review",
     "Ship",
   ]);
-  const posterLabels = await method.locator("svg text").allTextContents();
-  expect(posterLabels.filter((label) => label === "Before merge")).toHaveLength(1);
-  expect(posterLabels).not.toContain("Review before merge");
+  await expect(method.locator("ol > li p")).toHaveText([
+    "Agree one task and what done looks like.",
+    "An AI coding agent makes the change in its own copy of the code.",
+    "I read the diff and run the tests.",
+    "I test the real flow in a browser, then release.",
+  ]);
 });
 
 test("server-rendered hero facts stay visible before hydration", async ({ page }) => {
@@ -270,7 +271,7 @@ test("server-rendered hero facts stay visible before hydration", async ({ page }
   await expect(page.getByText("Software engineer", { exact: true })).toBeVisible();
   await expect(facts).toHaveCount(2);
   await expect(facts.nth(0)).toContainText("Database Engineer, Ostrum Tech Limited");
-  await expect(facts.nth(1)).toContainText("Forward deployed builds: Velo, this site, AI-agent workflows");
+  await expect(facts.nth(1)).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
 
   for (let index = 0; index < 2; index += 1) {
     const row = facts.nth(index);
@@ -281,6 +282,14 @@ test("server-rendered hero facts stay visible before hydration", async ({ page }
   }
 });
 
+test("the custom cursor is hidden on touch pointers", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-safari", "One representative touch pointer is sufficient");
+  await openHome(page);
+
+  const cursor = page.locator('[data-site-chrome="cursor-orb"]');
+  await expect(cursor).toHaveCSS("display", "none");
+});
+
 test("hero facts use ink on hover and keyboard focus, with a static reduced-motion path", async ({ page }, testInfo) => {
   test.skip(isTouchProject(testInfo), "Hover and keyboard focus states need a fine pointer");
   await openHome(page);
@@ -289,6 +298,10 @@ test("hero facts use ink on hover and keyboard focus, with a static reduced-moti
   await rows.nth(0).hover();
   await expect(rows.nth(0)).toHaveCSS("color", "rgb(237, 230, 218)");
   await expect(rows.nth(0)).toHaveCSS("box-shadow", "rgba(53, 30, 40, 0.2) 2px 2px 0px 0px");
+  const cursor = page.locator('[data-site-chrome="cursor-orb"]');
+  await expect(cursor).toHaveAttribute("data-theme", "true");
+  await expect(cursor).toHaveAttribute("data-active", "true");
+  await expect(cursor).toHaveCSS("width", "32px");
 
   await page.keyboard.press("Tab");
   await rows.nth(1).focus();

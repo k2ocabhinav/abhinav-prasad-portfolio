@@ -15,18 +15,14 @@ test.beforeAll(() => {
 
 async function expectHeroNameToFit(page: Page) {
   const wordmark = page.locator('[data-home-hero-wordmark="true"]');
-  const firstLetter = page.locator('[data-animated-letter-index="0"]').first();
-  const lastLetter = page.locator('[data-animated-letter-index="6"]').first();
+  const trigger = page.locator('[data-animated-name="hero-trigger"]');
 
   await expect(wordmark).toBeVisible();
-  await expect(firstLetter).toBeVisible();
-  await expect(lastLetter).toBeVisible();
-  await page.waitForTimeout(900);
+  await expect(trigger).toBeVisible();
 
-  const [wordmarkBox, firstBox, lastBox, viewport, widths] = await Promise.all([
+  const [wordmarkBox, triggerBox, viewport, widths] = await Promise.all([
     wordmark.boundingBox(),
-    firstLetter.boundingBox(),
-    lastLetter.boundingBox(),
+    trigger.boundingBox(),
     page.viewportSize(),
     page.evaluate(() => ({
       documentWidth: document.documentElement.scrollWidth,
@@ -35,13 +31,19 @@ async function expectHeroNameToFit(page: Page) {
   ]);
 
   expect(wordmarkBox).not.toBeNull();
-  expect(firstBox).not.toBeNull();
-  expect(lastBox).not.toBeNull();
+  expect(triggerBox).not.toBeNull();
   expect(viewport).not.toBeNull();
 
-  expect(firstBox!.x).toBeGreaterThanOrEqual(0);
-  expect(lastBox!.x + lastBox!.width).toBeLessThanOrEqual(viewport!.width);
+  expect(wordmarkBox!.x).toBeGreaterThanOrEqual(0);
+  expect(triggerBox!.x + triggerBox!.width).toBeLessThanOrEqual(viewport!.width);
   expect(widths.documentWidth).toBeLessThanOrEqual(widths.windowWidth);
+
+  const textRight = await wordmark.evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return range.getBoundingClientRect().right;
+  });
+  expect(textRight).toBeLessThanOrEqual(viewport!.width - 20);
 
   return {
     viewportWidth: viewport!.width,
@@ -53,7 +55,7 @@ async function freezeHeroAmbientForSnapshot(
   page: Page
 ) {
   await page.addStyleTag({
-    content: `[data-scroll-indicator="true"] { display: none !important; }`,
+    content: `[data-site-chrome="cursor-orb"] { display: none !important; }`,
   });
 }
 
@@ -108,6 +110,44 @@ test("home hero keeps the full name inside the mobile viewport", async ({ page }
   await expectHeroNameToFit(page);
 });
 
+test("wordmark and email action keep phone gutters from 320 to 430 pixels", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.goto("/");
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+
+  for (const width of [320, 360, 375, 390, 414, 430]) {
+    await page.setViewportSize({ width, height: 844 });
+    await expectHeroNameToFit(page);
+
+    const email = await page
+      .locator('[data-home-hero-text] a[href^="mailto:"]')
+      .boundingBox();
+    expect(email).not.toBeNull();
+    expect(email!.x + email!.width).toBeLessThanOrEqual(width - 20);
+  }
+});
+
+test("server-rendered hero paints both ink layers before hydration", async ({ page }) => {
+  await page.route("**/_next/static/chunks/**", (route) => route.abort());
+  await page.goto("/", { waitUntil: "load" });
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+
+  const heading = page.locator('[data-home-hero-text] h1');
+  const plate = heading.locator('[data-ink-plate-drift="true"] span');
+
+  await expect(heading).toHaveAttribute("data-pass", "false");
+  await expect(page.locator('[data-home-hero-wordmark="true"]')).toBeVisible();
+  await expect(plate).toBeVisible();
+  await expect(plate).toHaveCSS("clip-path", "none");
+  await expect(plate).toHaveCSS("opacity", "1");
+  await expect(page.getByText("Software engineer", { exact: true })).toBeVisible();
+  await expect(page.locator('[data-hero-facts="true"] a')).toHaveCount(2);
+});
+
 test("home page does not expose an obvious Beyond CTA", async ({ page }) => {
   await page.goto("/");
 
@@ -115,18 +155,53 @@ test("home page does not expose an obvious Beyond CTA", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Open Beyond", exact: true })).toHaveCount(0);
 });
 
-test("home hero paints the editorial wordmark before the premium hover state activates", async ({
+test("home hero paints one static wordmark over an aria-hidden ink plate", async ({
   page,
 }) => {
   await page.goto("/");
 
   const wordmark = page.locator('[data-home-hero-wordmark="true"]');
-  const firstEditorialLayer = wordmark.locator('[data-letter-layer="editorial"]').first();
+  const heading = page.locator('[data-home-hero-text] h1');
+  const plate = heading.locator('[data-ink-plate-drift="true"]');
 
   await expect(wordmark).toBeVisible();
-  await expect(firstEditorialLayer).toBeVisible();
-  await expect(wordmark.locator('[data-letter-layer="editorial"]')).toHaveCount(7);
-  await expect(wordmark.locator('[data-letter-layer="script"]')).toHaveCount(0);
+  await expect(wordmark).toHaveText("Abhinav");
+  await expect(plate).toHaveAttribute("aria-hidden", "true");
+  await expect(plate).toHaveText("Abhinav");
+  await expect(heading).toHaveAttribute("aria-label", "Abhinav");
+  await expect(wordmark).toHaveCSS("animation-name", "none");
+  await expect(wordmark).toHaveCSS("font-weight", "600");
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+  const fontState = await wordmark.evaluate((element) => {
+    const family = getComputedStyle(element).fontFamily.split(",")[0].trim();
+    return {
+      family,
+      loaded: document.fonts.check(`600 20px ${family}`),
+    };
+  });
+  expect(fontState.family).toMatch(/^frauncesWordmark/);
+  expect(fontState.family).not.toMatch(/Times New Roman|Georgia/i);
+  expect(fontState.loaded).toBe(true);
+});
+
+test("hero keeps its identity and work links without the board or proof band", async ({ page }) => {
+  await page.goto("/");
+  const hero = page.locator("#hero");
+
+  await expect(hero.getByRole("heading", { name: "Abhinav" })).toBeVisible();
+  await expect(hero.getByText("Software engineer", { exact: true })).toBeVisible();
+  await expect(
+    hero.getByText("I build products end to end, from the first conversation to release.", { exact: true })
+  ).toBeVisible();
+  await expect(hero.locator("[data-home-hero-board], [data-hero-band]")).toHaveCount(0);
+  await expect(hero.locator('[data-hero-facts="true"] a')).toHaveCount(2);
+  await expect(hero.getByRole("link", { name: "View work" })).toHaveAttribute("href", "#work");
+  await expect(hero.getByRole("link", { name: "Email Abhinav" })).toHaveAttribute(
+    "href",
+    "mailto:abhinavp0304@gmail.com"
+  );
 });
 
 test("reduced motion falls back to the accessible fade variant", async ({ page }) => {
@@ -141,8 +216,23 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await method.scrollIntoViewIfNeeded();
-  await expect(method.getByRole("heading", { name: "How I orchestrate AI agents" })).toBeVisible();
-  await expect(method.getByText("From Velo's build record", { exact: true })).toBeVisible();
+  await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
+  await expect(method.locator("ol > li")).toHaveCount(4);
+  await expect(method.locator("ol > li")).toContainText([
+    "Plan",
+    "Build",
+    "Review",
+    "Ship",
+  ]);
+
+  const plateState = await page.locator('[data-home-hero-text] h1 [aria-hidden="true"] span').evaluate((element) => ({
+    clipPath: getComputedStyle(element).clipPath,
+    animationName: getComputedStyle(element).animationName,
+    transform: getComputedStyle(element).transform,
+  }));
+  expect(plateState.clipPath).toBe("none");
+  expect(plateState.animationName).toBe("none");
+  expect(plateState.transform).toBe("matrix(1, 0, 0, 1, 2, 2)");
 
   await page.locator("#about").scrollIntoViewIfNeeded();
   await expect(
@@ -214,28 +304,14 @@ test("keyboard entry uses the centered trigger mode and opens the Beyond route a
   await expect(page.locator("#beyond-hero-title")).toBeVisible();
 });
 
-test("hovering individual letters keeps the per-letter animation active without navigating", async ({
+test("the final v portal target stays in the wordmark and works by pointer", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.waitForTimeout(200);
-
-  const firstLetter = page.locator('[data-animated-letter-index="0"]').first();
-  const fifthLetter = page.locator('[data-animated-letter-index="4"]').first();
-  const firstEditorialLayer = firstLetter.locator('[data-letter-layer="editorial"]');
-  const fifthEditorialLayer = fifthLetter.locator('[data-letter-layer="editorial"]');
-
-  await firstLetter.hover();
-  await expect(firstLetter).toHaveAttribute("data-hovered", "true");
-  await expect(firstEditorialLayer).toContainText("A");
-  await expect(firstLetter.locator('[data-letter-aura="true"]')).toBeAttached();
-  await expect(page).toHaveURL(/\/$/);
-
-  await fifthLetter.hover();
-  await expect(fifthLetter).toHaveAttribute("data-hovered", "true");
-  await expect(fifthEditorialLayer).toContainText("n");
-  await expect(fifthLetter.locator('[data-letter-aura="true"]')).toBeAttached();
-  await expect(page).toHaveURL(/\/$/);
+  const trigger = getHeroPortalTrigger(page);
+  await expect(trigger).toHaveAttribute("data-animated-letter-index", "6");
+  await trigger.click();
+  await expect(page).toHaveURL(/\/beyond-terminal$/);
 });
 
 test("deferred sections still render cleanly when scrolled into view", async ({ page }) => {
@@ -320,7 +396,7 @@ test("desktop handoff into the profile section stays seam-free", async ({ page }
   });
 });
 
-test("orchestration panel keeps the build method readable on desktop", async ({ page }) => {
+test("How I work renders four clear steps on desktop", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
@@ -331,6 +407,8 @@ test("orchestration panel keeps the build method readable on desktop", async ({ 
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
+  await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
+  await expect(method.locator("ol > li h4")).toHaveText(["Plan", "Build", "Review", "Ship"]);
 
   const screenshot = await method.screenshot({
     animations: "disabled",
@@ -341,7 +419,7 @@ test("orchestration panel keeps the build method readable on desktop", async ({ 
   });
 });
 
-test("orchestration panel keeps the build method readable on mobile", async ({ page }) => {
+test("How I work uses a vertical sequence on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
@@ -352,6 +430,11 @@ test("orchestration panel keeps the build method readable on mobile", async ({ p
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
+  await expect(method.locator("ol > li h4")).toHaveText(["Plan", "Build", "Review", "Ship"]);
+  const columnCount = await method.locator("ol").evaluate(
+    (element) => getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length
+  );
+  expect(columnCount).toBe(1);
 
   const screenshot = await method.screenshot({
     animations: "disabled",
@@ -433,7 +516,7 @@ test("desktop home hero wordmark keeps the editorial look", async ({ page }) => 
   await freezeHeroAmbientForSnapshot(page);
   await page.waitForTimeout(900);
 
-  const screenshot = await page.locator('[data-home-hero-wordmark="true"]').screenshot({
+  const screenshot = await page.locator('[data-home-hero-text] h1').screenshot({
     animations: "disabled",
   });
 
@@ -459,58 +542,40 @@ test("desktop home hero keeps the matte scene visible above the fold", async ({
   });
 });
 
-test("hovered A, n, and v hero letters keep the matte print states", async ({
+test("ink pass sweeps the burgundy plate while the black wordmark stays still", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
-  await page.waitForTimeout(300);
+  const heading = page.locator('[data-home-hero-text] h1');
+  const wordmark = heading.locator('[data-home-hero-wordmark="true"]');
+  const plate = heading.locator('[aria-hidden="true"] span');
 
-  const firstLetter = page.locator('[data-animated-letter-index="0"]').first();
-  const fifthLetter = page.locator('[data-animated-letter-index="4"]').first();
-  const seventhLetter = page.locator('[data-animated-letter-index="6"]').first();
-
-  await firstLetter.hover();
-  await page.waitForTimeout(280);
-  await expect(firstLetter).toHaveAttribute("data-hovered", "true");
-  await expect(firstLetter.locator('[data-letter-layer="editorial"]')).toContainText("A");
-  const firstPrintState = await firstLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => ({
-    color: getComputedStyle(el).color,
-    strokeWidth: getComputedStyle(el).webkitTextStrokeWidth,
-    textShadow: getComputedStyle(el).textShadow,
-  }));
-  expect(firstPrintState.color).toBe("rgba(0, 0, 0, 0)");
-  expect(firstPrintState.strokeWidth).toBe("1.5px");
-  expect(firstPrintState.textShadow).toBe("none");
-
-  await fifthLetter.hover();
-  await page.waitForTimeout(280);
-  await expect(fifthLetter).toHaveAttribute("data-hovered", "true");
-  await expect(fifthLetter.locator('[data-letter-layer="editorial"]')).toContainText("n");
-  const fifthPrintState = await fifthLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => ({
-    color: getComputedStyle(el).color,
-    strokeWidth: getComputedStyle(el).webkitTextStrokeWidth,
-    textShadow: getComputedStyle(el).textShadow,
-  }));
-  expect(fifthPrintState.color).toBe("rgb(106, 33, 53)");
-  expect(fifthPrintState.strokeWidth).toBe("0px");
-  expect(fifthPrintState.textShadow).toBe("none");
-
-  await seventhLetter.hover();
-  await page.waitForTimeout(280);
-  await expect(seventhLetter).toHaveAttribute("data-hovered", "true");
-  await expect(seventhLetter.locator('[data-letter-layer="editorial"]')).toContainText("v");
-  const seventhPrintState = await seventhLetter.locator('[data-letter-layer="editorial"]').evaluate((el) => ({
-    color: getComputedStyle(el).color,
-    strokeWidth: getComputedStyle(el).webkitTextStrokeWidth,
-    textShadow: getComputedStyle(el).textShadow,
-  }));
-  expect(seventhPrintState.color).toBe("rgba(0, 0, 0, 0)");
-  expect(seventhPrintState.strokeWidth).toBe("1.5px");
-  expect(seventhPrintState.textShadow).toBe("none");
-
+  await expect.poll(() => heading.getAttribute("data-pass")).toBe("true");
+  await expect(wordmark).toHaveCSS("animation-name", "none");
+  await expect.poll(
+    () => plate.evaluate((element) => getComputedStyle(element).animationName)
+  ).toMatch(/inkSweep$/);
   await expect(page).toHaveURL(/\/$/);
+});
+
+test("ink pass stays static when reduced motion is requested", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+
+  const heading = page.locator('[data-home-hero-text] h1');
+  const plate = heading.locator('[data-ink-plate-drift="true"] span');
+  await expect(heading).toHaveAttribute("data-reduce-motion", "true");
+  await expect(heading).toHaveAttribute("data-pass", "false");
+  await expect(plate).toHaveCSS("animation-name", "none");
+  await expect(plate).toHaveCSS("clip-path", "none");
+
+  const restTransform = await plate.evaluate((element) => getComputedStyle(element).transform);
+  await page.mouse.move(900, 640);
+  await page.waitForTimeout(120);
+  await expect(plate).toHaveCSS("transform", restTransform);
 });
 
 test("mobile Beyond shell matches the photo wall layout", async ({ page }) => {

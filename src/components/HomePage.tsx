@@ -1,5 +1,3 @@
-"use client";
-
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";

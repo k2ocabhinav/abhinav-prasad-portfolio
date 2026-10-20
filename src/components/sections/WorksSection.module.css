@@ -49,134 +49,79 @@
 }
 
 .orchestrationStrip {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(1rem, 3vw, 2.5rem);
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  padding: clamp(1rem, 3vw, 2rem);
-  border: 1px solid rgba(53, 30, 40, 0.22);
-  border-radius: 3px;
-  background: var(--color-black-cherry, #351E28);
-  color: var(--color-on-panel, #EDE6DA);
-  --plate-ink: var(--color-black-cherry, #351E28);
-  --plate-accent: var(--color-burgundy, #6A2135);
-  --plate-second: var(--color-cornflower, #94B6EF);
-  --plate-paper: var(--paper-linen, #FCF8F2);
-  --plate-glacier: var(--paper-linen, #FCF8F2);
-}
-
-.orchestrationLead {
-  display: grid;
-  grid-template-columns: minmax(8rem, 0.2fr) minmax(0, 0.8fr);
-  align-items: center;
-  gap: clamp(1rem, 3vw, 2.5rem);
-}
-
-.posterColumn {
-  width: min(100%, 11rem);
-  margin-inline: auto;
-}
-
-.posterColumn svg {
   display: block;
-  width: 100%;
-  height: auto;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
-.evidenceContent {
-  min-width: 0;
+.methodHeader {
+  max-width: 72rem;
 }
 
-.evidenceHeading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.3rem 1rem;
-}
-
-.evidenceHeading h3 {
-  margin: 0;
-  color: var(--color-panel-accent, #F4BEBB);
+.methodHeader h3 {
+  color: var(--color-on-surface, #0B1011);
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.5vw, 2rem);
-  font-weight: 560;
+  font-size: clamp(1.65rem, 2.8vw, 2.2rem);
+  font-weight: 550;
   line-height: 1.15;
 }
 
-.evidenceHeading p {
-  margin: 0;
-  color: var(--color-on-panel, #EDE6DA);
-  font-family: var(--font-label);
-  font-size: 0.65rem;
-  letter-spacing: 0.07em;
-  line-height: 1.45;
+.methodHeader p {
+  margin-top: 0.6rem;
+  color: var(--color-secondary-text, #63605A);
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
-.orchestrationIntro,
-.method,
-.lesson {
-  margin: 0.7rem 0 0;
-  color: var(--color-on-panel, #EDE6DA);
-  font-size: 0.94rem;
-  line-height: 1.5;
-}
-
-.method {
-  margin-top: 0.9rem;
-  font-weight: 600;
-}
-
-.methodLanes {
+.processSteps {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.35rem;
-  margin: 0.75rem 0 0;
-  padding: 0 0 0.7rem;
-  border-bottom: 1px solid rgba(237, 230, 218, 0.3);
-  color: var(--color-on-panel, #EDE6DA);
-  font-family: var(--font-label);
-  font-size: 0.68rem;
-  letter-spacing: 0.05em;
-  list-style: none;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem;
-  margin: 0.8rem 0 0;
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+  margin: 2rem 0 0;
   padding: 0;
   list-style: none;
 }
 
-.metrics li {
-  display: grid;
-  align-content: start;
-  gap: 0.15rem;
+.processSteps::before {
+  position: absolute;
+  top: 0.62rem;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--color-hairline, rgba(11, 16, 17, 0.14));
+  content: "";
+}
+
+.processSteps li {
+  position: relative;
   min-width: 0;
+  padding-top: 1.8rem;
 }
 
-.metricValue {
-  color: var(--color-panel-accent, #F4BEBB);
+.stepNumber {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-inline: 0.25rem;
+  background: var(--paper-linen, #FCF8F2);
+  color: var(--color-lead, #6A2135);
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+}
+
+.processSteps h4 {
+  color: var(--color-on-surface, #0B1011);
   font-family: var(--font-display);
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  line-height: 1.15;
+  font-size: 1.2rem;
+  font-weight: 550;
+  line-height: 1.2;
 }
 
-.metricLabel {
-  color: var(--color-on-panel, #EDE6DA);
-  font-size: 0.75rem;
-  line-height: 1.35;
-}
-
-.lesson {
-  padding-top: 0.7rem;
-  border-top: 1px solid rgba(237, 230, 218, 0.3);
+.processSteps p {
+  margin-top: 0.35rem;
+  color: var(--color-secondary-text, #63605A);
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 /* ─── Work Card Grid ─────────────────────────────────── */
@@ -638,61 +583,47 @@
     font-size: 12px;
   }
 
-  .orchestrationStrip {
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
   .projectsList {
     gap: 2rem;
   }
 
-  .orchestrationLead {
-    grid-template-columns: minmax(5rem, 0.2fr) minmax(0, 0.8fr);
-    align-items: start;
-    gap: 0.75rem;
+  .orchestrationStrip {
+    margin-top: 2rem;
   }
 
-  .posterColumn {
-    width: min(100%, 6rem);
+  .processSteps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.6rem;
+    padding-left: 2.25rem;
   }
 
-  .evidenceHeading {
-    display: block;
+  .processSteps::before {
+    top: 0;
+    bottom: 0;
+    left: 0.5rem;
+    width: 1px;
+    height: auto;
   }
 
-  .evidenceHeading h3 {
+  .processSteps li {
+    padding-top: 0;
+  }
+
+  .stepNumber {
+    top: 0;
+    left: -2.25rem;
+    width: 1rem;
+    padding: 0;
+    text-align: center;
+  }
+
+  .processSteps h4 {
     font-size: 1.25rem;
   }
 
-  .evidenceHeading p {
-    margin-top: 0.35rem;
-    font-size: 12px;
-  }
-
-  .featuredProof,
-  .orchestrationIntro,
-  .method,
-  .lesson {
-    font-size: 0.86rem;
-  }
-
-  .methodLanes {
-    gap: 0.2rem;
-    font-size: 0.62rem;
-    letter-spacing: 0.02em;
-  }
-
-  .metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.6rem 0.4rem;
-  }
-
-  .metricValue {
-    font-size: 1.08rem;
-  }
-
-  .metricLabel {
-    font-size: 12px;
+  .processSteps p {
+    margin-top: 0.25rem;
+    font-size: 1rem;
   }
 }

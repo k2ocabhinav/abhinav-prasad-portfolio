@@ -1,39 +1,54 @@
-/* =============================================================================
-   SageOrb — registration-mark cursor. Hairline circle + crosshair, 1.5px
-   strokes in currentColor (the active section accent set inline). Fine
-   pointers only; the component renders nothing on touch or reduced motion.
-   ============================================================================= */
-
 .orb {
   position: fixed;
   top: 0;
   left: 0;
-  width: 18px;
-  height: 18px;
-  z-index: var(--z-orb);
-  pointer-events: none;
+  z-index: calc(var(--z-overlay, 200) - 1);
   display: none;
-  color: var(--color-ink, #0B1011);
+  width: 6px;
+  height: 6px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: #6A2135;
+  opacity: 0;
+  pointer-events: none;
   will-change: transform;
+  transition:
+    width 180ms var(--motion-ease-out),
+    height 180ms var(--motion-ease-out),
+    background-color 180ms var(--motion-ease-out),
+    border-color 180ms var(--motion-ease-out),
+    opacity 100ms linear;
 }
 
-.mark {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+.orb[data-visible="true"] {
+  opacity: 1;
 }
 
-.mark circle,
-.mark line {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
+.orb[data-active="true"] {
+  width: 32px;
+  height: 32px;
+  border-color: #6A2135;
+  background: rgba(106, 33, 53, 0.14);
 }
 
-/* Redundant with the JS fine-pointer gate, but keeps SSR/first paint quiet. */
-@media (min-width: 768px) {
+.orb[data-theme="true"] {
+  background: #F4BEBB;
+}
+
+.orb[data-theme="true"][data-active="true"] {
+  border-color: #F4BEBB;
+  background: rgba(244, 190, 187, 0.14);
+}
+
+@media (pointer: fine) {
   .orb {
     display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb {
+    transition: none;
+    will-change: auto;
   }
 }

@@ -6,6 +6,7 @@ import {
   Hanken_Grotesk,
   Newsreader,
 } from "next/font/google";
+import localFont from "next/font/local";
 import AppProviders from "@/components/providers/AppProviders";
 import { getProfileContent } from "@/lib/portfolioContent";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
@@ -13,25 +14,28 @@ import "./globals.css";
 
 // =============================================================================
 // Root Layout — Fonts, metadata, HTML structure
-// "Print Room" system: Fraunces (display/wordmark), Newsreader (prose serif),
+// "Print Room" system: Fraunces (display/brand mark), Newsreader (prose serif),
 // Hanken Grotesk (UI + body), Fragment Mono (meta labels).
 // =============================================================================
 
-// Display + wordmark — expressive high-contrast serif. The wordmark forces
-// opsz 144 / WONK 1 via font-variation-settings in AnimatedName.module.css, so
-// only opsz and WONK are requested: SOFT is never set to anything but its
-// default (0), and that unused axis alone was ~121 KB of the build. Fraunces
-// roman carries the wordmark (and the roman face is the heaviest above-the-fold
-// need), so it is preloaded. The italic is a hero accent only, so it is a
-// separate non-preloaded instance: it downloads on first use instead of
-// competing with the roman for Fast-3G bandwidth. Both instances resolve to the
-// same `Fraunces` family, so `--font-display` still covers italic text.
+// Display face for editorial headings. The fixed wordmark subset is embedded
+// in critical CSS so the first visible frame already uses Fraunces.
 const fraunces = Fraunces({
   subsets: ["latin"],
   axes: ["opsz", "WONK"],
   style: "normal",
   variable: "--font-display",
   display: "swap",
+  preload: false,
+});
+
+const frauncesWordmark = localFont({
+  src: "../../public/fonts/fraunces-wordmark.woff2",
+  weight: "600",
+  style: "normal",
+  variable: "--font-wordmark",
+  display: "swap",
+  preload: true,
 });
 
 const frauncesItalic = Fraunces({
@@ -45,9 +49,8 @@ const frauncesItalic = Fraunces({
 
 // Prose serif — editorial reading moments and italic accents. Newsreader's
 // optical-size axis is load-bearing (prose runs from 1rem standfirsts up to
-// 3rem section headings), so it is kept. The roman face paints the hero value
-// sentence that becomes the LCP, hence preload; the italic is a marquee and
-// bridge accent, so it loads on use.
+// 3rem section headings), so it is kept. The roman face styles the hero value
+// sentence, so it is preloaded; the italic is a marquee and bridge accent.
 const newsreader = Newsreader({
   subsets: ["latin"],
   axes: ["opsz"],
@@ -61,7 +64,9 @@ const newsreaderItalic = Newsreader({
   axes: ["opsz"],
   style: "italic",
   variable: "--font-headline",
-  display: "swap",
+  // Detail page titles use this face above the fold. Its fallback is close in
+  // shape and already reserves the taller phone title box, so avoid a late swap.
+  display: "optional",
   preload: false,
 });
 
@@ -169,7 +174,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${fraunces.variable} ${frauncesItalic.variable} ${newsreader.variable} ${newsreaderItalic.variable} ${hankenGrotesk.variable} ${fragmentMono.variable}`}
+      className={`${fraunces.variable} ${frauncesWordmark.variable} ${frauncesItalic.variable} ${newsreader.variable} ${newsreaderItalic.variable} ${hankenGrotesk.variable} ${fragmentMono.variable}`}
     >
       <body>
         <AppProviders>{children}</AppProviders>

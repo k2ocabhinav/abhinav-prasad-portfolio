@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import AnimatedName from "./AnimatedName";
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { LandingHeroContent } from "@/types";
@@ -10,37 +7,22 @@ import styles from "./HeroTextColumn.module.css";
 // HeroTextColumn — the hero's text stack.
 //
 // The identity, summary, and two facts are fully readable in server-rendered
-// HTML. After hydration, a small print-in settles the labels and draws their
-// rule without hiding the copy that was already on screen.
+// HTML. The wordmark owns the landing's single entrance motion.
 // =============================================================================
 
 interface HeroTextColumnProps {
   hero: LandingHeroContent;
   name: string;
-  reduceMotion?: boolean;
 }
 
 export default function HeroTextColumn({
   hero,
   name,
-  reduceMotion = false,
 }: HeroTextColumnProps) {
-  const [printIn, setPrintIn] = useState(false);
-
-  useEffect(() => {
-    if (reduceMotion) {
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(() => setPrintIn(true));
-    return () => window.cancelAnimationFrame(frame);
-  }, [reduceMotion]);
-
   return (
     <div className={styles.textColumn} data-home-hero-text="true">
       <AnimatedName
         name={name}
-        reduceMotion={reduceMotion}
         portalTrigger={{
           href: "/beyond-terminal",
           source: "easter-egg",
@@ -57,13 +39,16 @@ export default function HeroTextColumn({
           className={styles.factSheet}
           aria-label="Work and personal builds"
           data-hero-facts="true"
-          data-printed={printIn ? "true" : "false"}
-          data-reduce-motion={reduceMotion ? "true" : "false"}
         >
           <span className={styles.factRule} aria-hidden="true" />
           <div className={styles.factList}>
             {hero.facts.map((fact) => (
-              <a key={fact.label} href={fact.href} className={styles.factLink}>
+              <a
+                key={fact.label}
+                href={fact.href}
+                className={styles.factLink}
+                data-cursor-theme="dark-hover"
+              >
                 <span className={styles.factLabel}>{fact.label}</span>
                 <span className={styles.factValue}>{fact.value}</span>
               </a>

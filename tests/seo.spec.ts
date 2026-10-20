@@ -13,8 +13,8 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   expect(html).toContain("Software engineer");
   expect(html).toContain("I build products end to end, from the first conversation to release.");
   expect(html).toContain("Database Engineer, Ostrum Tech Limited");
-  expect(html).toContain("Forward deployed builds: Velo, this site, AI-agent workflows");
-  expect(html).toContain("How I orchestrate AI agents");
+  expect(html).toContain("Forward deployed builds: Velo, this site, AI‑agent workflows");
+  expect(html).toContain("How I work");
   expect(html).toContain("Software Engineer Intern");
   expect(html).toContain("Selected projects");
 

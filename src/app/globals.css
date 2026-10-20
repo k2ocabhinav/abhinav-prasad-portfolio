@@ -1,8 +1,9 @@
 /* =============================================================================
    Portfolio — Global Styles & Design Tokens
    All design decisions are defined here as CSS custom properties.
-   Fonts are loaded via next/font in layout.tsx (self-hosted, no CLS).
+   Fonts are self-hosted through next/font and local assets.
    ============================================================================= */
+
 
 /* ─── Design Tokens ──────────────────────────────────────────────── */
 
@@ -106,10 +107,8 @@
   --glass-blur: 0px;
   --glass-shadow: none;
 
-  /* Display Font — loaded via next/font, variable injected on <html>.
-     The wordmark shares Fraunces (opsz 144 forced in AnimatedName). */
+  /* Display fonts — loaded via next/font, variables injected on <html>. */
   --font-display: "Fraunces", serif;
-  --font-wordmark: var(--font-display);
 
   /* ─── Motion Tokens (Landing Page) ────────────────────────────── */
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);

@@ -16,7 +16,6 @@ import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import CaseNumeral from "@/components/art/CaseNumeral";
-import PrintRunPoster from "@/components/art/PrintRunPoster";
 import VeloRoutePlate from "@/components/art/VeloRoutePlate";
 import styles from "./WorksSection.module.css";
 
@@ -92,48 +91,21 @@ function OrchestrationEvidence({
 }: {
   content: OrchestrationContent;
 }) {
-  const prefersReducedMotion = useReducedMotion();
-  const posterRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : posterRef,
-    offset: ["start end", "end start"],
-  });
-
   return (
     <aside className={styles.orchestrationStrip} aria-labelledby="work-method-title">
-      <div className={styles.orchestrationLead}>
-        <div ref={posterRef} className={styles.posterColumn}>
-          <PrintRunPoster
-            progress={scrollYProgress}
-            reducedMotion={prefersReducedMotion}
-          />
-        </div>
-        <div className={styles.evidenceHeading}>
-          <h3 id="work-method-title">How I orchestrate AI agents</h3>
-          <p>{content.metricsContext}</p>
-        </div>
-      </div>
-
-      <div className={styles.evidenceContent}>
-        <p className={styles.orchestrationIntro}>{content.intro}</p>
-        <p className={styles.method}>{content.method}</p>
-        <ol className={styles.methodLanes} aria-label="Four method lanes">
-          <li>Plan</li>
-          <li>Build</li>
-          <li>Review</li>
-          <li>Ship</li>
-        </ol>
-
-        <ul className={styles.metrics}>
-          {content.metrics.map((metric) => (
-            <li key={metric.label}>
-              <span className={styles.metricValue}>{metric.value}</span>
-              <span className={styles.metricLabel}>{metric.label}</span>
-            </li>
-          ))}
-        </ul>
-        <p className={styles.lesson}>{content.lesson}</p>
-      </div>
+      <header className={styles.methodHeader}>
+        <h3 id="work-method-title">How I work</h3>
+        <p>{content.intro}</p>
+      </header>
+      <ol className={styles.processSteps}>
+        {content.steps.map((step, index) => (
+          <li key={step.title}>
+            <span className={styles.stepNumber} aria-hidden="true">{index + 1}</span>
+            <h4>{step.title}</h4>
+            <p>{step.description}</p>
+          </li>
+        ))}
+      </ol>
     </aside>
   );
 }

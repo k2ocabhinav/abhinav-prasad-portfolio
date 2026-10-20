@@ -567,14 +567,14 @@ function readProfile(): PortfolioProfile {
   }
   const orchestration: OrchestrationContent = {
     intro: stringValue(orchestrationData, "intro", filePath),
-    method: stringValue(orchestrationData, "method", filePath),
-    metricsContext: stringValue(orchestrationData, "metricsContext", filePath),
-    metrics: objectArray(orchestrationData, "metrics", filePath).map((metric) => ({
-      value: stringValue(metric, "value", filePath),
-      label: stringValue(metric, "label", filePath),
+    steps: objectArray(orchestrationData, "steps", filePath).map((step) => ({
+      title: stringValue(step, "title", filePath),
+      description: stringValue(step, "description", filePath),
     })),
-    lesson: stringValue(orchestrationData, "lesson", filePath),
   };
+  if (orchestration.steps.length !== 4) {
+    fail(filePath, '"orchestration.steps" must contain four steps');
+  }
 
   return {
     personal,
