@@ -60,7 +60,7 @@
   width: 100%;
   height: 100%;
   overflow: visible;
-  opacity: 0.76;
+  opacity: 0.96;
   clip-path: none;
 }
 
@@ -75,6 +75,7 @@
   width: 1px;
   background: rgba(106, 33, 53, 0.52);
   opacity: 0;
+  visibility: hidden;
 }
 
 .scene[data-pass="true"] .glacierRoller {
@@ -277,6 +278,7 @@
   0% {
     transform: translateX(0);
     opacity: 0;
+    visibility: visible;
   }
 
   10% {
@@ -286,6 +288,7 @@
   100% {
     transform: translateX(100cqw);
     opacity: 0;
+    visibility: hidden;
   }
 }
 
@@ -321,8 +324,9 @@
 
   .swatch {
     gap: 0.22rem;
-    font-size: 0.5rem;
-    letter-spacing: -0.02em;
+    font-size: 0.6rem;
+    letter-spacing: 0.02em;
+    overflow: visible;
   }
 
   .fullLabel {
@@ -357,7 +361,7 @@
   }
 
   .swatch {
-    font-size: 0.46rem;
+    font-size: 0.6rem;
   }
 
   .scrollCue {
