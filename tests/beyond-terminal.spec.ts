@@ -264,7 +264,7 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
   ).toHaveCount(1);
   await expect(
     page.getByRole("heading", {
-      name: "Interactive Engineering Portfolio & Content Platform",
+      name: "Portfolio publishing system",
       exact: true,
     })
   ).toHaveCount(1);
@@ -280,11 +280,11 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Interactive Engineering Portfolio & Content Platform",
+      name: "Portfolio publishing system",
       exact: true,
     })
   ).toBeVisible();
-  await expect(page.locator("main img")).toHaveCount(7);
+  await expect(page.locator("main img")).toHaveCount(6);
 
   await page.goto("/work/velo");
   await expect(

@@ -14,9 +14,9 @@ export function GET() {
   const projects = getPublishedProjects().flatMap((project) =>
     project.detail ? [{ project, detail: project.detail }] : []
   );
-  const currentRole = experience?.roles[0]?.title ?? profile.personal.title;
+  const currentRole = experience?.roleTitle ?? profile.personal.title;
   const experienceSummary = experience
-    ? `${currentRole} at ${experience.company} (${experience.period}). ${experience.backendThesis} ${experience.functionality}`
+    ? `${currentRole} at ${experience.company} (${experience.period}). ${experience.employmentNote} ${experience.roleScope}`
     : "Professional experience is available on the portfolio homepage.";
 
   const lines = [
