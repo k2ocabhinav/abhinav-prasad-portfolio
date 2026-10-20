@@ -92,6 +92,14 @@
   .nameShell {
     font-size: clamp(8rem, min(24cqw, 25svh), 13rem);
   }
+
+  /* On short viewports the height caps the type size, so stretching the
+     letters edge to edge would open gaps between them. Set them at their
+     natural spacing instead. */
+  .wordmark,
+  .plate {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 767px) {
