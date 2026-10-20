@@ -134,6 +134,10 @@ test("keeps each home section readable without JavaScript", async ({ page }) => 
     checkedSections += 1;
   }
 
+  const aboutStatement = page.locator("#about [data-scrub]");
+  await expect(aboutStatement.locator("p")).toHaveCount(4);
+  await expect(aboutStatement).toContainText("I design backends first");
+  await expect(aboutStatement).toContainText("Open to full-time roles, contract work and scoped projects.");
   expect(checkedSections).toBeGreaterThan(0);
 });
 
