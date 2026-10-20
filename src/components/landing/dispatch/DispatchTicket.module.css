@@ -102,6 +102,21 @@
   }
 }
 
+/* Two lanes per row leave a narrow slip on phones: the stub sits above the
+   title so whole words fit instead of breaking mid-word. */
+@media (max-width: 479px) {
+  .button {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.15rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .title {
+    font-size: 0.9rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .button {
     transition: none;
