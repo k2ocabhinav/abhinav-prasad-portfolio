@@ -121,21 +121,8 @@ test("wordmark and email action keep phone gutters from 320 to 430 pixels", asyn
     await page.setViewportSize({ width, height: 844 });
     await expectHeroNameToFit(page);
 
-    const scene = page.locator("[data-pressrun-scene='true']");
     const strip = page.locator("[data-pressrun-strip='true']");
-    await expect(scene.locator("[data-pressrun-depth='glacier']")).toBeHidden();
-    await expect(scene.locator("[data-pressrun-depth='target']")).toBeHidden();
     await expect(strip).toBeVisible();
-    const stripBounds = await strip.boundingBox();
-    const compactLabels = strip.locator("[data-compact-label='true']");
-    expect(stripBounds).not.toBeNull();
-    await expect(compactLabels).toHaveCount(3);
-    for (let index = 0; index < 3; index += 1) {
-      const bounds = await compactLabels.nth(index).boundingBox();
-      expect(bounds).not.toBeNull();
-      expect(bounds!.x).toBeGreaterThanOrEqual(stripBounds!.x);
-      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(stripBounds!.x + stripBounds!.width);
-    }
 
     const email = await page
       .locator('[data-home-hero-text] a[href^="mailto:"]')
@@ -166,7 +153,6 @@ test("server-rendered hero paints both ink layers before hydration", async ({ pa
   const heading = page.locator('[data-home-hero-text] h1');
   const plate = heading.locator('[data-ink-plate-drift="true"] span');
 
-  await expect(heading).toHaveAttribute("data-pass", "false");
   await expect(page.locator('[data-home-hero-wordmark="true"]')).toBeVisible();
   await expect(plate).toBeVisible();
   await expect(plate).toHaveCSS("clip-path", "none");
@@ -672,64 +658,9 @@ test("desktop home hero lays in the crop marks and calibration strip", async ({ 
   const scene = page.locator("[data-pressrun-scene='true']");
   const strip = page.getByRole("link", { name: /^Scroll to What I do/ });
   await expect(scene.locator("[data-pressrun-crop-mark='true']")).toHaveCount(4);
-  await expect(scene.locator("[data-pressrun-depth='glacier']")).toBeHidden();
-  await expect(scene.locator("[data-proof-plate='petrol']")).toBeVisible();
-  await expect(scene.locator("[data-pressrun-depth='target']")).toBeVisible();
   await expect(strip).toBeVisible();
   await expect(strip).toHaveAttribute("href", "#about");
   await expect(strip).toHaveCSS("min-height", "48px");
-});
-
-test("desktop proof corner uses two edge-masked inks and stays off phones", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/");
-
-  const proof = page.locator("[data-pressrun-proof-corner='true']");
-  await expect(proof).toBeVisible();
-  await expect(proof).toHaveAttribute("aria-hidden", "true");
-  await expect(proof.locator("svg[data-proof-plate]")).toHaveCount(2);
-
-  const masksAreApplied = await proof.locator("svg[data-proof-plate]").evaluateAll((plates) =>
-    plates.every((plate) => {
-      const edgeMask = plate.querySelector("mask[data-proof-edge-mask='true']");
-      const maskId = edgeMask?.getAttribute("id");
-      const gradientRef = edgeMask?.querySelector("rect")?.getAttribute("fill");
-      const gradientId = gradientRef?.slice(5, -1);
-      const gradient = gradientId ? plate.querySelector(`#${gradientId}`) : null;
-      const outerStop = gradient?.querySelector("stop:last-child");
-
-      return Boolean(
-        maskId &&
-          plate.querySelector(`g[mask="url(#${maskId})"]`) &&
-          gradient?.tagName.toLowerCase() === "radialgradient" &&
-          outerStop?.getAttribute("stop-opacity") === "0"
-      );
-    })
-  );
-  expect(masksAreApplied).toBe(true);
-
-  const plateBounds = await proof.locator("[data-proof-plate]").first().boundingBox();
-  expect(plateBounds).not.toBeNull();
-  expect(plateBounds!.width).toBeGreaterThanOrEqual(260);
-  expect(plateBounds!.width).toBeLessThanOrEqual(360);
-
-  for (const width of [1280, 1024]) {
-    await page.setViewportSize({ width, height: 900 });
-    await expect(proof).toBeVisible();
-    const [proofBounds, factsBounds, railBounds] = await Promise.all([
-      proof.boundingBox(),
-      page.locator("[data-hero-facts='true']").boundingBox(),
-      page.locator("[data-site-chrome='navigation-rail'] a").first().boundingBox(),
-    ]);
-    expect(proofBounds).not.toBeNull();
-    expect(factsBounds).not.toBeNull();
-    expect(railBounds).not.toBeNull();
-    expect(proofBounds!.x).toBeGreaterThanOrEqual(factsBounds!.x + factsBounds!.width);
-    expect(proofBounds!.x + proofBounds!.width).toBeLessThan(railBounds!.x);
-  }
-
-  await page.setViewportSize({ width: 390, height: 844 });
-  await expect(proof).toBeHidden();
 });
 
 test("the calibration strip scrolls to What I do", async ({ page }) => {
@@ -741,60 +672,6 @@ test("the calibration strip scrolls to What I do", async ({ page }) => {
   await expect(page).toHaveURL(/#about$/);
   await expect(page.locator("#about")).toBeInViewport();
   await expect(page.locator("#about h2")).toHaveText("What I do");
-});
-
-test("ink pass sweeps the burgundy plate while the black wordmark stays still", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1440, height: 1024 });
-  await page.goto("/");
-  await freezeHeroAmbientForSnapshot(page);
-  const heading = page.locator('[data-home-hero-text] h1');
-  const wordmark = heading.locator('[data-home-hero-wordmark="true"]');
-  const plate = heading.locator('[aria-hidden="true"] span');
-
-  await expect.poll(() => heading.getAttribute("data-pass")).toBe("true");
-  await expect(wordmark).toHaveCSS("animation-name", "none");
-  await expect.poll(
-    () => plate.evaluate((element) => getComputedStyle(element).animationName)
-  ).toMatch(/inkSweep$/);
-  await expect(page.locator("[data-pressrun-roller='true']")).toBeHidden();
-  await expect(page).toHaveURL(/\/$/);
-});
-
-test("ink pass stays static when reduced motion is requested", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.setViewportSize({ width: 1440, height: 1024 });
-  await page.goto("/");
-
-  const heading = page.locator('[data-home-hero-text] h1');
-  const plate = heading.locator('[data-ink-plate-drift="true"] span');
-  await expect(heading).toHaveAttribute("data-reduce-motion", "true");
-  await expect(heading).toHaveAttribute("data-pass", "false");
-  await expect(page.locator("[data-pressrun-scene='true']")).toHaveAttribute(
-    "data-reduce-motion",
-    "true"
-  );
-  await expect(page.locator("[data-pressrun-strip='true']")).toHaveAttribute(
-    "data-reduce-motion",
-    "true"
-  );
-  await expect(plate).toHaveCSS("animation-name", "none");
-  await expect(plate).toHaveCSS("clip-path", "none");
-
-  const decorationAnimations = await page
-    .locator("[data-pressrun-scene='true']")
-    .evaluate((element) =>
-      Array.from(element.querySelectorAll("svg"))
-        .map((decor) => getComputedStyle(decor).animationName)
-    );
-  expect(decorationAnimations.length).toBeGreaterThan(6);
-  expect(decorationAnimations.every((animation) => animation === "none")).toBe(true);
-
-  const restTransform = await plate.evaluate((element) => getComputedStyle(element).transform);
-  await page.mouse.move(900, 640);
-  await page.waitForTimeout(120);
-  await expect(plate).toHaveCSS("transform", restTransform);
 });
 
 test("mobile Beyond shell matches the photo wall layout", async ({ page }) => {

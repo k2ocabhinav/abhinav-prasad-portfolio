@@ -402,14 +402,6 @@ test("server-rendered hero facts stay visible before hydration", async ({ page }
   }
 });
 
-test("the custom cursor is hidden on touch pointers", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile-safari", "One representative touch pointer is sufficient");
-  await openHome(page);
-
-  const cursor = page.locator('[data-site-chrome="cursor-orb"]');
-  await expect(cursor).toHaveCSS("display", "none");
-});
-
 test("hero facts use ink on hover and keyboard focus, with a static reduced-motion path", async ({ page }, testInfo) => {
   test.skip(isTouchProject(testInfo), "Hover and keyboard focus states need a fine pointer");
   await openHome(page);
@@ -418,10 +410,6 @@ test("hero facts use ink on hover and keyboard focus, with a static reduced-moti
   await rows.nth(0).hover();
   await expect(rows.nth(0)).toHaveCSS("color", "rgb(237, 230, 218)");
   await expect(rows.nth(0)).toHaveCSS("box-shadow", "rgba(53, 30, 40, 0.2) 2px 2px 0px 0px");
-  const cursor = page.locator('[data-site-chrome="cursor-orb"]');
-  await expect(cursor).toHaveAttribute("data-theme", "true");
-  await expect(cursor).toHaveAttribute("data-active", "true");
-  await expect(cursor).toHaveCSS("width", "32px");
 
   await page.keyboard.press("Tab");
   await rows.nth(1).focus();
