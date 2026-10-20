@@ -56,18 +56,35 @@ export default function HeroTextColumn({
           </div>
         </nav>
 
-        <div className={styles.ctaGroup}>
-          {hero.ctas.map((cta) =>
-            cta.variant === "primary" ? (
-              <MagneticButton key={cta.label} href={cta.href} variant="glow">
-                {cta.label}
-              </MagneticButton>
-            ) : (
-              <a key={cta.label} href={cta.href} className={styles.secondaryCta}>
+        <div className={styles.ctaGroup} data-hero-ctas="true">
+          {hero.ctas.map((cta) => {
+            if (cta.variant === "primary") {
+              return (
+                <MagneticButton key={cta.label} href={cta.href} variant="glow">
+                  {cta.label}
+                </MagneticButton>
+              );
+            }
+
+            const isLinkedIn = cta.label === "LinkedIn";
+
+            return (
+              <a
+                key={cta.label}
+                href={cta.href}
+                className={styles.secondaryCta}
+                aria-label={
+                  isLinkedIn
+                    ? "Abhinav Prasad on LinkedIn (opens in a new tab)"
+                    : undefined
+                }
+                target={isLinkedIn ? "_blank" : undefined}
+                rel={isLinkedIn ? "noopener noreferrer" : undefined}
+              >
                 {cta.label}
               </a>
-            )
-          )}
+            );
+          })}
         </div>
       </div>
     </div>
