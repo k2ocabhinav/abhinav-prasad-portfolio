@@ -511,8 +511,9 @@ test("desktop handoff into the profile section stays seam-free", async ({ page }
 
   const about = page.locator("#about").first();
   await expect(about).toBeVisible();
-  const screenshot = await about.screenshot({
+  const screenshot = await page.screenshot({
     animations: "disabled",
+    scale: "css",
   });
 
   expect(screenshot).toMatchSnapshot("home-about-handoff-desktop.png", {
@@ -571,53 +572,74 @@ test("How I work uses a vertical sequence on mobile", async ({ page }) => {
   });
 });
 
-test("profile stage keeps premium composition on desktop", async ({ page }) => {
+test("About statement and services keep a static composition on desktop", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
-  const profileStage = page.locator("#about .spec-sheet");
+  const about = page.locator("#about");
   await page.evaluate(() => {
-    document.querySelector("#about .spec-sheet")?.scrollIntoView({ block: "center" });
+    document.querySelector("#about")?.scrollIntoView({ block: "start" });
   });
   await page.waitForTimeout(420);
-  await expect(profileStage).toBeVisible();
+  await expect(about.getByRole("heading", { level: 2, name: "What I do" })).toBeVisible();
+  await expect(about.locator("[data-scrub] p")).toHaveCount(4);
+  for (const name of ["Backend and APIs", "Full-stack products", "AI-assisted delivery"]) {
+    await expect(about.getByRole("heading", { level: 3, name })).toBeVisible();
+  }
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator('[data-site-chrome="brand"]')).toHaveCSS("opacity", "1");
-
-  const screenshot = await profileStage.screenshot({
-    animations: "disabled",
+  await page.addStyleTag({
+    content: '[data-site-chrome], .skip-link { display: none !important; }',
+  });
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   });
 
-  expect(screenshot).toMatchSnapshot("home-profile-stage-desktop.png", {
+  const screenshot = await page.screenshot({
+    animations: "disabled",
+    scale: "css",
+  });
+
+  expect(screenshot).toMatchSnapshot("home-about-reduced-desktop.png", {
     maxDiffPixelRatio: 0.025,
   });
 });
 
-test("profile stage keeps premium composition on mobile", async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+test("About statement and services keep a static composition on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
-  const profileStage = page.locator("#about .spec-sheet");
+  const about = page.locator("#about");
   await page.evaluate(() => {
-    document.querySelector("#about .spec-sheet")?.scrollIntoView({ block: "start" });
+    document.querySelector("#about")?.scrollIntoView({ block: "start" });
   });
   await page.waitForTimeout(420);
-  await expect(profileStage).toBeVisible();
+  await expect(about.getByRole("heading", { level: 2, name: "What I do" })).toBeVisible();
+  await expect(about.locator("[data-scrub] p")).toHaveCount(4);
+  for (const name of ["Backend and APIs", "Full-stack products", "AI-assisted delivery"]) {
+    await expect(about.getByRole("heading", { level: 3, name })).toBeVisible();
+  }
   await page.evaluate(() => document.fonts.ready);
   await page.addStyleTag({
-    content:
-      '[data-site-chrome="brand"], [data-site-chrome="navigation-toggle"] { display: none !important; }',
+    content: '[data-site-chrome], .skip-link { display: none !important; }',
+  });
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   });
 
-  const screenshot = await profileStage.screenshot({
+  const screenshot = await page.screenshot({
     animations: "disabled",
+    scale: "css",
   });
 
-  expect(screenshot).toMatchSnapshot("home-profile-stage-mobile.png", {
+  expect(screenshot).toMatchSnapshot("home-about-reduced-mobile.png", {
     maxDiffPixelRatio: 0.025,
   });
 });

@@ -106,18 +106,6 @@ async function scrollToElementTop(page: Page, selector: string) {
   await settleFrame(page);
 }
 
-function boxesIntersect(
-  first: { x: number; y: number; width: number; height: number },
-  second: { x: number; y: number; width: number; height: number }
-) {
-  return !(
-    first.x + first.width <= second.x ||
-    second.x + second.width <= first.x ||
-    first.y + first.height <= second.y ||
-    second.y + second.height <= first.y
-  );
-}
-
 async function expectMinimumTargetSize(locator: Locator, minimum = 44) {
   const count = await locator.count();
   expect(count).toBeGreaterThan(0);
@@ -199,7 +187,7 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
   await expect(experience.getByRole("heading", { level: 3, name: "Ostrum Tech Limited" })).toBeVisible();
-  await expect(experience.getByRole("heading", { level: 4, name: "Database Engineer" })).toBeVisible();
+  await expect(experience.getByText("Database Engineer", { exact: true })).toBeVisible();
   await expect(experience.getByText("May 2024 to present", { exact: true })).toBeVisible();
   await expect(experience.getByText(
     "Started as an intern in May 2024; full-time Database Engineer since September 2024.",
@@ -212,7 +200,11 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   await expect(summaryPoints.nth(0)).toContainText("MySQL stored procedures, functions, triggers, views, and schema changes");
   await expect(summaryPoints.nth(1)).toContainText("Design relational schemas and indexes");
   await expect(summaryPoints.nth(2)).toContainText("version-controlled Flyway migrations");
-  await expect(summaryPoints.nth(3)).toContainText("Designed and built Database Toolkit, a Python and Qt desktop app");
+  await expect(summaryPoints.nth(3).getByRole("heading", {
+    level: 4,
+    name: "Designed and built Database Toolkit,",
+  })).toBeVisible();
+  await expect(summaryPoints.nth(3).locator("p")).toContainText("a Python and Qt desktop app");
   await expect(summaryPoints.nth(4)).toContainText("Trace defects across API requests");
   await expect(summaryPoints.nth(5)).toContainText("AWS-integrated database delivery");
 
@@ -221,7 +213,7 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   await expect(disclosure).toHaveAttribute("aria-expanded", "false");
   await expect(disclosure).toHaveAttribute("aria-controls", "experience-full");
   await expect(panel).toHaveAttribute("aria-hidden", "true");
-  await expect(disclosure).toContainText("4 sections · 14 points");
+  await expect(disclosure).toContainText("4 sections, 14 points");
   expect(await panel.textContent()).toContain("Work with senior engineers and technical managers");
 
   await disclosure.click();
@@ -357,12 +349,20 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await expect(onMyOwn).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
   const whatIDo = page.locator("#about");
   await expect(whatIDo.getByRole("heading", { name: "What I do" })).toBeVisible();
+  const statement = whatIDo.locator("[data-scrub]");
+  await expect(statement.locator("p")).toHaveCount(4);
+  await expect(statement.locator("p").nth(2).locator("span").first()).toHaveCSS("font-style", "italic");
+  await expect(statement.getByText("I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface.", { exact: true })).toBeVisible();
   await expect(whatIDo.getByText("At Ostrum, I work on MySQL-backed API behaviour and versioned database releases.", { exact: true })).toBeVisible();
   await expect(whatIDo.getByText("On my own, I take products from the backend to the interface, with AI coding agents doing scoped work under my review.", { exact: true })).toBeVisible();
-  await expect(whatIDo.getByText("I'm looking for work where backend and data meet the product.", { exact: true })).toBeVisible();
-  await expect(whatIDo.getByRole("heading", { name: "Database workflows" })).toBeVisible();
-  await expect(whatIDo.getByRole("heading", { name: "Release engineering" })).toBeVisible();
-  await expect(whatIDo.getByRole("heading", { name: "Product engineering" })).toBeVisible();
+  await expect(whatIDo.getByText("Open to full-time roles, contract work and scoped projects.", { exact: true })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "Backend and APIs" })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "Full-stack products" })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "AI-assisted delivery" })).toBeVisible();
+  await expect(whatIDo).toContainText("Java and Spring Boot services, REST APIs, authentication, realtime messaging and the relational models underneath.");
+  await expect(whatIDo).toContainText("Claude Code");
+  await expect(whatIDo.locator("[data-service-glyph]")).toHaveCount(3);
+  await expect(whatIDo.locator("[data-service-number]")).toHaveText(["01", "02", "03"]);
   expect((await page.locator("body").innerText()).match(/forward deployed/gi)).toHaveLength(1);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
@@ -446,42 +446,48 @@ test("keeps Experience and Stack content inside the project viewport", async ({
   }
 });
 
-test("aligns the arc with the Experience heading without collisions", async ({ page }) => {
+test("keeps the sticky Experience rail clear of its reading column", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop layout check");
   await openHome(page, true);
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
 
   const title = experience.getByRole("heading", { level: 2 });
-  const arc = experience.locator('[data-riso-mark="arc"]');
-  const callout = experience.locator("[data-experience-callout]");
-  const dossier = experience.locator("article");
+  const rail = experience.locator("[data-experience-rail]");
+  const content = experience.locator("[data-experience-content]");
   await expect(title).toBeVisible();
-  await expect(arc).toBeVisible();
+  await expect(rail).toBeVisible();
+  await expect(content).toBeVisible();
 
-  const [titleBox, arcBox, calloutBox, dossierBox] = await Promise.all([
-    title.boundingBox(),
-    arc.boundingBox(),
-    callout.boundingBox(),
-    dossier.boundingBox(),
+  const [railBox, contentBox] = await Promise.all([
+    rail.boundingBox(),
+    content.boundingBox(),
   ]);
-  expect(titleBox).not.toBeNull();
-  expect(arcBox).not.toBeNull();
-  expect(calloutBox).not.toBeNull();
-  expect(dossierBox).not.toBeNull();
-
-  expect(Math.abs(titleBox!.y + titleBox!.height - (arcBox!.y + arcBox!.height))).toBeLessThanOrEqual(12);
-  expect(boxesIntersect(arcBox!, calloutBox!)).toBe(false);
-  expect(boxesIntersect(arcBox!, dossierBox!)).toBe(false);
+  expect(railBox).not.toBeNull();
+  expect(contentBox).not.toBeNull();
+  expect(railBox!.x + railBox!.width).toBeLessThanOrEqual(contentBox!.x);
+  await expect(experience.locator("[data-experience-progress]")).toBeVisible();
 });
 
-test("reduced motion renders the Experience mark and work content statically", async ({ page }) => {
+test("reduced motion renders Experience content and progress statically", async ({ page }) => {
   await openHome(page, true);
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
 
-  const arcPath = experience.locator('[data-riso-arc-path="true"]');
-  await expect(arcPath).toBeVisible();
-  await expect(arcPath).not.toHaveAttribute("style", /stroke-dashoffset|pathLength/);
+  const progressFill = experience.locator("[data-experience-progress-fill]");
+  await expect(progressFill).toBeVisible();
+  await expect.poll(
+    () => progressFill.evaluate((element) => getComputedStyle(element).transform)
+  ).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
+
+  const summaryHeadings = experience.locator(
+    '[data-experience-content] [aria-label="Role summary"] h4'
+  );
+  await expect(summaryHeadings).toHaveCount(6);
+  for (const heading of await summaryHeadings.all()) {
+    await expect(heading).toBeVisible();
+    await expect(heading).toHaveCSS("opacity", "1");
+  }
 
   const disclosure = experience.locator("#experience-full-toggle");
   await disclosure.click();
@@ -502,29 +508,29 @@ test("reduced motion renders the Experience mark and work content statically", a
   }
 });
 
-test("the scroll-linked arc draws during the Experience heading transit", async ({
+test("the Experience rail advances as the section moves through the viewport", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic motion probe is sufficient");
   await openHome(page);
 
-  const header = page.locator("[data-experience-header]");
-  const path = page.locator('#experience [data-riso-arc-path="true"]');
-  const headerTop = await header.evaluate(
+  const section = page.locator("#experience > div");
+  const fill = page.locator("[data-experience-progress-fill]");
+  const sectionTop = await section.evaluate(
     (element) => element.getBoundingClientRect().top + window.scrollY
   );
   const viewportHeight = page.viewportSize()!.height;
 
-  const drawStateAt = async (viewportFraction: number) => {
-    const targetY = Math.max(0, Math.round(headerTop - viewportHeight * viewportFraction));
+  const progressAt = async (viewportFraction: number) => {
+    const targetY = Math.max(0, Math.round(sectionTop - viewportHeight * viewportFraction));
     await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), targetY);
     await settleFrame(page);
-    return path.evaluate((element) => getComputedStyle(element).strokeDasharray);
+    return fill.evaluate((element) => getComputedStyle(element).transform);
   };
 
-  const early = await drawStateAt(0.81);
-  const middle = await drawStateAt(0.68);
-  const settled = await drawStateAt(0.52);
+  const early = await progressAt(0.85);
+  const middle = await progressAt(0.5);
+  const settled = await progressAt(0.15);
   expect(early).not.toBe(middle);
   expect(middle).not.toBe(settled);
 });
@@ -751,18 +757,18 @@ test("the contact email keeps one line at phone, tablet, and small desktop width
   }
 });
 
-test("the About heading keeps a readable measure on tablets", async ({ page }, testInfo) => {
+test("the About statement keeps its reading measure on tablets", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
 
   for (const width of [768, 900, 1023]) {
     await page.setViewportSize({ width, height: 1000 });
     await openHome(page, true);
-    const heading = page.locator("#about h2");
-    await heading.scrollIntoViewIfNeeded();
-    const state = await heading.evaluate((element) => {
+    const statement = page.locator("#about [data-scrub]");
+    await statement.scrollIntoViewIfNeeded();
+    const state = await statement.evaluate((element) => {
       const style = getComputedStyle(element);
       const probe = document.createElement("span");
-      probe.textContent = "0".repeat(20);
+      probe.textContent = "0".repeat(24);
       probe.style.cssText = [
         "position:absolute",
         "visibility:hidden",
@@ -777,15 +783,24 @@ test("the About heading keeps a readable measure on tablets", async ({ page }, t
       probe.remove();
       return {
         width: element.getBoundingClientRect().width,
-        twentyCharacters,
-        fontSize: Number.parseFloat(style.fontSize),
+        twentyFourCharacters: twentyCharacters,
       };
     });
 
-    expect(state.twentyCharacters).toBeGreaterThan(0);
-    expect(state.width, `heading measure at ${width}px`).toBeGreaterThanOrEqual(
-      state.twentyCharacters - 0.5
+    expect(state.twentyFourCharacters).toBeGreaterThan(0);
+    expect(state.width, `statement measure at ${width}px`).toBeGreaterThanOrEqual(
+      state.twentyFourCharacters - 0.5
     );
+  }
+});
+
+test("About and Experience stay within the viewport at package widths", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width sweep");
+
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 920 });
+    await openHome(page, true);
+    await expectSectionsWithinViewport(page, ["#about", "#experience"]);
   }
 });
 

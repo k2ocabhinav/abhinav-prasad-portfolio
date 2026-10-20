@@ -48,7 +48,7 @@ export const projectTripRoles = ["rider", "dispatch", "driver"];
 export const expectedContentCounts = Object.freeze({
   heroFacts: 2,
   hintCopyLines: 2,
-  profileProofLines: 3,
+  profileProofLines: 4,
   orchestrationSteps: 4,
   experienceSummaryPoints: 6,
   experienceWorkstreams: 4,
