@@ -1,9 +1,9 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useScroll, useTransform } from "motion/react";
+import { useMotionValue, useScroll, useTransform } from "motion/react";
 import type { MotionValue } from "motion/react";
-import { useRef } from "react";
+import { useRef, type RefObject } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import styles from "./RisoMark.module.css";
@@ -14,6 +14,10 @@ import styles from "./RisoMark.module.css";
 // so each mark draws/moves exactly with its section — purposeful, not floating.
 // Discipline: one mark per section, ≤80px total travel, linear scrub (Lenis
 // already smooths scroll — no springs on top). Reduced motion renders static.
+//
+// A caller that already owns a section-level progress value passes it in. That
+// path never creates a second local useScroll listener, so a mark inside a
+// scrubbed header does not duplicate the section's scroll tracking.
 // =============================================================================
 
 export type RisoMarkVariant = "arc" | "discs" | "bars" | "asterisk";
@@ -25,41 +29,39 @@ interface RisoMarkProps {
   placement?: "floating" | "inline";
 }
 
-export default function RisoMark({
+interface RisoMarkVisualProps extends RisoMarkProps {
+  progress: MotionValue<number>;
+  drawRange: [number, number];
+  rootRef?: RefObject<HTMLSpanElement | null>;
+}
+
+function RisoMarkVisual({
   variant,
   className,
   progress,
   placement = "floating",
-}: RisoMarkProps) {
+  drawRange,
+  rootRef,
+}: RisoMarkVisualProps) {
   const prefersReducedMotion = useReducedMotion();
-  const ref = useRef<HTMLSpanElement>(null);
-  const { scrollYProgress: localProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : ref,
-    offset: ["start end", "end start"],
-  });
-  const progressSource = progress ?? localProgress;
 
   // Shared scrubbed values (clamped; each variant uses what it needs).
-  const draw = useTransform(
-    progressSource,
-    progress ? [0.08, 0.58] : [0.15, 0.5],
-    [0, 1]
-  );
-  const dotOpacity = useTransform(progressSource, [0.04, 0.16], [0, 1]);
-  const dotScale = useTransform(progressSource, [0.04, 0.16], [0.55, 1]);
-  const rotate = useTransform(progressSource, [0, 1], [-20, 20]);
-  const driftLeft = useTransform(progressSource, [0, 1], [-8, 8]);
-  const driftRight = useTransform(progressSource, [0, 1], [8, -8]);
-  const barOne = useTransform(progressSource, [0.12, 0.38], [0, 1]);
-  const barTwo = useTransform(progressSource, [0.17, 0.43], [0, 1]);
-  const barThree = useTransform(progressSource, [0.22, 0.48], [0, 1]);
-  const barFour = useTransform(progressSource, [0.27, 0.53], [0, 1]);
+  const draw = useTransform(progress, drawRange, [0, 1]);
+  const dotOpacity = useTransform(progress, [0.04, 0.16], [0, 1]);
+  const dotScale = useTransform(progress, [0.04, 0.16], [0.55, 1]);
+  const rotate = useTransform(progress, [0, 1], [-20, 20]);
+  const driftLeft = useTransform(progress, [0, 1], [-8, 8]);
+  const driftRight = useTransform(progress, [0, 1], [8, -8]);
+  const barOne = useTransform(progress, [0.12, 0.38], [0, 1]);
+  const barTwo = useTransform(progress, [0.17, 0.43], [0, 1]);
+  const barThree = useTransform(progress, [0.22, 0.48], [0, 1]);
+  const barFour = useTransform(progress, [0.27, 0.53], [0, 1]);
 
   const staticMode = prefersReducedMotion;
 
   return (
     <span
-      ref={ref}
+      ref={rootRef}
       className={cn(styles.mark, placement === "inline" && styles.inline, className)}
       data-riso-mark={variant}
       data-riso-placement={placement}
@@ -152,4 +154,42 @@ export default function RisoMark({
       )}
     </span>
   );
+}
+
+function LocalRisoMark(props: RisoMarkProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const staticProgress = useMotionValue(0);
+
+  return prefersReducedMotion ? (
+    <RisoMarkVisual {...props} progress={staticProgress} drawRange={[0.15, 0.5]} />
+  ) : (
+    <ScrollingRisoMark {...props} />
+  );
+}
+
+function ScrollingRisoMark(props: RisoMarkProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  return (
+    <RisoMarkVisual
+      {...props}
+      progress={scrollYProgress}
+      drawRange={[0.15, 0.5]}
+      rootRef={ref}
+    />
+  );
+}
+
+export default function RisoMark({ progress, ...props }: RisoMarkProps) {
+  if (progress) {
+    return (
+      <RisoMarkVisual {...props} progress={progress} drawRange={[0.08, 0.58]} />
+    );
+  }
+
+  return <LocalRisoMark {...props} />;
 }

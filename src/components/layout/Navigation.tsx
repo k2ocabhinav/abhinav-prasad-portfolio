@@ -6,11 +6,10 @@ import { FileText, Mail, Menu, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
 import LinkedInMark from "@/components/ui/LinkedInMark";
-import { navigationItems, navSpyTargets } from "@/data/navigation";
+import { navigationItems } from "@/data/navigation";
 import { panelSpring } from "@/lib/animations";
 import { scrollToSection, cn } from "@/lib/utils";
-import { useLandingNavMode } from "@/hooks/useLandingNavMode";
-import { useScrollSpy } from "@/hooks/useScrollSpy";
+import { useSectionState } from "@/lib/sectionStore";
 import styles from "./Navigation.module.css";
 
 const DESKTOP_RAIL_QUERY =
@@ -35,9 +34,11 @@ export default function Navigation({
   linkedinHref,
   fullName,
 }: NavigationProps) {
-  const { activeId: activeSection, dark: overDarkField } =
-    useScrollSpy(navSpyTargets);
-  const navMode = useLandingNavMode(80);
+  const {
+    activeId: activeSection,
+    dark: overDarkField,
+    navMode,
+  } = useSectionState();
   const prefersReducedMotion = useReducedMotion();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
@@ -212,8 +213,8 @@ export default function Navigation({
               >
                 {item.label}
               </span>
-              <m.div
-                whileHover={{ scale: 1.5 }}
+              <div
+                data-rail-dot="true"
                 className={cn(
                   styles.railDot,
                   activeSection === item.id && styles.railDotActive
@@ -233,8 +234,8 @@ export default function Navigation({
               <span className={cn(styles.railLabel, styles.railLabelRoute)}>
                 {item.label}
               </span>
-              <m.div
-                whileHover={{ scale: 1.15 }}
+              <div
+                data-rail-dot="true"
                 className={cn(styles.railDot, styles.railDotRoute)}
               />
             </PortalEntryTrigger>

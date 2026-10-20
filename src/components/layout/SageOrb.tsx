@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { getSectionSnapshot, subscribeToSection } from "@/lib/sectionStore";
 import styles from "./SageOrb.module.css";
 
 const INTERACTIVE_SELECTOR =
@@ -23,6 +24,21 @@ export default function SageOrb() {
     let currentY = targetY;
     let frame = 0;
 
+    // The cursor turns pale over dark ink fields. It reads the shared section
+    // store for page-level dark bands (the marquee) and the pointer target for
+    // dark sub-surfaces (spec sheets) that sit on paper sections.
+    let sectionIsDark = getSectionSnapshot().dark;
+    let pointerOnDarkSurface = false;
+
+    const applyTheme = () => {
+      cursor.dataset.theme = String(sectionIsDark || pointerOnDarkSurface);
+    };
+
+    const unsubscribe = subscribeToSection(() => {
+      sectionIsDark = getSectionSnapshot().dark;
+      applyTheme();
+    });
+
     const animate = () => {
       frame = 0;
       if (reducedMotion.matches) {
@@ -33,16 +49,20 @@ export default function SageOrb() {
         currentY += (targetY - currentY) * 0.24;
       }
 
+      const settled =
+        Math.abs(targetX - currentX) <= 0.1 && Math.abs(targetY - currentY) <= 0.1;
+
       cursor.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0) translate(-50%, -50%)`;
-      if (
-        !reducedMotion.matches &&
-        (Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1)
-      ) {
-        frame = window.requestAnimationFrame(animate);
+      if (reducedMotion.matches || settled) {
+        cursor.dataset.moving = "false";
+        return;
       }
+
+      frame = window.requestAnimationFrame(animate);
     };
 
     const schedule = () => {
+      cursor.dataset.moving = "true";
       if (frame === 0) frame = window.requestAnimationFrame(animate);
     };
 
@@ -56,13 +76,16 @@ export default function SageOrb() {
       cursor.dataset.active = String(
         element?.closest(INTERACTIVE_SELECTOR) !== null && element !== null
       );
-      cursor.dataset.theme = String(element?.closest(DARK_SELECTOR) !== null && element !== null);
+      pointerOnDarkSurface =
+        element?.closest(DARK_SELECTOR) !== null && element !== null;
+      applyTheme();
       schedule();
     };
 
     const hide = () => {
       cursor.dataset.visible = "false";
       cursor.dataset.active = "false";
+      cursor.dataset.moving = "false";
     };
 
     const handlePointerLeave = (event: PointerEvent) => {
@@ -96,6 +119,7 @@ export default function SageOrb() {
     finePointer.addEventListener("change", handlePointerCapabilityChange);
 
     return () => {
+      unsubscribe();
       disable();
       finePointer.removeEventListener("change", handlePointerCapabilityChange);
     };
@@ -109,6 +133,7 @@ export default function SageOrb() {
       data-visible="false"
       data-active="false"
       data-theme="false"
+      data-moving="false"
       aria-hidden="true"
     />
   );

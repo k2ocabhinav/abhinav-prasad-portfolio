@@ -16,8 +16,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .canvas {
-    /* Near-instant, not instant — a hard snap reads as broken; a long fade
-       can still bother vestibular users. */
-    transition-duration: 0.15s;
+    /* Opt into the short fade allowed by the global reduced-motion contract
+       (globals.css): a hard snap reads as broken, a long fade can still
+       bother vestibular users. */
+    --reduced-motion-duration: 150ms;
   }
 }

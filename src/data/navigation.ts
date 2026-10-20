@@ -1,4 +1,4 @@
-import type { NavigationItem, NavSection } from "@/types";
+import type { NavigationItem } from "@/types";
 
 export const navigationItems: NavigationItem[] = [
   { kind: "section", id: "hero", label: "Hero" },
@@ -8,10 +8,6 @@ export const navigationItems: NavigationItem[] = [
   { kind: "section", id: "stack", label: "Stack" },
   { kind: "section", id: "contact", label: "Contact" },
 ];
-
-export const sections: NavSection[] = navigationItems.filter(
-  (item): item is NavSection => item.kind === "section"
-);
 
 // =============================================================================
 // Scroll-spy targets

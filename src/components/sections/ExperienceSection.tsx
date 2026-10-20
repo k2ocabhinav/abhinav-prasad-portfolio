@@ -221,7 +221,11 @@ export default function ExperienceSection({
   return (
     <SectionWrapper id="experience" tone={tone} className={styles.experienceSection}>
       <div className={styles.experienceRoot}>
-        <header ref={headerRef} className={styles.sectionHeader}>
+        <header
+          ref={headerRef}
+          className={styles.sectionHeader}
+          data-experience-header="true"
+        >
           <div className={styles.titleCluster}>
             <h2 className={styles.heading}>
               <FlipRevealText
@@ -240,7 +244,7 @@ export default function ExperienceSection({
               className={styles.experienceArc}
             />
           </div>
-          <p className={styles.callout}>
+          <p className={styles.callout} data-experience-callout="true">
             The role spans stored programs, schema design, release tooling and cloud-supported delivery.
           </p>
         </header>

@@ -1,11 +1,11 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useLandingNavMode } from "@/hooks/useLandingNavMode";
+import { useSectionState } from "@/lib/sectionStore";
 import styles from "./BrandMark.module.css";
 
 export default function BrandMark() {
-  const navMode = useLandingNavMode(120);
+  const { navMode } = useSectionState();
   const isVisible = navMode === "glass";
 
   return (
