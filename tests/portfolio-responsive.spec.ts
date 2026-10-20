@@ -853,6 +853,9 @@ test("Velo dispatch screens show the whole desk on phones", async ({ page }, tes
     .locator('img[alt="Velo Business admin dispatch screen with a live fleet map."]')
     .first();
   await image.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth))
+    .toBeGreaterThan(0);
   const state = await image.evaluate((element) => {
     const rect = element.getBoundingClientRect();
     const imageElement = element as HTMLImageElement;

@@ -5,15 +5,9 @@ import type {
   PortfolioProfile,
   ProjectDetail,
 } from "@/types";
-import type { getHomeContent } from "@/lib/portfolioContent";
 import { absoluteUrl } from "@/lib/siteConfig";
 
-type HomeContent = ReturnType<typeof getHomeContent>;
 type JsonLdNode = Record<string, unknown>;
-
-const PUBLIC_PROJECT_REPOSITORIES: Record<string, string> = {
-  "portfolio-platform": "https://github.com/k2ocabhinav/abhinav-prasad-portfolio",
-};
 
 export interface PortfolioJsonLd {
   "@context": "https://schema.org";
@@ -70,8 +64,10 @@ function buildPersonNode(
   return person;
 }
 
-export function buildPortfolioJsonLd(content: HomeContent): PortfolioJsonLd {
-  const { profile, chronicleEntries } = content;
+export function buildPortfolioJsonLd(
+  profile: PortfolioProfile,
+  chronicleEntries: ChronicleEntry[]
+): PortfolioJsonLd {
   const { personal } = profile;
   const websiteId = `${absoluteUrl("/")}#website`;
   const profilePageId = `${absoluteUrl("/")}#profile-page`;
@@ -85,7 +81,7 @@ export function buildPortfolioJsonLd(content: HomeContent): PortfolioJsonLd {
         "@id": websiteId,
         url: absoluteUrl("/"),
         name: `${personal.fullName}'s engineering portfolio`,
-        description: profile.seo?.description ?? personal.subtitle,
+        description: profile.seo.description,
         inLanguage: "en",
         publisher: { "@id": personId },
       },
@@ -93,8 +89,8 @@ export function buildPortfolioJsonLd(content: HomeContent): PortfolioJsonLd {
         "@type": "ProfilePage",
         "@id": profilePageId,
         url: absoluteUrl("/"),
-        name: profile.seo?.title ?? `${personal.fullName}'s engineering portfolio`,
-        description: profile.seo?.description ?? personal.subtitle,
+        name: profile.seo.title,
+        description: profile.seo.description,
         isPartOf: { "@id": websiteId },
         mainEntity: { "@id": personId },
         inLanguage: "en",
@@ -119,7 +115,7 @@ export function buildProjectJsonLd(
     (reference) =>
       reference.href?.startsWith("https://github.com/")
   )?.href;
-  const repository = referencedRepository ?? PUBLIC_PROJECT_REPOSITORIES[detail.slug];
+  const repository = referencedRepository;
   const project: JsonLdNode = {
     "@type": repository ? ["CreativeWork", "SoftwareSourceCode"] : "CreativeWork",
     "@id": projectId,
@@ -160,11 +156,7 @@ export function buildProjectJsonLd(
 }
 
 export function projectSeoTitle(detail: ProjectDetail): string {
-  const titles: Record<string, string> = {
-    velo: "Velo, a white-label dispatch prototype",
-    "portfolio-platform": "Interactive engineering portfolio and content platform",
-  };
-  return titles[detail.slug] ?? detail.title.replace(/\s*\u2014\s*/g, ", ");
+  return detail.seoTitle;
 }
 
 export function serializeJsonLd(value: PortfolioJsonLd): string {

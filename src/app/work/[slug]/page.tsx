@@ -29,10 +29,7 @@ export async function generateMetadata({ params }: WorkDetailPageProps): Promise
   }
 
   const title = projectSeoTitle(detail);
-  const roleLine = project.landingStory.proofBeats.find((beat) => beat.label === "My Role")?.short;
-  const description = detail.slug === "portfolio-platform" && roleLine
-    ? `${detail.subtitle} ${roleLine}`
-    : detail.subtitle;
+  const description = detail.seoDescription;
   const imageUrl = absoluteUrl(detail.heroImage.src);
   const canonicalUrl = absoluteUrl(`/work/${detail.slug}`);
 
@@ -59,7 +56,7 @@ export async function generateMetadata({ params }: WorkDetailPageProps): Promise
     twitter: {
       card: "summary_large_image",
       title,
-      description: detail.subtitle,
+      description,
       images: [{ url: imageUrl, alt: detail.heroImage.alt }],
     },
   };
@@ -91,7 +88,6 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
       <ProjectDetailPage
         detail={detail}
         personal={profile.personal}
-        proofBeats={project.landingStory.proofBeats}
       />
       <ContactRail
         resumeHref={profile.personal.resumeHref}
