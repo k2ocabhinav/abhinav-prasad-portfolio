@@ -97,6 +97,14 @@ export interface ProjectVisual {
   caption: string;
 }
 
+/** Share image with verified intrinsic dimensions for Open Graph metadata. */
+export interface ProjectOgImage {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
 export interface ProjectTechBucket {
   label: string;
   items: string[];
@@ -292,6 +300,7 @@ export interface ProjectDetail {
   roleLine?: string;
   hardPart?: { label: string; copy: string };
   heroImage: ProjectVisual;
+  ogImage?: ProjectOgImage;
   gallery: ProjectVisual[];
   architectureSections: ProjectDetailSection[];
   stackBuckets: ProjectTechBucket[];

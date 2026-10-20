@@ -492,7 +492,13 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
       exact: true,
     })
   ).toBeVisible();
-  await expect(page.locator('section[aria-labelledby="gallery-title"]')).toHaveCount(0);
+  const gallery = page.locator('section[aria-labelledby="gallery-title"]');
+  await expect(gallery).toBeVisible();
+  const galleryImages = gallery.locator("img");
+  await expect(galleryImages).toHaveCount(3);
+  for (const image of await galleryImages.all()) {
+    await expect(image).toHaveAttribute("alt", /\S+/);
+  }
 
   await page.goto("/work/velo");
   await expect(
