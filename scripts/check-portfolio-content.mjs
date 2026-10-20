@@ -151,11 +151,17 @@ function unique(values, label) {
 }
 
 function validatePublicAsset(src, filePath) {
-  if (!src || src.startsWith("http")) return;
-  if (!src.startsWith("/")) {
-    fail(filePath, `asset path "${src}" must start with "/" or "https://"`);
+  if (!src) return;
+  // Images are served from public/ only; next.config.ts declares no
+  // remotePatterns, so a remote URL would render broken.
+  if (!src.startsWith("/") || src.startsWith("//")) {
+    fail(filePath, `asset path "${src}" must be a local path starting with "/"`);
   }
-  const diskPath = path.join(publicRoot, src.slice(1));
+  const diskPath = path.resolve(publicRoot, src.slice(1));
+  const relativePath = path.relative(publicRoot, diskPath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    fail(filePath, `asset path "${src}" must stay inside public/`);
+  }
   if (!fs.existsSync(diskPath)) {
     fail(filePath, `asset not found: public${src}`);
   }
@@ -254,6 +260,15 @@ function validateProfile() {
     stringValue(personal, key, filePath)
   );
   validatePublicAsset(stringValue(personal, "resumeHref", filePath), filePath);
+  validatePublicAsset(stringValue(personal, "heroPhoto", filePath), filePath);
+  objectArray(personal, "heroSlides", filePath).forEach((slide) => {
+    validatePublicAsset(stringValue(slide, "image", filePath), filePath);
+    stringValue(slide, "alt", filePath);
+  });
+  const location = objectValue(personal, "location", filePath);
+  ["city", "country", "countryCode", "timezone"].forEach((key) =>
+    stringValue(location, key, filePath)
+  );
   objectArray(personal, "socials", filePath).forEach((social) => {
     enumValue(social, "platform", new Set(["github", "linkedin", "email"]), filePath);
     stringValue(social, "label", filePath);
