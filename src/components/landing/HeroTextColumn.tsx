@@ -1,4 +1,3 @@
-import AnimatedName from "./AnimatedName";
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { LandingHeroContent } from "@/types";
 import styles from "./HeroTextColumn.module.css";
@@ -12,31 +11,19 @@ import styles from "./HeroTextColumn.module.css";
 
 interface HeroTextColumnProps {
   hero: LandingHeroContent;
-  name: string;
   fullName: string;
   linkedinHref: string | undefined;
 }
 
 export default function HeroTextColumn({
   hero,
-  name,
   fullName,
   linkedinHref,
 }: HeroTextColumnProps) {
   return (
     <div className={styles.textColumn} data-home-hero-text="true">
-      <AnimatedName
-        name={name}
-        portalTrigger={{
-          href: "/beyond-terminal",
-          source: "easter-egg",
-          variant: "portal-bloom",
-          skin: "beyond-pastel-mist",
-        }}
-      />
-
       <div className={styles.stack}>
-        <p className={styles.identity}>{hero.identity}</p>
+        <p className={styles.identity} data-hero-identity="true">{hero.identity}</p>
         <p className={styles.value}>{hero.summary}</p>
 
         <nav

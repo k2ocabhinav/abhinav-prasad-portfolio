@@ -10,7 +10,7 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   const html = await response.text();
 
   expect(html).toContain("Abhinav Prasad");
-  expect(html).toContain("Software engineer");
+  expect(html).toContain("Full-stack engineer");
   expect(html).toContain("I build products end to end, from the first conversation to release.");
   expect(html).toContain("Database Engineer, Ostrum Tech Limited");
   expect(html).toContain("Started as an intern in May 2024; full-time Database Engineer since September 2024.");
@@ -54,7 +54,7 @@ test("serves recruiter-readable content and structured data in the initial HTML"
 
   const title = await page.title();
   const description = await page.locator('meta[name="description"]').getAttribute("content");
-  expect(title).toBe("Abhinav Prasad | Software engineer");
+  expect(title).toBe("Abhinav Prasad | Full-stack engineer");
   expect(title.length).toBeLessThanOrEqual(60);
   expect(description).toBe("I build products end to end, from first conversation to release. At work: Database Engineer, Ostrum Tech Limited. On my own: Velo and AI-agent workflows.");
   expect(description).toMatch(/Database Engineer, Ostrum Tech Limited/);
@@ -84,6 +84,10 @@ test("keeps local and preview surfaces out of search indexes", async ({ page, re
 test("keeps each home section readable without JavaScript", async ({ page }) => {
   await page.route("**/_next/static/**/*.js", (route) => route.abort());
   await page.goto("/");
+
+  await expect(page.locator('[data-home-hero-heading="true"]')).toHaveAttribute("aria-label", "Abhinav");
+  await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
+  await expect(page.locator("[data-product-stack]").getByRole("link", { name: "Backend" })).toHaveAttribute("href", "#about");
 
   const sections = page.locator("main section");
   const sectionCount = await sections.count();
@@ -209,6 +213,7 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   expect(llmsResponse.headers()["content-type"]).toContain("text/plain");
   const llms = await llmsResponse.text();
   expect(llms).toContain("# Abhinav Prasad");
+  // The LLM summary still uses personal.title; RV1 changes hero.identity and seo.title only.
   expect(llms).toContain("Software engineer");
   expect(llms).toContain("At work: Database Engineer, Ostrum Tech Limited.");
   expect(llms).toContain("On my own: Velo, this portfolio, and AI-agent workflows.");

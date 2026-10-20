@@ -1,63 +1,47 @@
-/* =============================================================================
-   HeroTextColumn — the hero's text stack.
-   The wordmark fills its column; the stack below is optically aligned to the
-   wordmark's left edge through the container-query inset, so the masthead and
-   the copy share one margin at every width.
-   ============================================================================= */
-
 .textColumn {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  max-width: 760px;
-  container-type: inline-size;
+  max-width: 490px;
 }
 
-/* The wordmark sits about 1.2cqw inside its column (see AnimatedName:
-   31cqw of a 3.2em-wide word). */
 .stack {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(0.5rem, 1.1vh, 0.85rem);
+  gap: clamp(0.55rem, 1.25vh, 0.9rem);
   width: 100%;
-  max-width: 620px;
-  margin-top: clamp(0.4rem, 1.4vh, 1rem);
 }
 
 .identity {
   margin: 0;
-  font-family: var(--font-display);
+  color: #6A2135;
+  font-family: var(--font-headline);
+  font-size: clamp(2rem, 3vw, 2.75rem);
   font-style: italic;
-  font-weight: 550;
-  font-size: clamp(1.15rem, 1.7vw, 1.6rem);
-  line-height: 1.2;
-  color: var(--color-lead);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
 }
 
-/* Newsreader standfirst — the one value sentence. */
 .value {
+  max-width: 36ch;
   margin: 0;
-  font-family: var(--font-headline);
-  font-weight: 420;
-  font-size: clamp(1.0625rem, 1.15vw, 1.25rem);
-  line-height: 1.55;
-  color: rgba(11, 16, 17, 0.82);
-  max-width: 48ch;
+  color: rgba(11, 16, 17, 0.9);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(1.0625rem, 1.35vw, 1.25rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
 }
 
 .factSheet {
   width: 100%;
-  max-width: 44rem;
-  margin-top: 0.15rem;
-}
-
-.factRule {
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: var(--color-hairline);
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(11, 16, 17, 0.22);
 }
 
 .factList {
@@ -69,50 +53,56 @@
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: minmax(6.5rem, 0.34fr) minmax(0, 1fr);
+  grid-template-columns: minmax(5rem, 0.34fr) minmax(0, 1fr);
   align-items: center;
   gap: 0.75rem;
-  min-height: 3.25rem;
-  padding: 0.55rem 0.7rem;
-  border-bottom: 1px solid var(--color-hairline);
-  color: var(--color-ink, #0B1011);
+  min-height: 3.5rem;
+  padding: 0.55rem 0.15rem;
+  border-bottom: 1px solid rgba(11, 16, 17, 0.22);
+  color: #0B1011;
+  text-decoration: none;
   transition:
-    color 160ms var(--motion-ease-out),
-    transform 160ms var(--motion-ease-out),
-    box-shadow 160ms var(--motion-ease-out);
+    color 180ms var(--motion-ease-out),
+    box-shadow 180ms var(--motion-ease-out);
 }
 
 .factLink::before {
   position: absolute;
   z-index: -1;
-  inset: 0;
-  background: var(--color-burgundy, #6A2135);
+  inset: 0 -0.15rem;
+  background: #6A2135;
   content: "";
   pointer-events: none;
   transform: scaleX(0);
   transform-origin: left center;
-  transition: transform 260ms var(--motion-ease-out);
+  transition: transform 240ms var(--motion-ease-out);
+}
+
+.factLabel,
+.factValue {
+  position: relative;
+  z-index: 1;
 }
 
 .factLabel {
+  color: #6A2135;
   font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.35;
-  color: var(--color-lead, #6A2135);
 }
 
 .factValue {
   min-width: 0;
   font-family: var(--font-body);
-  font-size: clamp(0.875rem, 0.95vw, 1rem);
+  font-size: clamp(0.8125rem, 0.92vw, 0.95rem);
   line-height: 1.4;
 }
 
 .factLink:hover,
 .factLink:focus-visible {
-  color: var(--color-on-lead, #EDE6DA);
-  box-shadow: 2px 2px 0 rgba(53, 30, 40, 0.2);
+  color: #EDE6DA;
+  box-shadow: 2px 2px 0 rgba(53, 30, 40, 0.22);
 }
 
 .factLink:hover::before,
@@ -126,7 +116,7 @@
 }
 
 .factLink:focus-visible {
-  outline: 2px solid var(--color-ink, #0B1011);
+  outline: 2px solid #0B1011;
   outline-offset: 3px;
 }
 
@@ -136,131 +126,166 @@
   transition-duration: 80ms;
 }
 
-.factLabel,
-.factValue {
-  position: relative;
-  z-index: 1;
-}
-
 .ctaGroup {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.25rem;
-  margin-top: clamp(0.5rem, 1.4vh, 0.9rem);
+  gap: clamp(0.75rem, 1.7vw, 1.5rem);
+  margin-top: 1.25rem;
+}
+
+.primaryCta {
+  flex: 0 0 auto;
+  min-height: 3rem;
+  padding: 0.8rem 1.25rem;
+  border-radius: 0;
+  background: #6A2135;
+  border-color: #6A2135;
+  box-shadow: 3px 3px 0 #351E28;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: none;
+}
+
+.primaryCta:hover {
+  translate: 2px 2px;
+  box-shadow: 1px 1px 0 #351E28;
+}
+
+.primaryCta:active {
+  translate: 3px 3px;
+  box-shadow: none;
 }
 
 .secondaryCtas {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-}
-
-.primaryCta {
-  flex: 0 0 auto;
+  gap: clamp(0.8rem, 1.7vw, 1.5rem);
 }
 
 .secondaryCta {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
+  border-bottom: 1px solid rgba(11, 16, 17, 0.3);
+  color: #63605A;
   font-family: var(--font-label);
-  font-size: 0.78rem;
-  font-weight: 400;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-secondary-text);
-  border-bottom: 1px solid var(--color-hairline);
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-decoration: none;
   transition:
-    color 180ms var(--motion-ease-out),
-    border-color 180ms var(--motion-ease-out);
+    color 160ms var(--motion-ease-out),
+    border-color 160ms var(--motion-ease-out);
 }
 
-.secondaryCta:hover {
-  color: var(--color-lead);
-  border-color: var(--color-lead);
+.secondaryCta:hover,
+.secondaryCta:focus-visible {
+  border-color: #6A2135;
+  color: #6A2135;
 }
 
 .secondaryCta:focus-visible {
-  color: var(--color-lead);
-  border-color: var(--color-lead);
-  outline: 2px solid var(--color-lead);
+  outline: 2px solid #6A2135;
   outline-offset: 4px;
 }
 
-@media (max-width: 1279px) {
-  .value {
-    max-width: 46ch;
+@media (min-width: 768px) and (max-width: 1023px) {
+  .textColumn {
+    max-width: 620px;
+    margin-top: -1.2rem;
   }
 
-  .factSheet {
-    text-align: left;
-  }
-}
-
-/* Short viewports: tighter leading keeps the dispatch board in the fold. */
-@media (max-width: 767px) {
   .stack {
-    gap: 0.45rem;
-    max-width: 100%;
+    gap: 0.7rem;
   }
 
   .identity {
-    font-size: 1.1rem;
+    font-size: clamp(2.2rem, 4vw, 2.75rem);
   }
 
   .value {
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-
-  .secondaryCta {
-    font-size: 1rem;
-  }
-
-  .ctaGroup {
-    gap: 1rem;
-  }
-
-  .secondaryCtas {
-    gap: 1rem;
+    max-width: 42ch;
   }
 }
 
-@media (max-width: 520px) {
-  .ctaGroup,
-  .secondaryCtas {
-    gap: 0.55rem;
+@media (max-width: 767px) {
+  .textColumn {
+    max-width: none;
   }
 
-  .ctaGroup .primaryCta {
-    padding: 1.25rem 4rem;
-    font-size: 0.875rem;
-    letter-spacing: 0.08em;
+  .stack {
+    gap: 0.45rem;
   }
 
-  .secondaryCta {
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-  }
-}
-
-@media (max-width: 480px) {
-  .ctaGroup {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.35rem;
+  .identity {
+    font-size: clamp(1.85rem, 8vw, 2.1rem);
+    line-height: 1;
   }
 
-  .secondaryCtas {
-    gap: 1rem;
+  .value {
+    max-width: 37ch;
+    font-size: 1.0625rem;
+    line-height: 1.4;
   }
-}
 
-@media (max-width: 26rem) {
+  .factSheet {
+    margin-top: 0.75rem;
+  }
+
   .factLink {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.22rem;
-    padding-inline: 0.55rem;
+    grid-template-columns: minmax(4.3rem, 0.29fr) minmax(0, 1fr);
+    gap: 0.6rem;
+    min-height: 3.35rem;
+    padding-block: 0.5rem;
+  }
+
+  .factValue {
+    font-size: 0.84rem;
+  }
+
+  .ctaGroup {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.5rem 0.75rem;
+    width: 100%;
+    margin-top: 0.95rem;
+  }
+
+  .primaryCta {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 3.25rem;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+  }
+
+  .secondaryCtas {
+    display: contents;
+  }
+
+  .secondaryCta {
+    justify-content: center;
+    min-height: 2.75rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (max-width: 350px) {
+  .factLink {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: 0.45rem;
+  }
+
+  .factValue {
+    font-size: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .factLink,
+  .factLink::before,
+  .secondaryCta {
+    transition: none;
   }
 }

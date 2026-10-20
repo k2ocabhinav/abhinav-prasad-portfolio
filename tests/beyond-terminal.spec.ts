@@ -99,8 +99,8 @@ test("home hero keeps the full name inside the desktop viewport", async ({ page 
   const metrics = await expectHeroNameToFit(page);
 
   const wordmarkWidthRatio = metrics.wordmarkWidth / metrics.viewportWidth;
-  expect(wordmarkWidthRatio).toBeGreaterThanOrEqual(0.5);
-  expect(wordmarkWidthRatio).toBeLessThanOrEqual(0.56);
+  expect(wordmarkWidthRatio).toBeGreaterThanOrEqual(0.86);
+  expect(wordmarkWidthRatio).toBeLessThanOrEqual(0.96);
 });
 
 test("home hero keeps the full name inside the mobile viewport", async ({ page }) => {
@@ -108,6 +108,80 @@ test("home hero keeps the full name inside the mobile viewport", async ({ page }
   await page.goto("/");
 
   await expectHeroNameToFit(page);
+});
+
+test("hero keeps its order and layers clear at the approved widths", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const widthState = await page.evaluate(() => ({
+      document: document.documentElement.scrollWidth,
+      viewport: window.innerWidth,
+    }));
+    expect(widthState.document).toBeLessThanOrEqual(widthState.viewport);
+
+    const wordmark = page.locator('[data-home-hero-wordmark="true"]');
+    const identity = page.locator('[data-hero-identity="true"]');
+    const actions = page.locator("[data-hero-ctas]");
+    const stack = page.locator("[data-product-stack]");
+    const stage = page.locator("[data-stack-stage]");
+    const [wordmarkBox, identityBox, actionsBox, stackBox] = await Promise.all([
+      wordmark.boundingBox(),
+      identity.boundingBox(),
+      actions.boundingBox(),
+      stack.boundingBox(),
+    ]);
+    expect(wordmarkBox).not.toBeNull();
+    expect(identityBox).not.toBeNull();
+    expect(actionsBox).not.toBeNull();
+    expect(stackBox).not.toBeNull();
+    await expect(stage).toHaveAttribute("data-static", width <= 767 ? "true" : "false");
+
+    if (width <= 767) {
+      expect(wordmarkBox!.y).toBeLessThan(identityBox!.y);
+      expect(stackBox!.y).toBeGreaterThan(actionsBox!.y + actionsBox!.height);
+      const targets = stack.getByRole("link");
+      for (const target of await targets.all()) {
+        const box = await target.boundingBox();
+        expect(box).not.toBeNull();
+        expect(box!.height).toBeGreaterThanOrEqual(44);
+      }
+    } else if (width <= 1023) {
+      expect(stackBox!.y).toBeLessThan(identityBox!.y);
+    } else {
+      const separated =
+        identityBox!.x + identityBox!.width <= stackBox!.x ||
+        stackBox!.x + stackBox!.width <= identityBox!.x;
+      expect(separated).toBe(true);
+    }
+  }
+});
+
+test("stack layer links have destinations and a keyboard focus ring", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/");
+
+  const interfaceLink = page.locator("[data-product-stack]").getByRole("link", {
+    name: "Interface",
+  });
+  await expect(interfaceLink).toHaveAttribute("href", "#work");
+  await interfaceLink.focus();
+  await expect(interfaceLink).toHaveCSS("outline-style", "solid");
+});
+
+test("desktop stack tilts on pointer movement", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  const stage = page.locator("[data-stack-stage]");
+  const tilt = page.locator("[data-stack-tilt]");
+  const bounds = await stage.boundingBox();
+  expect(bounds).not.toBeNull();
+  const before = await tilt.evaluate((element) => getComputedStyle(element).transform);
+  await page.mouse.move(bounds!.x + bounds!.width * 0.2, bounds!.y + bounds!.height * 0.2);
+  await expect.poll(() => tilt.evaluate((element) => getComputedStyle(element).transform)).not.toBe(before);
 });
 
 test("wordmark and email action keep phone gutters from 320 to 430 pixels", async ({ page }) => {
@@ -136,7 +210,7 @@ test("wordmark and email action keep phone gutters from 320 to 430 pixels", asyn
     expect(viewWork).not.toBeNull();
     expect(linkedin).not.toBeNull();
     expect(email!.x + email!.width).toBeLessThanOrEqual(width - 20);
-    expect(viewWork!.height).toBeGreaterThanOrEqual(58);
+    expect(viewWork!.height).toBeGreaterThanOrEqual(52);
     expect(viewWork!.width).toBeGreaterThanOrEqual(200);
     expect(viewWork!.y).toBeLessThan(email!.y);
     expect(Math.abs(email!.y - linkedin!.y)).toBeLessThan(1);
@@ -150,14 +224,14 @@ test("server-rendered hero paints both ink layers before hydration", async ({ pa
     await document.fonts.ready;
   });
 
-  const heading = page.locator('[data-home-hero-text] h1');
-  const plate = heading.locator('[data-ink-plate-drift="true"] span');
+  const heading = page.locator('[data-home-hero-heading="true"]');
+  const plate = heading.locator('[data-ink-plate-drift="true"]');
 
   await expect(page.locator('[data-home-hero-wordmark="true"]')).toBeVisible();
   await expect(plate).toBeVisible();
   await expect(plate).toHaveCSS("clip-path", "none");
   await expect(plate).toHaveCSS("opacity", "1");
-  await expect(page.getByText("Software engineer", { exact: true })).toBeVisible();
+  await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(
     page.getByText(
       "I build products end to end, from the first conversation to release.",
@@ -201,7 +275,7 @@ test("LinkedIn is a quiet external hero link beside the email action", async ({ 
   expect(workBox).not.toBeNull();
   expect(emailBox).not.toBeNull();
   expect(linkedinBox).not.toBeNull();
-  expect(workBox!.height).toBeGreaterThanOrEqual(58);
+  expect(workBox!.height).toBeGreaterThanOrEqual(44);
   expect(workBox!.width).toBeGreaterThanOrEqual(200);
   expect(workBox!.y).toBeLessThan(emailBox!.y);
   expect(Math.abs(emailBox!.y - linkedinBox!.y)).toBeLessThan(1);
@@ -239,13 +313,14 @@ test("home page does not expose an obvious Beyond CTA", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Open Beyond", exact: true })).toHaveCount(0);
 });
 
-test("home hero paints one static wordmark over an aria-hidden ink plate", async ({
+test("home hero exposes one wordmark over a clean aria-hidden ink plate", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
 
   const wordmark = page.locator('[data-home-hero-wordmark="true"]');
-  const heading = page.locator('[data-home-hero-text] h1');
+  const heading = page.locator('[data-home-hero-heading="true"]');
   const plate = heading.locator('[data-ink-plate-drift="true"]');
 
   await expect(wordmark).toBeVisible();
@@ -275,7 +350,7 @@ test("hero keeps its identity and work links without the board or proof band", a
   const hero = page.locator("#hero");
 
   await expect(hero.getByRole("heading", { name: "Abhinav" })).toBeVisible();
-  await expect(hero.getByText("Software engineer", { exact: true })).toBeVisible();
+  await expect(hero.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(
     hero.getByText("I build products end to end, from the first conversation to release.", { exact: true })
   ).toBeVisible();
@@ -293,7 +368,7 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   await page.goto("/");
   await page.waitForTimeout(150);
 
-  const staticRole = page.getByText("Software engineer", { exact: true });
+  const staticRole = page.locator('[data-hero-identity="true"]');
   await expect(staticRole).toBeVisible();
   await page.waitForTimeout(2_800);
   await expect(staticRole).toBeVisible();
@@ -309,14 +384,20 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
     "Verify",
   ]);
 
-  const plateState = await page.locator('[data-home-hero-text] h1 [aria-hidden="true"] span').evaluate((element) => ({
+  const plateState = await page.locator('[data-home-hero-heading="true"] [data-ink-plate-drift="true"]').evaluate((element) => ({
     clipPath: getComputedStyle(element).clipPath,
     animationName: getComputedStyle(element).animationName,
     transform: getComputedStyle(element).transform,
   }));
   expect(plateState.clipPath).toBe("none");
   expect(plateState.animationName).toBe("none");
-  expect(plateState.transform).toBe("matrix(1, 0, 0, 1, 2, 2)");
+  expect(plateState.transform).toBe("matrix(1, 0, 0, 1, 1, 1)");
+
+  const heroStack = page.locator("[data-product-stack]");
+  await expect(heroStack.getByRole("link", { name: "Interface" })).toHaveAttribute("href", "#work");
+  await expect(heroStack.getByRole("link", { name: "Backend" })).toHaveAttribute("href", "#about");
+  await expect(heroStack.getByRole("link", { name: "Data" })).toHaveAttribute("href", "#experience");
+  await expect(page.locator("[data-stack-stage]")).toHaveAttribute("data-static", "true");
 
   await page.locator("#about").scrollIntoViewIfNeeded();
   await expect(
@@ -642,7 +723,7 @@ test("desktop home hero wordmark keeps the editorial look", async ({ page }) => 
   await freezeHeroAmbientForSnapshot(page);
   await page.waitForTimeout(900);
 
-  const screenshot = await page.locator('[data-home-hero-text] h1').screenshot({
+  const screenshot = await page.locator('[data-home-hero-heading="true"]').screenshot({
     animations: "disabled",
   });
 
@@ -651,19 +732,18 @@ test("desktop home hero wordmark keeps the editorial look", async ({ page }) => 
   });
 });
 
-test("desktop home hero lays in the crop marks and calibration strip", async ({ page }) => {
+test("hero keeps a minimal scroll cue and removes the crop marks", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
 
-  const scene = page.locator("[data-pressrun-scene='true']");
   const strip = page.getByRole("link", { name: /^Scroll to What I do/ });
-  await expect(scene.locator("[data-pressrun-crop-mark='true']")).toHaveCount(4);
   await expect(strip).toBeVisible();
   await expect(strip).toHaveAttribute("href", "#about");
-  await expect(strip).toHaveCSS("min-height", "48px");
+  await expect(strip).toHaveCSS("min-height", "44px");
+  await expect(page.locator("[data-pressrun-crop-mark='true']")).toHaveCount(0);
 });
 
-test("the calibration strip scrolls to What I do", async ({ page }) => {
+test("the scroll cue links to What I do", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
 

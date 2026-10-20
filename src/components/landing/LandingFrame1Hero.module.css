@@ -1,52 +1,100 @@
 .frame {
+  --hero-top-inset: clamp(1rem, 2.2vw, 2rem);
   position: relative;
-  display: flex;
-  width: 100%;
   min-height: 100vh;
   min-height: 100svh;
-  padding-inline: clamp(1.5rem, 6.7vw, 6rem);
+  padding: var(--hero-top-inset) clamp(1.5rem, 5.4vw, 4.875rem) 0;
   overflow: clip;
+  color: #0B1011;
+  isolation: isolate;
 }
 
 .content {
   position: relative;
-  z-index: 2;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   width: 100%;
-  max-width: 1248px;
+  max-width: 1320px;
+  min-height: calc(100vh - var(--hero-top-inset));
+  min-height: calc(100svh - var(--hero-top-inset));
   margin-inline: auto;
-  padding-block: clamp(7.5rem, 15vh, 10rem) 5rem;
+  container-type: inline-size;
 }
 
-@media (min-width: 768px) and (max-width: 1279px) {
-  .frame {
-    padding-inline: 5.2vw;
-  }
-
-  .content {
-    padding-block: clamp(6.5rem, 13vh, 8rem) 4rem;
-  }
+.masthead {
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  min-height: 2.75rem;
+  color: #63605A;
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  line-height: 1.4;
 }
 
-@media (min-width: 768px) and (max-width: 900px) {
+.mastheadName {
+  justify-self: start;
+  color: #0B1011;
+}
+
+.mastheadRole {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.heroGrid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(18rem, 0.83fr) minmax(0, 1.17fr);
+  gap: clamp(2rem, 4.6vw, 4.25rem);
+  align-items: center;
+  padding-block: 1.5rem clamp(13rem, 24vw, 20rem);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
   .content {
-    padding-right: 4.5rem;
+    min-height: calc(100vh - var(--hero-top-inset));
+    min-height: calc(100svh - var(--hero-top-inset));
+  }
+
+  .heroGrid {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0;
+    padding-block: 0 clamp(14rem, 31vw, 17rem);
+  }
+
+  .masthead {
+    min-height: 2.6rem;
   }
 }
 
 @media (max-width: 767px) {
   .frame {
-    padding-inline: clamp(1.5rem, 6vw, 2rem);
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 0.85rem 1.25rem 1.5rem;
   }
 
   .content {
-    padding-block: 6.25rem 7rem;
+    display: flex;
+    min-height: 0;
   }
-}
 
-@media (max-height: 740px) and (min-width: 768px) {
-  .content {
-    padding-block: 6rem 3rem;
+  .masthead {
+    display: none;
+  }
+
+  .heroGrid {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    gap: 0;
+    align-items: stretch;
+    padding: 0;
   }
 }

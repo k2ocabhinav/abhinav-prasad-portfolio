@@ -1,59 +1,98 @@
 .nameShell {
-  position: relative;
-  display: block;
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  max-width: 100%;
-  overflow: visible;
-  container-type: inline-size;
-  isolation: isolate;
-  font-size: 31.6cqw;
-  line-height: 0.98;
+  margin: 0;
+  color: #0B1011;
   font-family: var(--font-wordmark);
+  font-size: clamp(11rem, 29cqw, 28rem);
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
   font-weight: 600;
-  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
-  letter-spacing: -0.02em;
-  color: var(--color-ink, #0B1011);
-}
-
-.wordmark,
-.inkPlate {
-  display: block;
-  width: max-content;
-  max-width: 100%;
+  letter-spacing: -0.075em;
+  line-height: 0.79;
   white-space: nowrap;
-  font: inherit;
-  line-height: 0.95;
-  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
-  letter-spacing: inherit;
 }
 
 .wordmark {
   position: relative;
   z-index: 1;
-  color: var(--color-ink, #0B1011);
+  display: flex;
+  justify-content: space-between;
+  width: calc(100% - 0.12em);
+  margin-inline: 0.06em;
+  font: inherit;
+  font-variation-settings: inherit;
+  line-height: inherit;
 }
 
-.plateDrift {
+.plate {
   position: absolute;
   z-index: 0;
-  inset: 0;
-  display: block;
+  inset: 0 0.06em;
+  display: flex;
+  justify-content: space-between;
+  width: auto;
+  color: #6A2135;
   pointer-events: none;
-  color: var(--color-burgundy, #6A2135);
-  transform: translate3d(0, 0, 0);
+  transform: translate(1px, 1px);
 }
 
-.inkPlate {
-  transform: translate(2px, 2px);
-  clip-path: none;
+.letterMask {
+  display: block;
+  margin-inline: -0.03em;
+  padding-inline: 0.03em;
+  overflow: clip;
+}
+
+.letter,
+.plateLetter {
+  display: block;
+  animation-duration: 280ms;
+  animation-fill-mode: both;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+.letter {
+  position: relative;
+  z-index: 1;
+  animation-name: inkRise;
+  animation-delay: calc(40ms + var(--letter-index) * 60ms);
+}
+
+.plateLetter {
+  animation-name: plateRise;
+  animation-delay: calc(var(--letter-index) * 60ms);
+}
+
+@keyframes inkRise {
+  from {
+    transform: translateY(28%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes plateRise {
+  from {
+    transform: translateY(28%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
 }
 
 .portalButton {
   position: absolute;
   z-index: 2;
   top: 0;
-  right: 0;
-  width: 12%;
+  right: 0.06em;
+  width: max(14%, 44px);
   height: 100%;
   padding: 0;
   border: 0;
@@ -68,17 +107,56 @@
 }
 
 .portalButton:focus-visible {
-  outline: 2px solid var(--color-lead, #6A2135);
+  outline: 2px solid #6A2135;
   outline-offset: 3px;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nameShell {
+    bottom: 0;
+    font-size: clamp(11rem, 28cqw, 15rem);
+  }
 }
 
 @media (max-width: 767px) {
   .nameShell {
-    font-size: 31.4cqw;
+    position: relative;
+    order: -1;
+    bottom: auto;
+    margin: 3.7rem 0 0.75rem;
+    width: calc(100% - 0.5rem);
+    font-size: clamp(5rem, 30cqw, 8.5rem);
+    line-height: 0.86;
   }
 
   .wordmark,
-  .inkPlate {
-    line-height: 1;
+  .plate {
+    width: auto;
+  }
+
+  .wordmark {
+    width: calc(100% - 0.12em);
+    margin-inline: 0.06em;
+  }
+
+  .plate {
+    inset-inline: 0.06em;
+  }
+
+  .portalButton {
+    right: 0.06em;
+    width: max(13%, 44px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter,
+  .plateLetter {
+    animation: none;
+    transform: translateY(0);
+  }
+
+  .plate {
+    transform: translate(1px, 1px);
   }
 }
