@@ -11,21 +11,7 @@ import ExperienceSection from "@/components/sections/ExperienceSection";
 import WorksSection from "@/components/sections/WorksSection";
 import TechStackSection from "@/components/sections/TechStackSection";
 import ContactSection from "@/components/sections/ContactSection";
-import type {
-  ChronicleEntry,
-  PortfolioProfile,
-  PortfolioProject,
-  ServiceEntry,
-  StackGroup,
-} from "@/types";
-
-interface HomeContent {
-  profile: PortfolioProfile;
-  projects: PortfolioProject[];
-  chronicleEntries: ChronicleEntry[];
-  stackGroups: StackGroup[];
-  services: ServiceEntry[];
-}
+import type { HomeContent } from "@/types";
 
 interface HomePageProps {
   content: HomeContent;
@@ -79,7 +65,7 @@ export default function HomePage({ content }: HomePageProps) {
           orchestration={profile.orchestration}
           tone="pastel-blush"
         />
-        <Marquee />
+        <Marquee items={profile.marqueeItems} />
         <TechStackSection
           techCategories={content.stackGroups}
           stackItems={profile.profileIntro.stackItems}

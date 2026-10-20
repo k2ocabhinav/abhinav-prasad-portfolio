@@ -1,5 +1,5 @@
 import HomePage from "@/components/HomePage";
-import { getHomeContent } from "@/lib/portfolioContent";
+import { getChronicleEntries, getHomeContent, getProfileContent } from "@/lib/portfolioContent";
 import { buildPortfolioJsonLd, serializeJsonLd } from "@/lib/structuredData";
 
 // =============================================================================
@@ -9,7 +9,7 @@ import { buildPortfolioJsonLd, serializeJsonLd } from "@/lib/structuredData";
 
 export default function Home() {
   const content = getHomeContent();
-  const structuredData = buildPortfolioJsonLd(content);
+  const structuredData = buildPortfolioJsonLd(getProfileContent(), getChronicleEntries());
 
   return (
     <>

@@ -147,8 +147,7 @@ function WorkCard({ project }: { project: Project }) {
         className={cn(
           styles.visualPanel,
           hasScreenshots && styles.visualPanelRich,
-          isVeloProject && styles.visualPanelVelo,
-          project.reversed && styles.visualReversed
+          isVeloProject && styles.visualPanelVelo
         )}
       >
         {hasScreenshots && heroScreenshot ? (
@@ -206,10 +205,7 @@ function WorkCard({ project }: { project: Project }) {
       {/* Content Panel — also the scroll anchor for the visual parallax */}
       <div
         ref={cardRef}
-        className={cn(
-          styles.contentPanel,
-          project.reversed && styles.contentReversed
-        )}
+        className={styles.contentPanel}
       >
         <div className={styles.caseMarker}>
           <CaseNumeral number={project.id} />
@@ -224,37 +220,6 @@ function WorkCard({ project }: { project: Project }) {
             ))}
           </div>
         )}
-
-        {!isTeaserOnly && project.architectureHighlights?.length ? (
-          <div className={styles.infoBlock}>
-            <h4 className={styles.infoTitle}>Architecture highlights</h4>
-            <ul className={styles.infoList}>
-              {project.architectureHighlights.map((highlight) => (
-                <li key={highlight}>{highlight}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-
-        {!isTeaserOnly && project.techBuckets?.length ? (
-          <div className={styles.infoBlock}>
-            <h4 className={styles.infoTitle}>Technology coverage</h4>
-            <div className={styles.techBuckets}>
-              {project.techBuckets.map((bucket) => (
-                <div key={bucket.label} className={styles.techBucket}>
-                  <span className={styles.techBucketLabel}>{bucket.label}</span>
-                  <div className={styles.techBucketItems}>
-                    {bucket.items.map((item) => (
-                      <span key={item} className={styles.techChip}>
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
 
         {hasDeepDive ? (
           <div className={styles.deepDiveCta}>

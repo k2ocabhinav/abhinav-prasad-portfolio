@@ -1,31 +1,40 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import {
+  accents as accentValues,
+  beyondColors as beyondColorValues,
+  beyondKinds as beyondKindValues,
+  beyondSizes as beyondSizeValues,
+  expectedContentCounts,
+  expectedHeroFactLinks,
+  projectIcons as projectIconValues,
+  projectStoryLayouts as projectStoryLayoutValues,
+  projectStoryThemes as projectStoryThemeValues,
+  projectStoryViewports as projectStoryViewportValues,
+  projectTenantIds as projectTenantValues,
+  projectTripRoles as projectTripRoleValues,
+  socialPlatforms as socialPlatformValues,
+  stackContextValues as stackContextValueList,
+  statusValues as statusValueList,
+} from "../src/lib/portfolioSchema.mjs";
 
 const root = process.cwd();
 const contentRoot = path.join(root, "src/content/portfolio");
 const publicRoot = path.join(root, "public");
-const statuses = new Set(["draft", "published"]);
-const proofLabels = new Set([
-  "Problem",
-  "My Role",
-  "Shipped",
-  "Impact",
-  "Built",
-  "Prototype scope",
-]);
-const projectIcons = new Set(["terminal", "cloud", "database", "sparkles", "cpu"]);
-const stackIcons = new Set(["cloud", "cpu", "database", "terminal", "sparkles"]);
-const stackContextValues = new Set(["Used at work", "Part of my workflow", "Built in projects"]);
-const accents = new Set(["sage", "peach", "sky", "sand"]);
-const codeTones = new Set(["lime", "ember", "split"]);
-const beyondKinds = new Set(["photo", "event", "quote", "person", "project"]);
-const beyondColors = new Set(["cobalt", "coral", "lemon", "amber", "lilac", "pink"]);
-const beyondSizes = new Set(["hero", "wide", "tall", "square"]);
-const projectStoryViewports = new Set(["desktop", "mobile"]);
-const projectStoryThemes = new Set(["day", "night"]);
-const projectTenantIds = new Set(["velo-business", "saffron-routes"]);
-const projectTripRoles = new Set(["rider", "dispatch", "driver"]);
+const statuses = new Set(statusValueList);
+const projectIcons = new Set(projectIconValues);
+const stackContextValues = new Set(stackContextValueList);
+const accents = new Set(accentValues);
+const beyondKinds = new Set(beyondKindValues);
+const beyondColors = new Set(beyondColorValues);
+const beyondSizes = new Set(beyondSizeValues);
+const projectStoryViewports = new Set(projectStoryViewportValues);
+const projectStoryThemes = new Set(projectStoryThemeValues);
+const projectStoryLayouts = new Set(projectStoryLayoutValues);
+const projectTenantIds = new Set(projectTenantValues);
+const projectTripRoles = new Set(projectTripRoleValues);
+const socialPlatforms = new Set(socialPlatformValues);
 
 function rel(filePath) {
   return path.relative(root, filePath);
@@ -178,6 +187,15 @@ function validateImage(image, filePath, requireSrc = true) {
 
 // P4 storyboard validation — begin
 function validateStoryboard(storyboard, filePath) {
+  stringValue(storyboard, "status", filePath);
+  const facts = objectArray(storyboard, "facts", filePath);
+  if (facts.length === 0) fail(filePath, 'storyboard "facts" must contain at least one fact');
+  facts.forEach((fact) => {
+    stringValue(fact, "label", filePath);
+    stringValue(fact, "value", filePath);
+  });
+  unique(facts.map((fact) => stringValue(fact, "label", filePath)), "storyboard fact label");
+
   const visuals = objectArray(storyboard, "visuals", filePath);
   if (visuals.length === 0) fail(filePath, 'storyboard "visuals" must contain at least one visual');
   visuals.forEach((visual) => {
@@ -190,11 +208,23 @@ function validateStoryboard(storyboard, filePath) {
   const visualIds = visuals.map((visual) => stringValue(visual, "id", filePath));
   unique(visualIds, "storyboard visual id");
   const visualById = new Map(visuals.map((visual) => [stringValue(visual, "id", filePath), visual]));
+  const mobileHeroVisualId = stringValue(storyboard, "mobileHeroVisualId", filePath);
+  if (visualById.get(mobileHeroVisualId)?.viewport !== "mobile") {
+    fail(filePath, `storyboard mobileHeroVisualId "${mobileHeroVisualId}" must reference a mobile visual`);
+  }
+  const tripIntro = objectValue(storyboard, "tripIntro", filePath);
+  stringValue(tripIntro, "eyebrow", filePath);
+  stringValue(tripIntro, "title", filePath);
+  optionalString(tripIntro, "summary");
+  if (storyboard.routePlate !== undefined && typeof storyboard.routePlate !== "boolean") {
+    fail(filePath, 'storyboard "routePlate" must be a boolean');
+  }
 
   const chapters = objectArray(storyboard, "chapters", filePath);
   if (chapters.length === 0) fail(filePath, 'storyboard "chapters" must contain at least one chapter');
   chapters.forEach((chapter) => {
     stringValue(chapter, "id", filePath);
+    enumValue(chapter, "layout", projectStoryLayouts, filePath);
     stringValue(chapter, "eyebrow", filePath);
     stringValue(chapter, "title", filePath);
     stringValue(chapter, "summary", filePath);
@@ -209,7 +239,7 @@ function validateStoryboard(storyboard, filePath) {
   unique(chapters.map((chapter) => stringValue(chapter, "id", filePath)), "storyboard chapter id");
 
   const steps = objectArray(storyboard, "tripSteps", filePath);
-  if (steps.length !== projectTripRoles.size) {
+  if (steps.length !== expectedContentCounts.storyboardTripSteps) {
     fail(filePath, 'storyboard "tripSteps" must contain one step for rider, dispatch, and driver');
   }
   const roles = steps.map((step) => enumValue(step, "role", projectTripRoles, filePath));
@@ -247,6 +277,17 @@ function validateStoryboard(storyboard, filePath) {
       fail(filePath, `storyboard tenant visual "${visualId}" must be tagged for "${optionIds[index]}"`);
     }
   });
+
+  for (const key of ["mobileProof", "featureProof", "scheduleProof"]) {
+    if (storyboard[key] === undefined) continue;
+    const proof = objectValue(storyboard, key, filePath);
+    const visualId = stringValue(proof, "visualId", filePath);
+    if (!visualById.has(visualId)) {
+      fail(filePath, `storyboard ${key} references missing visual "${visualId}"`);
+    }
+    if (key !== "scheduleProof") stringValue(proof, "title", filePath);
+    stringValue(proof, "summary", filePath);
+  }
 }
 // P4 storyboard validation — end
 
@@ -256,21 +297,20 @@ function validateProfile() {
   const personal = objectValue(data, "personal", filePath);
   const hero = objectValue(data, "hero", filePath);
 
-  ["name", "fullName", "title", "tagline", "subtitle", "email", "presenceDescription", "footerTagline"].forEach((key) =>
+  ["name", "fullName", "title", "subtitle", "email", "presenceDescription", "footerTagline"].forEach((key) =>
     stringValue(personal, key, filePath)
   );
+  if (stringArray(personal, "hintCopy", filePath).length !== expectedContentCounts.hintCopyLines) {
+    fail(filePath, `"personal.hintCopy" must contain ${expectedContentCounts.hintCopyLines} lines`);
+  }
   validatePublicAsset(stringValue(personal, "resumeHref", filePath), filePath);
   validatePublicAsset(stringValue(personal, "heroPhoto", filePath), filePath);
-  objectArray(personal, "heroSlides", filePath).forEach((slide) => {
-    validatePublicAsset(stringValue(slide, "image", filePath), filePath);
-    stringValue(slide, "alt", filePath);
-  });
   const location = objectValue(personal, "location", filePath);
   ["city", "country", "countryCode", "timezone"].forEach((key) =>
     stringValue(location, key, filePath)
   );
   objectArray(personal, "socials", filePath).forEach((social) => {
-    enumValue(social, "platform", new Set(["github", "linkedin", "email"]), filePath);
+    enumValue(social, "platform", socialPlatforms, filePath);
     stringValue(social, "label", filePath);
     stringValue(social, "href", filePath);
   });
@@ -278,18 +318,14 @@ function validateProfile() {
   stringValue(hero, "identity", filePath);
   stringValue(hero, "summary", filePath);
   const facts = objectArray(hero, "facts", filePath);
-  if (facts.length !== 2) {
-    fail(filePath, '"hero.facts" must contain the two work and personal-build rows');
+  if (facts.length !== expectedContentCounts.heroFacts) {
+    fail(filePath, `"hero.facts" must contain ${expectedContentCounts.heroFacts} work and personal-build rows`);
   }
-  const expectedFactLinks = [
-    { label: "At work", href: "#experience" },
-    { label: "On my own", href: "#work" },
-  ];
   facts.forEach((fact, index) => {
     const label = stringValue(fact, "label", filePath);
     stringValue(fact, "value", filePath);
     const href = stringValue(fact, "href", filePath);
-    const expected = expectedFactLinks[index];
+    const expected = expectedHeroFactLinks[index];
     if (expected && (label !== expected.label || href !== expected.href)) {
       fail(filePath, `"hero.facts[${index}]" must be ${expected.label} linking to ${expected.href}`);
     }
@@ -302,20 +338,24 @@ function validateProfile() {
   // P7: Validate the method content that powers the human-reviewed orchestration section.
   const profileIntro = objectValue(data, "profileIntro", filePath);
   stringValue(profileIntro, "headline", filePath);
-  if (stringArray(profileIntro, "proofLines", filePath).length !== 3) {
-    fail(filePath, '"profileIntro.proofLines" must contain three proof lines');
+  if (stringArray(profileIntro, "proofLines", filePath).length !== expectedContentCounts.profileProofLines) {
+    fail(filePath, `"profileIntro.proofLines" must contain ${expectedContentCounts.profileProofLines} proof lines`);
   }
   unique(stringArray(profileIntro, "stackItems", filePath), "profile intro stack item");
   const orchestration = objectValue(data, "orchestration", filePath);
   stringValue(orchestration, "intro", filePath);
   const steps = objectArray(orchestration, "steps", filePath);
-  if (steps.length !== 4) {
-    fail(filePath, '"orchestration.steps" must contain four steps');
+  if (steps.length !== expectedContentCounts.orchestrationSteps) {
+    fail(filePath, `"orchestration.steps" must contain ${expectedContentCounts.orchestrationSteps} steps`);
   }
   steps.forEach((step) => {
     stringValue(step, "title", filePath);
     stringValue(step, "description", filePath);
   });
+  unique(stringArray(data, "marqueeItems", filePath), "marquee item");
+  const llms = objectValue(data, "llms", filePath);
+  stringArray(llms, "positioningLines", filePath);
+  stringArray(llms, "homepageLines", filePath);
   unique(stringArray(data, "knowsAbout", filePath), "knowsAbout value");
   const seo = objectValue(data, "seo", filePath);
   ["title", "description", "author", "ogImage"].forEach((key) => stringValue(seo, key, filePath));
@@ -328,32 +368,26 @@ function validateProjects() {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
     enumValue(data, "icon", projectIcons, filePath);
-    enumValue(data, "accent", accents, filePath);
-    enumValue(data, "projectCodeTone", codeTones, filePath);
-    ["slug", "id", "title", "description", "claim", "summary", "note", "eyebrow"].forEach((key) =>
+    ["slug", "id", "title", "description"].forEach((key) =>
       stringValue(data, key, filePath)
     );
     stringArray(data, "tags", filePath);
-    objectArray(data, "proofBeats", filePath).forEach((beat) => {
-      enumValue(beat, "label", proofLabels, filePath);
-      stringValue(beat, "short", filePath);
-      stringValue(beat, "detail", filePath);
-    });
     optionalObjectArray(data, "screenshots").forEach((image) => validateImage(image, filePath));
     optionalObjectArray(data, "links").forEach((link) => {
       stringValue(link, "label", filePath);
       optionalNullableString(link, "href", filePath);
     });
-    const visual = objectValue(data, "visual", filePath);
-    enumValue(visual, "kind", new Set(["screenshot", "system", "type"]), filePath);
-    validatePublicAsset(optionalString(visual, "src"), filePath);
-    stringValue(visual, "alt", filePath);
-    stringValue(visual, "caption", filePath);
     const detail = optionalObject(data, "detail");
     if (detail?.enabled === true) {
-      ["slug", "eyebrow", "title", "subtitle", "scopeSummary"].forEach((key) =>
+      ["slug", "eyebrow", "title", "seoTitle", "seoDescription", "subtitle", "scopeSummary"].forEach((key) =>
         stringValue(detail, key, filePath)
       );
+      if (detail.roleLine !== undefined) stringValue(detail, "roleLine", filePath);
+      if (detail.hardPart !== undefined) {
+        const hardPart = objectValue(detail, "hardPart", filePath);
+        stringValue(hardPart, "label", filePath);
+        stringValue(hardPart, "copy", filePath);
+      }
       validateImage(objectValue(detail, "heroImage", filePath), filePath);
       objectArray(detail, "gallery", filePath).forEach((image) => validateImage(image, filePath));
       objectArray(detail, "architectureSections", filePath).forEach((section) => {
@@ -365,7 +399,7 @@ function validateProjects() {
         stringValue(bucket, "label", filePath);
         stringArray(bucket, "items", filePath);
       });
-      stringArray(detail, "qualityHighlights", filePath);
+      optionalStringArray(detail, "qualityHighlights", filePath);
       optionalObjectArray(detail, "references").forEach((reference) => {
         stringValue(reference, "label", filePath);
         optionalNullableString(reference, "href", filePath);
@@ -397,13 +431,6 @@ function validateProjects() {
       .map((detail) => detail.slug),
     "project detail slug"
   );
-
-  const published = projects.filter((project) => project.status === "published");
-  const featured = published.filter((project) => project.featured === true);
-  const homepageFeatured = featured.slice(0, 4);
-  if (homepageFeatured.length > 4) {
-    throw new Error("[portfolio-content] homepage featured selection exceeded four items");
-  }
 }
 
 function validateChronicle() {
@@ -415,8 +442,8 @@ function validateChronicle() {
     );
 
     const summaryPoints = objectArray(data, "summaryPoints", filePath);
-    if (summaryPoints.length !== 6) {
-      fail(filePath, '"summaryPoints" must contain six visible experience points');
+    if (summaryPoints.length !== expectedContentCounts.experienceSummaryPoints) {
+      fail(filePath, `"summaryPoints" must contain ${expectedContentCounts.experienceSummaryPoints} visible experience points`);
     }
     summaryPoints.forEach((point) => {
       stringValue(point, "lead", filePath);
@@ -425,8 +452,8 @@ function validateChronicle() {
     });
 
     const workstreams = objectArray(data, "workstreams", filePath);
-    if (workstreams.length !== 4) {
-      fail(filePath, '"workstreams" must contain the four full-experience sections');
+    if (workstreams.length !== expectedContentCounts.experienceWorkstreams) {
+      fail(filePath, `"workstreams" must contain ${expectedContentCounts.experienceWorkstreams} full-experience sections`);
     }
     workstreams.forEach((workstream) => {
       ["id", "title", "summary"].forEach((key) => stringValue(workstream, key, filePath));
@@ -469,11 +496,11 @@ function validateStack() {
   const groups = mdxFiles("stack").map((filePath) => {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
-    enumValue(data, "icon", stackIcons, filePath);
     enumValue(data, "context", stackContextValues, filePath);
     ["id", "label"].forEach((key) => stringValue(data, key, filePath));
-    const items = stringArray(data, "items", filePath);
-    unique(items, `stack item in ${rel(filePath)}`);
+    if (typeof data.highlighted !== "boolean") {
+      fail(filePath, '"highlighted" must be a boolean');
+    }
     return data;
   });
   unique(groups.map((group) => group.id), "stack id");
