@@ -173,7 +173,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         </section>
 
         {storyboard ? (
-          <div className={styles.factRail} aria-label="Project facts">
+          <div className={styles.factRail} role="group" aria-label="Project facts">
             {storyboard.facts.map((fact) => (
               <p key={fact.label}><span>{fact.label}</span>{fact.value}</p>
             ))}

@@ -257,10 +257,10 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   );
   const veloOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
   const veloTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
-  expect(new URL(veloOgImage!, page.url()).pathname).toBe("/projects/velo/velo-livery-day.webp");
+  expect(new URL(veloOgImage!, page.url()).pathname).toBe("/projects/velo/og.jpg");
   expect(veloTwitterImage).toBe(veloOgImage);
-  await expect(page.locator('meta[property="og:image:width"]')).toHaveCount(0);
-  await expect(page.locator('meta[property="og:image:height"]')).toHaveCount(0);
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
+  await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute("content", "630");
 
   await page.goto("/work/portfolio-platform");
   const platformOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
@@ -273,7 +273,7 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute("content", "630");
   await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute(
     "content",
-    /wordmark, role, proof rows, and print proof/
+    /Full-stack engineer, the work and own-build rows/
   );
   const portfolioJsonLd = await page.locator("#project-structured-data").textContent();
   expect(portfolioJsonLd).not.toBeNull();
