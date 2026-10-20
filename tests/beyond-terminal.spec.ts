@@ -309,6 +309,19 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
     "Verify",
   ]);
 
+  const workProjects = page.locator("#work [data-work-project]");
+  await expect(workProjects).toHaveCount(2);
+  const staticWorkState = await workProjects.first().evaluate((article) => {
+    const stage = article.querySelector("[data-work-frame]")?.parentElement?.parentElement;
+    const frame = article.querySelector("[data-work-frame]");
+    return {
+      stagePosition: stage ? getComputedStyle(stage).position : null,
+      frameTransform: frame ? getComputedStyle(frame).transform : null,
+    };
+  });
+  expect(staticWorkState.stagePosition).toBe("relative");
+  expect(staticWorkState.frameTransform).toBe("none");
+
   const plateState = await page.locator('[data-home-hero-text] h1 [aria-hidden="true"] span').evaluate((element) => ({
     clipPath: getComputedStyle(element).clipPath,
     animationName: getComputedStyle(element).animationName,
@@ -454,7 +467,7 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
 
   await expect(page.locator("#experience article")).toHaveCount(1);
   await expect(
-    page.getByRole("heading", { name: "Velo, a white-label dispatch prototype", exact: true })
+    page.getByRole("heading", { name: "Velo", exact: true })
   ).toHaveCount(1);
   await expect(
     page.getByRole("heading", {
@@ -535,13 +548,67 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
   await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
 
-  const screenshot = await method.screenshot({
+  const screenshot = await method.locator("[data-work-method-stage]").screenshot({
     animations: "disabled",
   });
 
   expect(screenshot).toMatchSnapshot("orchestration-method-desktop.png", {
     maxDiffPixelRatio: 0.025,
   });
+});
+
+test("work projects zoom from a framed image to a full-width image above the details band", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+
+  const firstProject = page.locator("#work [data-work-project]").first();
+  await expect(firstProject.getByRole("heading", { name: "Velo" })).toBeVisible();
+  await page.evaluate(() => {
+    document.querySelector("#work [data-work-project]")?.scrollIntoView({ block: "start" });
+  });
+  await page.waitForTimeout(300);
+
+  const initial = await firstProject.evaluate((article) => {
+    const frame = article.querySelector("[data-work-frame]");
+    const stage = frame?.closest("[class*='projectStage']");
+    const rect = frame?.getBoundingClientRect();
+    return {
+      position: stage ? getComputedStyle(stage).position : null,
+      width: rect?.width ?? 0,
+    };
+  });
+  expect(initial.position).toBe("sticky");
+
+  const trackEnd = await firstProject.evaluate((article) => {
+    const rect = article.getBoundingClientRect();
+    return rect.top + window.scrollY + rect.height - window.innerHeight;
+  });
+  await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), trackEnd);
+  await page.waitForTimeout(650);
+
+  const final = await firstProject.evaluate((article) => {
+    const frame = article.querySelector("[data-work-frame]");
+    const details = article.querySelector("[data-work-copy]");
+    const imageBox = frame?.getBoundingClientRect();
+    const detailsBox = details?.getBoundingClientRect();
+    return {
+      imageWidth: imageBox?.width ?? 0,
+      imageBottom: imageBox ? imageBox.bottom : 0,
+      detailsTop: detailsBox ? detailsBox.top : 0,
+    };
+  });
+
+  expect(final.imageWidth).toBeGreaterThan(initial.width + 250);
+  expect(final.imageBottom).toBeLessThanOrEqual(final.detailsTop);
+  await expect(firstProject.getByRole("link", { name: "Read the case study" })).toHaveAttribute(
+    "href",
+    "/work/velo"
+  );
+  await expect(firstProject.getByRole("link", { name: "View project source" })).toHaveAttribute(
+    "href",
+    "https://github.com/k2ocabhinav/Velo"
+  );
 });
 
 test("How I work uses a vertical sequence on mobile", async ({ page }) => {
