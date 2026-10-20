@@ -1,4 +1,5 @@
 import HomePage from "@/components/HomePage";
+import ExperienceProvidersBoundary from "@/components/providers/ExperienceProvidersBoundary";
 import { getChronicleEntries, getHomeContent, getProfileContent } from "@/lib/portfolioContent";
 import { buildPortfolioJsonLd, serializeJsonLd } from "@/lib/structuredData";
 
@@ -19,7 +20,9 @@ export default function Home() {
       >
         {serializeJsonLd(structuredData)}
       </script>
-      <HomePage content={content} />
+      <ExperienceProvidersBoundary>
+        <HomePage content={content} />
+      </ExperienceProvidersBoundary>
     </>
   );
 }
