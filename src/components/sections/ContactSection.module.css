@@ -169,30 +169,26 @@
   opacity: 0.72;
 }
 
-.socials {
+/* Two print-press actions sit directly below the address: LinkedIn leads,
+   the résumé follows. Both share the panel's button tokens. */
+.contactActions {
   display: flex;
-  gap: 0.45rem;
-}
-
-.socialIcon {
-  display: flex;
-  width: 44px;
-  height: 44px;
+  max-width: 100%;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: var(--color-on-panel, #EDE6DA);
-  touch-action: manipulation;
-  transition: opacity 0.3s ease;
+  gap: 0.9rem;
 }
 
-.socialIcon:hover {
-  opacity: 0.72;
+.contactAction.contactAction {
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
 }
 
-.socialIcon:focus-visible {
-  outline: 2px solid var(--color-panel-accent, #F4BEBB);
-  outline-offset: 3px;
+.linkedinAction {
+  gap: 0.55rem;
+}
+
+.linkedinAction svg {
+  flex: none;
 }
 
 .footerTagline {
@@ -283,6 +279,14 @@
     gap: 1rem;
   }
 
+  .contactActions {
+    width: 100%;
+  }
+
+  .contactAction.contactAction {
+    width: 100%;
+  }
+
   .mapContainer {
     width: min(100%, 23rem);
     aspect-ratio: 2.7 / 1;
@@ -321,5 +325,12 @@
   .taglineText,
   .callout {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .contactAction.contactAction {
+    padding-inline: 0.85rem;
+    letter-spacing: 0.08em;
   }
 }

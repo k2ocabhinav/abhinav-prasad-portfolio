@@ -95,6 +95,12 @@ export default function HomePage({ content }: HomePageProps) {
       <Navigation
         resumeHref={profile.personal.resumeHref}
         email={profile.personal.email}
+        linkedinHref={
+          profile.personal.socials.find(
+            (social) => social.platform === "linkedin"
+          )?.href
+        }
+        fullName={profile.personal.fullName}
       />
     </>
   );

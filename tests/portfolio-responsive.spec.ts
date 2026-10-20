@@ -292,9 +292,52 @@ test("uses the approved marquee and contact copy", async ({ page }) => {
   await expect(contact.getByText("Full-time roles, contract work or a scoped project: all welcome.", { exact: true })).toBeVisible();
   await expect(contact.getByRole("link", { name: "abhinavp0304@gmail.com" })).toBeVisible();
   await expect(contact.getByRole("link", { name: "Download résumé" })).toBeVisible();
-  for (const name of ["GitHub", "LinkedIn", "Email Abhinav"]) {
-    await expect(contact.getByRole("link", { name })).toBeVisible();
-  }
+  const linkedin = contact.getByRole("link", { name: "Connect on LinkedIn" });
+  await expect(linkedin).toBeVisible();
+  await expect(linkedin).toHaveAttribute("href", "https://www.linkedin.com/in/k2ocabhinav22");
+  await expect(linkedin).toHaveAttribute("target", "_blank");
+  await expect(linkedin).toHaveAttribute("rel", "noopener noreferrer");
+  await expect(contact.getByRole("link", { name: "GitHub" })).toHaveCount(0);
+});
+
+test("LinkedIn is one tap away from the rail, phone menu, and case study", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
+  const linkedinHref = "https://www.linkedin.com/in/k2ocabhinav22";
+  const accessibleName = "Abhinav Prasad on LinkedIn (opens in a new tab)";
+
+  await openHome(page, true);
+  const rail = page.getByRole("navigation", { name: "Section navigation" });
+  const railLink = rail.getByRole("link", { name: accessibleName });
+  await expect(railLink).toBeVisible();
+  await expect(railLink).toHaveAttribute("href", linkedinHref);
+  await expect(railLink).toHaveAttribute("target", "_blank");
+  await expect(railLink).toHaveAttribute("rel", "noopener noreferrer");
+  await railLink.focus();
+  await expect(railLink).toHaveCSS("outline-style", "solid");
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openHome(page, true);
+  await page.getByRole("button", { name: "Open menu" }).click();
+  const mobileNav = page.getByRole("navigation", { name: "Mobile navigation" });
+  const mobileLink = mobileNav.getByRole("link", { name: accessibleName });
+  await expect(mobileLink).toBeVisible();
+  await expect(mobileLink).toHaveAttribute("href", linkedinHref);
+  await expect(mobileLink).toHaveAttribute("target", "_blank");
+  await expect(mobileLink).toHaveAttribute("rel", "noopener noreferrer");
+  const mobileBox = await mobileLink.boundingBox();
+  expect(mobileBox).not.toBeNull();
+  expect(mobileBox!.height).toBeGreaterThanOrEqual(44);
+
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/work/velo");
+  const caseStudyRail = page.getByRole("navigation", { name: "Contact navigation" });
+  const caseStudyLink = caseStudyRail.getByRole("link", { name: accessibleName });
+  await expect(caseStudyLink).toBeVisible();
+  await expect(caseStudyLink).toHaveAttribute("href", linkedinHref);
+  await expect(caseStudyLink).toHaveAttribute("target", "_blank");
+  await expect(caseStudyLink).toHaveAttribute("rel", "noopener noreferrer");
 });
 
 test("keeps hero facts separate and What I do specific", async ({ page }) => {
@@ -515,8 +558,9 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
     "Work",
     "Stack",
     "Contact",
-    "Résumé",
+    "LinkedIn",
     "Email",
+    "Résumé",
   ]);
 
   const menuLinks = mobileNav.getByRole("link");
@@ -539,7 +583,10 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await mobileNav.getByRole("link", { name: "Experience", exact: true }).click();
   await expect(mobileNav).toBeHidden();
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
-  await expectMinimumTargetSize(page.locator("#contact a[aria-label]"));
+  const contact = page.locator("#contact");
+  await expectMinimumTargetSize(contact.locator('a[href^="mailto:"]'));
+  await expectMinimumTargetSize(contact.getByRole("link", { name: "Connect on LinkedIn" }));
+  await expectMinimumTargetSize(contact.getByRole("link", { name: "Download résumé" }));
 });
 
 test("touch layouts do not retain hover movement on project cards", async ({ page }, testInfo) => {
