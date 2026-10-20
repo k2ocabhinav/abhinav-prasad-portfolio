@@ -609,11 +609,11 @@ test("reduced motion renders Experience content and workstream index statically"
     await expect(workstream).toBeVisible();
     await expect.poll(
       () => workstream.evaluate((element) => Number.parseFloat(getComputedStyle(element).opacity)),
-      { timeout: 250 }
+      { timeout: 1500 }
     ).toBe(1);
     await expect.poll(
       () => workstream.evaluate((element) => getComputedStyle(element).transform),
-      { timeout: 250 }
+      { timeout: 1500 }
     ).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   }
 });

@@ -8,7 +8,7 @@ test.describe("tablet QA regressions", () => {
     await page.goto("/");
     await page.locator("#stack").evaluate((element) => element.scrollIntoView({ block: "start" }));
     await expect(
-      page.locator('nav[aria-label] [aria-current="location"]').first()
+      page.locator('nav[aria-label="Section navigation"] [aria-current="location"]')
     ).toHaveAttribute("href", /#stack$/);
   });
 
@@ -19,7 +19,7 @@ test.describe("tablet QA regressions", () => {
     await page.goto("/");
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await expect(
-      page.locator('nav[aria-label] [aria-current="location"]').first()
+      page.locator('nav[aria-label="Section navigation"] [aria-current="location"]')
     ).toHaveAttribute("href", /#contact$/);
   });
 
