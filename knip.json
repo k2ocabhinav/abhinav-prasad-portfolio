@@ -11,5 +11,8 @@
     "scripts/**/*.mjs",
     "tests/**/*.ts"
   ],
-  "ignoreExportsUsedInFile": true
+  "ignoreExportsUsedInFile": true,
+  "ignore": [
+    "src/components/motion/**"
+  ]
 }
