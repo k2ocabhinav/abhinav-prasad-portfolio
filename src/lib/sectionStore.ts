@@ -49,7 +49,10 @@ const PAPER_STOCK_BY_SECTION: Record<string, PaperStock> = {
 };
 
 const NAV_MODE_THRESHOLD = 80;
-const MIDLINE_ROOT_MARGIN = "-50% 0% -50% 0%";
+// A thin reading band a third of the way down the viewport. A midline band
+// (-50%/-50%) let sections shorter than half the viewport (Stack on tablets)
+// never become active, even right after the menu scrolled to them.
+const READING_BAND_ROOT_MARGIN = "-34% 0% -65% 0%";
 
 interface ResolvedTarget {
   element: Element;
@@ -97,6 +100,10 @@ function startEngine(): () => void {
   }
 
   const visible = new Set<Element>();
+  const atPageBottom = () =>
+    window.innerHeight + window.scrollY >=
+    document.documentElement.scrollHeight - 2;
+  const last = resolved[resolved.length - 1];
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -115,6 +122,9 @@ function startEngine(): () => void {
           current = target;
         }
       });
+      if (atPageBottom()) {
+        current = last;
+      }
 
       if (current) {
         publish({
@@ -124,7 +134,7 @@ function startEngine(): () => void {
         });
       }
     },
-    { rootMargin: MIDLINE_ROOT_MARGIN }
+    { rootMargin: READING_BAND_ROOT_MARGIN }
   );
 
   resolved.forEach(({ element }) => observer.observe(element));
@@ -137,6 +147,12 @@ function startEngine(): () => void {
     publish({
       navMode: window.scrollY > NAV_MODE_THRESHOLD ? "glass" : "transparent",
     });
+
+    // At the very bottom the last section owns the highlight, even when it is
+    // too short to reach the reading band.
+    if (atPageBottom()) {
+      publish({ activeId: last.id, dark: last.dark, stock: last.stock });
+    }
   };
   const handleScroll = () => {
     if (frame === 0) {
