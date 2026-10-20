@@ -70,12 +70,15 @@ export default function ExplodedStack() {
               aria-hidden="true"
               focusable="false"
             >
+              {/* A 2x crop of the strip this sheet shows, not the full
+                  1440 px capture: phones (no stack) and desktops alike fetch a
+                  few KB instead of 120 KB. */}
               <image
-                href="/projects/velo/velo-dispatch-velo-business.webp"
+                href="/projects/velo/velo-dispatch-strip.webp"
                 x="0"
                 y="0"
-                width="1440"
-                height="750"
+                width="1010"
+                height="153"
               />
             </svg>
           </g>
