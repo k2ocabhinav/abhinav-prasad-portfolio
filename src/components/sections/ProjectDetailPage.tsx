@@ -8,6 +8,7 @@ import type {
 } from "@/types";
 import Footer from "@/components/layout/Footer";
 import DispatchReel from "@/components/sections/project-detail/DispatchReel";
+import { getMobileHeroAvif } from "@/components/sections/project-detail/mobileHeroVariants";
 import TenantSwitcher from "@/components/sections/project-detail/TenantSwitcher";
 import VeloRoutePlate from "@/components/sections/project-detail/VeloRoutePlate";
 import styles from "./ProjectDetailPage.module.css";
@@ -91,6 +92,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
   const visuals = storyboard?.visuals ?? [];
   const getVisual = (id: string) => visuals.find((visual) => visual.id === id);
   const mobileHeroVisual = storyboard ? getVisual(storyboard.mobileHeroVisualId) : undefined;
+  const mobileHeroAvif = mobileHeroVisual ? getMobileHeroAvif(mobileHeroVisual.src) : undefined;
   const switcherOptions: ProjectTenantOption[] = storyboard?.tenantSwitcher.options ?? [];
   const tripVisuals = storyboard?.tripSteps.flatMap((step) => {
     const visual = getVisual(step.visualId);
@@ -103,6 +105,19 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
 
   return (
     <div className={styles.pageShell}>
+      {/* The art-directed mobile capture is the LCP on phones. Preload the exact
+          URL the <source>s below will select so it starts before the inline
+          stylesheet has been parsed; the media query keeps it off desktop. */}
+      {mobileHeroVisual ? (
+        <link
+          rel="preload"
+          as="image"
+          href={mobileHeroAvif ?? mobileHeroVisual.src}
+          type={mobileHeroAvif ? "image/avif" : undefined}
+          media="(max-width: 767px)"
+          fetchPriority="high"
+        />
+      ) : null}
       <a className={styles.skipLink} href="#project-content">Skip to project content</a>
       <header className={styles.chrome}>
         <div className={`content-container ${styles.chromeInner}`}>
@@ -135,6 +150,9 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
           <figure className={styles.heroFigure}>
             <div className={styles.heroMedia} data-mobile-preview={mobileHeroVisual ? "true" : undefined}>
               <picture className={styles.heroPicture}>
+                {mobileHeroAvif ? (
+                  <source media="(max-width: 767px)" type="image/avif" srcSet={mobileHeroAvif} />
+                ) : null}
                 {mobileHeroVisual ? (
                   <source media="(max-width: 767px)" srcSet={mobileHeroVisual.src} />
                 ) : null}
