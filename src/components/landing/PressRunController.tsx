@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 import * as m from "motion/react-m";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "./PressRunController.module.css";
@@ -45,13 +46,18 @@ function CropMark({ corner }: CropMarkProps) {
       viewBox="0 0 24 24"
       aria-hidden="true"
       focusable="false"
+      data-pressrun-crop-mark="true"
     >
       <path d="M23 1H1v22" />
     </svg>
   );
 }
 
-export default function PressRunController() {
+interface PressRunControllerProps {
+  proofCorner: ReactNode;
+}
+
+export default function PressRunController({ proofCorner }: PressRunControllerProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
@@ -62,9 +68,21 @@ export default function PressRunController() {
     const plate = heading?.querySelector<HTMLElement>("[data-ink-plate-drift='true']");
     const glacier = scene?.querySelector<HTMLElement>("[data-pressrun-depth='glacier']");
     const target = scene?.querySelector<HTMLElement>("[data-pressrun-depth='target']");
+    const proofPetrol = scene?.querySelector<HTMLElement>("[data-pressrun-depth='proof-petrol']");
+    const proofCornflower = scene?.querySelector<HTMLElement>("[data-pressrun-depth='proof-cornflower']");
     const strip = frame?.querySelector<HTMLAnchorElement>("[data-pressrun-strip]");
 
-    if (!scene || !frame || !heading || !plate || !glacier || !target || !strip) {
+    if (
+      !scene ||
+      !frame ||
+      !heading ||
+      !plate ||
+      !glacier ||
+      !target ||
+      !proofPetrol ||
+      !proofCornflower ||
+      !strip
+    ) {
       return;
     }
 
@@ -129,6 +147,8 @@ export default function PressRunController() {
       plate.style.willChange = value;
       glacier.style.willChange = value;
       target.style.willChange = value;
+      proofPetrol.style.willChange = value;
+      proofCornflower.style.willChange = value;
     };
 
     const readRects = () => {
@@ -204,6 +224,8 @@ export default function PressRunController() {
 
       plate.style.transform = `translate3d(${(pointerPlateX.position * 5).toFixed(2)}px, ${(pointerPlateY.position * 5 - scrollProgress * 6).toFixed(2)}px, 0)`;
       glacier.style.transform = `translate3d(${(pointerGlacierX.position * 3).toFixed(2)}px, ${(pointerGlacierY.position * 3 + scrollProgress * 12).toFixed(2)}px, 0)`;
+      proofPetrol.style.transform = `translate3d(${(pointerGlacierX.position * 3).toFixed(2)}px, ${(pointerGlacierY.position * 3 + scrollProgress * 8).toFixed(2)}px, 0)`;
+      proofCornflower.style.transform = `translate3d(${(pointerGlacierX.position * 4).toFixed(2)}px, ${(pointerGlacierY.position * 4 + scrollProgress * 10).toFixed(2)}px, 0)`;
       target.style.transform = `translate3d(${(pointerTargetX.position * 2).toFixed(2)}px, ${(pointerTargetY.position * 2).toFixed(2)}px, 0)`;
 
       if (
@@ -434,6 +456,8 @@ export default function PressRunController() {
           <circle cx="14" cy="14" r="1" />
         </m.svg>
       </span>
+
+      {proofCorner}
 
     </div>
     <a

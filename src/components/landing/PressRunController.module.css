@@ -114,6 +114,118 @@
   animation: targetRegister 650ms var(--motion-ease-out) 450ms both;
 }
 
+.proofCorner {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  top: clamp(10rem, 17vh, 12rem);
+  right: clamp(6.5rem, 10vw, 8rem);
+  bottom: clamp(6.5rem, 11vh, 8rem);
+  left: 70%;
+  pointer-events: none;
+}
+
+.proofPlateStage {
+  position: absolute;
+  top: 4rem;
+  right: 0;
+  bottom: 2.5rem;
+  left: 0;
+  display: grid;
+  place-items: center;
+}
+
+.proofPetrolDepth,
+.proofCornflowerDepth {
+  position: relative;
+  grid-area: 1 / 1;
+  display: block;
+  width: 100%;
+  aspect-ratio: 320 / 360;
+  transition: transform 260ms var(--motion-ease-out);
+}
+
+.proofPlate {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scene[data-lock="true"] .proofCornflowerDepth {
+  transform: translate3d(-3px, -3px, 0) !important;
+}
+
+.proofWedge {
+  position: absolute;
+  top: 3.25rem;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.proofWedgeRow {
+  display: grid;
+  grid-template-columns: 1.25rem 1.125rem;
+  align-items: center;
+  gap: 0.42rem;
+  min-height: 1.125rem;
+}
+
+.proofWedgeLabel {
+  color: var(--color-secondary-text);
+  font-family: var(--font-label);
+  font-size: 0.625rem;
+  line-height: 1;
+  text-align: right;
+}
+
+.proofWedgePatch {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+  opacity: 0.24;
+  transform: scale(0.82);
+  transform-origin: center;
+}
+
+.scene[data-pass="true"] .proofWedgePatch {
+  animation-name: revealProofPatch;
+  animation-duration: 180ms;
+  animation-timing-function: var(--motion-ease-out);
+  animation-fill-mode: both;
+}
+
+.proofSlug {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: var(--color-secondary-text);
+  font-family: var(--font-label);
+  font-size: 0.625rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* The proof corner ends clear of the fixed side rail (its labels reach about
+   7.5rem in from the right edge), so plates and wedge never sit under it. The
+   proof replaces the small Glacier field on wide screens. */
+@media (min-width: 1024px) {
+  .proofCorner {
+    display: block;
+    right: clamp(9.5rem, 11vw, 11rem);
+  }
+
+  .targetDepth {
+    top: clamp(10rem, 17vh, 12rem);
+    right: clamp(9.5rem, 11vw, 11rem);
+  }
+
+  .glacierDepth {
+    display: none;
+  }
+}
+
 .calibrationStrip {
   position: absolute;
   z-index: 3;
@@ -254,6 +366,12 @@
   transform: none;
 }
 
+.scene[data-reduce-motion="true"] .proofWedgePatch {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
 @keyframes drawCrop {
   from {
     stroke-dashoffset: 48;
@@ -312,9 +430,22 @@
   }
 }
 
+@keyframes revealProofPatch {
+  from {
+    opacity: 0.24;
+    transform: scale(0.82);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @media (max-width: 767px) {
   .glacierDepth,
-  .targetDepth {
+  .targetDepth,
+  .proofCorner {
     display: none;
   }
 
@@ -374,7 +505,8 @@
   .glacierPlate,
   .glacierRoller,
   .registrationTarget,
-  .swatch::before {
+  .swatch::before,
+  .proofWedgePatch {
     animation: none !important;
   }
 
@@ -386,7 +518,20 @@
     transform: none;
   }
 
+  .proofWedgePatch {
+    opacity: 1;
+    transform: none;
+  }
+
   .scrollCue span {
     transition: none;
+  }
+}
+
+/* Between 1024 and 1199 px the wordmark reaches the proof column, so the
+   wedge steps aside and the target and plates carry the corner alone. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .proofWedge {
+    display: none;
   }
 }

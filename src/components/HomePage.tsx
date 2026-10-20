@@ -45,6 +45,12 @@ export default function HomePage({ content }: HomePageProps) {
         <LandingExperience
           hero={profile.hero}
           services={[]}
+          fullName={profile.personal.fullName}
+          linkedinHref={
+            profile.personal.socials.find(
+              (social) => social.platform === "linkedin"
+            )?.href
+          }
         />
 
         <AboutSection
