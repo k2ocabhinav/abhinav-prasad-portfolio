@@ -1,8 +1,12 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import type { PersonalData, ProjectDetail, ProjectStoryVisual, ProjectTenantOption } from "@/types";
+import type {
+  LandingProofBeat,
+  PersonalData,
+  ProjectDetail,
+  ProjectStoryVisual,
+  ProjectTenantOption,
+} from "@/types";
 import Footer from "@/components/layout/Footer";
 import DispatchReel from "@/components/sections/project-detail/DispatchReel";
 import TenantSwitcher from "@/components/sections/project-detail/TenantSwitcher";
@@ -12,6 +16,7 @@ import styles from "./ProjectDetailPage.module.css";
 interface ProjectDetailPageProps {
   detail: ProjectDetail;
   personal: PersonalData;
+  proofBeats: LandingProofBeat[];
 }
 
 interface SectionIntroContent {
@@ -55,28 +60,25 @@ function VisualFigure({ visual, className, frameClassName, imageClassName, sizes
   );
 }
 
-const LEGACY_TILES = [
-  "legacyTileLead",
-  "legacyTileWideLeft",
-  "legacyTileWideRight",
-  "legacyTileThirdLeft",
-  "legacyTileThirdCenter",
-  "legacyTileThirdRight",
-] as const;
-
 function LegacyGallery({ detail }: { detail: ProjectDetail }) {
+  if (detail.gallery.length === 0) return null;
+
   return (
     <section className={styles.section} aria-labelledby="gallery-title">
       <p className={styles.eyebrow}>Project visuals</p>
       <h2 id="gallery-title" className={styles.sectionTitle}>Screens from the build</h2>
-      <div className={styles.legacyGallery}>
-        {detail.gallery.map((visual, index) => (
-          <figure
-            className={`${styles.legacyFigure} ${styles[LEGACY_TILES[index] ?? ""]}`}
-            key={visual.src}
-          >
+      <div className={styles.legacyGallery} data-count={detail.gallery.length}>
+        {detail.gallery.map((visual) => (
+          <figure className={styles.legacyFigure} key={visual.src}>
             <div className={styles.legacyFrame}>
-              <Image src={visual.src} alt={visual.alt} fill sizes="(max-width: 767px) 100vw, 50vw" />
+              <Image
+                src={visual.src}
+                alt={visual.alt}
+                fill
+                sizes={detail.gallery.length > 2
+                  ? "(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 33vw"
+                  : "(max-width: 767px) 100vw, 50vw"}
+              />
             </div>
             <figcaption className={styles.figureCaption}>{visual.caption}</figcaption>
           </figure>
@@ -86,9 +88,11 @@ function LegacyGallery({ detail }: { detail: ProjectDetail }) {
   );
 }
 
-export default function ProjectDetailPage({ detail, personal }: ProjectDetailPageProps) {
+export default function ProjectDetailPage({ detail, personal, proofBeats }: ProjectDetailPageProps) {
   const storyboard = detail.storyboard;
   const visuals = storyboard?.visuals ?? [];
+  const isVelo = detail.slug === "velo";
+  const isPortfolioPlatform = detail.slug === "portfolio-platform";
   const getVisual = (id: string) => visuals.find((visual) => visual.id === id);
   const getChapter = (id: string) => storyboard?.chapters.find((chapter) => chapter.id === id);
   const liveryChapter = getChapter("livery");
@@ -97,43 +101,77 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
   const dayVisual = getVisual("livery-day");
   const nightVisual = getVisual("livery-night");
   const mobileLiveryVisual = getVisual("livery-mobile");
+  const mobileHeroVisual = isVelo ? mobileLiveryVisual : undefined;
   const brandingVisual = getVisual("saffron-branding");
   const tripSheetVisual = getVisual("trip-sheet");
   const switcherOptions: ProjectTenantOption[] = storyboard?.tenantSwitcher.options ?? [];
+  const roleBeat = proofBeats.find((beat) => beat.label === "My Role");
+  const problemBeat = proofBeats.find((beat) => beat.label === "Problem");
+  const tripVisuals = storyboard?.tripSteps.flatMap((step) => {
+    const visual = getVisual(step.visualId);
+    return visual ? [visual] : [];
+  }) ?? [];
+  const tenantVisuals = switcherOptions.flatMap((option) => {
+    const visual = getVisual(option.visualId);
+    return visual ? [visual] : [];
+  });
+  const architectureSections = detail.architectureSections.map((section) => {
+    if (!isPortfolioPlatform || section.title !== "Browser checks") return section;
+    return { ...section, points: [...section.points, ...detail.qualityHighlights] };
+  });
 
   return (
     <div className={styles.pageShell}>
+      <a className={styles.skipLink} href="#project-content">Skip to project content</a>
       <header className={styles.chrome}>
         <div className={`content-container ${styles.chromeInner}`}>
           <Link href="/#work" prefetch={false} className={styles.backLink}>
             ← Back to Works
           </Link>
-          <span className={styles.chromeLabel}>Project file</span>
+          <span className={styles.chromeLabel}>{detail.title}</span>
         </div>
       </header>
 
-      <main className={`content-container ${styles.main}`}>
+      <main id="project-content" className={`content-container ${styles.main}`}>
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{detail.eyebrow}</p>
             {storyboard ? <p className={styles.statusStamp}>Pre-launch working prototype</p> : null}
             <h1 className={styles.title}>{detail.title}</h1>
             <p className={styles.subtitle}>{detail.subtitle}</p>
-            <p className={styles.scopeSummary}>{detail.scopeSummary}</p>
+            {isPortfolioPlatform ? (
+              <>
+                {roleBeat ? <p className={styles.roleLine}>{roleBeat.short}</p> : null}
+                {problemBeat ? (
+                  <div className={styles.hardPart}>
+                    <p className={styles.hardPartLabel}>What was hard</p>
+                    <p className={styles.hardPartCopy}>{problemBeat.short} {problemBeat.detail}</p>
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <p className={styles.scopeSummary}>{detail.scopeSummary}</p>
+            )}
             {storyboard ? <VeloRoutePlate /> : null}
           </div>
 
           <figure className={styles.heroFigure}>
-            <div className={styles.heroMedia}>
-              <Image
-                src={detail.heroImage.src}
-                alt={detail.heroImage.alt}
-                fill
-                preload
-                fetchPriority="high"
-                className={styles.heroImage}
-                sizes="(max-width: 767px) calc(100vw - 3.25rem), (max-width: 1023px) 43vw, (max-width: 1100px) 54vw, 650px"
-              />
+            <div className={styles.heroMedia} data-mobile-preview={mobileHeroVisual ? "true" : undefined}>
+              <picture className={styles.heroPicture}>
+                {mobileHeroVisual ? (
+                  <source media="(max-width: 767px)" srcSet={mobileHeroVisual.src} />
+                ) : null}
+                <Image
+                  src={detail.heroImage.src}
+                  alt={detail.heroImage.alt}
+                  fill
+                  preload={!mobileHeroVisual}
+                  fetchPriority={mobileHeroVisual ? "high" : undefined}
+                  loading={mobileHeroVisual ? "eager" : undefined}
+                  className={styles.heroImage}
+                  sizes="(max-width: 767px) calc(100vw - 3rem), (max-width: 1023px) 43vw, (max-width: 1100px) 54vw, 760px"
+                />
+              </picture>
             </div>
             <figcaption className={styles.figureCaption}>{detail.heroImage.caption}</figcaption>
           </figure>
@@ -157,7 +195,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                   A pre-booked request moves from rider to dispatch to driver. Fleet movement shown here is simulated demo traffic.
                 </p>
               </div>
-              <DispatchReel steps={storyboard.tripSteps} visuals={visuals} />
+              <DispatchReel steps={storyboard.tripSteps} visuals={tripVisuals} />
             </section>
 
             {tenantChapter ? (
@@ -167,7 +205,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                   label={storyboard.tenantSwitcher.label}
                   defaultId={storyboard.tenantSwitcher.defaultId}
                   options={switcherOptions}
-                  visuals={visuals}
+                  visuals={tenantVisuals}
                 />
               </section>
             ) : null}
@@ -249,7 +287,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         <section className={styles.section} aria-labelledby="architecture-title">
           <SectionIntro intro={detail.sectionIntros.architecture} headingId="architecture-title" />
           <div className={styles.architectureGrid}>
-            {detail.architectureSections.map((section, index) => (
+            {architectureSections.map((section, index) => (
               <article className={styles.architectureCard} key={section.title}>
                 <p className={styles.cardIndex}>0{index + 1}</p>
                 <h3 className={styles.cardTitle}>{section.title}</h3>
@@ -276,14 +314,16 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
           </div>
         </section>
 
-        <section className={`${styles.section} ${styles.qualitySection}`} aria-labelledby="quality-title">
-          <div className={styles.qualityPanel}>
-            <SectionIntro intro={detail.sectionIntros.quality} headingId="quality-title" />
-            <ul className={styles.qualityList}>
-              {detail.qualityHighlights.map((item) => <li key={item}>{item}</li>)}
-            </ul>
-          </div>
-        </section>
+        {detail.qualityHighlights.length > 0 && !isPortfolioPlatform ? (
+          <section className={`${styles.section} ${styles.qualitySection}`} aria-labelledby="quality-title">
+            <div className={styles.qualityPanel}>
+              <SectionIntro intro={detail.sectionIntros.quality} headingId="quality-title" />
+              <ul className={styles.qualityList}>
+                {detail.qualityHighlights.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </div>
+          </section>
+        ) : null}
 
         {detail.references?.length ? (
           <section className={styles.section} aria-labelledby="references-title">
@@ -305,9 +345,9 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         ) : null}
 
         <section className={`${styles.section} ${styles.contactBand}`} aria-labelledby="detail-contact-title">
-          <h2 id="detail-contact-title" className={styles.sectionTitle}>Let&apos;s talk about your project.</h2>
+          <h2 id="detail-contact-title" className={styles.sectionTitle}>Let&apos;s talk.</h2>
           <p className={styles.sectionSummary}>
-            For backend roles, product work or questions about this project, email me or download my résumé.
+            Full-time roles, contract work or a scoped project: all welcome.
           </p>
           <div className={styles.contactActions}>
             <a className={styles.contactPrimary} href={`mailto:${personal.email}`}>
@@ -317,16 +357,16 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
               Download résumé
             </a>
             {personal.socials
-              .filter((social) => social.platform !== "email")
+              .filter((social) => social.platform === "linkedin")
               .map((social) => (
                 <a
                   key={social.platform}
                   className={styles.contactSecondary}
                   href={social.href}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                 >
-                  {social.label}
+                  Connect on {social.label}
                 </a>
               ))}
           </div>
