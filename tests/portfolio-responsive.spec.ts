@@ -367,18 +367,18 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await method.scrollIntoViewIfNeeded();
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
-  await expect(method.getByText("For my own projects, I use AI coding agents on small, scoped tasks and review every change myself.", { exact: true })).toBeVisible();
+  await expect(method.getByText("On my own builds, I choose the coding tool and model for each task, run independent pieces in parallel, and review every change before it ships.", { exact: true })).toBeVisible();
   await expect(method.locator("ol > li h4")).toHaveText([
-    "Plan",
-    "Build",
+    "Scope",
+    "Assign",
     "Review",
-    "Ship",
+    "Verify",
   ]);
   await expect(method.locator("ol > li p")).toHaveText([
-    "Agree one task and what done looks like.",
-    "An AI coding agent makes the change in its own copy of the code.",
-    "I read the diff and run the tests.",
-    "I test the real flow in a browser, then release.",
+    "Define the change and what done means.",
+    "Pick the coding tool and model that suits the task; run independent pieces in parallel, each in isolation.",
+    "Read every change against the task and the existing code.",
+    "Run the checks and walk the real flow in a browser.",
   ]);
 });
 

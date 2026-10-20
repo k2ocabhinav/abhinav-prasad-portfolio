@@ -247,10 +247,10 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
   await expect(method.locator("ol > li")).toHaveCount(4);
   await expect(method.locator("ol > li")).toContainText([
-    "Plan",
-    "Build",
+    "Scope",
+    "Assign",
     "Review",
-    "Ship",
+    "Verify",
   ]);
 
   const plateState = await page.locator('[data-home-hero-text] h1 [aria-hidden="true"] span').evaluate((element) => ({
@@ -437,7 +437,7 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
-  await expect(method.locator("ol > li h4")).toHaveText(["Plan", "Build", "Review", "Ship"]);
+  await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
 
   const screenshot = await method.screenshot({
     animations: "disabled",
@@ -460,7 +460,7 @@ test("How I work uses a vertical sequence on mobile", async ({ page }) => {
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
-  await expect(method.locator("ol > li h4")).toHaveText(["Plan", "Build", "Review", "Ship"]);
+  await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
   const columnCount = await method.locator("ol").evaluate(
     (element) => getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length
   );
