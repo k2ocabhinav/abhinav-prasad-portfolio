@@ -15,8 +15,8 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   expect(html).toContain("Database Engineer, Ostrum Tech Limited");
   expect(html).toContain("Started as an intern in May 2024; full-time Database Engineer since September 2024.");
   expect(html).toContain("Develop MySQL-backed business logic for API workflows");
-  expect(html).toContain("Forward deployed builds: Velo, this site, AI-agent workflows");
-  expect(html).toContain("How I orchestrate AI agents");
+  expect(html).toContain("Forward deployed builds: Velo, this site, AI‑agent workflows");
+  expect(html).toContain("How I work");
   expect(html).not.toContain("Software Engineer Intern");
   expect(html).toContain("Selected projects");
 

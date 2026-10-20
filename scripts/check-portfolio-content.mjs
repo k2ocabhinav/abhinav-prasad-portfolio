@@ -308,17 +308,14 @@ function validateProfile() {
   unique(stringArray(profileIntro, "stackItems", filePath), "profile intro stack item");
   const orchestration = objectValue(data, "orchestration", filePath);
   stringValue(orchestration, "intro", filePath);
-  stringValue(orchestration, "method", filePath);
-  stringValue(orchestration, "metricsContext", filePath);
-  const metrics = objectArray(orchestration, "metrics", filePath);
-  if (metrics.length < 3 || metrics.length > 5) {
-    fail(filePath, '"orchestration.metrics" must contain three to five proof points');
+  const steps = objectArray(orchestration, "steps", filePath);
+  if (steps.length !== 4) {
+    fail(filePath, '"orchestration.steps" must contain four steps');
   }
-  metrics.forEach((metric) => {
-    stringValue(metric, "value", filePath);
-    stringValue(metric, "label", filePath);
+  steps.forEach((step) => {
+    stringValue(step, "title", filePath);
+    stringValue(step, "description", filePath);
   });
-  stringValue(orchestration, "lesson", filePath);
   unique(stringArray(data, "knowsAbout", filePath), "knowsAbout value");
   const seo = objectValue(data, "seo", filePath);
   ["title", "description", "author", "ogImage"].forEach((key) => stringValue(seo, key, filePath));

@@ -1,126 +1,115 @@
 "use client";
 
-import * as m from "motion/react-m";
-import { useMotionValue, useSpring, useTransform } from "motion/react";
-import { useEffect, useState } from "react";
-import { useScrollSpy } from "@/hooks/useScrollSpy";
-import { navSpyTargets } from "@/data/navigation";
-import type { NavSpyTarget } from "@/data/navigation";
-import { orbSpring } from "@/lib/animations";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useEffect, useRef } from "react";
 import styles from "./SageOrb.module.css";
 
-// =============================================================================
-// SageOrb — printers' registration-mark cursor.
-//
-// A hairline circle + crosshair (~18px) that adopts the current section's
-// accent. Position comes from motion values written by a single passive
-// pointermove listener, so pointer movement costs zero React renders.
-// Rendered only for fine pointers with motion allowed (nothing on touch or
-// under prefers-reduced-motion).
-// =============================================================================
-
-const MARK_SIZE = 18;
-const NO_TARGETS: readonly NavSpyTarget[] = [];
 const INTERACTIVE_SELECTOR =
-  "a, button, [role='button'], input, textarea, select, summary, [data-cursor-grow]";
-
-// Riso accents per section, palette v2 (fallbacks until P0 tokens land).
-const ORB_ACCENTS: Record<string, string> = {
-  hero: "var(--color-ink, #0B1011)",
-  about: "var(--color-ink, #0B1011)",
-  experience: "var(--color-cornflower-deep, #25447B)",
-  work: "var(--color-lead, #6A2135)",
-  stack: "var(--color-lovebird-deep, #4E5312)",
-  presence: "var(--color-petrol, #1A5D74)",
-  contact: "var(--color-lead, #6A2135)",
-};
+  "a, button, [role='button'], input, textarea, select, summary, [data-cursor], [data-cursor-grow]";
+const DARK_SELECTOR =
+  ".spec-sheet, [data-cursor-theme='dark'], [data-cursor-theme='dark-hover']:hover";
 
 export default function SageOrb() {
-  const prefersReducedMotion = useReducedMotion();
-  const [finePointer, setFinePointer] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const pointerQuery = window.matchMedia("(pointer: fine) and (min-width: 768px)");
-    const update = () => setFinePointer(pointerQuery.matches);
-    update();
-    pointerQuery.addEventListener("change", update);
-    return () => pointerQuery.removeEventListener("change", update);
-  }, []);
+    const cursor = cursorRef.current;
+    const finePointer = window.matchMedia("(pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!cursor) return;
 
-  const pointerEnabled = finePointer && !prefersReducedMotion;
+    let targetX = -20;
+    let targetY = -20;
+    let currentX = targetX;
+    let currentY = targetY;
+    let frame = 0;
 
-  const x = useMotionValue(-MARK_SIZE);
-  const y = useMotionValue(-MARK_SIZE);
-  const targetScale = useMotionValue(1);
-  const springX = useSpring(x, orbSpring);
-  const springY = useSpring(y, orbSpring);
-  const scale = useSpring(targetScale, orbSpring);
-  const markX = useTransform(springX, (value) => value - MARK_SIZE / 2);
-  const markY = useTransform(springY, (value) => value - MARK_SIZE / 2);
+    const animate = () => {
+      frame = 0;
+      if (reducedMotion.matches) {
+        currentX = targetX;
+        currentY = targetY;
+      } else {
+        currentX += (targetX - currentX) * 0.24;
+        currentY += (targetY - currentY) * 0.24;
+      }
 
-  useEffect(() => {
-    if (!pointerEnabled) {
-      return;
-    }
+      cursor.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0) translate(-50%, -50%)`;
+      if (
+        !reducedMotion.matches &&
+        (Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1)
+      ) {
+        frame = window.requestAnimationFrame(animate);
+      }
+    };
+
+    const schedule = () => {
+      if (frame === 0) frame = window.requestAnimationFrame(animate);
+    };
 
     const handlePointerMove = (event: PointerEvent) => {
-      x.set(event.clientX);
-      y.set(event.clientY);
-    };
-    const handlePointerOver = (event: PointerEvent) => {
+      targetX = event.clientX;
+      targetY = event.clientY;
+      cursor.dataset.visible = "true";
+
       const target = event.target;
-      const overInteractive =
-        target instanceof Element && target.closest(INTERACTIVE_SELECTOR) !== null;
-      targetScale.set(overInteractive ? 1.4 : 1);
+      const element = target instanceof Element ? target : null;
+      cursor.dataset.active = String(
+        element?.closest(INTERACTIVE_SELECTOR) !== null && element !== null
+      );
+      cursor.dataset.theme = String(element?.closest(DARK_SELECTOR) !== null && element !== null);
+      schedule();
     };
 
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    window.addEventListener("pointerover", handlePointerOver, { passive: true });
+    const hide = () => {
+      cursor.dataset.visible = "false";
+      cursor.dataset.active = "false";
+    };
+
+    const handlePointerLeave = (event: PointerEvent) => {
+      if (event.relatedTarget === null) hide();
+    };
+
+    const enable = () => {
+      if (!finePointer.matches) return;
+      window.addEventListener("pointermove", handlePointerMove, { passive: true });
+      window.addEventListener("pointerout", handlePointerLeave, { passive: true });
+      window.addEventListener("blur", hide);
+    };
+
+    const disable = () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerout", handlePointerLeave);
+      window.removeEventListener("blur", hide);
+      hide();
+      if (frame !== 0) {
+        window.cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    };
+
+    const handlePointerCapabilityChange = () => {
+      disable();
+      enable();
+    };
+
+    enable();
+    finePointer.addEventListener("change", handlePointerCapabilityChange);
 
     return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerover", handlePointerOver);
+      disable();
+      finePointer.removeEventListener("change", handlePointerCapabilityChange);
     };
-  }, [pointerEnabled, x, y, targetScale]);
-
-  const { activeId: activeSection } = useScrollSpy(
-    pointerEnabled ? navSpyTargets : NO_TARGETS
-  );
-  const accent = ORB_ACCENTS[activeSection] ?? ORB_ACCENTS.hero;
-
-  if (!pointerEnabled) {
-    return null;
-  }
+  }, []);
 
   return (
-    <m.div
-      data-site-chrome="cursor-orb"
+    <div
+      ref={cursorRef}
       className={styles.orb}
-      style={{ x: markX, y: markY, scale, color: accent }}
-    >
-      <svg
-        className={styles.mark}
-        viewBox={`0 0 ${MARK_SIZE} ${MARK_SIZE}`}
-        aria-hidden="true"
-        focusable="false"
-      >
-        <circle cx={MARK_SIZE / 2} cy={MARK_SIZE / 2} r={MARK_SIZE / 2 - 1} />
-        <line x1={MARK_SIZE / 2} y1="0.5" x2={MARK_SIZE / 2} y2={MARK_SIZE / 2 - 3.5} />
-        <line
-          x1={MARK_SIZE / 2}
-          y1={MARK_SIZE / 2 + 3.5}
-          x2={MARK_SIZE / 2}
-          y2={MARK_SIZE - 0.5}
-        />
-        <line x1="0.5" y1={MARK_SIZE / 2} x2={MARK_SIZE / 2 - 3.5} y2={MARK_SIZE / 2} />
-        <line
-          x1={MARK_SIZE / 2 + 3.5}
-          y1={MARK_SIZE / 2}
-          x2={MARK_SIZE - 0.5}
-          y2={MARK_SIZE / 2}
-        />
-      </svg>
-    </m.div>
+      data-site-chrome="cursor-orb"
+      data-visible="false"
+      data-active="false"
+      data-theme="false"
+      aria-hidden="true"
+    />
   );
 }

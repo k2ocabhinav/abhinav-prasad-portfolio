@@ -9,7 +9,7 @@ import styles from "./BackdropCanvas.module.css";
 // As each section crosses the viewport midline the canvas fades (0.8s CSS
 // transition) to its paper stock. Fields are painted by their sections.
 // Snap-per-section, never continuous interpolation (muddy midpoints).
-// The grain layer is the single page-wide texture (feTurbulence, multiply).
+// Paper stocks remain flat; texture belongs only inside specific artwork.
 // =============================================================================
 
 const SECTION_STOCKS: Record<string, string> = {
@@ -61,8 +61,6 @@ export default function BackdropCanvas() {
       className={styles.canvas}
       data-stock="bone"
       data-home-backdrop-canvas="true"
-    >
-      <span className={styles.grain} aria-hidden="true" />
-    </div>
+    />
   );
 }

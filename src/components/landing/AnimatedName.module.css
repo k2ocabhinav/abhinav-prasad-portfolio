@@ -1,36 +1,79 @@
-/* =============================================================================
-   AnimatedName — matte editorial serif wordmark (Fraunces, opsz 144, WONK 1).
-   Flat ink on paper; hover play is typographic (hollow stroke, hairline
-   underline, registration-mark corners) — no glow, no shadow, no blur.
-   ============================================================================= */
-
 .nameShell {
-  width: 100%;
-  max-width: 100%;
-  display: block;
-  overflow: clip;
-  container-type: inline-size;
-  contain: layout style;
-}
-
-.nameRow {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: 100%;
-  max-width: 100%;
-  margin-inline: auto;
   position: relative;
-  gap: clamp(0.006em, 0.24cqw, 0.032em);
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+  container-type: inline-size;
+  isolation: isolate;
+  font-size: 31.6cqw;
+  line-height: 0.98;
+  font-family: var(--font-wordmark);
+  font-weight: 600;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  letter-spacing: -0.02em;
+  color: var(--color-ink, #0B1011);
 }
 
-.letterWrapper {
-  display: inline-block;
-  overflow: clip;
+.wordmark,
+.inkPlate {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+  font: inherit;
+  line-height: 0.95;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  letter-spacing: inherit;
 }
 
-.letterPortalButton {
-  display: inline-block;
+.wordmark {
+  position: relative;
+  z-index: 1;
+  color: var(--color-ink, #0B1011);
+}
+
+.plateDrift {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  color: var(--color-burgundy, #6A2135);
+  transform: translate3d(0, 0, 0);
+}
+
+.inkPlate {
+  transform: translate(2px, 2px);
+  clip-path: none;
+}
+
+.nameShell[data-pass="true"] .inkPlate {
+  animation: inkSweep 650ms var(--motion-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) 450ms both;
+}
+
+.nameShell[data-pass="true"] .plateDrift::after {
+  animation: rollerSweep 650ms var(--motion-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) 450ms both;
+}
+
+.plateDrift::after {
+  position: absolute;
+  inset-block: 0;
+  right: 100%;
+  width: 1px;
+  background: var(--color-burgundy, #6A2135);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+
+.portalButton {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  width: 12%;
+  height: 100%;
   padding: 0;
   border: 0;
   background: transparent;
@@ -39,228 +82,93 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.letterPortalButton:disabled {
+.portalButton:disabled {
   cursor: wait;
 }
 
-.letterPortalButton:focus-visible {
-  outline: 2px solid rgba(196, 33, 23, 0.85);
-  outline-offset: 0.12em;
-  border-radius: 0.08em;
+.portalButton:focus-visible {
+  outline: 2px solid var(--color-lead, #6A2135);
+  outline-offset: 3px;
 }
 
-.letterStage {
-  display: inline-block;
-  position: relative;
-  padding-inline: 0.01em;
-  transform-origin: 50% 86%;
-  color: var(--color-on-surface);
-  user-select: none;
-  isolation: isolate;
-  animation: letterSettle 600ms var(--motion-ease-out) backwards;
-  animation-delay: var(--letter-delay, 0s);
-  transition:
-    transform 280ms var(--motion-ease-out),
-    color 180ms var(--motion-ease-out);
-}
-
-/* First-paint entrance: transform only, so the server-rendered wordmark is
-   never blank while JS hydrates. Scaling up from a near-baseline origin keeps
-   every frame inside the clip box, and the backwards fill holds the small start
-   state during each letter's delay. The animation releases transform control
-   when it ends, so the hover transitions below are unaffected. */
-@keyframes letterSettle {
-  from {
-    transform: scale(0.94);
+@keyframes inkSweep {
+  0% {
+    transform: translate(2px, 2px);
   }
-  to {
-    transform: scale(1);
+
+  18% {
+    transform: translate(4px, 3px);
+  }
+
+  100% {
+    transform: translate(2px, 2px);
   }
 }
 
-.letterStage[data-hovered="true"] {
-  color: var(--letter-color);
-  transform: translate3d(0, -0.03em, 0);
-  z-index: 2;
-}
+@keyframes rollerSweep {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
 
-.glyph {
-  display: inline-block;
-  white-space: nowrap;
-  line-height: 0.95;
-  color: currentColor;
-  transform-origin: 50% 86%;
-}
+  8% {
+    transform: translateX(0);
+    opacity: 0;
+  }
 
-.editorialGlyph {
-  font-family: var(--font-wordmark);
-  font-weight: 600;
-  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
-  /* "Abhinav" in Fraunces measures 3.2em wide, so 31cqw fills about 99% of the
-     column the hero gives it. Sizing against that column (not the viewport)
-     keeps all seven letters inside the frame at every width. The hero grid
-     decides how wide the column is: ~52% of the viewport on desktop, ~86% on
-     phones. */
-  font-size: 31cqw;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  text-transform: none;
-  transition:
-    opacity 220ms var(--motion-ease-out),
-    transform 280ms var(--motion-ease-out),
-    color 180ms var(--motion-ease-out),
-    -webkit-text-stroke-color 180ms var(--motion-ease-out);
-}
+  14% {
+    opacity: 1;
+  }
 
-.hoverAura {
-  position: absolute;
-  inset: -0.12em -0.1em -0.08em;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0;
-  transform: translate3d(0, 6px, 0);
-  transition:
-    opacity 220ms ease,
-    transform 300ms var(--motion-ease-out);
-}
+  82% {
+    transform: translateX(82cqw);
+    opacity: 1;
+  }
 
-.letterStage[data-hovered="true"] .hoverAura {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-}
-
-/* Hairline underline — flat vermilion, draws in from the left. */
-.hoverAccentBar {
-  position: absolute;
-  left: 0.02em;
-  right: 0.02em;
-  bottom: 0.03em;
-  height: 2px;
-  background: var(--color-lead, #6A2135);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 220ms var(--motion-ease-out);
-}
-
-.letterStage[data-hovered="true"] .hoverAccentBar {
-  transform: scaleX(1);
-}
-
-/* Registration-mark corners — print artifact, revealed on hover. */
-.cornerTop,
-.cornerBottom {
-  position: absolute;
-  width: 0.18em;
-  height: 0.18em;
-  opacity: 0;
-  transition:
-    opacity 220ms var(--motion-ease-out),
-    transform 300ms var(--motion-ease-out);
-}
-
-.cornerTop {
-  top: 0.08em;
-  right: -0.02em;
-  border-top: 1px solid var(--color-hairline);
-  border-right: 1px solid var(--color-hairline);
-  transform: translate3d(-0.05em, 0.05em, 0);
-}
-
-.cornerBottom {
-  left: -0.02em;
-  bottom: 0.06em;
-  border-left: 1px solid var(--color-hairline);
-  border-bottom: 1px solid var(--color-hairline);
-  transform: translate3d(0.05em, -0.05em, 0);
-}
-
-.letterStage[data-hovered="true"] .cornerTop,
-.letterStage[data-hovered="true"] .cornerBottom {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-}
-
-/* Per-letter typographic play (flat) */
-
-.letterStage[data-animated-letter-index="0"][data-hovered="true"] .editorialGlyph {
-  -webkit-text-stroke: 1.5px var(--letter-color);
-  color: transparent;
-}
-
-.letterStage[data-animated-letter-index="1"][data-hovered="true"] {
-  transform: perspective(520px) rotateY(4deg) translate3d(0, -0.025em, 0);
-}
-
-.letterStage[data-animated-letter-index="3"][data-hovered="true"] .editorialGlyph {
-  transform: translate3d(0, -0.02em, 0) scaleY(1.04);
-}
-
-.letterStage[data-animated-letter-index="5"][data-hovered="true"] {
-  transform: translate3d(0, -0.03em, 0) skewX(-2deg);
-}
-
-.letterStage[data-animated-letter-index="6"][data-hovered="true"] .editorialGlyph {
-  -webkit-text-stroke: 1.5px var(--letter-color);
-  color: transparent;
-}
-
-.letterStage[data-portal-letter="true"] .hoverAccentBar {
-  height: 3px;
-  background: var(--color-lead, #6A2135);
-}
-
-/* Stacked hero layouts put the dispatch board under the masthead, so the
-   wordmark is also capped by viewport height to keep the board in the first
-   screen. The width cap still comes from the column, so containment holds. */
-@media (max-width: 1279px) {
-  .editorialGlyph {
-    font-size: min(31cqw, 26vh);
+  100% {
+    transform: translateX(100cqw);
+    opacity: 0;
   }
 }
 
-/* Tablets stack too, but with a wider column: a slightly smaller cap keeps the
-   whole board and the proof band inside the first screen. */
-@media (min-width: 768px) and (max-width: 1279px) {
-  .editorialGlyph {
-    font-size: min(28cqw, 22vh);
+.nameShell[data-reduce-motion="true"] .inkPlate,
+.nameShell[data-reduce-motion="true"] .plateDrift::after {
+  animation: none;
+}
+
+.nameShell[data-reduce-motion="true"] .inkPlate {
+  clip-path: none;
+  transform: translate(2px, 2px);
+}
+
+.nameShell[data-reduce-motion="true"] .plateDrift::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inkPlate {
+    clip-path: none;
+    transform: translate(2px, 2px);
+    animation: none !important;
+  }
+
+  .plateDrift::after {
+    display: none;
+    animation: none !important;
+  }
+
+  .plateDrift {
+    will-change: auto;
   }
 }
 
 @media (max-width: 767px) {
-  .nameRow {
-    width: 100%;
-    justify-content: center;
-    gap: 0;
+  .nameShell {
+    font-size: 31.4cqw;
   }
 
-  .editorialGlyph {
+  .wordmark,
+  .inkPlate {
     line-height: 1;
   }
-
-  .hoverAura {
-    inset: -0.34em -0.18em -0.12em;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .letterStage {
-    animation: none;
-  }
-
-  .letterStage,
-  .editorialGlyph,
-  .hoverAura,
-  .cornerTop,
-  .cornerBottom {
-    transition-duration: 120ms;
-  }
-
-  .letterStage[data-hovered="true"] {
-    transform: none;
-  }
-}
-
-/* The prop-driven path (parent forces reduced motion) skips the entrance. */
-.nameRow[data-reduce-motion="true"] .letterStage {
-  animation: none;
 }

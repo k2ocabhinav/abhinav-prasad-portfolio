@@ -171,17 +171,14 @@ export interface ProfileIntroContent {
   stackItems: string[];
 }
 
-export interface OrchestrationMetric {
-  value: string;
-  label: string;
+export interface OrchestrationStep {
+  title: string;
+  description: string;
 }
 
 export interface OrchestrationContent {
   intro: string;
-  method: string;
-  metricsContext: string;
-  metrics: OrchestrationMetric[];
-  lesson: string;
+  steps: OrchestrationStep[];
 }
 
 export interface PortfolioProject extends Project {
@@ -363,7 +360,7 @@ export interface LandingHeroFact {
 }
 
 export interface LandingHeroContent {
-  /** Main display title rendered in Fraunces via AnimatedName */
+  /** Main display title rendered as the landing wordmark */
   displayTitle: string;
   /** Static professional identity shown below the wordmark */
   identity: string;
