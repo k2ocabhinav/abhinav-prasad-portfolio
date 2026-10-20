@@ -30,7 +30,7 @@ const fraunces = Fraunces({
 });
 
 const frauncesWordmark = localFont({
-  src: "../../public/fonts/fraunces-wordmark.woff2",
+  src: "./fonts/fraunces-wordmark.woff2",
   weight: "600",
   style: "normal",
   variable: "--font-wordmark",
