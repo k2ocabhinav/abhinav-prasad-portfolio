@@ -86,7 +86,6 @@ function VeloFeature({ project }: { project: Project }) {
                   fill
                   sizes="(min-width: 1024px) 64vw, 100vw"
                   className={styles.projectImage}
-                  priority
                 />
               ) : (
                 <div className={styles.projectFallback} aria-hidden="true">
