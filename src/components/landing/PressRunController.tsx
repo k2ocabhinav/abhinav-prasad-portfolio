@@ -395,7 +395,7 @@ export default function PressRunController() {
     </div>
     <a
       className={styles.calibrationStrip}
-      href="#services"
+      href="#about"
       aria-label="Scroll to What I do"
       data-pressrun-strip="true"
       data-pass="false"

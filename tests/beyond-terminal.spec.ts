@@ -565,7 +565,7 @@ test("desktop home hero lays in the crop marks and calibration strip", async ({ 
   await expect(scene.locator("[data-pressrun-depth='glacier']")).toBeVisible();
   await expect(scene.locator("[data-pressrun-depth='target']")).toBeVisible();
   await expect(strip).toBeVisible();
-  await expect(strip).toHaveAttribute("href", "#services");
+  await expect(strip).toHaveAttribute("href", "#about");
   await expect(strip).toHaveCSS("min-height", "48px");
 });
 
@@ -575,9 +575,9 @@ test("the calibration strip scrolls to What I do", async ({ page }) => {
 
   await page.getByRole("link", { name: "Scroll to What I do" }).click();
 
-  await expect(page).toHaveURL(/#services$/);
-  await expect(page.locator("#services")).toBeInViewport();
-  await expect(page.locator("#services h2")).toHaveText("What I do");
+  await expect(page).toHaveURL(/#about$/);
+  await expect(page.locator("#about")).toBeInViewport();
+  await expect(page.locator("#about h2")).toHaveText("What I do");
 });
 
 test("ink pass sweeps the burgundy plate while the black wordmark stays still", async ({
