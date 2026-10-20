@@ -584,3 +584,198 @@ test("Experience and Stack keep focused reduced-motion visual baselines", async 
     maxDiffPixelRatio: 0.015,
   });
 });
+
+test("the contact email keeps one line at phone, tablet, and small desktop widths", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
+
+  for (const width of [375, 768, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openHome(page, true);
+    const link = page.locator('#contact a[class*="emailLink"]');
+    await link.scrollIntoViewIfNeeded();
+    const state = await link.evaluate((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      const rect = element.getBoundingClientRect();
+      const tops = Array.from(
+        new Set(
+          Array.from(range.getClientRects())
+            .filter((fragment) => fragment.width > 0)
+            .map((fragment) => Math.round(fragment.top))
+        )
+      ).sort((a, b) => a - b);
+      return {
+        text: element.textContent ?? "",
+        lines: tops.length,
+        overflow: element.scrollWidth - element.clientWidth,
+        height: rect.height,
+      };
+    });
+
+    expect(state.text).toContain("@");
+    expect(state.lines, `email lines at ${width}px`).toBe(1);
+    expect(state.overflow, `email overflow at ${width}px`).toBeLessThanOrEqual(1);
+    expect(state.height, `email height at ${width}px`).toBeLessThan(60);
+  }
+});
+
+test("the About heading keeps a readable measure on tablets", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
+
+  for (const width of [768, 900, 1023]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await openHome(page, true);
+    const heading = page.locator("#about h2");
+    await heading.scrollIntoViewIfNeeded();
+    const state = await heading.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const probe = document.createElement("span");
+      probe.textContent = "0".repeat(20);
+      probe.style.cssText = [
+        "position:absolute",
+        "visibility:hidden",
+        "white-space:nowrap",
+        `font-family:${style.fontFamily}`,
+        `font-size:${style.fontSize}`,
+        `font-weight:${style.fontWeight}`,
+        `letter-spacing:${style.letterSpacing}`,
+      ].join(";");
+      document.body.appendChild(probe);
+      const twentyCharacters = probe.getBoundingClientRect().width;
+      probe.remove();
+      return {
+        width: element.getBoundingClientRect().width,
+        twentyCharacters,
+        fontSize: Number.parseFloat(style.fontSize),
+      };
+    });
+
+    expect(state.twentyCharacters).toBeGreaterThan(0);
+    expect(state.width, `heading measure at ${width}px`).toBeGreaterThanOrEqual(
+      state.twentyCharacters - 0.5
+    );
+  }
+});
+
+test("the marquee pauses for a fine pointer and for keyboard focus", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
+  await openHome(page);
+  const marquee = page.locator("[data-marquee]");
+  await marquee.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+  const track = marquee.locator('[class*="track"]');
+  const trackX = () =>
+    track.evaluate((element) => {
+      const transform = getComputedStyle(element).transform;
+      return transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
+    });
+
+  const movingStart = await trackX();
+  await page.waitForTimeout(450);
+  const movingEnd = await trackX();
+  expect(Math.abs(movingEnd - movingStart)).toBeGreaterThan(0.5);
+
+  const box = await marquee.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.waitForTimeout(250);
+  const hoverStart = await trackX();
+  await page.waitForTimeout(450);
+  const hoverEnd = await trackX();
+  expect(Math.abs(hoverEnd - hoverStart)).toBeLessThan(0.01);
+
+  await page.mouse.move(10, 10);
+  await page.waitForTimeout(250);
+  await marquee.focus();
+  await page.waitForTimeout(250);
+  const focusStart = await trackX();
+  await page.waitForTimeout(450);
+  const focusEnd = await trackX();
+  expect(Math.abs(focusEnd - focusStart)).toBeLessThan(0.01);
+});
+
+test("Velo dispatch screens show the whole desk on phones", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probe");
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/work/velo");
+  const image = page
+    .locator('img[alt="Velo Business admin dispatch screen with a live fleet map."]')
+    .first();
+  await image.scrollIntoViewIfNeeded();
+  const state = await image.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const imageElement = element as HTMLImageElement;
+    return {
+      fit: getComputedStyle(element).objectFit,
+      width: rect.width,
+      height: rect.height,
+      naturalWidth: imageElement.naturalWidth,
+      naturalHeight: imageElement.naturalHeight,
+    };
+  });
+
+  expect(state.fit).toBe("contain");
+  expect(state.naturalWidth).toBeGreaterThan(0);
+  const renderedRatio = state.width / state.height;
+  const naturalRatio = state.naturalWidth / state.naturalHeight;
+  expect(Math.abs(renderedRatio - naturalRatio)).toBeLessThan(0.02);
+});
+
+test("hovering a project photograph paints nothing over the card copy", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
+  await openHome(page);
+  const card = page.locator("#work [class*='workCard']").nth(1);
+  await card.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(500);
+
+  const thinRules = await card.evaluate((element) =>
+    Array.from(element.querySelectorAll<HTMLElement>("*")).filter((node) => {
+      const rect = node.getBoundingClientRect();
+      return rect.width > 0 && rect.width <= 2 && rect.height >= 100;
+    }).length
+  );
+  expect(thinRules).toBe(0);
+
+  const copy = card.locator('[class*="contentPanel"]');
+  await page.mouse.move(10, 10);
+  await page.waitForTimeout(400);
+  const before = await copy.screenshot({ animations: "disabled" });
+
+  const photo = card.locator("img").first();
+  const photoBox = await photo.boundingBox();
+  expect(photoBox).not.toBeNull();
+  await page.mouse.move(
+    photoBox!.x + photoBox!.width / 2,
+    photoBox!.y + photoBox!.height / 2
+  );
+  await page.waitForTimeout(900);
+  const after = await copy.screenshot({ animations: "disabled" });
+
+  expect(after.equals(before)).toBe(true);
+});
+
+test("reduced motion jumps to a section without a smooth animation", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "One native scroll probe");
+  await openHome(page, true);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+  await settleFrame(page);
+
+  await page
+    .locator('nav[aria-label="Section navigation"] a[href="#contact"]')
+    .click();
+  await settleFrame(page);
+  const firstFrame = await page.evaluate(() => window.scrollY);
+  await page.waitForTimeout(350);
+  const settled = await page.evaluate(() => window.scrollY);
+
+  expect(firstFrame).toBeGreaterThan(0);
+  expect(Math.abs(settled - firstFrame)).toBeLessThanOrEqual(1);
+});

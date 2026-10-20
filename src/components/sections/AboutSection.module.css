@@ -132,6 +132,60 @@
   line-height: 1.6;
 }
 
+/* The home gutter narrows the panel at 768-1023 enough that a 15rem portrait
+   column squeezes the heading to a few characters per line. Stack there too,
+   with a portrait strip and a heading measure of at least 20ch. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .composition {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .portraitColumn {
+    grid-row: 1;
+    height: 6.5rem;
+    justify-items: start;
+    margin: 1.25rem 0 0 1.25rem;
+    padding: 0;
+    background: transparent;
+  }
+
+  .imageFrame {
+    width: 6rem;
+  }
+
+  .stillLife {
+    right: auto;
+    bottom: -0.15rem;
+    left: 4.8rem;
+    width: 3.2rem;
+  }
+
+  .hintCopy {
+    display: none;
+  }
+
+  /* Raise specificity over the global .spec-body padding the panel also uses. */
+  .composition .copyColumn {
+    grid-row: 2;
+    padding: 1.25rem 1.5rem 1.75rem;
+  }
+
+  .heading {
+    max-width: 22ch;
+    font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+  }
+
+  .proofList {
+    margin-top: 1rem;
+  }
+
+  .proofList li,
+  .philosophyText {
+    font-size: 1rem;
+  }
+}
+
 @media (max-width: 767px) {
   .composition {
     grid-template-columns: minmax(0, 1fr);

@@ -221,15 +221,22 @@ function optionalEnum<T extends readonly string[]>(
 }
 
 function validatePublicAsset(src: string | undefined, filePath: string) {
-  if (!src || src.startsWith("http")) {
+  if (!src) {
     return;
   }
 
-  if (!src.startsWith("/")) {
-    fail(filePath, `asset path "${src}" must start with "/" or "https://"`);
+  // Images are served from public/ only; next.config.ts declares no
+  // remotePatterns, so a remote URL would render broken.
+  if (!src.startsWith("/") || src.startsWith("//")) {
+    fail(filePath, `asset path "${src}" must be a local path starting with "/"`);
   }
 
-  const diskPath = path.join(PUBLIC_ROOT, src.slice(1));
+  const diskPath = path.resolve(PUBLIC_ROOT, src.slice(1));
+  const relativePath = path.relative(PUBLIC_ROOT, diskPath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    fail(filePath, `asset path "${src}" must stay inside public/`);
+  }
+
   if (!fs.existsSync(diskPath)) {
     fail(filePath, `asset not found: public${src}`);
   }

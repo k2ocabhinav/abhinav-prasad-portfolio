@@ -103,14 +103,6 @@
     max-width: min(100%, 340px);
   }
 
-  /* A 1440-wide desk cannot shrink to a phone legibly: crop to the fleet map at
-     the centre of the screen instead of showing the sidebar alone. */
-  .step[data-viewport="desktop"] .frameInner {
-    aspect-ratio: 1 / 1;
-  }
-
-  .step[data-viewport="desktop"] .image {
-    object-fit: cover;
-    object-position: 35% center;
-  }
+  /* Keep the whole 1440x750 desk on phones. A square cover crop cuts the side
+     panel, which is part of what the step is showing. */
 }
