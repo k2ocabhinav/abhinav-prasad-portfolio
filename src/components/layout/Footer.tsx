@@ -3,7 +3,7 @@ import PrinterSlug from "@/components/art/PrinterSlug";
 import styles from "./Footer.module.css";
 
 // =============================================================================
-// Footer — Copyright and branding
+// Footer — Copyright, colophon and branding
 // =============================================================================
 
 interface FooterProps {

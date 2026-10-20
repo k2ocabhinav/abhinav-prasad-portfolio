@@ -898,6 +898,47 @@ test("mobile Beyond shell matches the photo wall layout", async ({ page }) => {
   });
 });
 
+test("Beyond route publishes its own share metadata", async ({ page }) => {
+  await page.goto("/beyond-terminal");
+
+  const ogImage = await page.locator('meta[property="og:image"]').getAttribute("content");
+  expect(ogImage).not.toBeNull();
+  expect(new URL(ogImage!, page.url()).pathname).toBe("/og-image.jpg");
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+    "content",
+    "Beyond The Terminal"
+  );
+
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    "content",
+    "summary_large_image"
+  );
+  await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute(
+    "content",
+    "Beyond The Terminal"
+  );
+  await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute(
+    "content",
+    /photo wall/
+  );
+  expect(await page.locator('meta[name="twitter:image"]').getAttribute("content")).toBe(ogImage);
+});
+
+test("Beyond home actions keep a visible cobalt focus outline", async ({ page }) => {
+  await page.goto("/beyond-terminal");
+
+  for (const name of ["Home", "Return home"]) {
+    const link = page.getByRole("link", { name, exact: true });
+    await link.focus();
+    await expect(link).toBeFocused();
+    await expect(link).toHaveCSS("outline-style", "solid");
+    await expect(link).toHaveCSS("outline-width", "3px");
+    await expect(link).toHaveCSS("outline-offset", "3px");
+    await expect(link).toHaveCSS("outline-color", "rgb(36, 93, 255)");
+  }
+});
+
 test("redirected journal archive matches the Beyond photo wall layout", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1200 });
   await page.goto("/beyond-terminal/journal");

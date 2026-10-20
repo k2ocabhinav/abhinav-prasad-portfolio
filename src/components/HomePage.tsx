@@ -31,6 +31,20 @@ export default function HomePage({ content }: HomePageProps) {
         <BrandMark />
       </header>
 
+      {/* Navigation leads the document so the phone menu trigger is reachable
+          in the first tabs; its chrome is fixed, so the visual order is
+          unchanged. */}
+      <Navigation
+        resumeHref={profile.personal.resumeHref}
+        email={profile.personal.email}
+        linkedinHref={
+          profile.personal.socials.find(
+            (social) => social.platform === "linkedin"
+          )?.href
+        }
+        fullName={profile.personal.fullName}
+      />
+
       <main
         id="site-content"
         tabIndex={-1}
@@ -78,17 +92,6 @@ export default function HomePage({ content }: HomePageProps) {
       <Footer personal={profile.personal} />
 
       <ScrollProgress />
-
-      <Navigation
-        resumeHref={profile.personal.resumeHref}
-        email={profile.personal.email}
-        linkedinHref={
-          profile.personal.socials.find(
-            (social) => social.platform === "linkedin"
-          )?.href
-        }
-        fullName={profile.personal.fullName}
-      />
     </>
   );
 }

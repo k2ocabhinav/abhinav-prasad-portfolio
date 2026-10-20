@@ -17,6 +17,19 @@ const DESKTOP_RAIL_QUERY =
 const MENU_FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+// Follow the jump with focus so keyboard and screen-reader users land inside
+// the section they chose. `preventScroll` keeps the smooth scroll single.
+function focusSectionHeading(id: string): void {
+  const section = document.getElementById(id);
+  if (!section) {
+    return;
+  }
+
+  const target = section.querySelector<HTMLElement>("h1, h2, h3") ?? section;
+  target.setAttribute("tabindex", "-1");
+  target.focus({ preventScroll: true });
+}
+
 interface NavigationProps {
   /** Resume PDF path, offered on the first screen from the rail and menu. */
   resumeHref: string;
@@ -41,10 +54,12 @@ export default function Navigation({
   } = useSectionState();
   const prefersReducedMotion = useReducedMotion();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHamburgerHidden, setIsHamburgerHidden] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const restoreBodyScrollRef = useRef<(() => void) | null>(null);
   const shouldRestoreFocusRef = useRef(false);
+  const pendingSectionFocusRef = useRef<string | null>(null);
 
   const closeMobileMenu = useCallback(() => {
     shouldRestoreFocusRef.current = true;
@@ -54,9 +69,20 @@ export default function Navigation({
   }, []);
 
   const handleNavClick = useCallback((id: string) => {
+    const wasMenuOpen = isMobileMenuOpen;
     closeMobileMenu();
     scrollToSection(id);
-  }, [closeMobileMenu]);
+
+    if (wasMenuOpen) {
+      // The menu's exit restores focus to its trigger by default. A chosen
+      // section should own focus instead, once the close commit has cleared
+      // the inert page.
+      shouldRestoreFocusRef.current = false;
+      pendingSectionFocusRef.current = id;
+    } else {
+      window.requestAnimationFrame(() => focusSectionHeading(id));
+    }
+  }, [closeMobileMenu, isMobileMenuOpen]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -169,6 +195,24 @@ export default function Navigation({
   }, [closeMobileMenu, isMobileMenuOpen]);
 
   useEffect(() => {
+    if (isMobileMenuOpen) {
+      return;
+    }
+
+    const sectionId = pendingSectionFocusRef.current;
+    if (!sectionId) {
+      return;
+    }
+
+    pendingSectionFocusRef.current = null;
+    const frame = window.requestAnimationFrame(() =>
+      focusSectionHeading(sectionId)
+    );
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
     const desktopRailMedia = window.matchMedia(DESKTOP_RAIL_QUERY);
     const handleDesktopRailChange = (event: MediaQueryListEvent) => {
       if (event.matches) {
@@ -181,6 +225,58 @@ export default function Navigation({
       desktopRailMedia.removeEventListener("change", handleDesktopRailChange);
     };
   }, [closeMobileMenu]);
+
+  // Keep the phone trigger out of the reading column while the visitor is
+  // moving down the page. It returns on an upward gesture, at both ends of the
+  // page, on keyboard focus, and it never hides while the menu is open.
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      return;
+    }
+
+    let frame = 0;
+    let lastY = window.scrollY;
+    let maxScroll = 0;
+
+    // Cache the scroll range; only resize and content-height changes refresh
+    // it. The scroll handler then does no layout reads.
+    const measure = () => {
+      maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    };
+    measure();
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(document.body);
+    window.addEventListener("resize", measure, { passive: true });
+
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const delta = y - lastY;
+      if (Math.abs(delta) < 4) {
+        return;
+      }
+      lastY = y;
+
+      const atEdge = y <= 96 || maxScroll - y <= 96;
+      setIsHamburgerHidden(!atEdge && delta > 0);
+    };
+
+    const handleScroll = () => {
+      if (frame === 0) {
+        frame = window.requestAnimationFrame(update);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", measure);
+      resizeObserver.disconnect();
+      if (frame !== 0) {
+        window.cancelAnimationFrame(frame);
+      }
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <>
@@ -290,8 +386,14 @@ export default function Navigation({
       </nav>
 
       <div
-        className={styles.mobileHamburger}
+        className={cn(
+          styles.mobileHamburger,
+          isHamburgerHidden && !isMobileMenuOpen && styles.mobileHamburgerHidden
+        )}
         data-site-chrome="navigation-toggle"
+        data-hamburger-hidden={
+          isHamburgerHidden && !isMobileMenuOpen ? "true" : "false"
+        }
         aria-hidden={isMobileMenuOpen ? "true" : undefined}
         style={{ visibility: isMobileMenuOpen ? "hidden" : undefined }}
       >
@@ -306,6 +408,7 @@ export default function Navigation({
               setIsMobileMenuOpen(true);
             }
           }}
+          onFocus={() => setIsHamburgerHidden(false)}
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-navigation-panel"

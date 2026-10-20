@@ -103,11 +103,14 @@
     box-shadow 180ms ease;
 }
 
-.actionPrimary:hover,
-.actionPrimary:focus-visible {
+.actionPrimary:hover {
   transform: translateY(-1px);
   box-shadow: 4px 5px 0 rgba(21, 21, 27, 0.94);
-  outline: none;
+}
+
+.actionPrimary:focus-visible {
+  outline: 3px solid #245DFF;
+  outline-offset: 3px;
 }
 
 @media (max-width: 767px) {
