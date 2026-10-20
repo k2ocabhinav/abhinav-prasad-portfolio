@@ -6,11 +6,15 @@ import type { LandingHeroContent, ServiceEntry } from "@/types";
 interface LandingExperienceProps {
   hero: LandingHeroContent;
   services: ServiceEntry[];
+  fullName: string;
+  linkedinHref: string | undefined;
 }
 
 export default function LandingExperience({
   hero,
   services,
+  fullName,
+  linkedinHref,
 }: LandingExperienceProps) {
   return (
     <div className={styles.landing}>
@@ -18,6 +22,8 @@ export default function LandingExperience({
         <LandingFrame1Hero
           hero={hero}
           name={hero.displayTitle}
+          fullName={fullName}
+          linkedinHref={linkedinHref}
         />
       </section>
       <div className={`deferred-section ${styles.deferredFrames}`}>

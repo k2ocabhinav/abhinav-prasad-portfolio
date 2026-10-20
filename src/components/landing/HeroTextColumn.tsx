@@ -13,11 +13,15 @@ import styles from "./HeroTextColumn.module.css";
 interface HeroTextColumnProps {
   hero: LandingHeroContent;
   name: string;
+  fullName: string;
+  linkedinHref: string | undefined;
 }
 
 export default function HeroTextColumn({
   hero,
   name,
+  fullName,
+  linkedinHref,
 }: HeroTextColumnProps) {
   return (
     <div className={styles.textColumn} data-home-hero-text="true">
@@ -57,34 +61,38 @@ export default function HeroTextColumn({
         </nav>
 
         <div className={styles.ctaGroup} data-hero-ctas="true">
-          {hero.ctas.map((cta) => {
-            if (cta.variant === "primary") {
-              return (
-                <MagneticButton key={cta.label} href={cta.href} variant="glow">
-                  {cta.label}
-                </MagneticButton>
-              );
-            }
-
-            const isLinkedIn = cta.label === "LinkedIn";
-
-            return (
-              <a
+          {hero.ctas
+            .filter((cta) => cta.variant === "primary")
+            .map((cta) => (
+              <MagneticButton
                 key={cta.label}
                 href={cta.href}
-                className={styles.secondaryCta}
-                aria-label={
-                  isLinkedIn
-                    ? "Abhinav Prasad on LinkedIn (opens in a new tab)"
-                    : undefined
-                }
-                target={isLinkedIn ? "_blank" : undefined}
-                rel={isLinkedIn ? "noopener noreferrer" : undefined}
+                variant="glow"
+                className={styles.primaryCta}
               >
                 {cta.label}
+              </MagneticButton>
+            ))}
+          <div className={styles.secondaryCtas}>
+            {hero.ctas
+              .filter((cta) => cta.variant === "secondary")
+              .map((cta) => (
+                <a key={cta.label} href={cta.href} className={styles.secondaryCta}>
+                  {cta.label}
+                </a>
+              ))}
+            {linkedinHref ? (
+              <a
+                href={linkedinHref}
+                className={styles.secondaryCta}
+                aria-label={`${fullName} on LinkedIn (opens in a new tab)`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn
               </a>
-            );
-          })}
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

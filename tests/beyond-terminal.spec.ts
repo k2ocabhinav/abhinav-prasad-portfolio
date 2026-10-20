@@ -140,8 +140,19 @@ test("wordmark and email action keep phone gutters from 320 to 430 pixels", asyn
     const email = await page
       .locator('[data-home-hero-text] a[href^="mailto:"]')
       .boundingBox();
+    const viewWork = await page.getByRole("link", { name: "View work" }).boundingBox();
+    const linkedin = await page
+      .locator("[data-home-hero-text]")
+      .getByRole("link", { name: "Abhinav Prasad on LinkedIn (opens in a new tab)" })
+      .boundingBox();
     expect(email).not.toBeNull();
+    expect(viewWork).not.toBeNull();
+    expect(linkedin).not.toBeNull();
     expect(email!.x + email!.width).toBeLessThanOrEqual(width - 20);
+    expect(viewWork!.height).toBeGreaterThanOrEqual(58);
+    expect(viewWork!.width).toBeGreaterThanOrEqual(200);
+    expect(viewWork!.y).toBeLessThan(email!.y);
+    expect(Math.abs(email!.y - linkedin!.y)).toBeLessThan(1);
   }
 });
 
@@ -204,7 +215,9 @@ test("LinkedIn is a quiet external hero link beside the email action", async ({ 
   expect(workBox).not.toBeNull();
   expect(emailBox).not.toBeNull();
   expect(linkedinBox).not.toBeNull();
-  expect(Math.abs(workBox!.y - emailBox!.y)).toBeLessThan(1);
+  expect(workBox!.height).toBeGreaterThanOrEqual(58);
+  expect(workBox!.width).toBeGreaterThanOrEqual(200);
+  expect(workBox!.y).toBeLessThan(emailBox!.y);
   expect(Math.abs(emailBox!.y - linkedinBox!.y)).toBeLessThan(1);
 });
 
@@ -618,12 +631,65 @@ test("desktop home hero lays in the crop marks and calibration strip", async ({ 
 
   const scene = page.locator("[data-pressrun-scene='true']");
   const strip = page.getByRole("link", { name: /^Scroll to What I do/ });
-  await expect(scene.locator("svg")).toHaveCount(6);
-  await expect(scene.locator("[data-pressrun-depth='glacier']")).toBeVisible();
+  await expect(scene.locator("[data-pressrun-crop-mark='true']")).toHaveCount(4);
+  await expect(scene.locator("[data-pressrun-depth='glacier']")).toBeHidden();
+  await expect(scene.locator("[data-proof-plate='petrol']")).toBeVisible();
   await expect(scene.locator("[data-pressrun-depth='target']")).toBeVisible();
   await expect(strip).toBeVisible();
   await expect(strip).toHaveAttribute("href", "#about");
   await expect(strip).toHaveCSS("min-height", "48px");
+});
+
+test("desktop proof corner uses two edge-masked inks and stays off phones", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  const proof = page.locator("[data-pressrun-proof-corner='true']");
+  await expect(proof).toBeVisible();
+  await expect(proof).toHaveAttribute("aria-hidden", "true");
+  await expect(proof.locator("svg[data-proof-plate]")).toHaveCount(2);
+
+  const masksAreApplied = await proof.locator("svg[data-proof-plate]").evaluateAll((plates) =>
+    plates.every((plate) => {
+      const edgeMask = plate.querySelector("mask[data-proof-edge-mask='true']");
+      const maskId = edgeMask?.getAttribute("id");
+      const gradientRef = edgeMask?.querySelector("rect")?.getAttribute("fill");
+      const gradientId = gradientRef?.slice(5, -1);
+      const gradient = gradientId ? plate.querySelector(`#${gradientId}`) : null;
+      const outerStop = gradient?.querySelector("stop:last-child");
+
+      return Boolean(
+        maskId &&
+          plate.querySelector(`g[mask="url(#${maskId})"]`) &&
+          gradient?.tagName.toLowerCase() === "radialgradient" &&
+          outerStop?.getAttribute("stop-opacity") === "0"
+      );
+    })
+  );
+  expect(masksAreApplied).toBe(true);
+
+  const plateBounds = await proof.locator("[data-proof-plate]").first().boundingBox();
+  expect(plateBounds).not.toBeNull();
+  expect(plateBounds!.width).toBeGreaterThanOrEqual(300);
+  expect(plateBounds!.width).toBeLessThanOrEqual(360);
+
+  for (const width of [1280, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(proof).toBeVisible();
+    const [proofBounds, factsBounds, railBounds] = await Promise.all([
+      proof.boundingBox(),
+      page.locator("[data-hero-facts='true']").boundingBox(),
+      page.locator("[data-site-chrome='navigation-rail'] a").first().boundingBox(),
+    ]);
+    expect(proofBounds).not.toBeNull();
+    expect(factsBounds).not.toBeNull();
+    expect(railBounds).not.toBeNull();
+    expect(proofBounds!.x).toBeGreaterThanOrEqual(factsBounds!.x + factsBounds!.width);
+    expect(proofBounds!.x + proofBounds!.width).toBeLessThan(railBounds!.x);
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(proof).toBeHidden();
 });
 
 test("the calibration strip scrolls to What I do", async ({ page }) => {
@@ -684,14 +750,8 @@ test("ink pass stays static when reduced motion is requested", async ({ page }) 
       Array.from(element.querySelectorAll("svg"))
         .map((decor) => getComputedStyle(decor).animationName)
     );
-  expect(decorationAnimations).toEqual([
-    "none",
-    "none",
-    "none",
-    "none",
-    "none",
-    "none",
-  ]);
+  expect(decorationAnimations.length).toBeGreaterThan(6);
+  expect(decorationAnimations.every((animation) => animation === "none")).toBe(true);
 
   const restTransform = await plate.evaluate((element) => getComputedStyle(element).transform);
   await page.mouse.move(900, 640);
