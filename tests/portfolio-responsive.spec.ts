@@ -3,14 +3,14 @@ import { expect, test } from "@playwright/test";
 import type { Locator, Page, TestInfo } from "@playwright/test";
 
 const workstreamNames = [
-  "Stakeholder delivery and release tooling",
-  "Cloud delivery and operational reports",
-  "Backend and SQL foundations",
-  "AI coding tools for database work",
+  "Database engineering",
+  "Release and delivery",
+  "Tooling and analytics",
+  "Ownership and collaboration",
 ] as const;
 
 const stackGroups = [
-  ["AI coding agent workflows", "Part of my workflow"],
+  ["AI-assisted engineering", "Part of my workflow"],
   ["Backend systems and APIs", "Built in projects"],
   ["Cloud delivery and release checks", "Used at work"],
 ] as const;
@@ -193,28 +193,55 @@ function formatAxeViolations(
     .join("\n");
 }
 
-test("shows the approved Ostrum role, work, and context-labelled stack", async ({ page }) => {
+test("shows the Ostrum summary and opens the full technical experience", async ({ page }) => {
   await openHome(page, true);
 
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
   await expect(experience.getByRole("heading", { level: 3, name: "Ostrum Tech Limited" })).toBeVisible();
   await expect(experience.getByRole("heading", { level: 4, name: "Database Engineer" })).toBeVisible();
-  await expect(experience.getByText("September 2024 to present", { exact: true })).toBeVisible();
+  await expect(experience.getByText("May 2024 to present", { exact: true })).toBeVisible();
+  await expect(experience.getByText(
+    "Started as an intern in May 2024; full-time Database Engineer since September 2024.",
+    { exact: true }
+  )).toBeVisible();
+  await expect(experience.getByText(/Develop MySQL-backed business logic for API workflows/)).toBeVisible();
 
-  const workDisclosure = experience.getByText("Selected engineering work", { exact: true });
-  await workDisclosure.click();
-  await expect(experience.getByText(/stakeholder needs into database-backed changes/)).toBeVisible();
+  const summaryPoints = experience.getByRole("list").first().getByRole("listitem");
+  await expect(summaryPoints).toHaveCount(6);
+  await expect(summaryPoints.nth(0)).toContainText("MySQL stored procedures, functions, triggers, views, and schema changes");
+  await expect(summaryPoints.nth(1)).toContainText("Design relational schemas and indexes");
+  await expect(summaryPoints.nth(2)).toContainText("version-controlled Flyway migrations");
+  await expect(summaryPoints.nth(3)).toContainText("Designed and built Database Toolkit, a Python and Qt desktop app");
+  await expect(summaryPoints.nth(4)).toContainText("Trace defects across API requests");
+  await expect(summaryPoints.nth(5)).toContainText("AWS-integrated database delivery");
+
+  const disclosure = experience.locator("#experience-full-toggle");
+  const panel = experience.locator("#experience-full");
+  await expect(disclosure).toHaveAttribute("aria-expanded", "false");
+  await expect(disclosure).toHaveAttribute("aria-controls", "experience-full");
+  await expect(panel).toHaveAttribute("aria-hidden", "true");
+  await expect(disclosure).toContainText("4 sections · 14 points");
+  expect(await panel.textContent()).toContain("Work with senior engineers and technical managers");
+
+  await disclosure.click();
+  await expect(disclosure).toHaveAttribute("aria-expanded", "true");
+  await expect(panel).toHaveAttribute("aria-hidden", "false");
   for (const name of workstreamNames) {
-    await expect(experience.getByRole("heading", { level: 4, name, exact: true })).toBeVisible();
+    await expect(panel.getByRole("heading", { level: 4, name, exact: true })).toBeVisible();
   }
-  await expect(experience.getByText("Software Engineer Intern", { exact: true })).toBeVisible();
-  const sqlToolsProof = experience.getByText(
-    /I built SQL Tools in Python and Tkinter\./
-  );
-  await expect(sqlToolsProof).toHaveCount(1);
-  await expect(sqlToolsProof).toBeVisible();
-  await expect(experience.getByText(/I traced a state-transition defect/)).toBeVisible();
+  const toolkitImages = panel.getByRole("img");
+  await expect(toolkitImages).toHaveCount(2);
+  await expect(toolkitImages.nth(0)).toHaveAttribute("alt", /Table Compare results/);
+  await expect(toolkitImages.nth(1)).toHaveAttribute("alt", /INSERT Consolidator/);
+  for (const image of await toolkitImages.all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  }
+
+  await disclosure.click();
+  await expect(disclosure).toHaveAttribute("aria-expanded", "false");
+  await expect(panel).toHaveAttribute("aria-hidden", "true");
 
   const stack = page.locator("#stack");
   await stack.scrollIntoViewIfNeeded();
@@ -222,6 +249,52 @@ test("shows the approved Ostrum role, work, and context-labelled stack", async (
     const group = stack.locator("li").filter({ hasText: label });
     await expect(group).toHaveCount(1);
     await expect(group).toContainText(context);
+  }
+});
+
+test("full experience disclosure supports Enter, Space, and its deep link", async ({ page }) => {
+  await openHome(page, true);
+  const button = page.locator("#experience-full-toggle");
+
+  await button.focus();
+  await page.keyboard.press("Enter");
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(button).toBeFocused();
+
+  await page.keyboard.press("Space");
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+
+  await page.goto("/#experience-full");
+  const deepLinkButton = page.locator("#experience-full-toggle");
+  await expect(deepLinkButton).toHaveAttribute("aria-expanded", "true");
+  await expect(deepLinkButton).toContainText("Close full experience");
+  await expect(page.locator("#experience-full")).toBeVisible();
+});
+
+test("uses the approved marquee and contact copy", async ({ page }) => {
+  await openHome(page, true);
+  const marquee = await page.locator('[data-marquee] [aria-hidden="true"]').textContent();
+  for (const phrase of [
+    "Backend systems",
+    "Database design",
+    "API and data contracts",
+    "Reliable releases",
+    "Internal developer tools",
+    "Product interfaces",
+    "End-to-end builds",
+    "AI-assisted engineering",
+  ]) {
+    expect(marquee).toContain(phrase);
+  }
+
+  const contact = page.locator("#contact");
+  await contact.scrollIntoViewIfNeeded();
+  await expect(contact.getByRole("heading", { name: "Let's talk." })).toBeVisible();
+  await expect(contact.getByText("For software roles, product work or a project question.", { exact: true })).toBeVisible();
+  await expect(contact.getByRole("link", { name: "abhinavp0304@gmail.com" })).toBeVisible();
+  await expect(contact.getByRole("link", { name: "Download résumé" })).toBeVisible();
+  for (const name of ["GitHub", "LinkedIn", "Email Abhinav"]) {
+    await expect(contact.getByRole("link", { name })).toBeVisible();
   }
 });
 
@@ -242,7 +315,7 @@ test("keeps the hero facts separate and the profile proof specific", async ({ pa
   await expect(page.locator("#about").getByText(/Velo is a pre-launch dispatch prototype/)).toBeVisible();
   await expect(page.locator("#about").getByText(/As Database Engineer at Ostrum Tech Limited/)).toBeVisible();
   await expect(page.locator("#about").getByText(/For my own builds, I scope AI-agent tasks/)).toBeVisible();
-  await expect(page.locator("#about").getByText(/I clarify requested behavior with stakeholders/)).toBeVisible();
+  await expect(page.locator("#about").getByText(/I clarify expected behavior, trace the API and database changes/)).toBeVisible();
   expect((await page.locator("body").innerText()).match(/forward deployed/gi)).toHaveLength(1);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
@@ -362,17 +435,22 @@ test("reduced motion renders the Experience mark and work content statically", a
   await expect(arcPath).toBeVisible();
   await expect(arcPath).not.toHaveAttribute("style", /stroke-dashoffset|pathLength/);
 
-  await experience.getByText("Selected engineering work", { exact: true }).click();
-  const workstreams = experience.locator("details[open] section");
+  const disclosure = experience.locator("#experience-full-toggle");
+  await disclosure.click();
+  await expect(disclosure).toHaveAttribute("aria-expanded", "true");
+  const workstreams = experience.locator("#experience-full section");
   await expect(workstreams).toHaveCount(4);
   for (let index = 0; index < 4; index += 1) {
-    await expect(workstreams.nth(index)).toBeVisible();
-    const state = await workstreams.nth(index).evaluate((element) => ({
-      opacity: Number.parseFloat(getComputedStyle(element).opacity),
-      transform: getComputedStyle(element).transform,
-    }));
-    expect(state.opacity).toBe(1);
-    expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(state.transform);
+    const workstream = workstreams.nth(index);
+    await expect(workstream).toBeVisible();
+    await expect.poll(
+      () => workstream.evaluate((element) => Number.parseFloat(getComputedStyle(element).opacity)),
+      { timeout: 250 }
+    ).toBe(1);
+    await expect.poll(
+      () => workstream.evaluate((element) => getComputedStyle(element).transform),
+      { timeout: 250 }
+    ).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   }
 });
 
@@ -512,6 +590,13 @@ test("full-page sweep has no runtime, network, ID, or image failures", async ({
   });
 
   await openHome(page);
+  const experienceToggle = page.locator("#experience-full-toggle");
+  await experienceToggle.click();
+  const experienceImages = page.locator("#experience-full img");
+  for (const image of await experienceImages.all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  }
   await sweepWholePage(page);
 
   const integrity = await page.evaluate(() => {

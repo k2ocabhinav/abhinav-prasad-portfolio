@@ -8,6 +8,7 @@ import type {
   BeyondAlbumKind,
   BeyondAlbumSize,
   ChronicleEntry,
+  ExperienceVisual,
   LandingAccentKey,
   LandingHeroContent,
   LandingProofBeatLabel,
@@ -141,6 +142,14 @@ function numberValue(data: Frontmatter, key: string, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
+function positiveNumberValue(data: Frontmatter, key: string, filePath: string): number {
+  const value = data[key];
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+    fail(filePath, `missing positive number "${key}"`);
+  }
+  return value;
+}
+
 function booleanValue(data: Frontmatter, key: string, fallback = false): boolean {
   const value = data[key];
   return typeof value === "boolean" ? value : fallback;
@@ -271,6 +280,18 @@ function readImage(data: Frontmatter, filePath: string): ProjectVisual {
     alt: stringValue(data, "alt", filePath),
     caption: stringValue(data, "caption", filePath),
   };
+}
+
+function readExperienceImage(data: Frontmatter, filePath: string): ExperienceVisual {
+  const image: ExperienceVisual = {
+    src: stringValue(data, "src", filePath),
+    alt: stringValue(data, "alt", filePath),
+    caption: stringValue(data, "caption", filePath),
+    width: positiveNumberValue(data, "width", filePath),
+    height: positiveNumberValue(data, "height", filePath),
+  };
+  validatePublicAsset(image.src, filePath);
+  return image;
 }
 
 function readLinks(data: Frontmatter, filePath: string, key = "links"): ProjectLink[] {
@@ -632,16 +653,25 @@ export function getChronicleEntries(): ChronicleEntry[] {
     const workstreams = nonEmptyObjectArray(data, "workstreams", filePath).map((workstream) => {
       const tools = nonEmptyStringArray(workstream, "tools", filePath);
       ensureUnique(tools, `tool in workstream "${stringValue(workstream, "id", filePath)}"`);
+      const images = (workstream.images === undefined
+        ? []
+        : objectArray(workstream, "images", filePath)
+      ).map((image) => readExperienceImage(image, filePath));
 
       return {
         id: stringValue(workstream, "id", filePath),
         title: stringValue(workstream, "title", filePath),
         summary: stringValue(workstream, "summary", filePath),
-        points: nonEmptyObjectArray(workstream, "points", filePath).map((point) => ({
-          lead: stringValue(point, "lead", filePath),
-          detail: stringValue(point, "detail", filePath),
-        })),
+        points: nonEmptyObjectArray(workstream, "points", filePath).map((point) => {
+          const emphasis = optionalNonEmptyString(point, "emphasis", filePath);
+          return {
+            lead: stringValue(point, "lead", filePath),
+            detail: stringValue(point, "detail", filePath),
+            ...(emphasis ? { emphasis } : {}),
+          };
+        }),
         tools,
+        ...(images.length > 0 ? { images } : {}),
       };
     });
 
@@ -657,13 +687,17 @@ export function getChronicleEntries(): ChronicleEntry[] {
       company: stringValue(data, "company", filePath),
       period: stringValue(data, "period", filePath),
       companyContext: stringValue(data, "companyContext", filePath),
-      backendThesis: stringValue(data, "backendThesis", filePath),
-      functionality: stringValue(data, "functionality", filePath),
-      roles: nonEmptyObjectArray(data, "roles", filePath).map((role) => ({
-        title: stringValue(role, "title", filePath),
-        date: stringValue(role, "date", filePath),
-        note: optionalNonEmptyString(role, "note", filePath),
-      })),
+      roleTitle: stringValue(data, "roleTitle", filePath),
+      roleScope: stringValue(data, "roleScope", filePath),
+      employmentNote: stringValue(data, "employmentNote", filePath),
+      summaryPoints: nonEmptyObjectArray(data, "summaryPoints", filePath).map((point) => {
+        const emphasis = optionalNonEmptyString(point, "emphasis", filePath);
+        return {
+          lead: stringValue(point, "lead", filePath),
+          detail: stringValue(point, "detail", filePath),
+          ...(emphasis ? { emphasis } : {}),
+        };
+      }),
       workstreams,
     };
   });

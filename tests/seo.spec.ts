@@ -13,9 +13,11 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   expect(html).toContain("Software engineer");
   expect(html).toContain("I build products end to end, from the first conversation to release.");
   expect(html).toContain("Database Engineer, Ostrum Tech Limited");
+  expect(html).toContain("Started as an intern in May 2024; full-time Database Engineer since September 2024.");
+  expect(html).toContain("Develop MySQL-backed business logic for API workflows");
   expect(html).toContain("Forward deployed builds: Velo, this site, AI-agent workflows");
   expect(html).toContain("How I orchestrate AI agents");
-  expect(html).toContain("Software Engineer Intern");
+  expect(html).not.toContain("Software Engineer Intern");
   expect(html).toContain("Selected projects");
 
   await page.goto("/");
@@ -31,7 +33,10 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   expect(person).toMatchObject({
     jobTitle: "Database Engineer",
     worksFor: { name: "Ostrum Tech Limited" },
+    hasOccupation: { name: "Database Engineer" },
   });
+  expect(JSON.stringify(person)).not.toMatch(/Software Engineer(?: Intern)?/i);
+  await expect(page.locator("#experience article")).not.toContainText(/Software Engineer/i);
   expect(person?.sameAs).toEqual([
     "https://github.com/k2ocabhinav",
     "https://www.linkedin.com/in/k2ocabhinav22",

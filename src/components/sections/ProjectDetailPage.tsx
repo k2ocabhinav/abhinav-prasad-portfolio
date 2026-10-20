@@ -305,9 +305,9 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         ) : null}
 
         <section className={`${styles.section} ${styles.contactBand}`} aria-labelledby="detail-contact-title">
-          <h2 id="detail-contact-title" className={styles.sectionTitle}>Let&apos;s build.</h2>
+          <h2 id="detail-contact-title" className={styles.sectionTitle}>Let&apos;s talk about your project.</h2>
           <p className={styles.sectionSummary}>
-            I build and ship systems like this end to end. Email me, or start from the résumé.
+            For backend roles, product work or questions about this project, email me or download my résumé.
           </p>
           <div className={styles.contactActions}>
             <a className={styles.contactPrimary} href={`mailto:${personal.email}`}>

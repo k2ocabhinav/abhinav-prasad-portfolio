@@ -98,8 +98,8 @@ export default function ContactSection({
               }}
             >
               <div className={cn("spec-body", styles.contactMotionRoot)}>
-                <h2 className={styles.heading}>Let&apos;s build.</h2>
-                <p className={styles.callout}>From idea to shipped system.</p>
+                <h2 className={styles.heading}>Let&apos;s talk.</h2>
+                <p className={styles.callout}>For software roles, product work or a project question.</p>
 
                 <div className={styles.ctaContainer}>
                   <MagneticButton href={personal.resumeHref} download>
