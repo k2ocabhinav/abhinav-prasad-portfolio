@@ -34,15 +34,13 @@ export default function AboutSection({
                 width={640}
                 height={640}
                 className={styles.heroImage}
-                priority={false}
               />
             </div>
             <div className={styles.stillLife}>
               <StillLifePlate />
             </div>
             <span className={styles.hintCopy} data-secret-hint="true">
-              <span>Personal layer</span>
-              <span>v opens it</span>
+              {personal.hintCopy.map((line) => <span key={line}>{line}</span>)}
             </span>
           </div>
 

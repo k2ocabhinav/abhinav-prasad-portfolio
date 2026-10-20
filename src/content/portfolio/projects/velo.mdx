@@ -1,20 +1,11 @@
 ---
 slug: "velo"
 status: "published"
-featured: true
-featuredOrder: 1
 worksOrder: 1
 id: "01"
 title: "Velo, a white-label dispatch prototype"
 description: "A pre-launch dispatch prototype for rider bookings, admin dispatch, and driver trip controls."
-scopeSummary: "Java 21, Spring Boot, PostgreSQL/PostGIS, Next.js"
 icon: "cpu"
-accent: "sage"
-projectCodeTone: "split"
-eyebrow: "Product Build"
-claim: "A dispatch prototype for rider, dispatcher, and driver workflows."
-summary: "A pre-launch dispatch prototype for rider bookings, admin dispatch, and driver trip controls."
-note: "Pre-launch working prototype. No public demo is linked yet."
 tags:
   - "Java 21"
   - "Spring Boot"
@@ -31,29 +22,13 @@ screenshots:
   - src: "/projects/velo/velo-livery-day.webp"
     alt: "Velo's day-theme Livery page with a route map."
     caption: "Livery day theme with a simulated transfer map."
-visual:
-  kind: "screenshot"
-  src: "/projects/velo/velo-livery-day.webp"
-  alt: "Velo's day-theme Livery page with a route map."
-  caption: "Day-theme map capture"
-proofBeats:
-  - label: "Problem"
-    short: "Pre-booked transfers span three workspaces."
-    detail: "The demo follows one transfer through rider booking, admin dispatch, and driver controls."
-  - label: "My Role"
-    short: "Built the backend and product workspaces."
-    detail: "Designed the tenant model, dispatch flow, rider and driver screens, and admin tools."
-  - label: "Built"
-    short: "Includes a fleet map with simulated traffic, a trip simulator, and weekly trip templates."
-    detail: "The prototype includes a dispatch map, trip simulator, trip sheet, tenant tariffs, and service areas."
-  - label: "Prototype scope"
-    short: "One dispatch core runs two branded workspaces. The second is a demo tenant."
-    detail: "Velo Business and Saffron Routes use the same dispatch core. Saffron Routes is a demo tenant."
 detail:
   enabled: true
   slug: "velo"
   eyebrow: "Velo / Dispatch Atlas"
   title: "Velo, a white-label dispatch prototype"
+  seoTitle: "Velo, a white-label dispatch prototype"
+  seoDescription: "A pre-launch dispatch prototype for rider bookings, admin dispatch, and driver trip controls."
   subtitle: "A pre-launch dispatch prototype for rider bookings, admin dispatch, and driver trip controls."
   scopeSummary: "Weekly trip templates, a trip sheet, per-tenant tariffs, and service areas."
   detailCtaLabel: "Read the Dispatch Atlas"
@@ -136,6 +111,31 @@ detail:
       eyebrow: "08 / Source"
       title: "View project source on GitHub."
   storyboard:
+    status: "Pre-launch working prototype"
+    facts:
+      - label: "Stage"
+        value: "Pre-launch working prototype"
+      - label: "Product"
+        value: "Dispatch for pre-booked transfers"
+      - label: "Quality"
+        value: "334 backend tests, 16 Oct 2026"
+    mobileHeroVisualId: "livery-mobile"
+    tripIntro:
+      eyebrow: "01 / One trip"
+      title: "Three workspaces, one dispatch flow."
+      summary: "A pre-booked request moves from rider to dispatch to driver. Fleet movement shown here is simulated demo traffic."
+    routePlate: true
+    mobileProof:
+      visualId: "livery-mobile"
+      title: "The route view adapts to mobile."
+      summary: "The day theme keeps the transfer map and booking actions in a single, vertical flow."
+    featureProof:
+      visualId: "saffron-branding"
+      title: "Each tenant has its own identity and operating rules."
+      summary: "Branding, role labels, tariffs, and service areas are configured per tenant. Saffron Routes is a demo tenant."
+    scheduleProof:
+      visualId: "trip-sheet"
+      summary: "Weekly trip templates create scheduled requests. The trip sheet groups work by time and supports CSV export."
     visuals:
       - id: "livery-day"
         src: "/projects/velo/velo-livery-day.webp"
@@ -190,6 +190,7 @@ detail:
         viewport: "desktop"
     chapters:
       - id: "tenant-views"
+        layout: "tenant-switcher"
         eyebrow: "02 / Tenant views"
         title: "The same dispatch work, in two brands."
         summary: "Velo Business and Saffron Routes share a dispatch core. Saffron Routes is a demo tenant, not a customer."
@@ -198,6 +199,7 @@ detail:
           - "dispatch-saffron-routes"
           - "saffron-branding"
       - id: "livery"
+        layout: "theme-comparison"
         eyebrow: "03 / Livery"
         title: "One landing page, by day and night."
         summary: "The Livery page uses a schematic route map to introduce the transfer workflow."
@@ -206,6 +208,7 @@ detail:
           - "livery-night"
           - "livery-mobile"
       - id: "weekly-work"
+        layout: "schedule"
         eyebrow: "04 / Weekly work"
         title: "Plan the week, then work the trip sheet."
         summary: "Weekly trip templates create scheduled requests for the admin trip sheet."

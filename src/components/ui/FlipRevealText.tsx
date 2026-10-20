@@ -245,11 +245,7 @@ export default function FlipRevealText({
           <span key={token.key} className={styles.clip}>
             <m.span
               className={cn(styles.token, tokenClassName)}
-              initial={
-                disableFlip
-                  ? { opacity: 0, y: startY }
-                  : { opacity: 0, rotateX: startRotate, y: startY }
-              }
+              initial={false}
               whileInView={
                 disableFlip
                   ? { opacity: 1, y: 0 }

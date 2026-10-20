@@ -25,8 +25,6 @@ const STACK_ICON_BY_LABEL: Record<string, StackIconName> = {
   agents: "agents",
 };
 
-const FOCUS_GROUP_IDS = ["ai-workflow", "development", "cloud"] as const;
-
 export default function TechStackSection({
   techCategories,
   stackItems,
@@ -35,15 +33,12 @@ export default function TechStackSection({
   if (techCategories.length === 0) {
     return null;
   }
+  const highlightedCategories = techCategories.filter((category) => category.highlighted);
 
   const iconItems: StackStripItem[] = stackItems.map((label) => ({
     name: STACK_ICON_BY_LABEL[label.toLowerCase()] ?? "api",
     label,
   }));
-  const focusGroups = FOCUS_GROUP_IDS.map((id) =>
-    techCategories.find((category) => category.id === id)
-  ).filter((category): category is StackGroup => Boolean(category));
-
   return (
     <SectionWrapper id="stack" tone={tone} className={styles.stackSection}>
       <div className={styles.header}>
@@ -55,7 +50,7 @@ export default function TechStackSection({
       </div>
 
       <ul className={styles.focusList}>
-        {focusGroups.map((group) => (
+        {highlightedCategories.map((group) => (
           <li key={group.id}>
             <span className={styles.groupLabel}>{group.label}</span>
             <span className={styles.context}>{group.context}</span>
