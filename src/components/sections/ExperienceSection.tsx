@@ -241,7 +241,7 @@ export default function ExperienceSection({
             />
           </div>
           <p className={styles.callout}>
-            MySQL backend work, database releases and internal tools.
+            The role spans stored programs, schema design, release tooling and cloud-supported delivery.
           </p>
         </header>
 

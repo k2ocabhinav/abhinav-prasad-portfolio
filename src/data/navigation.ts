@@ -2,8 +2,7 @@ import type { NavigationItem, NavSection } from "@/types";
 
 export const navigationItems: NavigationItem[] = [
   { kind: "section", id: "hero", label: "Hero" },
-  { kind: "section", id: "services", label: "What I do" },
-  { kind: "section", id: "about", label: "About" },
+  { kind: "section", id: "about", label: "What I do" },
   { kind: "section", id: "experience", label: "Experience" },
   { kind: "section", id: "work", label: "Work" },
   { kind: "section", id: "stack", label: "Stack" },
@@ -37,7 +36,6 @@ export interface NavSpyTarget {
 
 export const navSpyTargets: readonly NavSpyTarget[] = [
   { id: "hero", selector: "#hero" },
-  { id: "services", selector: "#services" },
   { id: "about", selector: "#about" },
   { id: "experience", selector: "#experience" },
   { id: "work", selector: "#work" },

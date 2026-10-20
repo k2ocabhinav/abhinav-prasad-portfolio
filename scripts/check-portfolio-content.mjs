@@ -256,7 +256,7 @@ function validateProfile() {
   const personal = objectValue(data, "personal", filePath);
   const hero = objectValue(data, "hero", filePath);
 
-  ["name", "fullName", "title", "tagline", "subtitle", "email", "philosophy", "presenceDescription", "footerTagline"].forEach((key) =>
+  ["name", "fullName", "title", "tagline", "subtitle", "email", "presenceDescription", "footerTagline"].forEach((key) =>
     stringValue(personal, key, filePath)
   );
   validatePublicAsset(stringValue(personal, "resumeHref", filePath), filePath);
