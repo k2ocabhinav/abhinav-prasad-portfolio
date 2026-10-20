@@ -1,5 +1,4 @@
 import HeroTextColumn from "./HeroTextColumn";
-import ProofCorner from "./ProofCorner";
 import PressRunController from "./PressRunController";
 import type { LandingHeroContent } from "@/types";
 import styles from "./LandingFrame1Hero.module.css";
@@ -27,7 +26,7 @@ export default function LandingFrame1Hero({
           linkedinHref={linkedinHref}
         />
       </div>
-      <PressRunController proofCorner={<ProofCorner />} />
+      <PressRunController />
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import ScrollProgress from "@/components/layout/ScrollProgress";
-import SageOrb from "@/components/layout/SageOrb";
 import Footer from "@/components/layout/Footer";
 import BackdropCanvas from "@/components/layout/BackdropCanvas";
 import BrandMark from "@/components/layout/BrandMark";
@@ -79,7 +78,6 @@ export default function HomePage({ content }: HomePageProps) {
 
       <Footer personal={profile.personal} />
 
-      <SageOrb />
       <ScrollProgress />
 
       <Navigation

@@ -17,8 +17,6 @@ export default function AnimatedName({ name, portalTrigger }: AnimatedNameProps)
     <h1
       className={styles.nameShell}
       aria-label={name}
-      data-pass="false"
-      data-reduce-motion="false"
     >
       <span className={styles.plateDrift} data-ink-plate-drift="true" aria-hidden="true">
         <span className={styles.inkPlate}>{name}</span>
