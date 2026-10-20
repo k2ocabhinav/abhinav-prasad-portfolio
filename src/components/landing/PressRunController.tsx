@@ -6,11 +6,11 @@ export default function PressRunController() {
     <a
       className={styles.scrollLink}
       href="#about"
-      aria-label="Scroll to What I do"
-      data-pressrun-strip="true"
+      aria-label="What I do"
+      data-hero-scroll-cue="true"
     >
-      <span className={styles.scrollCue}>Scroll</span>
-      <span className={styles.scrollLine} aria-hidden="true" />
+      <span>What I do</span>
+      <span className={styles.scrollArrow} aria-hidden="true">↓</span>
     </a>
   );
 }

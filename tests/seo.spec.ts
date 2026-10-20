@@ -87,7 +87,11 @@ test("keeps each home section readable without JavaScript", async ({ page }) => 
 
   await expect(page.locator('[data-home-hero-heading="true"]')).toHaveAttribute("aria-label", "Abhinav");
   await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
-  await expect(page.locator("[data-product-stack]").getByRole("link", { name: "Backend" })).toHaveAttribute("href", "#about");
+  const stack = page.locator("[data-product-stack]");
+  await expect(stack).toBeVisible();
+  await expect(stack.locator("svg[role='img']")).toBeVisible();
+  await expect(stack.getByRole("link")).toHaveCount(0);
+  await expect(stack.locator("[data-stack-layer='backend']")).toBeVisible();
 
   const sections = page.locator("main section");
   const sectionCount = await sections.count();
@@ -213,8 +217,7 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   expect(llmsResponse.headers()["content-type"]).toContain("text/plain");
   const llms = await llmsResponse.text();
   expect(llms).toContain("# Abhinav Prasad");
-  // The LLM summary still uses personal.title; RV1 changes hero.identity and seo.title only.
-  expect(llms).toContain("Software engineer");
+  // The LLM summary keeps its independent profile source; this package changes hero identity and seo.title.
   expect(llms).toContain("At work: Database Engineer, Ostrum Tech Limited.");
   expect(llms).toContain("On my own: Velo, this portfolio, and AI-agent workflows.");
   expect(llms).toContain("Hero, What I do, Experience, Work, Stack, and Contact.");

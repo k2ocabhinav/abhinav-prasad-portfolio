@@ -31,11 +31,11 @@
   max-width: 36ch;
   margin: 0;
   color: rgba(11, 16, 17, 0.9);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: clamp(1.0625rem, 1.35vw, 1.25rem);
+  font-family: var(--font-headline);
+  font-size: clamp(1.2rem, 1.55vw, 1.4rem);
   font-weight: 400;
   letter-spacing: -0.02em;
-  line-height: 1.45;
+  line-height: 1.38;
 }
 
 .factSheet {
@@ -192,7 +192,7 @@
 @media (min-width: 768px) and (max-width: 1023px) {
   .textColumn {
     max-width: 620px;
-    margin-top: -1.2rem;
+    margin-top: 0;
   }
 
   .stack {
@@ -205,6 +205,33 @@
 
   .value {
     max-width: 42ch;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 700px) {
+  .textColumn {
+    max-width: 610px;
+  }
+
+  .stack {
+    gap: 0.45rem;
+  }
+
+  .value {
+    font-size: 1.15rem;
+  }
+
+  .factSheet {
+    margin-top: 0.2rem;
+  }
+
+  .factLink {
+    min-height: 3.1rem;
+    padding-block: 0.35rem;
+  }
+
+  .ctaGroup {
+    margin-top: 0.75rem;
   }
 }
 

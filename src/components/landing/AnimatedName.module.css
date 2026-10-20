@@ -8,7 +8,7 @@
   margin: 0;
   color: #0B1011;
   font-family: var(--font-wordmark);
-  font-size: clamp(11rem, 29cqw, 28rem);
+  font-size: clamp(9rem, min(29cqw, 36svh), 28rem);
   font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
   font-weight: 600;
   letter-spacing: -0.075em;
@@ -50,41 +50,11 @@
 .letter,
 .plateLetter {
   display: block;
-  animation-duration: 280ms;
-  animation-fill-mode: both;
-  animation-timing-function: var(--ease-out-expo);
 }
 
 .letter {
   position: relative;
   z-index: 1;
-  animation-name: inkRise;
-  animation-delay: calc(40ms + var(--letter-index) * 60ms);
-}
-
-.plateLetter {
-  animation-name: plateRise;
-  animation-delay: calc(var(--letter-index) * 60ms);
-}
-
-@keyframes inkRise {
-  from {
-    transform: translateY(28%);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-}
-
-@keyframes plateRise {
-  from {
-    transform: translateY(28%);
-  }
-
-  to {
-    transform: translateY(0);
-  }
 }
 
 .portalButton {
@@ -114,7 +84,13 @@
 @media (min-width: 768px) and (max-width: 1023px) {
   .nameShell {
     bottom: 0;
-    font-size: clamp(11rem, 28cqw, 15rem);
+    font-size: clamp(9rem, 27cqw, 15rem);
+  }
+}
+
+@media (min-width: 768px) and (max-height: 700px) {
+  .nameShell {
+    font-size: clamp(8rem, min(24cqw, 25svh), 13rem);
   }
 }
 
@@ -150,12 +126,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .letter,
-  .plateLetter {
-    animation: none;
-    transform: translateY(0);
-  }
-
   .plate {
     transform: translate(1px, 1px);
   }

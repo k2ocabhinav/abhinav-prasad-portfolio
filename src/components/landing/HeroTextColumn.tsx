@@ -1,5 +1,6 @@
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { LandingHeroContent } from "@/types";
+import PressRunController from "./PressRunController";
 import styles from "./HeroTextColumn.module.css";
 
 // =============================================================================
@@ -81,6 +82,7 @@ export default function HeroTextColumn({
             ) : null}
           </div>
         </div>
+        <PressRunController />
       </div>
     </div>
   );

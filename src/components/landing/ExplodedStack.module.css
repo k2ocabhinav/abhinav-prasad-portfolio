@@ -1,555 +1,314 @@
 .stackColumn {
-  position: relative;
-  width: 100%;
+  display: none;
   min-width: 0;
+  width: 100%;
+  max-width: 640px;
+  margin: 0;
 }
 
 .stackStage {
   position: relative;
   width: 100%;
-  height: clamp(350px, 43vh, 430px);
-  perspective: 1400px;
-  perspective-origin: 50% 42%;
-  touch-action: pan-y;
+  height: min(51svh, 520px);
+  min-height: 360px;
 }
 
-.agentNote {
-  position: absolute;
-  z-index: 5;
-  top: 0;
-  left: 7%;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  color: #351E28;
-  font-family: var(--font-label);
-  font-size: 0.63rem;
-  line-height: 1.4;
-}
-
-.agentNote::before {
-  width: 1.75rem;
-  height: 1px;
-  background: #6A2135;
-  content: "";
-}
-
-.agentLanes,
-.leaderLines {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
+.stackDrawing {
+  display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
-  pointer-events: none;
 }
 
-.agentPath {
+.agentLanes path {
   fill: none;
-  stroke: rgba(11, 16, 17, 0.78);
+  stroke: rgba(11, 16, 17, 0.8);
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+
+.agentLanes .agentLeader {
+  stroke: #6A2135;
+}
+
+.agentLabel {
+  fill: #351E28;
+  font-family: var(--font-label);
+  font-size: 11px;
+}
+
+.printOffset {
+  fill: rgba(53, 30, 40, 0.2);
+}
+
+.sheetSide {
+  fill: #E1DBD1;
+  stroke: rgba(11, 16, 17, 0.85);
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+
+.sheetFace,
+.backendFace,
+.dataFace {
+  fill: #FCF8F2;
+  stroke: rgba(11, 16, 17, 0.88);
+  stroke-width: 1.15;
+  vector-effect: non-scaling-stroke;
+}
+
+.backendFace {
+  fill: #FCF8F2;
+  stroke-width: 1.5;
+}
+
+.backendRule {
+  fill: none;
+  stroke: #6A2135;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.backendHeading,
+.dataHeading {
+  fill: #6A2135;
+  font-family: var(--font-label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.backendSubtitle {
+  fill: #351E28;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.guardBox {
+  fill: #F5EDE8;
+  stroke: #6A2135;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.reviewTick {
-  fill: none;
-  stroke: #6A2135;
-  stroke-width: 1.5;
+.guardText {
+  fill: #6A2135;
+  font-family: var(--font-label);
+  font-size: 10px;
+}
+
+.metaLabel {
+  fill: #63605A;
+  font-family: var(--font-label);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.route {
+  fill: #0B1011;
+  font-family: var(--font-label);
+  font-size: 10px;
+}
+
+.routeVerb {
+  fill: #6A2135;
+  font-weight: 600;
+}
+
+.serviceBox,
+.queueBox {
+  fill: #FFFDF9;
+  stroke: rgba(11, 16, 17, 0.8);
+  stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.agentDot {
+.queueBox {
+  fill: #F8F5EF;
+  stroke: #6A2135;
+}
+
+.serviceName {
+  fill: #0B1011;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.flowLine {
+  fill: none;
+  stroke: rgba(11, 16, 17, 0.82);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.flowNode,
+.agentDots circle,
+.annotations circle {
   fill: #6A2135;
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
 }
 
-.agentDotFirst {
-  --agent-travel: 104px;
-  animation-delay: 720ms;
+.dataHeading {
+  font-size: 11px;
 }
 
-.agentDotSecond {
-  --agent-travel: 129px;
-  animation-delay: 860ms;
-}
-
-.agentDotThird {
-  --agent-travel: 154px;
-  animation-delay: 1000ms;
-}
-
-.stackStage[data-motion-ready="true"] .agentDot {
-  animation-name: agentTravel;
-  animation-duration: 900ms;
-  animation-timing-function: var(--ease-in-out-quint);
-  animation-fill-mode: forwards;
-  animation-play-state: paused;
-}
-
-.leaderLines path {
+.schemaRule,
+.schemaColumn {
   fill: none;
   stroke: rgba(11, 16, 17, 0.82);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.leaderLines circle {
-  fill: #6A2135;
+.schemaColumn {
+  stroke: rgba(11, 16, 17, 0.72);
 }
 
-@keyframes agentTravel {
-  from {
-    opacity: 0;
-    transform: translateY(0);
-  }
-
-  12% {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(var(--agent-travel));
-  }
-}
-
-.tilt {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-
-.assembly {
-  position: absolute;
-  inset: 7% 9% 0 2%;
-  transform: rotateX(58deg) rotateZ(-38deg);
-  transform-origin: 50% 44%;
-  transform-style: preserve-3d;
-}
-
-.sheetOffset {
-  position: absolute;
-  transform-style: preserve-3d;
-}
-
-.dataOffset {
-  z-index: 0;
-  top: 31%;
-  left: 14%;
-  width: 72%;
-  height: 45%;
-}
-
-.backendOffset {
-  z-index: 1;
-  top: 15%;
-  left: 5%;
-  width: 90%;
-  height: 77%;
-}
-
-.interfaceOffset {
-  z-index: 2;
-  top: 29%;
-  left: 16.5%;
-  width: 67%;
-  height: 49%;
-}
-
-.sheetFace {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border: 1px solid rgba(11, 16, 17, 0.82);
-  background: #FCF8F2;
-  transform: translateZ(var(--sheet-depth));
-  transform-style: preserve-3d;
-}
-
-.dataFace {
-  --sheet-depth: 12px;
-  padding: 26px 16px 12px;
-  background: #F8F5EF;
-}
-
-.backendFace {
-  --sheet-depth: 66px;
-  padding: 34px 19px 18px;
-  background: #FCF8F2;
-  border-top: 2px solid #6A2135;
-  box-shadow: 8px 8px 0 rgba(53, 30, 40, 0.3);
-}
-
-.interfaceFace {
-  --sheet-depth: 126px;
-  padding: 28px 14px 14px;
-  background: #FFFDF9;
-  box-shadow: 9px 9px 0 rgba(53, 30, 40, 0.28);
-}
-
-.stackStage[data-motion-ready="true"] .sheetFace {
-  animation-name: sheetRise;
-  animation-duration: 1100ms;
-  animation-delay: 360ms;
-  animation-fill-mode: both;
-  animation-timing-function: var(--ease-out-expo);
-  animation-play-state: paused;
-}
-
-[data-home-hero-frame][data-hero-motion-visible="true"] .sheetFace,
-[data-home-hero-frame][data-hero-motion-visible="true"] .agentDot {
-  animation-play-state: running;
-}
-
-@keyframes sheetRise {
-  from {
-    transform: translateZ(0);
-  }
-
-  to {
-    transform: translateZ(var(--sheet-depth));
-  }
-}
-
-.sheetCaption {
-  position: absolute;
-  top: 0.55rem;
-  left: 0.7rem;
-  color: #351E28;
+.schemaText,
+.schemaType {
+  fill: #0B1011;
   font-family: var(--font-label);
-  font-size: 0.52rem;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-  text-transform: uppercase;
+  font-size: 8px;
 }
 
-.dataGrid {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr 0.6fr;
-  grid-template-rows: repeat(5, minmax(17px, 1fr));
-  border-top: 1px solid rgba(11, 16, 17, 0.35);
-  border-left: 1px solid rgba(11, 16, 17, 0.35);
+.schemaType {
+  fill: #63605A;
+  font-size: 7px;
 }
 
-.dataGrid > span {
-  min-width: 0;
-  padding: 4px 6px;
-  overflow: hidden;
-  border-right: 1px solid rgba(11, 16, 17, 0.35);
-  border-bottom: 1px solid rgba(11, 16, 17, 0.35);
-  color: #351E28;
-  font-family: var(--font-label);
-  font-size: clamp(0.42rem, 0.68vw, 0.58rem);
-  line-height: 1.15;
-  white-space: nowrap;
-}
-
-.dataGrid .dataHead {
-  color: #0B1011;
-  font-weight: 600;
-}
-
-.dataGrid .dataKey {
-  color: #6A2135;
-  font-weight: 600;
-}
-
-.backendHeader {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 1.25rem;
-  padding-inline: 0.1rem;
-  border-bottom: 1px solid rgba(11, 16, 17, 0.26);
-}
-
-.backendHeader .sheetCaption {
-  position: static;
-  color: #6A2135;
-  font-size: 0.62rem;
-  font-weight: 600;
-}
-
-.backendSubtitle {
-  margin-left: 3.8rem;
-  color: #63605A;
-  font-family: var(--font-body);
-  font-size: clamp(0.52rem, 0.8vw, 0.7rem);
-  line-height: 1.3;
-}
-
-.authGuard {
-  padding: 0.2rem 0.35rem;
-  border: 1px solid rgba(106, 33, 53, 0.72);
-  color: #6A2135;
-  font-family: var(--font-label);
-  font-size: clamp(0.43rem, 0.65vw, 0.55rem);
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.backendFlow {
-  position: absolute;
-  inset: 44px 18px 17px;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 0.83fr;
-  gap: 1.7rem;
-  align-items: center;
-}
-
-.routes,
-.serviceColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.flowLabel {
-  display: block;
-  color: #63605A;
-  font-family: var(--font-label);
-  font-size: clamp(0.43rem, 0.64vw, 0.55rem);
-  letter-spacing: 0.03em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.routes code {
-  color: #0B1011;
-  font-family: var(--font-label);
-  font-size: clamp(0.48rem, 0.74vw, 0.65rem);
-  line-height: 1.35;
-  white-space: nowrap;
-}
-
-.routes code b {
-  color: #6A2135;
-  font-weight: 600;
-}
-
-.serviceBox {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-height: 2.35rem;
-  justify-content: center;
-  padding: 0.3rem 0.45rem;
-  border: 1px solid rgba(11, 16, 17, 0.76);
-  background: #FFFDF9;
-}
-
-.serviceBox strong,
-.queueBox strong {
-  color: #0B1011;
-  font-family: var(--font-body);
-  font-size: clamp(0.5rem, 0.76vw, 0.67rem);
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.queueBox {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  min-height: 3.2rem;
-  justify-content: center;
-  padding: 0.35rem 0.5rem;
-  border: 1px solid rgba(11, 16, 17, 0.76);
-  border-left: 2px solid #6A2135;
-  background: #F8F5EF;
-}
-
-.flowLines {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.flowLines path {
+.reviewMarks path {
   fill: none;
-  stroke: rgba(11, 16, 17, 0.78);
-  stroke-width: 1;
+  stroke: #6A2135;
+  stroke-width: 1.7;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
   vector-effect: non-scaling-stroke;
 }
 
-.flowLines circle {
-  fill: #6A2135;
+.annotations path {
+  fill: none;
+  stroke: rgba(11, 16, 17, 0.86);
+  stroke-width: 1.15;
+  vector-effect: non-scaling-stroke;
 }
 
-.screenFrame {
-  display: grid;
-  grid-template-columns: minmax(36px, 0.2fr) minmax(0, 1fr);
-  height: 100%;
-  border: 1px solid rgba(11, 16, 17, 0.5);
-  background: #FCF8F2;
-}
-
-.screenRail {
-  display: flex;
-  flex-direction: column;
-  gap: 0.42rem;
-  padding: 0.4rem 0.3rem;
-  border-right: 1px solid rgba(11, 16, 17, 0.3);
-  background: #F3F0EA;
-}
-
-.screenBrand {
-  width: 65%;
-  height: 4px;
-  margin-bottom: 0.3rem;
-  background: #6A2135;
-}
-
-.screenNav,
-.screenNavActive {
-  display: block;
-  width: 80%;
-  height: 3px;
-  background: rgba(11, 16, 17, 0.28);
-}
-
-.screenNavActive {
-  width: 92%;
-  height: 12px;
-  margin-left: -0.15rem;
-  border-left: 2px solid #6A2135;
-  background: rgba(106, 33, 53, 0.1);
-}
-
-.screenBody {
-  min-width: 0;
-  padding: 0.5rem 0.6rem;
-}
-
-.screenTopline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.4rem;
-  margin-bottom: 0.42rem;
-  color: #0B1011;
-  font-family: var(--font-body);
-  font-size: clamp(0.55rem, 0.82vw, 0.72rem);
-}
-
-.screenAction {
-  display: inline-flex;
-  align-items: center;
-  min-height: 1rem;
-  padding-inline: 0.32rem;
-  background: #6A2135;
-  color: #FCF8F2;
-  font-size: 0.48rem;
+.annotations text {
+  fill: #0B1011;
+  font-family: var(--font-label);
+  font-size: 10px;
   font-weight: 500;
-  white-space: nowrap;
 }
 
-.screenTable {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid rgba(11, 16, 17, 0.25);
+.annotations [data-stack-annotation="interface"],
+.annotations [data-stack-annotation="backend"],
+.annotations [data-stack-annotation="data"] {
+  font-size: 10px;
 }
 
-.screenTableHead,
-.screenRow {
-  display: grid;
-  grid-template-columns: 0.9fr 1fr 0.35fr;
-  align-items: center;
-  gap: 0.25rem;
-  min-height: 1.3rem;
-  border-bottom: 1px solid rgba(11, 16, 17, 0.2);
-  color: #63605A;
-  font-family: var(--font-label);
-  font-size: clamp(0.37rem, 0.52vw, 0.46rem);
+.interfaceLayer,
+.backendLayer {
+  transform-box: view-box;
+  transform-origin: center;
 }
 
-.screenTableHead {
-  color: #351E28;
-  font-weight: 600;
+.stackStage[data-stack-motion="settling"] .interfaceLayer,
+.stackStage[data-stack-motion="settling"] .backendLayer {
+  animation-timing-function: var(--ease-out-expo);
+  animation-fill-mode: both;
 }
 
-.screenRow > span {
-  width: 72%;
-  height: 3px;
-  background: rgba(11, 16, 17, 0.34);
+.stackStage[data-stack-motion="settling"] .interfaceLayer {
+  animation-name: interfaceSettle;
+  animation-duration: 1100ms;
 }
 
-.screenRow > span:first-child {
-  width: 62%;
-  background: rgba(11, 16, 17, 0.62);
+.stackStage[data-stack-motion="settling"] .backendLayer {
+  animation-name: backendSettle;
+  animation-duration: 1100ms;
 }
 
-.screenRow i {
-  display: block;
-  width: 0.5rem;
-  height: 0.5rem;
-  border: 1px solid #6A2135;
-  border-radius: 50%;
+.stackStage[data-stack-motion="settling"] .interfaceDot,
+.stackStage[data-stack-motion="settling"] .backendDot,
+.stackStage[data-stack-motion="settling"] .dataDot {
+  animation-timing-function: var(--ease-out-expo);
+  animation-fill-mode: both;
 }
 
-.layerLinks {
-  position: absolute;
-  z-index: 6;
-  inset: 0;
+.stackStage[data-stack-motion="settling"] .interfaceDot {
+  animation-name: interfaceAgent;
+  animation-duration: 720ms;
 }
 
-.layerLink {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  min-width: 5.5rem;
-  min-height: 2.75rem;
-  gap: 0.55rem;
-  color: #0B1011;
-  font-family: var(--font-label);
-  font-size: 0.62rem;
-  line-height: 1.3;
-  text-decoration: none;
-  transition: color 160ms var(--motion-ease-out);
+.stackStage[data-stack-motion="settling"] .backendDot {
+  animation-name: backendAgent;
+  animation-duration: 850ms;
 }
 
-.layerLink::before {
-  width: 1.75rem;
-  height: 1px;
-  background: #6A2135;
-  content: "";
-  flex: 0 0 auto;
+.stackStage[data-stack-motion="settling"] .dataDot {
+  animation-name: dataAgent;
+  animation-duration: 980ms;
 }
 
-.layerLink:hover,
-.layerLink:focus-visible {
-  color: #6A2135;
+.stackStage[data-motion-paused="true"] * {
+  animation-play-state: paused !important;
 }
 
-.layerLink:focus-visible,
-.mobileLayerLinks a:focus-visible {
-  outline: 2px solid #6A2135;
-  outline-offset: 4px;
+@keyframes interfaceSettle {
+  from {
+    transform: translateY(142px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
 }
 
-.interfaceLink {
-  top: 13%;
-  right: -1%;
+@keyframes backendSettle {
+  from {
+    transform: translateY(70px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
 }
 
-.backendLink {
-  top: 43%;
-  right: -1%;
+@keyframes interfaceAgent {
+  from {
+    opacity: 0.25;
+    transform: translateY(-76px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.dataLink {
-  bottom: 4%;
-  left: 0;
+@keyframes backendAgent {
+  from {
+    opacity: 0.25;
+    transform: translateY(-192px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.mobileLayerLinks {
-  display: none;
+@keyframes dataAgent {
+  from {
+    opacity: 0.25;
+    transform: translateY(-334px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .srOnly {
@@ -563,213 +322,20 @@
   border: 0;
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 1200px) {
   .stackColumn {
-    order: -1;
-    width: min(76vw, 690px);
-    flex: 0 0 auto;
-    transform: scale(0.7);
-    transform-origin: top center;
-    margin: 2rem auto -6.1rem;
-  }
-
-  .stackStage {
-    height: 360px;
-  }
-
-  .assembly {
-    inset-block-start: 17%;
-  }
-
-  .interfaceLink,
-  .backendLink {
-    right: 0;
-  }
-}
-
-@media (max-width: 767px) {
-  .stackColumn {
-    margin-top: 1rem;
-  }
-
-  .stackStage {
-    width: 100%;
-    height: clamp(220px, 62vw, 270px);
-    perspective: 1100px;
-    perspective-origin: 50% 45%;
-  }
-
-  .agentNote {
-    left: 5%;
-    font-size: 0.58rem;
-  }
-
-  .agentNote::before {
-    width: 1.15rem;
-  }
-
-  .assembly {
-    inset: 17% 4% 0;
-    transform: scale(0.65) rotateX(58deg) rotateZ(-38deg);
-    transform-origin: 50% 40%;
-  }
-
-  .sheetFace {
-    animation: none !important;
-    transform: translateZ(var(--sheet-depth)) !important;
-  }
-
-  .agentDot {
-    animation: none !important;
-    opacity: 1;
-  }
-
-  .agentDotFirst {
-    transform: translateY(104px);
-  }
-
-  .agentDotSecond {
-    transform: translateY(129px);
-  }
-
-  .agentDotThird {
-    transform: translateY(154px);
-  }
-
-  .layerLinks {
-    display: none;
-  }
-
-  .leaderLines {
-    display: none;
-  }
-
-  .mobileLayerLinks {
-    display: flex;
-    justify-content: center;
-    gap: clamp(0.75rem, 5vw, 1.5rem);
-    margin-top: -0.1rem;
-  }
-
-  .mobileLayerLinks a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.75rem;
-    gap: 0.4rem;
-    border-bottom: 1px solid rgba(11, 16, 17, 0.25);
-    color: #0B1011;
-    font-family: var(--font-label);
-    font-size: 0.58rem;
-    text-decoration: none;
-  }
-
-  .mobileLayerLinks a::before {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #6A2135;
-    content: "";
-  }
-
-  .dataFace {
-    padding: 24px 12px 8px;
-  }
-
-  .backendFace {
-    padding: 29px 14px 12px;
-  }
-
-  .interfaceFace {
-    padding: 24px 10px 10px;
-  }
-
-  .backendHeader {
-    min-height: 1rem;
-  }
-
-  .backendHeader .sheetCaption {
-    font-size: 0.54rem;
-  }
-
-  .backendSubtitle {
-    margin-left: 2.8rem;
-    font-size: 0.48rem;
-  }
-
-  .authGuard {
-    padding: 0.14rem 0.2rem;
-    font-size: 0.4rem;
-  }
-
-  .backendFlow {
-    inset: 37px 12px 12px;
-    grid-template-columns: 1.1fr 1fr 0.8fr;
-    gap: 0.75rem;
-  }
-
-  .routes,
-  .serviceColumn {
-    gap: 0.45rem;
-  }
-
-  .flowLabel {
-    font-size: 0.4rem;
-  }
-
-  .routes code {
-    font-size: 0.42rem;
-  }
-
-  .serviceBox {
-    min-height: 2rem;
-    padding: 0.22rem 0.3rem;
-  }
-
-  .serviceBox strong,
-  .queueBox strong {
-    font-size: 0.43rem;
-  }
-
-  .queueBox {
-    min-height: 2.7rem;
-    padding: 0.25rem 0.35rem;
-  }
-
-  .screenBody {
-    padding: 0.35rem 0.4rem;
-  }
-
-  .screenTableHead,
-  .screenRow {
-    min-height: 1rem;
-    font-size: 0.37rem;
+    display: block;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stackStage .sheetFace {
-    animation: none !important;
-    transform: translateZ(var(--sheet-depth)) !important;
-  }
-
-  .stackStage .agentDot {
-    animation: none !important;
+  .stackStage[data-stack-motion="settling"] .interfaceLayer,
+  .stackStage[data-stack-motion="settling"] .backendLayer,
+  .stackStage[data-stack-motion="settling"] .interfaceDot,
+  .stackStage[data-stack-motion="settling"] .backendDot,
+  .stackStage[data-stack-motion="settling"] .dataDot {
+    animation: none;
+    transform: none;
     opacity: 1;
-  }
-
-  .stackStage .agentDotFirst {
-    transform: translateY(104px);
-  }
-
-  .stackStage .agentDotSecond {
-    transform: translateY(129px);
-  }
-
-  .stackStage .agentDotThird {
-    transform: translateY(154px);
-  }
-
-  .layerLink {
-    transition: none;
   }
 }
