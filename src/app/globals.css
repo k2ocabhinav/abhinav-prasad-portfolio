@@ -101,6 +101,11 @@
   /* ─── Motion Tokens (Landing Page) ────────────────────────────── */
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-duration-short: 280ms;
+  /* Revamp motion system: long expo settles for reveals, quint for scrubs. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --reveal-duration: 900ms;
+  --reveal-stagger: 55ms;
 
   /* ─── Dark Panel Legacy Aliases ───────────────────────────────── */
   --color-surface-dark: var(--color-panel);

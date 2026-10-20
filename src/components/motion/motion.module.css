@@ -1,0 +1,85 @@
+/* Shared motion primitives. The hidden start states apply only under
+   html[data-js] (set by an inline script before first paint) and only when
+   motion is allowed, so no-JS and reduced-motion visitors always get the
+   finished state. A 4 s CSS failsafe finishes any reveal whose observer never
+   ran. */
+
+/* ─── RevealText: word line-mask ─────────────────────────────────── */
+.reveal {
+  display: block;
+}
+
+.mask {
+  display: inline-block;
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
+  padding-block: 0.06em;
+  margin-block: -0.06em;
+  vertical-align: top;
+}
+
+.word {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html[data-js]) .reveal:not([data-in="true"]) .word {
+    transform: translate3d(0, 110%, 0);
+    animation: revealFailsafe 1ms linear 4s forwards;
+  }
+
+  :global(html[data-js]) .reveal .word {
+    transition: transform var(--reveal-duration) var(--ease-out-expo)
+      calc(var(--reveal-delay, 0ms) + var(--i, 0) * var(--reveal-stagger));
+  }
+}
+
+/* ─── ClipReveal: image / panel wipe ─────────────────────────────── */
+.clip {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html[data-js]) .clip {
+    transition: clip-path 1100ms var(--ease-out-expo);
+  }
+
+  :global(html[data-js]) .clip[data-clip-from="bottom"]:not([data-in="true"]) {
+    clip-path: inset(100% 0 0 0);
+    animation: clipFailsafe 1ms linear 4s forwards;
+  }
+
+  :global(html[data-js]) .clip[data-clip-from="left"]:not([data-in="true"]) {
+    clip-path: inset(0 100% 0 0);
+    animation: clipFailsafe 1ms linear 4s forwards;
+  }
+}
+
+/* ─── ScrubText: scroll-scrubbed ink fill ────────────────────────── */
+.scrub {
+  --p: 1;
+}
+
+.scrubWord {
+  opacity: clamp(0.16, calc((var(--p) * (var(--n) + 6) - var(--i)) / 6), 1);
+  transition: opacity 120ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrubWord {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+@keyframes revealFailsafe {
+  to {
+    transform: none;
+  }
+}
+
+@keyframes clipFailsafe {
+  to {
+    clip-path: inset(0);
+  }
+}

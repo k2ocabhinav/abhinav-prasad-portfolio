@@ -175,7 +175,17 @@ export default function RootLayout({
       lang="en"
       data-scroll-behavior="smooth"
       className={`${fraunces.variable} ${frauncesWordmark.variable} ${frauncesItalic.variable} ${newsreader.variable} ${newsreaderItalic.variable} ${hankenGrotesk.variable} ${fragmentMono.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Marks JS as available before first paint, so reveal start states
+            apply only when the animation can actually run. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.dataset.js='1'",
+          }}
+        />
+      </head>
       <body>
         <AppProviders>{children}</AppProviders>
         {process.env.VERCEL === "1" ? <SpeedInsights /> : null}
