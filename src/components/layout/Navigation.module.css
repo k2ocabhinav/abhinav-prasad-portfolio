@@ -134,7 +134,19 @@
 /* On case-study routes the rail carries only the contact actions. Labels
    stay out of the way until hover or keyboard focus, so the icons sit clear
    of the reading column. */
+/* Case-study rail: the label floats left of its icon, out of flow, so each
+   link's hit area is only the 44 px icon and never covers page content. */
+.desktopRailCompact .railItem {
+  position: relative;
+  min-width: 44px;
+  justify-content: center;
+}
+
 .desktopRailCompact .railLabelRoute {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 0.5rem);
+  margin-top: -0.85rem;
   padding: 0.28rem 0.45rem;
   border: 1px solid var(--color-hairline);
   border-radius: 2px;
