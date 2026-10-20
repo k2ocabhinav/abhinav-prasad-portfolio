@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
+import { createPortal } from "react-dom";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import type { BeyondAlbumColor, BeyondAlbumItem, BeyondAlbumSize } from "@/types";
@@ -270,7 +271,10 @@ export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) 
         </div>
       </section>
 
-      {activeItem ? (
+      {/* Portalled to <body> so the dialog escapes main's stacking context and
+          always paints above the sticky route header. */}
+      {activeItem
+        ? createPortal(
         <div
           className={styles.lightbox}
           role="dialog"
@@ -307,7 +311,10 @@ export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) 
             </div>
           </div>
         </div>
-      ) : null}
+          ,
+            document.body
+          )
+        : null}
     </>
   );
 }

@@ -365,9 +365,11 @@ test("album lightbox focuses close, traps Tab, and restores focus on close", asy
   const close = dialog.getByRole("button", { name: "Close album item" });
   await expect(dialog).toBeVisible();
   await expect(close).toBeFocused();
-  await expect(hero).toHaveAttribute("inert", "");
-  await expect(wall).toHaveAttribute("inert", "");
-  await expect(chrome).toHaveAttribute("inert", "");
+  const isInert = (locator: typeof hero) =>
+    locator.evaluate((element) => element.closest("[inert]") !== null);
+  expect(await isInert(hero)).toBe(true);
+  expect(await isInert(wall)).toBe(true);
+  expect(await isInert(chrome)).toBe(true);
 
   await page.keyboard.press("Tab");
   await expect(close).toBeFocused();
@@ -377,9 +379,9 @@ test("album lightbox focuses close, traps Tab, and restores focus on close", asy
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
   await expect(firstCard).toBeFocused();
-  await expect(wall).not.toHaveAttribute("inert", "");
-  await expect(hero).not.toHaveAttribute("inert", "");
-  await expect(chrome).not.toHaveAttribute("inert", "");
+  expect(await isInert(wall)).toBe(false);
+  expect(await isInert(hero)).toBe(false);
+  expect(await isInert(chrome)).toBe(false);
 });
 
 test("desktop Beyond shell matches the photo wall layout", async ({ page }) => {
