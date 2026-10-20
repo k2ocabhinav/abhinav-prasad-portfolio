@@ -195,16 +195,14 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   )).toBeVisible();
   await expect(experience.getByText(/Develop MySQL-backed business logic for API workflows/)).toBeVisible();
 
-  const summaryPoints = experience.getByRole("list").first().getByRole("listitem");
+  const summaryPoints = experience.locator('[aria-label="Role summary"] > li');
   await expect(summaryPoints).toHaveCount(6);
   await expect(summaryPoints.nth(0)).toContainText("MySQL stored procedures, functions, triggers, views, and schema changes");
   await expect(summaryPoints.nth(1)).toContainText("Design relational schemas and indexes");
   await expect(summaryPoints.nth(2)).toContainText("version-controlled Flyway migrations");
-  await expect(summaryPoints.nth(3).getByRole("heading", {
-    level: 4,
-    name: "Designed and built Database Toolkit,",
-  })).toBeVisible();
-  await expect(summaryPoints.nth(3).locator("p")).toContainText("a Python and Qt desktop app");
+  const toolkitSummary = summaryPoints.nth(3).locator("p");
+  await expect(toolkitSummary.locator("strong")).toHaveText("Designed and built Database Toolkit,");
+  await expect(toolkitSummary).toContainText("a Python and Qt desktop app");
   await expect(summaryPoints.nth(4)).toContainText("Trace defects across API requests");
   await expect(summaryPoints.nth(5)).toContainText("AWS-integrated database delivery");
 
@@ -261,6 +259,26 @@ test("full experience disclosure supports Enter, Space, and its deep link", asyn
   await expect(deepLinkButton).toHaveAttribute("aria-expanded", "true");
   await expect(deepLinkButton).toContainText("Close full experience");
   await expect(page.locator("#experience-full")).toBeVisible();
+
+  const workstreamId = "ostrum-database-engineer-workstream-release-delivery";
+  await page.goto(`/#${workstreamId}`);
+  await expect(page.locator("#experience-full-toggle")).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator(`#${workstreamId}`)).toBeInViewport();
+});
+
+test("the workstream index opens the disclosure and follows the selected section", async ({ page }) => {
+  await openHome(page, true);
+
+  const experience = page.locator("#experience");
+  const navigation = experience.getByRole("navigation", { name: "Workstreams at Ostrum Tech Limited" });
+  const link = navigation.getByRole("link", { name: "Tooling and analytics" });
+  await link.click();
+
+  const target = page.locator("#ostrum-database-engineer-workstream-tooling-analytics");
+  await expect(page.locator("#experience-full-toggle")).toHaveAttribute("aria-expanded", "true");
+  await expect(page).toHaveURL(/#ostrum-database-engineer-workstream-tooling-analytics$/);
+  await expect(target).toBeInViewport();
+  await expect(link).toHaveAttribute("aria-current", "location");
 });
 
 test("uses the approved marquee and contact copy", async ({ page }) => {
@@ -361,8 +379,14 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await expect(whatIDo.getByRole("heading", { name: "AI-assisted delivery" })).toBeVisible();
   await expect(whatIDo).toContainText("Java and Spring Boot services, REST APIs, authentication, realtime messaging and the relational models underneath.");
   await expect(whatIDo).toContainText("Claude Code");
-  await expect(whatIDo.locator("[data-service-glyph]")).toHaveCount(3);
-  await expect(whatIDo.locator("[data-service-number]")).toHaveText(["01", "02", "03"]);
+  const evidenceTable = whatIDo.getByRole("table", { name: "Engineering areas and evidence" });
+  await expect(evidenceTable.getByRole("columnheader")).toHaveText([
+    "Area",
+    "Where it shows",
+    "Proof tags",
+  ]);
+  await expect(evidenceTable.locator("tbody > tr")).toHaveCount(3);
+  await expect(whatIDo.locator("[data-service-number], [data-service-glyph]")).toHaveCount(0);
   expect((await page.locator("body").innerText()).match(/forward deployed/gi)).toHaveLength(1);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
@@ -381,6 +405,66 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
     "Read every change against the task and the existing code.",
     "Run the checks and walk the real flow in a browser.",
   ]);
+});
+
+test("About keeps the statement full width above the small monogram on narrow phones", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed 320px layout probe");
+  await page.setViewportSize({ width: 320, height: 844 });
+  await openHome(page, true);
+  await page.locator("#about").scrollIntoViewIfNeeded();
+
+  const geometry = await page.locator("#about").evaluate((section) => {
+    const statement = section.querySelector<HTMLElement>("[data-scrub]");
+    const aside = section.querySelector<HTMLElement>("[aria-label='Personal layer']");
+    const monogram = aside?.querySelector("img");
+    if (!statement || !aside || !monogram) throw new Error("About composition is incomplete");
+
+    return {
+      sectionWidth: section.getBoundingClientRect().width,
+      statementWidth: statement.getBoundingClientRect().width,
+      statementBottom: statement.getBoundingClientRect().bottom,
+      asideTop: aside.getBoundingClientRect().top,
+      monogramWidth: monogram.getBoundingClientRect().width,
+      documentWidth: document.documentElement.scrollWidth,
+    };
+  });
+
+  expect(geometry.statementWidth).toBeGreaterThan(geometry.sectionWidth * 0.8);
+  expect(geometry.asideTop).toBeGreaterThanOrEqual(geometry.statementBottom);
+  expect(geometry.monogramWidth).toBeLessThanOrEqual(73);
+  expect(geometry.documentWidth).toBeLessThanOrEqual(320);
+});
+
+test("About keeps every ScrubText word at or above the readable ink floor", async ({ page }) => {
+  await openHome(page);
+  await page.locator("#about [data-scrub]").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(100);
+
+  const minimumOpacity = await page.locator("#about [data-scrub]").evaluate((statement) => {
+    const words = [...statement.querySelectorAll<HTMLElement>("[style*='--i']")];
+    return Math.min(...words.map((word) => Number.parseFloat(getComputedStyle(word).opacity)));
+  });
+
+  expect(minimumOpacity).toBeGreaterThanOrEqual(0.65);
+});
+
+test("Experience gives the 768px summary column room beside its index", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed tablet-width layout probe");
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await openHome(page, true);
+  await page.locator("#experience").scrollIntoViewIfNeeded();
+
+  const widths = await page.locator("#experience article").evaluate((article) => {
+    const sidebar = article.querySelector<HTMLElement>("aside");
+    const content = article.querySelector<HTMLElement>("[data-experience-content]");
+    if (!sidebar || !content) throw new Error("Experience columns are missing");
+    return {
+      sidebar: sidebar.getBoundingClientRect().width,
+      content: content.getBoundingClientRect().width,
+    };
+  });
+
+  expect(widths.content).toBeGreaterThan(widths.sidebar * 1.8);
 });
 
 test("server-rendered hero facts stay visible before hydration", async ({ page }) => {
@@ -446,47 +530,52 @@ test("keeps Experience and Stack content inside the project viewport", async ({
   }
 });
 
-test("keeps the sticky Experience rail clear of its reading column", async ({ page }, testInfo) => {
+test("keeps the sticky Experience index clear of its reading column", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Desktop layout check");
   await openHome(page, true);
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
 
   const title = experience.getByRole("heading", { level: 2 });
-  const rail = experience.locator("[data-experience-rail]");
+  const sidebar = experience.locator('aside[aria-label="At work"]');
+  const index = experience.getByRole("navigation", { name: "Workstreams at Ostrum Tech Limited" });
   const content = experience.locator("[data-experience-content]");
   await expect(title).toBeVisible();
-  await expect(rail).toBeVisible();
+  await expect(sidebar).toBeVisible();
+  await expect(index).toBeVisible();
   await expect(content).toBeVisible();
 
-  const [railBox, contentBox] = await Promise.all([
-    rail.boundingBox(),
+  const [sidebarBox, contentBox] = await Promise.all([
+    sidebar.boundingBox(),
     content.boundingBox(),
   ]);
-  expect(railBox).not.toBeNull();
+  expect(sidebarBox).not.toBeNull();
   expect(contentBox).not.toBeNull();
-  expect(railBox!.x + railBox!.width).toBeLessThanOrEqual(contentBox!.x);
-  await expect(experience.locator("[data-experience-progress]")).toBeVisible();
+  expect(sidebarBox!.x + sidebarBox!.width).toBeLessThanOrEqual(contentBox!.x);
+  await expect(sidebar).toHaveCSS("position", "sticky");
 });
 
-test("reduced motion renders Experience content and progress statically", async ({ page }) => {
+test("reduced motion renders Experience content and workstream index statically", async ({ page }) => {
   await openHome(page, true);
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
 
-  const progressFill = experience.locator("[data-experience-progress-fill]");
-  await expect(progressFill).toBeVisible();
-  await expect.poll(
-    () => progressFill.evaluate((element) => getComputedStyle(element).transform)
-  ).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
+  const index = experience.getByRole("navigation", { name: "Workstreams at Ostrum Tech Limited" });
+  const indexLinks = index.getByRole("link");
+  await expect(indexLinks).toHaveCount(4);
+  for (const link of await indexLinks.all()) {
+    await expect(link).toBeVisible();
+    await expect(link).toHaveCSS("opacity", "1");
+    await expect(link).toHaveCSS("transform", "none");
+  }
 
-  const summaryHeadings = experience.locator(
-    '[data-experience-content] [aria-label="Role summary"] h4'
+  const summaryPoints = experience.locator(
+    '[data-experience-content] [aria-label="Role summary"] > li'
   );
-  await expect(summaryHeadings).toHaveCount(6);
-  for (const heading of await summaryHeadings.all()) {
-    await expect(heading).toBeVisible();
-    await expect(heading).toHaveCSS("opacity", "1");
+  await expect(summaryPoints).toHaveCount(6);
+  for (const point of await summaryPoints.all()) {
+    await expect(point).toBeVisible();
+    await expect(point.locator("strong")).toHaveCSS("opacity", "1");
   }
 
   const disclosure = experience.locator("#experience-full-toggle");
@@ -506,33 +595,6 @@ test("reduced motion renders Experience content and progress statically", async 
       { timeout: 250 }
     ).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   }
-});
-
-test("the Experience rail advances as the section moves through the viewport", async ({
-  page,
-}, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic motion probe is sufficient");
-  await openHome(page);
-
-  const section = page.locator("#experience > div");
-  const fill = page.locator("[data-experience-progress-fill]");
-  const sectionTop = await section.evaluate(
-    (element) => element.getBoundingClientRect().top + window.scrollY
-  );
-  const viewportHeight = page.viewportSize()!.height;
-
-  const progressAt = async (viewportFraction: number) => {
-    const targetY = Math.max(0, Math.round(sectionTop - viewportHeight * viewportFraction));
-    await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), targetY);
-    await settleFrame(page);
-    return fill.evaluate((element) => getComputedStyle(element).transform);
-  };
-
-  const early = await progressAt(0.85);
-  const middle = await progressAt(0.5);
-  const settled = await progressAt(0.15);
-  expect(early).not.toBe(middle);
-  expect(middle).not.toBe(settled);
 });
 
 test("touch navigation is operable, sized safely, and restores focus", async ({

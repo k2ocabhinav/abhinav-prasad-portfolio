@@ -1,13 +1,12 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useScroll, useTransform } from "motion/react";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import type { MouseEvent } from "react";
 import type { ChronicleEntry, ExperiencePoint, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import ClipReveal from "@/components/motion/ClipReveal";
 import RevealText from "@/components/motion/RevealText";
 import styles from "./ExperienceSection.module.css";
 
@@ -16,20 +15,28 @@ interface ExperienceSectionProps {
   tone?: SectionTone;
 }
 
-interface ExperienceDossierProps {
-  experience: ChronicleEntry;
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
-}
-
-function pointHeading(point: ExperiencePoint): string {
+function pointLead(point: ExperiencePoint): string {
   return point.emphasis
     ? `${point.lead} ${point.emphasis},`
     : `${point.lead}.`;
 }
 
-function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
+function targetId(experience: ChronicleEntry, workstreamId: string): string {
+  return `${experience.slug}-workstream-${workstreamId}`;
+}
+
+interface ExperienceDossierProps {
+  experience: ChronicleEntry;
+}
+
+function ExperienceDossier({ experience }: ExperienceDossierProps) {
   const prefersReducedMotion = useReducedMotion();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [activeWorkstreamId, setActiveWorkstreamId] = useState(
+    experience.workstreams[0]?.id ?? ""
+  );
+  const [pendingTargetId, setPendingTargetId] = useState<string | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const panelId = experience.slug === "ostrum-database-engineer"
     ? "experience-full"
     : `${experience.slug}-full-experience`;
@@ -40,11 +47,18 @@ function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
     (count, workstream) => count + workstream.points.length,
     0
   );
-  const dotY = useTransform(progress, [0, 1], [0, 116]);
 
   useEffect(() => {
     const openFromHash = () => {
-      if (window.location.hash === `#${panelId}`) {
+      const hash = window.location.hash.slice(1);
+      const isWorkstreamTarget = experience.workstreams.some(
+        (workstream) => targetId(experience, workstream.id) === hash
+      );
+
+      if (hash === panelId) {
+        setIsExpanded(true);
+      } else if (isWorkstreamTarget) {
+        setPendingTargetId(hash);
         setIsExpanded(true);
       }
     };
@@ -52,7 +66,33 @@ function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
     openFromHash();
     window.addEventListener("hashchange", openFromHash);
     return () => window.removeEventListener("hashchange", openFromHash);
-  }, [panelId]);
+  }, [experience, panelId]);
+
+  useEffect(() => {
+    if (!isExpanded) return;
+    const panel = panelRef.current;
+    if (!panel || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const current = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((first, second) => first.boundingClientRect.top - second.boundingClientRect.top)[0];
+
+        if (current instanceof IntersectionObserverEntry && current.target instanceof HTMLElement) {
+          const id = current.target.dataset.workstream;
+          if (id) setActiveWorkstreamId(id);
+        }
+      },
+      { rootMargin: "-38% 0px -52% 0px", threshold: 0 }
+    );
+
+    panel.querySelectorAll<HTMLElement>("[data-workstream]").forEach((workstream) => {
+      observer.observe(workstream);
+    });
+
+    return () => observer.disconnect();
+  }, [isExpanded]);
 
   const panelTransition = prefersReducedMotion
     ? { duration: 0 }
@@ -66,26 +106,72 @@ function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
           opacity: { duration: 0.14, ease: "easeIn" as const },
         };
 
+  function handleWorkstreamClick(
+    event: MouseEvent<HTMLAnchorElement>,
+    id: string
+  ) {
+    if (isExpanded) return;
+    event.preventDefault();
+    setPendingTargetId(id);
+    setIsExpanded(true);
+  }
+
+  function handlePanelAnimationComplete() {
+    if (!isExpanded) return;
+
+    const hashTarget = window.location.hash.slice(1);
+    const linkedTarget = experience.workstreams.some(
+      (workstream) => targetId(experience, workstream.id) === hashTarget
+    )
+      ? hashTarget
+      : null;
+    const id = pendingTargetId ?? linkedTarget;
+    if (!id) return;
+
+    if (window.location.hash !== `#${id}`) {
+      window.history.pushState(null, "", `#${id}`);
+    }
+    window.requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+    setPendingTargetId(null);
+  }
+
   return (
     <article className={styles.experienceEntry} aria-labelledby={companyId}>
-      <aside className={styles.employerRail} aria-label="At work" data-experience-rail="true">
+      <aside className={styles.experienceSidebar} aria-label="At work">
         <p className={styles.atWork}>At work</p>
         <h3 id={companyId} className={styles.employerName}>
           {experience.company}
         </h3>
         <p className={styles.roleTitle}>{experience.roleTitle}</p>
         <p className={styles.period}>{experience.period}</p>
-        <div className={styles.progressTrack} aria-hidden="true" data-experience-progress="true">
-          <m.span
-            className={styles.progressFill}
-            style={{ scaleY: prefersReducedMotion ? 1 : progress }}
-            data-experience-progress-fill="true"
-          />
-          <m.span
-            className={styles.progressDot}
-            style={{ y: prefersReducedMotion ? 116 : dotY }}
-          />
-        </div>
+
+        <nav className={styles.workstreamNav} aria-label={`Workstreams at ${experience.company}`}>
+          <p className={styles.workstreamNavLabel}>Workstreams</p>
+          <ul className={styles.workstreamNavList}>
+            {experience.workstreams.map((workstream) => {
+              const id = targetId(experience, workstream.id);
+              const isActive = activeWorkstreamId === workstream.id;
+
+              return (
+                <li key={workstream.id}>
+                  <a
+                    href={`#${id}`}
+                    aria-current={isActive ? "location" : undefined}
+                    data-active={isActive}
+                    onClick={(event) => handleWorkstreamClick(event, id)}
+                  >
+                    {workstream.title}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       </aside>
 
       <div className={styles.experienceContent} data-experience-content="true">
@@ -93,17 +179,11 @@ function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
         <p className={styles.roleScope}>{experience.roleScope}</p>
 
         <ul className={styles.pointList} aria-label="Role summary">
-          {experience.summaryPoints.map((point, index) => (
+          {experience.summaryPoints.map((point) => (
             <li className={styles.summaryPoint} key={`${point.lead}-${point.detail}`}>
-              <h4 className={styles.pointHeading} aria-label={pointHeading(point)}>
-                <RevealText
-                  as="span"
-                  text={pointHeading(point)}
-                  className={styles.pointHeadingReveal}
-                  delay={index * 35}
-                />
-              </h4>
-              <p>{point.detail}</p>
+              <p className={styles.summarySentence}>
+                <strong>{pointLead(point)}</strong> {point.detail}
+              </p>
             </li>
           ))}
         </ul>
@@ -135,6 +215,7 @@ function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
           </button>
 
           <m.div
+            ref={panelRef}
             id={panelId}
             className={styles.detailPanel}
             role="region"
@@ -144,35 +225,27 @@ function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
             initial={false}
             animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
             transition={panelTransition}
+            onAnimationComplete={handlePanelAnimationComplete}
           >
             <div className={styles.detailContent}>
               <div className={styles.workstreamGrid}>
-                {experience.workstreams.map((workstream, index) => {
-                  const itemTransition = prefersReducedMotion
-                    ? { duration: 0 }
-                    : isExpanded
-                      ? {
-                          duration: 0.18,
-                          delay: index * 0.03,
-                          ease: [0.22, 1, 0.36, 1] as const,
-                        }
-                      : { duration: 0.14, ease: "easeIn" as const };
+                {experience.workstreams.map((workstream) => {
+                  const headingId = `${targetId(experience, workstream.id)}-title`;
 
                   return (
-                    <m.section
+                    <section
                       key={workstream.id}
+                      id={targetId(experience, workstream.id)}
                       className={styles.workstream}
                       data-workstream={workstream.id}
-                      initial={false}
-                      animate={{ opacity: isExpanded ? 1 : 0, y: isExpanded ? 0 : 8 }}
-                      transition={itemTransition}
+                      aria-labelledby={headingId}
                     >
-                      <h4>{workstream.title}</h4>
+                      <h4 id={headingId}>{workstream.title}</h4>
                       <p className={styles.workstreamSummary}>{workstream.summary}</p>
                       <ul className={styles.workstreamPoints}>
                         {workstream.points.map((point) => (
                           <li key={`${point.lead}-${point.detail}`}>
-                            <strong>{pointHeading(point)}</strong> {point.detail}
+                            <strong>{pointLead(point)}</strong> {point.detail}
                           </li>
                         ))}
                       </ul>
@@ -180,23 +253,18 @@ function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
                       {workstream.images?.length ? (
                         <div className={styles.toolkitFigureGrid}>
                           {workstream.images.map((image) => (
-                            <ClipReveal
-                              className={styles.toolkitClip}
-                              key={image.src}
-                            >
-                              <figure className={styles.toolkitFigure}>
-                                <Image
-                                  src={image.src}
-                                  alt={image.alt}
-                                  width={image.width}
-                                  height={image.height}
-                                  sizes="(max-width: 767px) 100vw, (max-width: 1199px) 43vw, 520px"
-                                  loading="lazy"
-                                  className={styles.toolkitImage}
-                                />
-                                <figcaption>{image.caption}</figcaption>
-                              </figure>
-                            </ClipReveal>
+                            <figure className={styles.toolkitFigure} key={image.src}>
+                              <Image
+                                src={image.src}
+                                alt={image.alt}
+                                width={image.width}
+                                height={image.height}
+                                sizes="(max-width: 767px) 100vw, (max-width: 1023px) 30vw, 360px"
+                                loading="lazy"
+                                className={styles.toolkitImage}
+                              />
+                              <figcaption>{image.caption}</figcaption>
+                            </figure>
                           ))}
                         </div>
                       ) : null}
@@ -206,7 +274,7 @@ function ExperienceDossier({ experience, progress }: ExperienceDossierProps) {
                           <li key={tool}>{tool}</li>
                         ))}
                       </ul>
-                    </m.section>
+                    </section>
                   );
                 })}
               </div>
@@ -222,20 +290,13 @@ export default function ExperienceSection({
   experiences,
   tone,
 }: ExperienceSectionProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : sectionRef,
-    offset: ["start end", "end start"],
-  });
-
   if (experiences.length === 0) {
     return null;
   }
 
   return (
     <SectionWrapper id="experience" tone={tone} className={styles.experienceSection}>
-      <div ref={sectionRef} className={styles.experienceRoot}>
+      <div className={styles.experienceRoot}>
         <header className={styles.sectionHeader}>
           <h2 className={styles.heading}>
             <RevealText text="Experience" as="span" className={styles.headingReveal} />
@@ -244,11 +305,7 @@ export default function ExperienceSection({
 
         <div className={styles.experienceList}>
           {experiences.map((experience) => (
-            <ExperienceDossier
-              key={experience.slug}
-              experience={experience}
-              progress={scrollYProgress}
-            />
+            <ExperienceDossier key={experience.slug} experience={experience} />
           ))}
         </div>
       </div>

@@ -1,20 +1,17 @@
 .aboutSection {
-  --plate-ink: var(--color-black-cherry, #351E28);
-  --plate-accent: var(--color-burgundy, #6A2135);
-  --plate-second: var(--color-cornflower, #94B6EF);
-  --plate-paper: var(--paper-linen, #FCF8F2);
+  background: var(--paper-bone, #F0EEE9);
 }
 
 .sectionContent {
   display: grid;
-  gap: clamp(2.5rem, 6vw, 5rem);
+  gap: clamp(2.5rem, 6vw, 4.5rem);
   max-width: 78rem;
   margin-inline: auto;
 }
 
 .sectionHeader {
-  border-bottom: 1px solid var(--color-hairline);
   padding-bottom: clamp(0.85rem, 1.8vw, 1.25rem);
+  border-bottom: 1px solid var(--color-hairline);
 }
 
 .heading {
@@ -29,12 +26,13 @@
 
 .statementLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 9.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.62fr);
   align-items: center;
-  gap: clamp(2rem, 7vw, 7rem);
+  gap: clamp(2rem, 6vw, 6rem);
 }
 
 .statement {
+  --scrub-opacity-floor: 0.65;
   max-width: 28ch;
   color: var(--color-ink, #0B1011);
   font-family: var(--font-headline);
@@ -42,6 +40,14 @@
   font-weight: 400;
   letter-spacing: -0.028em;
   line-height: 1.27;
+}
+
+.statement :global(span[style*="--i"]) {
+  opacity: clamp(
+    var(--scrub-opacity-floor),
+    calc((var(--p) * (var(--n) + 6) - var(--i)) / 6),
+    1
+  );
 }
 
 .statementParagraph {
@@ -57,15 +63,12 @@
 }
 
 .identityAside {
+  display: grid;
+  justify-items: center;
+  align-content: center;
   width: 100%;
-  max-width: 9.5rem;
-  justify-self: end;
-}
-
-.identityArtwork {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
+  max-width: 18rem;
+  justify-self: center;
 }
 
 .monogram {
@@ -76,20 +79,14 @@
   border-radius: 2px;
 }
 
-.stillLife {
-  position: absolute;
-  right: -18%;
-  bottom: -11%;
-  width: 48%;
-}
-
 .hintCopy {
   display: grid;
   gap: 0.12rem;
-  margin: 1.2rem 0 0;
+  width: 100%;
+  margin: 1rem 0 0;
   color: var(--color-muted, #63605A);
   font-family: var(--font-label);
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   letter-spacing: 0.035em;
   line-height: 1.5;
 }
@@ -98,65 +95,78 @@
   color: var(--color-burgundy, #6A2135);
 }
 
-.serviceList {
-  display: grid;
-  margin: 0;
-  padding: 0;
+.serviceTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
   border-top: 1px solid var(--color-hairline);
-  list-style: none;
+  text-align: left;
 }
 
-.serviceItem {
-  min-width: 0;
-  border-bottom: 1px solid var(--color-hairline);
+.areaColumn {
+  width: 22%;
+}
+
+.descriptionColumn {
+  width: 52%;
+}
+
+.proofColumn {
+  width: 26%;
+}
+
+.serviceTable thead th {
+  padding: 0.8rem 1rem 0.8rem 0;
+  color: var(--color-muted, #63605A);
+  font-family: var(--font-label);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  line-height: 1.4;
+}
+
+.serviceTable th,
+.serviceTable td {
+  vertical-align: top;
 }
 
 .serviceRow {
-  display: grid;
-  grid-template-columns: 3.2rem minmax(0, 1fr) 5.5rem;
-  align-items: center;
-  gap: clamp(0.75rem, 2.8vw, 2.5rem);
-  min-height: 10.3rem;
-  padding-block: clamp(1.35rem, 2.8vw, 2rem);
+  border-top: 1px solid var(--color-hairline);
 }
 
-.serviceNumber {
-  align-self: start;
-  padding-top: 0.2rem;
-  color: var(--color-burgundy, #6A2135);
-  font-family: var(--font-label);
-  font-size: 0.82rem;
-  line-height: 1.5;
+.serviceRow > th,
+.serviceRow > td {
+  padding: 1.25rem 1rem 1.35rem 0;
 }
 
-.serviceCopy {
-  min-width: 0;
+.serviceRow > th {
+  text-align: left;
 }
 
 .serviceHeading {
   margin: 0;
   color: var(--color-black-cherry, #351E28);
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
   font-weight: 550;
-  line-height: 1.16;
+  line-height: 1.18;
 }
 
 .serviceTitle {
   position: relative;
-  display: block;
+  display: inline-block;
   width: fit-content;
   max-width: 100%;
 }
 
 .serviceTitle > span:not(:last-child) {
-  margin-inline-end: 0.22em;
+  margin-inline-end: 0.18em;
 }
 
 .serviceTitle::after {
   position: absolute;
   right: 0;
-  bottom: -0.18em;
+  bottom: -0.12em;
   left: 0;
   height: 1px;
   background: var(--color-burgundy, #6A2135);
@@ -166,24 +176,25 @@
   transition: transform 420ms var(--ease-out-expo);
 }
 
-.serviceRow:hover .serviceTitle::after {
+.serviceRow:hover .serviceTitle::after,
+.serviceRow:focus-within .serviceTitle::after {
   transform: scaleX(1);
 }
 
 .serviceDescription {
-  max-width: 68ch;
-  margin: 0.55rem 0 0;
+  max-width: 60ch;
+  margin: 0;
   color: var(--color-ink, #0B1011);
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.97rem;
   line-height: 1.55;
 }
 
 .serviceTags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 1rem;
-  margin: 0.7rem 0 0;
+  gap: 0.3rem 0.8rem;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -192,82 +203,50 @@
   color: var(--color-burgundy, #6A2135);
   font-family: var(--font-label);
   font-size: 0.65rem;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.015em;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
-.serviceGlyph {
-  display: block;
-  width: 4.4rem;
-  height: auto;
-  justify-self: end;
-  overflow: visible;
-  color: var(--color-ink, #0B1011);
-  transition: transform 350ms var(--ease-out-expo);
-}
+@media (max-width: 959px) {
+  .statementLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.7rem;
+  }
 
-.glyphReveal {
-  width: 4.4rem;
-  justify-self: end;
-}
+  .identityAside {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    max-width: none;
+  }
 
-.serviceGlyph .glyphShape,
-.serviceGlyph .glyphAccent {
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
-  stroke-width: 1.35;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 760ms var(--ease-out-expo);
-}
+  .monogram {
+    width: 7rem;
+    flex: 0 0 7rem;
+  }
 
-.serviceGlyph .glyphAccent {
-  color: var(--color-burgundy, #6A2135);
-  stroke: currentColor;
-}
-
-.serviceGlyph .glyphNode {
-  fill: var(--color-burgundy, #6A2135);
-  stroke: var(--color-ink, #0B1011);
-  stroke-width: 1;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  :global(html[data-js]) .glyphReveal:not([data-in="true"]) .glyphShape,
-  :global(html[data-js]) .glyphReveal:not([data-in="true"]) .glyphAccent {
-    stroke-dashoffset: 1;
+  .hintCopy {
+    width: auto;
+    margin: 0;
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .serviceRow:hover .serviceGlyph {
-    transform: translateX(4px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .serviceGlyph,
-  .serviceTitle::after {
-    transition: none;
-  }
-
-  .serviceGlyph .glyphShape,
-  .serviceGlyph .glyphAccent {
-    stroke-dashoffset: 0 !important;
+@media (min-width: 768px) and (max-width: 1023px) {
+  .aboutSection > :global(.content-container) {
+    padding-left: var(--content-padding-x);
+    padding-right: calc(var(--content-padding-x) + 6.5rem);
   }
 }
 
 @media (max-width: 767px) {
   .sectionContent {
-    gap: 2.2rem;
+    gap: 2rem;
   }
 
   .statementLayout {
-    grid-template-columns: minmax(0, 1fr) 5.5rem;
-    align-items: start;
-    gap: 1.2rem;
+    gap: 1.4rem;
   }
 
   .statement {
@@ -275,80 +254,106 @@
     line-height: 1.3;
   }
 
-  .identityAside {
-    max-width: 5.5rem;
-    margin-top: 0.25rem;
-  }
-
-  .stillLife {
-    right: -12%;
-    bottom: -7%;
-    width: 40%;
+  .monogram {
+    width: 4.5rem;
+    flex-basis: 4.5rem;
   }
 
   .hintCopy {
-    margin-top: 0.9rem;
-    font-size: 0.55rem;
+    font-size: 0.58rem;
+  }
+
+  .serviceTable thead th {
+    padding-right: 0.5rem;
+    font-size: 0.58rem;
+  }
+
+  .serviceTable {
+    display: block;
+    border-collapse: separate;
+  }
+
+  .serviceTable thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .serviceTable tbody {
+    display: block;
   }
 
   .serviceRow {
-    grid-template-columns: 2rem minmax(0, 1fr) 3.25rem;
-    gap: 0.55rem;
-    min-height: 9rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.7rem;
+    padding-block: 1rem;
   }
 
-  .serviceGlyph,
-  .glyphReveal {
-    width: 3.1rem;
+  .areaColumn {
+    width: 26%;
+  }
+
+  .descriptionColumn {
+    width: 45%;
+  }
+
+  .proofColumn {
+    width: 29%;
+  }
+
+  .serviceRow > th,
+  .serviceRow > td {
+    display: block;
+    padding: 0;
+  }
+
+  .serviceRow > td::before {
+    display: block;
+    margin-bottom: 0.2rem;
+    color: var(--color-muted, #63605A);
+    content: attr(data-label);
+    font-family: var(--font-label);
+    font-size: 0.57rem;
+    line-height: 1.4;
+  }
+
+  .serviceHeading {
+    font-size: clamp(1rem, 4.2vw, 1.25rem);
   }
 
   .serviceDescription {
-    font-size: 0.96rem;
+    font-size: 0.89rem;
   }
 
   .serviceTags {
-    gap: 0.25rem 0.7rem;
+    gap: 0.2rem 0.45rem;
   }
 
   .serviceTags li {
-    font-size: 0.6rem;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .statementLayout {
-    grid-template-columns: minmax(0, 1fr) 5.5rem;
-    gap: 1.25rem;
-  }
-
-  .identityAside {
-    max-width: 5.5rem;
-  }
-
-  .stillLife {
-    right: -12%;
-    bottom: -7%;
-    width: 40%;
+    font-size: 0.58rem;
   }
 }
 
 @media (max-width: 359px) {
-  .statementLayout {
-    grid-template-columns: minmax(0, 1fr) 4.5rem;
-    gap: 0.8rem;
+  .serviceHeading {
+    font-size: 0.96rem;
   }
 
-  .identityAside {
-    max-width: 4.5rem;
+  .serviceDescription {
+    font-size: 0.84rem;
   }
 
-  .serviceRow {
-    grid-template-columns: 1.6rem minmax(0, 1fr) 2.6rem;
-    gap: 0.4rem;
+  .serviceTags li {
+    font-size: 0.54rem;
   }
+}
 
-  .serviceGlyph,
-  .glyphReveal {
-    width: 2.5rem;
+@media (prefers-reduced-motion: reduce) {
+  .serviceTitle::after {
+    transition: none;
   }
 }
