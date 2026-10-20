@@ -33,6 +33,7 @@ import type {
   ProjectTechBucket,
   ProjectTenantOption,
   ProjectStoryVisual,
+  ProjectOgImage,
   ProjectVisual,
   ProjectCard,
   ServiceEntry,
@@ -50,6 +51,7 @@ import {
   projectStoryThemes,
   projectStoryViewports,
   projectStoryLayouts,
+  projectOgImageSchema,
   projectTenantIds,
   projectTripRoles,
   socialPlatforms,
@@ -140,6 +142,14 @@ function positiveNumberValue(data: Frontmatter, key: string, filePath: string): 
   const value = data[key];
   if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
     fail(filePath, `missing positive number "${key}"`);
+  }
+  return value;
+}
+
+function positiveIntegerValue(data: Frontmatter, key: string, filePath: string): number {
+  const value = data[key];
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
+    fail(filePath, `missing positive integer "${key}"`);
   }
   return value;
 }
@@ -267,6 +277,17 @@ function readImage(data: Frontmatter, filePath: string): ProjectVisual {
     alt: stringValue(data, "alt", filePath),
     caption: stringValue(data, "caption", filePath),
   };
+}
+
+function readOgImage(data: Frontmatter, filePath: string): ProjectOgImage {
+  const image: ProjectOgImage = {
+    src: stringValue(data, projectOgImageSchema.src, filePath),
+    alt: stringValue(data, projectOgImageSchema.alt, filePath),
+    width: positiveIntegerValue(data, projectOgImageSchema.width, filePath),
+    height: positiveIntegerValue(data, projectOgImageSchema.height, filePath),
+  };
+  validatePublicAsset(image.src, filePath);
+  return image;
 }
 
 function readExperienceImage(data: Frontmatter, filePath: string): ExperienceVisual {
@@ -456,6 +477,9 @@ function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefi
   }
 
   const heroImage = readImage(objectValue(detail, "heroImage", filePath), filePath);
+  const ogImage = detail.ogImage === undefined
+    ? undefined
+    : readOgImage(objectValue(detail, "ogImage", filePath), filePath);
   const gallery = objectArray(detail, "gallery", filePath).map((item) => readImage(item, filePath));
   gallery.forEach((item) => validatePublicAsset(item.src, filePath));
 
@@ -484,6 +508,7 @@ function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefi
         }
       : {}),
     heroImage,
+    ...(ogImage ? { ogImage } : {}),
     gallery,
     architectureSections: objectArray(detail, "architectureSections", filePath).map((section) => ({
       title: stringValue(section, "title", filePath),

@@ -25,6 +25,14 @@ export const socialPlatforms = ["github", "linkedin", "email"];
 /** @type {readonly ["desktop", "mobile"]} */
 export const projectStoryViewports = ["desktop", "mobile"];
 
+/** @type {Readonly<{src: "src", alt: "alt", width: "width", height: "height"}>} */
+export const projectOgImageSchema = Object.freeze({
+  src: "src",
+  alt: "alt",
+  width: "width",
+  height: "height",
+});
+
 /** @type {readonly ["day", "night"]} */
 export const projectStoryThemes = ["day", "night"];
 

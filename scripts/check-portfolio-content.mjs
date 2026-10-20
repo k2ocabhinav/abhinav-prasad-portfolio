@@ -12,6 +12,7 @@ import {
   projectStoryLayouts as projectStoryLayoutValues,
   projectStoryThemes as projectStoryThemeValues,
   projectStoryViewports as projectStoryViewportValues,
+  projectOgImageSchema,
   projectTenantIds as projectTenantValues,
   projectTripRoles as projectTripRoleValues,
   socialPlatforms as socialPlatformValues,
@@ -182,6 +183,18 @@ function validateImage(image, filePath, requireSrc = true) {
   stringValue(image, "alt", filePath);
   if (requireSrc) {
     stringValue(image, "caption", filePath);
+  }
+}
+
+function validateOgImage(image, filePath) {
+  const src = stringValue(image, projectOgImageSchema.src, filePath);
+  validatePublicAsset(src, filePath);
+  stringValue(image, projectOgImageSchema.alt, filePath);
+  for (const key of [projectOgImageSchema.width, projectOgImageSchema.height]) {
+    const value = image[key];
+    if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
+      fail(filePath, `missing positive integer "${key}"`);
+    }
   }
 }
 
@@ -389,6 +402,9 @@ function validateProjects() {
         stringValue(hardPart, "copy", filePath);
       }
       validateImage(objectValue(detail, "heroImage", filePath), filePath);
+      if (detail.ogImage !== undefined) {
+        validateOgImage(objectValue(detail, "ogImage", filePath), filePath);
+      }
       objectArray(detail, "gallery", filePath).forEach((image) => validateImage(image, filePath));
       objectArray(detail, "architectureSections", filePath).forEach((section) => {
         stringValue(section, "title", filePath);

@@ -247,14 +247,22 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   const veloTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
   expect(new URL(veloOgImage!, page.url()).pathname).toBe("/projects/velo/velo-livery-day.webp");
   expect(veloTwitterImage).toBe(veloOgImage);
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveCount(0);
+  await expect(page.locator('meta[property="og:image:height"]')).toHaveCount(0);
 
   await page.goto("/work/portfolio-platform");
   const platformOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
   const platformTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
   expect(new URL(platformOgImage!, page.url()).pathname).toBe(
-    "/projects/portfolio-platform/portfolio-preview.svg"
+    "/projects/portfolio-platform/og.jpg"
   );
   expect(platformTwitterImage).toBe(platformOgImage);
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
+  await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute("content", "630");
+  await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute(
+    "content",
+    /wordmark, role, proof rows, and print proof/
+  );
   const portfolioJsonLd = await page.locator("#project-structured-data").textContent();
   expect(portfolioJsonLd).not.toBeNull();
   const portfolioGraph = JSON.parse(portfolioJsonLd!) as {

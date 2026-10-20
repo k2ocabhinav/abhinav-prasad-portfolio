@@ -30,8 +30,16 @@ export async function generateMetadata({ params }: WorkDetailPageProps): Promise
 
   const title = projectSeoTitle(detail);
   const description = detail.seoDescription;
-  const imageUrl = absoluteUrl(detail.heroImage.src);
+  const shareImage = detail.ogImage ?? detail.heroImage;
+  const imageUrl = absoluteUrl(shareImage.src);
   const canonicalUrl = absoluteUrl(`/work/${detail.slug}`);
+  const openGraphImage = {
+    url: imageUrl,
+    alt: shareImage.alt,
+    ...(detail.ogImage
+      ? { width: detail.ogImage.width, height: detail.ogImage.height }
+      : {}),
+  };
 
   return {
     title,
@@ -44,20 +52,13 @@ export async function generateMetadata({ params }: WorkDetailPageProps): Promise
       title,
       description,
       url: canonicalUrl,
-      images: [
-        {
-          url: imageUrl,
-          width: 1440,
-          height: 900,
-          alt: detail.heroImage.alt,
-        },
-      ],
+      images: [openGraphImage],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [{ url: imageUrl, alt: detail.heroImage.alt }],
+      images: [{ url: imageUrl, alt: shareImage.alt }],
     },
   };
 }
