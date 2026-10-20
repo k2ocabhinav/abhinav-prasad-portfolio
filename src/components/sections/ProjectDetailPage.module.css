@@ -51,6 +51,9 @@
 }
 
 .backLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   padding-bottom: 0.2rem;
   border-bottom: 1px solid rgba(106, 33, 53, 0.45);
   color: var(--detail-burgundy);
