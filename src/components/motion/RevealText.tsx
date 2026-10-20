@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { observeReveal } from "./revealObserver";
 import styles from "./motion.module.css";
@@ -48,15 +48,19 @@ export default function RevealText({
       data-reveal="words"
     >
       {words.map((word, index) => (
-        <span key={`${word}-${index}`} className={styles.mask}>
-          <span
-            className={styles.word}
-            style={{ "--i": index } as React.CSSProperties}
-          >
-            {word}
+        // The space sits between the masks, not inside them: trailing
+        // whitespace inside an inline-block collapses and glues words together.
+        <Fragment key={`${word}-${index}`}>
+          <span className={styles.mask}>
+            <span
+              className={styles.word}
+              style={{ "--i": index } as React.CSSProperties}
+            >
+              {word}
+            </span>
           </span>
           {index < words.length - 1 ? " " : null}
-        </span>
+        </Fragment>
       ))}
     </Tag>
   );

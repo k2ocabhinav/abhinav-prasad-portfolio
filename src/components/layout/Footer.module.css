@@ -1,4 +1,8 @@
 .footer {
+  /* Own stacking layer above the fixed paper backdrop (z-index 0), which
+     otherwise painted over the in-flow footer on the home page. */
+  position: relative;
+  z-index: 1;
   padding: 3rem 1.5rem;
   text-align: center;
   border-top: 1px solid var(--color-hairline);

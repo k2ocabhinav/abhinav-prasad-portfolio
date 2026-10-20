@@ -309,6 +309,19 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
     "Verify",
   ]);
 
+  const workProjects = page.locator("#work [data-work-project]");
+  await expect(workProjects).toHaveCount(2);
+  const staticWorkState = await workProjects.first().evaluate((article) => {
+    const stage = article.querySelector("[data-work-frame]")?.parentElement?.parentElement;
+    const frame = article.querySelector("[data-work-frame]");
+    return {
+      stagePosition: stage ? getComputedStyle(stage).position : null,
+      frameTransform: frame ? getComputedStyle(frame).transform : null,
+    };
+  });
+  expect(staticWorkState.stagePosition).toBe("static");
+  expect(staticWorkState.frameTransform).toBe("none");
+
   const plateState = await page.locator('[data-home-hero-text] h1 [aria-hidden="true"] span').evaluate((element) => ({
     clipPath: getComputedStyle(element).clipPath,
     animationName: getComputedStyle(element).animationName,
@@ -365,9 +378,11 @@ test("album lightbox focuses close, traps Tab, and restores focus on close", asy
   const close = dialog.getByRole("button", { name: "Close album item" });
   await expect(dialog).toBeVisible();
   await expect(close).toBeFocused();
-  await expect(hero).toHaveAttribute("inert", "");
-  await expect(wall).toHaveAttribute("inert", "");
-  await expect(chrome).toHaveAttribute("inert", "");
+  const isInert = (locator: typeof hero) =>
+    locator.evaluate((element) => element.closest("[inert]") !== null);
+  expect(await isInert(hero)).toBe(true);
+  expect(await isInert(wall)).toBe(true);
+  expect(await isInert(chrome)).toBe(true);
 
   await page.keyboard.press("Tab");
   await expect(close).toBeFocused();
@@ -377,9 +392,9 @@ test("album lightbox focuses close, traps Tab, and restores focus on close", asy
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
   await expect(firstCard).toBeFocused();
-  await expect(wall).not.toHaveAttribute("inert", "");
-  await expect(hero).not.toHaveAttribute("inert", "");
-  await expect(chrome).not.toHaveAttribute("inert", "");
+  expect(await isInert(wall)).toBe(false);
+  expect(await isInert(hero)).toBe(false);
+  expect(await isInert(chrome)).toBe(false);
 });
 
 test("desktop Beyond shell matches the photo wall layout", async ({ page }) => {
@@ -454,7 +469,7 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
 
   await expect(page.locator("#experience article")).toHaveCount(1);
   await expect(
-    page.getByRole("heading", { name: "Velo, a white-label dispatch prototype", exact: true })
+    page.getByRole("heading", { name: "Velo", exact: true })
   ).toHaveCount(1);
   await expect(
     page.getByRole("heading", {
@@ -533,15 +548,99 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
-  await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
+  await expect(method.locator("ol > li h4")).toHaveText([
+    "1 Scope",
+    "2 Assign",
+    "3 Review",
+    "4 Verify",
+  ]);
 
-  const screenshot = await method.screenshot({
+  const screenshot = await method.locator("[data-work-method-stage]").screenshot({
     animations: "disabled",
   });
 
   expect(screenshot).toMatchSnapshot("orchestration-method-desktop.png", {
     maxDiffPixelRatio: 0.025,
   });
+});
+
+test("Velo zooms beside visible details while Portfolio stays a static card", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+
+  const firstProject = page.locator("#work [data-work-project]").first();
+  const portfolio = page.locator("#work [data-work-project]").nth(1);
+  await expect(firstProject.getByRole("heading", { name: "Velo" })).toBeVisible();
+  await page.evaluate(() => {
+    document.querySelector("#work [data-work-project]")?.scrollIntoView({ block: "start" });
+  });
+  await page.waitForTimeout(500);
+
+  const initial = await firstProject.evaluate((article) => {
+    const frame = article.querySelector("[data-work-frame]");
+    const stage = frame?.closest("[class*='projectStage']");
+    const rect = frame?.getBoundingClientRect();
+    return {
+      position: stage ? getComputedStyle(stage).position : null,
+      width: rect?.width ?? 0,
+      right: rect?.right ?? 0,
+    };
+  });
+  expect(initial.position).toBe("sticky");
+  expect(initial.right).toBeLessThan(1440 - 100);
+
+  const firstCta = firstProject.getByRole("link", { name: "Read the case study" });
+  await expect(firstCta).toBeVisible();
+  const ctaBox = await firstCta.boundingBox();
+  expect(ctaBox).not.toBeNull();
+  expect(ctaBox!.y).toBeGreaterThanOrEqual(0);
+  expect(ctaBox!.y + ctaBox!.height).toBeLessThanOrEqual(900);
+  await expect(firstCta).toHaveCSS("opacity", "1");
+
+  const trackEnd = await firstProject.evaluate((article) => {
+    const rect = article.getBoundingClientRect();
+    return rect.top + window.scrollY + rect.height - window.innerHeight;
+  });
+  await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), trackEnd);
+  await page.waitForTimeout(650);
+
+  const final = await firstProject.evaluate((article) => {
+    const frame = article.querySelector("[data-work-frame]");
+    const details = article.querySelector("[data-work-copy]");
+    const imageBox = frame?.getBoundingClientRect();
+    const detailsBox = details?.getBoundingClientRect();
+    return {
+      imageWidth: imageBox?.width ?? 0,
+      imageRight: imageBox ? imageBox.right : 0,
+      detailsLeft: detailsBox ? detailsBox.left : 0,
+      detailsRight: detailsBox ? detailsBox.right : 0,
+    };
+  });
+
+  expect(final.imageWidth).toBeGreaterThan(initial.width + 100);
+  expect(final.imageRight).toBeLessThanOrEqual(final.detailsLeft);
+  expect(final.detailsRight).toBeLessThanOrEqual(1440 - 100);
+  await expect(firstCta).toHaveAttribute(
+    "href",
+    "/work/velo"
+  );
+  await expect(firstProject.getByRole("link", { name: "View project source" })).toHaveAttribute(
+    "href",
+    "https://github.com/k2ocabhinav/Velo"
+  );
+
+  const portfolioState = await portfolio.evaluate((article) => {
+    const stage = article.querySelector("[data-work-frame]")?.closest("[class*='projectStage']");
+    const frame = article.querySelector("[data-work-frame]");
+    return {
+      position: stage ? getComputedStyle(stage).position : null,
+      transform: frame ? getComputedStyle(frame).transform : null,
+    };
+  });
+  expect(portfolioState.position).not.toBe("sticky");
+  expect(portfolioState.transform).toBe("none");
+  await expect(portfolio.getByRole("link", { name: "Read the case study" })).toBeVisible();
 });
 
 test("How I work uses a vertical sequence on mobile", async ({ page }) => {
@@ -556,7 +655,12 @@ test("How I work uses a vertical sequence on mobile", async ({ page }) => {
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
-  await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
+  await expect(method.locator("ol > li h4")).toHaveText([
+    "1 Scope",
+    "2 Assign",
+    "3 Review",
+    "4 Verify",
+  ]);
   const columnCount = await method.locator("ol").evaluate(
     (element) => getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length
   );

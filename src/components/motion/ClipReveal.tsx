@@ -29,8 +29,11 @@ export default function ClipReveal({
   }, []);
 
   return (
+    // The observed wrapper is never clipped: a fully clipped target never
+    // intersects, so clipping it directly would deadlock the reveal (and keep
+    // lazy images inside from loading).
     <div ref={ref} className={cn(styles.clip, className)} data-clip-from={from}>
-      {children}
+      <div className={styles.clipInner}>{children}</div>
     </div>
   );
 }

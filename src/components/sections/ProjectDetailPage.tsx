@@ -107,7 +107,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
       <header className={styles.chrome}>
         <div className={`content-container ${styles.chromeInner}`}>
           <Link href="/#work" prefetch={false} className={styles.backLink}>
-            ← Back to Works
+            ← Back to work
           </Link>
           <span className={styles.chromeLabel}>{detail.title}</span>
         </div>
