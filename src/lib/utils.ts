@@ -59,7 +59,15 @@ export function scrollToSection(id: string): void {
     return;
   }
 
-  target.scrollIntoView({ behavior: "smooth" });
+  // Lenis is configured with instant smoothing under reduced motion, and the
+  // native path must match: jump instead of animating the viewport.
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  target.scrollIntoView({
+    behavior: prefersReducedMotion ? "auto" : "smooth",
+    block: "start",
+  });
 
   if (window.location.hash !== `#${id}`) {
     window.history.replaceState(null, "", `#${id}`);

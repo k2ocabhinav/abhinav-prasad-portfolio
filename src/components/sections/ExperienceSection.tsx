@@ -1,13 +1,14 @@
 "use client";
 
+import * as m from "motion/react-m";
 import { useScroll } from "motion/react";
-import { useRef } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import type { ChronicleEntry, ExperiencePoint, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
-import ChangeLedgerPlate from "@/components/art/ChangeLedgerPlate";
 import styles from "./ExperienceSection.module.css";
 
 interface ExperienceSectionProps {
@@ -15,16 +16,190 @@ interface ExperienceSectionProps {
   tone?: SectionTone;
 }
 
-function getKeyPoints(experience: ChronicleEntry): ExperiencePoint[] {
-  const delivery = experience.workstreams.find(
-    (workstream) => workstream.id === "database-delivery"
+interface ExperienceDossierProps {
+  experience: ChronicleEntry;
+}
+
+function ExperiencePointText({ point }: { point: ExperiencePoint }) {
+  if (point.emphasis) {
+    return (
+      <>
+        <strong>{point.lead} <span>{point.emphasis}</span></strong>, {point.detail}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <strong>{point.lead}.</strong> {point.detail}
+    </>
   );
-  const aiTooling = experience.workstreams.find(
-    (workstream) => workstream.id === "ai-tooling"
+}
+
+function ExperienceDossier({ experience }: ExperienceDossierProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const panelId = experience.slug === "ostrum-database-engineer"
+    ? "experience-full"
+    : `${experience.slug}-full-experience`;
+  const toggleId = `${panelId}-toggle`;
+  const headingId = `${experience.slug}-employer`;
+  const sectionCount = experience.workstreams.length;
+  const pointCount = experience.workstreams.reduce(
+    (count, workstream) => count + workstream.points.length,
+    0
   );
 
-  return [delivery?.points[0], delivery?.points[1], aiTooling?.points[0]].filter(
-    (point): point is ExperiencePoint => Boolean(point)
+  useEffect(() => {
+    const openFromHash = () => {
+      if (window.location.hash === `#${panelId}`) {
+        setIsExpanded(true);
+      }
+    };
+
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
+  }, [panelId]);
+
+  const panelTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : isExpanded
+      ? {
+          height: { duration: 0.32, ease: [0.22, 1, 0.36, 1] as const },
+          opacity: { duration: 0.18, ease: "easeOut" as const },
+        }
+      : {
+          height: { duration: 0.22, ease: "easeIn" as const },
+          opacity: { duration: 0.14, ease: "easeIn" as const },
+        };
+
+  return (
+    <article className={styles.dossier} aria-labelledby={headingId}>
+      <header className={styles.employerLabel}>
+        <div className={styles.employerLine}>
+          <h3 id={headingId} className={styles.employerName}>
+            {experience.company}
+          </h3>
+          <span className={styles.period}>{experience.period}</span>
+        </div>
+        <p className={styles.companyContext}>{experience.companyContext}</p>
+      </header>
+
+      <div className={styles.roleSummary}>
+        <h4 className={styles.roleTitle}>{experience.roleTitle}</h4>
+        <p className={styles.employmentNote}>{experience.employmentNote}</p>
+        <p className={styles.roleScope}>{experience.roleScope}</p>
+        <ul className={styles.pointList}>
+          {experience.summaryPoints.map((point) => (
+            <li key={`${point.lead}-${point.detail}`}>
+              <ExperiencePointText point={point} />
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className={styles.detailDisclosure}>
+        <button
+          id={toggleId}
+          type="button"
+          className={styles.disclosureButton}
+          aria-expanded={isExpanded}
+          aria-controls={panelId}
+          onClick={() => setIsExpanded((expanded) => !expanded)}
+        >
+          <span className={styles.disclosureLabel}>
+            {isExpanded ? "Close full experience" : "Read full experience"}
+          </span>
+          <span className={styles.disclosureMeta}>
+            {sectionCount} sections · {pointCount} points
+          </span>
+          <svg
+            className={styles.disclosureMark}
+            data-expanded={isExpanded}
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M10 3v14M3 10h14" />
+          </svg>
+        </button>
+
+        <m.div
+          id={panelId}
+          className={styles.detailPanel}
+          role="region"
+          aria-labelledby={toggleId}
+          aria-hidden={!isExpanded}
+          inert={!isExpanded}
+          initial={false}
+          animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
+          transition={panelTransition}
+        >
+          <div className={styles.detailContent}>
+            <div className={styles.workstreamGrid}>
+              {experience.workstreams.map((workstream, index) => {
+                const itemTransition = prefersReducedMotion
+                  ? { duration: 0 }
+                  : isExpanded
+                    ? {
+                        duration: 0.18,
+                        delay: index * 0.03,
+                        ease: [0.22, 1, 0.36, 1] as const,
+                      }
+                    : { duration: 0.14, ease: "easeIn" as const };
+
+                return (
+                  <m.section
+                    key={workstream.id}
+                    className={styles.workstream}
+                    data-workstream={workstream.id}
+                    initial={false}
+                    animate={{ opacity: isExpanded ? 1 : 0, y: isExpanded ? 0 : 8 }}
+                    transition={itemTransition}
+                  >
+                    <h4>{workstream.title}</h4>
+                    <p className={styles.workstreamSummary}>{workstream.summary}</p>
+                    <ul className={styles.workstreamPoints}>
+                      {workstream.points.map((point) => (
+                        <li key={`${point.lead}-${point.detail}`}>
+                          <ExperiencePointText point={point} />
+                        </li>
+                      ))}
+                    </ul>
+
+                    {workstream.images?.length ? (
+                      <div className={styles.toolkitFigureGrid}>
+                        {workstream.images.map((image) => (
+                          <figure className={styles.toolkitFigure} key={image.src}>
+                            <Image
+                              src={image.src}
+                              alt={image.alt}
+                              width={image.width}
+                              height={image.height}
+                              sizes="(max-width: 767px) 100vw, (max-width: 1199px) 43vw, 520px"
+                              loading="lazy"
+                              className={styles.toolkitImage}
+                            />
+                            <figcaption>{image.caption}</figcaption>
+                          </figure>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    <ul className={styles.toolTags} aria-label={`${workstream.title} technologies`}>
+                      {workstream.tools.map((tool) => (
+                        <li key={tool}>{tool}</li>
+                      ))}
+                    </ul>
+                  </m.section>
+                );
+              })}
+            </div>
+          </div>
+        </m.div>
+      </div>
+    </article>
   );
 }
 
@@ -66,99 +241,14 @@ export default function ExperienceSection({
             />
           </div>
           <p className={styles.callout}>
-            Where the business rules live and the releases ship.
+            The role spans stored programs, schema design, release tooling and cloud-supported delivery.
           </p>
         </header>
 
         <div className={styles.dossierList}>
-          {experiences.map((experience) => {
-            const primaryRole = experience.roles[0];
-            const keyPoints = getKeyPoints(experience);
-            const employerHeadingId = `${experience.slug}-employer`;
-
-            if (!primaryRole) {
-              return null;
-            }
-
-            return (
-              <article
-                key={experience.slug}
-                className={styles.dossier}
-                aria-labelledby={employerHeadingId}
-              >
-                <header className={styles.employerLabel}>
-                  <div className={styles.employerLine}>
-                    <h3 id={employerHeadingId} className={styles.employerName}>
-                      {experience.company}
-                    </h3>
-                    <span className={styles.period}>{experience.period}</span>
-                  </div>
-                  <p className={styles.companyContext}>{experience.companyContext}</p>
-                </header>
-
-                <div className={styles.roleSummary}>
-                  <div className={styles.roleHeading}>
-                    <h4 className={styles.roleTitle}>{primaryRole.title}</h4>
-                    <p className={styles.roleDate}>{primaryRole.date}</p>
-                  </div>
-                  <ul className={styles.pointList}>
-                    {keyPoints.map((point) => (
-                      <li key={`${point.lead}-${point.detail}`}>
-                        <strong>{point.lead}.</strong> {point.detail}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <details className={styles.detailDisclosure}>
-                  <summary>Selected engineering work</summary>
-                  <div className={styles.detailContent}>
-                    <p className={styles.backendThesis}>{experience.backendThesis}</p>
-                    <p className={styles.functionality}>{experience.functionality}</p>
-
-                    {experience.roles.length > 1 ? (
-                      <div className={styles.roleHistory}>
-                        <h4>Role progression</h4>
-                        <ol>
-                          {experience.roles.slice(1).map((role) => (
-                            <li key={`${role.title}-${role.date}`}>
-                              <strong>{role.title}</strong>
-                              <span>{role.date}</span>
-                              {role.note ? <p>{role.note}</p> : null}
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    ) : null}
-
-                    <div className={styles.detailGrid}>
-                      <div className={styles.ledgerPlate}>
-                        <ChangeLedgerPlate id={experience.slug} />
-                      </div>
-                      <div className={styles.workstreamList}>
-                        {experience.workstreams.map((workstream) => (
-                          <section key={workstream.id} className={styles.workstream}>
-                            <h4>{workstream.title}</h4>
-                            <p>{workstream.summary}</p>
-                            <ul>
-                              {workstream.points.map((point) => (
-                                <li key={`${point.lead}-${point.detail}`}>
-                                  <strong>{point.lead}.</strong> {point.detail}
-                                </li>
-                              ))}
-                            </ul>
-                            <p className={styles.toolList}>
-                              {workstream.tools.join(", ")}
-                            </p>
-                          </section>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </details>
-              </article>
-            );
-          })}
+          {experiences.map((experience) => (
+            <ExperienceDossier key={experience.slug} experience={experience} />
+          ))}
         </div>
       </div>
     </SectionWrapper>

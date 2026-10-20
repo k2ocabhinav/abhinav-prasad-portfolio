@@ -151,11 +151,17 @@ function unique(values, label) {
 }
 
 function validatePublicAsset(src, filePath) {
-  if (!src || src.startsWith("http")) return;
-  if (!src.startsWith("/")) {
-    fail(filePath, `asset path "${src}" must start with "/" or "https://"`);
+  if (!src) return;
+  // Images are served from public/ only; next.config.ts declares no
+  // remotePatterns, so a remote URL would render broken.
+  if (!src.startsWith("/") || src.startsWith("//")) {
+    fail(filePath, `asset path "${src}" must be a local path starting with "/"`);
   }
-  const diskPath = path.join(publicRoot, src.slice(1));
+  const diskPath = path.resolve(publicRoot, src.slice(1));
+  const relativePath = path.relative(publicRoot, diskPath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    fail(filePath, `asset path "${src}" must stay inside public/`);
+  }
   if (!fs.existsSync(diskPath)) {
     fail(filePath, `asset not found: public${src}`);
   }
@@ -250,10 +256,19 @@ function validateProfile() {
   const personal = objectValue(data, "personal", filePath);
   const hero = objectValue(data, "hero", filePath);
 
-  ["name", "fullName", "title", "tagline", "subtitle", "email", "philosophy", "presenceDescription", "footerTagline"].forEach((key) =>
+  ["name", "fullName", "title", "tagline", "subtitle", "email", "presenceDescription", "footerTagline"].forEach((key) =>
     stringValue(personal, key, filePath)
   );
   validatePublicAsset(stringValue(personal, "resumeHref", filePath), filePath);
+  validatePublicAsset(stringValue(personal, "heroPhoto", filePath), filePath);
+  objectArray(personal, "heroSlides", filePath).forEach((slide) => {
+    validatePublicAsset(stringValue(slide, "image", filePath), filePath);
+    stringValue(slide, "alt", filePath);
+  });
+  const location = objectValue(personal, "location", filePath);
+  ["city", "country", "countryCode", "timezone"].forEach((key) =>
+    stringValue(location, key, filePath)
+  );
   objectArray(personal, "socials", filePath).forEach((social) => {
     enumValue(social, "platform", new Set(["github", "linkedin", "email"]), filePath);
     stringValue(social, "label", filePath);
@@ -395,26 +410,23 @@ function validateChronicle() {
   const entries = mdxFiles("chronicle").map((filePath) => {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
-    ["slug", "company", "period", "companyContext", "backendThesis", "functionality"].forEach((key) =>
+    ["slug", "company", "period", "companyContext", "roleTitle", "roleScope", "employmentNote"].forEach((key) =>
       stringValue(data, key, filePath)
     );
 
-    const roles = objectArray(data, "roles", filePath);
-    if (roles.length === 0) {
-      fail(filePath, '"roles" must contain at least one role');
+    const summaryPoints = objectArray(data, "summaryPoints", filePath);
+    if (summaryPoints.length !== 6) {
+      fail(filePath, '"summaryPoints" must contain six visible experience points');
     }
-    roles.forEach((role) => {
-      stringValue(role, "title", filePath);
-      stringValue(role, "date", filePath);
-      const note = role.note;
-      if (note !== undefined && (typeof note !== "string" || note.trim().length === 0)) {
-        fail(filePath, 'optional role "note" must be a non-empty string');
-      }
+    summaryPoints.forEach((point) => {
+      stringValue(point, "lead", filePath);
+      stringValue(point, "detail", filePath);
+      if (point.emphasis !== undefined) stringValue(point, "emphasis", filePath);
     });
 
     const workstreams = objectArray(data, "workstreams", filePath);
-    if (workstreams.length === 0) {
-      fail(filePath, '"workstreams" must contain at least one workstream');
+    if (workstreams.length !== 4) {
+      fail(filePath, '"workstreams" must contain the four full-experience sections');
     }
     workstreams.forEach((workstream) => {
       ["id", "title", "summary"].forEach((key) => stringValue(workstream, key, filePath));
@@ -425,9 +437,24 @@ function validateChronicle() {
       points.forEach((point) => {
         stringValue(point, "lead", filePath);
         stringValue(point, "detail", filePath);
+        if (point.emphasis !== undefined) stringValue(point, "emphasis", filePath);
       });
       const tools = stringArray(workstream, "tools", filePath);
       unique(tools, `tool in workstream "${workstream.id}"`);
+      if (workstream.images !== undefined) {
+        const images = objectArray(workstream, "images", filePath);
+        images.forEach((image) => {
+          const src = stringValue(image, "src", filePath);
+          validatePublicAsset(src, filePath);
+          stringValue(image, "alt", filePath);
+          stringValue(image, "caption", filePath);
+          for (const dimension of ["width", "height"]) {
+            if (typeof image[dimension] !== "number" || !Number.isFinite(image[dimension]) || image[dimension] <= 0) {
+              fail(filePath, `experience image "${dimension}" must be a positive number`);
+            }
+          }
+        });
+      }
     });
     unique(
       workstreams.map((workstream) => workstream.id),

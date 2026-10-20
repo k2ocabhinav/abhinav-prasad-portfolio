@@ -14,9 +14,9 @@ export function GET() {
   const projects = getPublishedProjects().flatMap((project) =>
     project.detail ? [{ project, detail: project.detail }] : []
   );
-  const currentRole = experience?.roles[0]?.title ?? profile.personal.title;
+  const currentRole = experience?.roleTitle ?? profile.personal.title;
   const experienceSummary = experience
-    ? `${currentRole} at ${experience.company} (${experience.period}). ${experience.backendThesis} ${experience.functionality}`
+    ? `${currentRole} at ${experience.company} (${experience.period}). ${experience.employmentNote} ${experience.roleScope}`
     : "Professional experience is available on the portfolio homepage.";
 
   const lines = [
@@ -31,6 +31,10 @@ export function GET() {
     `At work: ${currentRole}, ${experience?.company ?? "the current employer"}.`,
     "On my own: Velo, this portfolio, and AI-agent workflows.",
     profile.personal.presenceDescription,
+    "",
+    "## Homepage sections",
+    "",
+    "Hero, What I do, Experience, Work, Stack, and Contact. How I work appears below the projects in Work.",
     "",
     "## Professional experience",
     "",

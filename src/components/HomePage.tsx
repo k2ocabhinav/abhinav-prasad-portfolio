@@ -58,12 +58,13 @@ export default function HomePage({ content }: HomePageProps) {
       >
         <LandingExperience
           hero={profile.hero}
-          services={content.services}
+          services={[]}
         />
 
         <AboutSection
           personal={profile.personal}
           intro={profile.profileIntro}
+          services={content.services}
           tone="pastel-cream"
         />
         <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
@@ -92,6 +93,12 @@ export default function HomePage({ content }: HomePageProps) {
       <Navigation
         resumeHref={profile.personal.resumeHref}
         email={profile.personal.email}
+        linkedinHref={
+          profile.personal.socials.find(
+            (social) => social.platform === "linkedin"
+          )?.href
+        }
+        fullName={profile.personal.fullName}
       />
     </>
   );

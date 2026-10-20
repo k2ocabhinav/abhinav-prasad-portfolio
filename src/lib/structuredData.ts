@@ -27,7 +27,7 @@ function buildPersonNode(
 ): JsonLdNode {
   const { personal } = profile;
   const primaryExperience = chronicleEntries[0];
-  const currentRole = primaryExperience?.roles[0];
+  const currentRole = primaryExperience?.roleTitle;
 
   const person: JsonLdNode = {
     "@type": "Person",
@@ -35,7 +35,7 @@ function buildPersonNode(
     name: personal.fullName,
     url: absoluteUrl("/"),
     description: personal.subtitle,
-    jobTitle: currentRole?.title ?? personal.title,
+    jobTitle: currentRole ?? personal.title,
     homeLocation: {
       "@type": "Place",
       name: `${personal.location.city}, ${personal.location.country}`,
@@ -58,8 +58,8 @@ function buildPersonNode(
     };
     person.hasOccupation = {
       "@type": "Occupation",
-      name: currentRole?.title ?? "Software Engineer",
-      description: primaryExperience.backendThesis,
+      name: currentRole ?? "Software Engineer",
+      description: primaryExperience.roleScope,
       occupationLocation: {
         "@type": "Country",
         name: personal.location.country,

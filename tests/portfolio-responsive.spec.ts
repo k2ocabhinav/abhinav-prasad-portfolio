@@ -3,16 +3,16 @@ import { expect, test } from "@playwright/test";
 import type { Locator, Page, TestInfo } from "@playwright/test";
 
 const workstreamNames = [
-  "Stakeholder delivery and release tooling",
-  "Cloud delivery and operational reports",
-  "Backend and SQL foundations",
-  "AI coding tools for database work",
+  "Database engineering",
+  "Release and delivery",
+  "Tooling and analytics",
+  "Ownership and collaboration",
 ] as const;
 
 const stackGroups = [
-  ["AI coding agent workflows", "Part of my workflow"],
+  ["AI-assisted engineering", "Part of my workflow"],
   ["Backend systems and APIs", "Built in projects"],
-  ["Cloud delivery and release checks", "Used at work"],
+  ["Cloud delivery and reporting", "Used at work"],
 ] as const;
 
 const screenshotProjects = new Set([
@@ -64,7 +64,6 @@ async function sweepWholePage(page: Page) {
 
 async function revealAndSettleHomepage(page: Page) {
   for (const selector of [
-    "#services",
     "#about",
     "#experience",
     "#work",
@@ -193,28 +192,55 @@ function formatAxeViolations(
     .join("\n");
 }
 
-test("shows the approved Ostrum role, work, and context-labelled stack", async ({ page }) => {
+test("shows the Ostrum summary and opens the full technical experience", async ({ page }) => {
   await openHome(page, true);
 
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
   await expect(experience.getByRole("heading", { level: 3, name: "Ostrum Tech Limited" })).toBeVisible();
   await expect(experience.getByRole("heading", { level: 4, name: "Database Engineer" })).toBeVisible();
-  await expect(experience.getByText("September 2024 to present", { exact: true })).toBeVisible();
+  await expect(experience.getByText("May 2024 to present", { exact: true })).toBeVisible();
+  await expect(experience.getByText(
+    "Started as an intern in May 2024; full-time Database Engineer since September 2024.",
+    { exact: true }
+  )).toBeVisible();
+  await expect(experience.getByText(/Develop MySQL-backed business logic for API workflows/)).toBeVisible();
 
-  const workDisclosure = experience.getByText("Selected engineering work", { exact: true });
-  await workDisclosure.click();
-  await expect(experience.getByText(/stakeholder needs into database-backed changes/)).toBeVisible();
+  const summaryPoints = experience.getByRole("list").first().getByRole("listitem");
+  await expect(summaryPoints).toHaveCount(6);
+  await expect(summaryPoints.nth(0)).toContainText("MySQL stored procedures, functions, triggers, views, and schema changes");
+  await expect(summaryPoints.nth(1)).toContainText("Design relational schemas and indexes");
+  await expect(summaryPoints.nth(2)).toContainText("version-controlled Flyway migrations");
+  await expect(summaryPoints.nth(3)).toContainText("Designed and built Database Toolkit, a Python and Qt desktop app");
+  await expect(summaryPoints.nth(4)).toContainText("Trace defects across API requests");
+  await expect(summaryPoints.nth(5)).toContainText("AWS-integrated database delivery");
+
+  const disclosure = experience.locator("#experience-full-toggle");
+  const panel = experience.locator("#experience-full");
+  await expect(disclosure).toHaveAttribute("aria-expanded", "false");
+  await expect(disclosure).toHaveAttribute("aria-controls", "experience-full");
+  await expect(panel).toHaveAttribute("aria-hidden", "true");
+  await expect(disclosure).toContainText("4 sections · 14 points");
+  expect(await panel.textContent()).toContain("Work with senior engineers and technical managers");
+
+  await disclosure.click();
+  await expect(disclosure).toHaveAttribute("aria-expanded", "true");
+  await expect(panel).toHaveAttribute("aria-hidden", "false");
   for (const name of workstreamNames) {
-    await expect(experience.getByRole("heading", { level: 4, name, exact: true })).toBeVisible();
+    await expect(panel.getByRole("heading", { level: 4, name, exact: true })).toBeVisible();
   }
-  await expect(experience.getByText("Software Engineer Intern", { exact: true })).toBeVisible();
-  const sqlToolsProof = experience.getByText(
-    /I built SQL Tools in Python and Tkinter\./
-  );
-  await expect(sqlToolsProof).toHaveCount(1);
-  await expect(sqlToolsProof).toBeVisible();
-  await expect(experience.getByText(/I traced a state-transition defect/)).toBeVisible();
+  const toolkitImages = panel.getByRole("img");
+  await expect(toolkitImages).toHaveCount(2);
+  await expect(toolkitImages.nth(0)).toHaveAttribute("alt", /Table Compare results/);
+  await expect(toolkitImages.nth(1)).toHaveAttribute("alt", /INSERT Consolidator/);
+  for (const image of await toolkitImages.all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  }
+
+  await disclosure.click();
+  await expect(disclosure).toHaveAttribute("aria-expanded", "false");
+  await expect(panel).toHaveAttribute("aria-hidden", "true");
 
   const stack = page.locator("#stack");
   await stack.scrollIntoViewIfNeeded();
@@ -225,7 +251,96 @@ test("shows the approved Ostrum role, work, and context-labelled stack", async (
   }
 });
 
-test("keeps the hero facts separate and the profile proof specific", async ({ page }) => {
+test("full experience disclosure supports Enter, Space, and its deep link", async ({ page }) => {
+  await openHome(page, true);
+  const button = page.locator("#experience-full-toggle");
+
+  await button.focus();
+  await page.keyboard.press("Enter");
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(button).toBeFocused();
+
+  await page.keyboard.press("Space");
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+
+  await page.goto("/#experience-full");
+  const deepLinkButton = page.locator("#experience-full-toggle");
+  await expect(deepLinkButton).toHaveAttribute("aria-expanded", "true");
+  await expect(deepLinkButton).toContainText("Close full experience");
+  await expect(page.locator("#experience-full")).toBeVisible();
+});
+
+test("uses the approved marquee and contact copy", async ({ page }) => {
+  await openHome(page, true);
+  const marquee = await page.locator('[data-marquee] [aria-hidden="true"]').textContent();
+  for (const phrase of [
+    "Backend systems",
+    "Database design",
+    "API and data contracts",
+    "Reliable releases",
+    "Internal developer tools",
+    "Product interfaces",
+    "End-to-end builds",
+    "AI-assisted engineering",
+  ]) {
+    expect(marquee).toContain(phrase);
+  }
+
+  const contact = page.locator("#contact");
+  await contact.scrollIntoViewIfNeeded();
+  await expect(contact.getByRole("heading", { name: "Let's talk." })).toBeVisible();
+  await expect(contact.getByText("Full-time roles, contract work or a scoped project: all welcome.", { exact: true })).toBeVisible();
+  await expect(contact.getByRole("link", { name: "abhinavp0304@gmail.com" })).toBeVisible();
+  await expect(contact.getByRole("link", { name: "Download résumé" })).toBeVisible();
+  const linkedin = contact.getByRole("link", { name: "Connect on LinkedIn" });
+  await expect(linkedin).toBeVisible();
+  await expect(linkedin).toHaveAttribute("href", "https://www.linkedin.com/in/k2ocabhinav22");
+  await expect(linkedin).toHaveAttribute("target", "_blank");
+  await expect(linkedin).toHaveAttribute("rel", "noopener noreferrer");
+  await expect(contact.getByRole("link", { name: "GitHub" })).toHaveCount(0);
+});
+
+test("LinkedIn is one tap away from the rail, phone menu, and case study", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
+  const linkedinHref = "https://www.linkedin.com/in/k2ocabhinav22";
+  const accessibleName = "Abhinav Prasad on LinkedIn (opens in a new tab)";
+
+  await openHome(page, true);
+  const rail = page.getByRole("navigation", { name: "Section navigation" });
+  const railLink = rail.getByRole("link", { name: accessibleName });
+  await expect(railLink).toBeVisible();
+  await expect(railLink).toHaveAttribute("href", linkedinHref);
+  await expect(railLink).toHaveAttribute("target", "_blank");
+  await expect(railLink).toHaveAttribute("rel", "noopener noreferrer");
+  await railLink.focus();
+  await expect(railLink).toHaveCSS("outline-style", "solid");
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openHome(page, true);
+  await page.getByRole("button", { name: "Open menu" }).click();
+  const mobileNav = page.getByRole("navigation", { name: "Mobile navigation" });
+  const mobileLink = mobileNav.getByRole("link", { name: accessibleName });
+  await expect(mobileLink).toBeVisible();
+  await expect(mobileLink).toHaveAttribute("href", linkedinHref);
+  await expect(mobileLink).toHaveAttribute("target", "_blank");
+  await expect(mobileLink).toHaveAttribute("rel", "noopener noreferrer");
+  const mobileBox = await mobileLink.boundingBox();
+  expect(mobileBox).not.toBeNull();
+  expect(mobileBox!.height).toBeGreaterThanOrEqual(44);
+
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/work/velo");
+  const caseStudyRail = page.getByRole("navigation", { name: "Contact navigation" });
+  const caseStudyLink = caseStudyRail.getByRole("link", { name: accessibleName });
+  await expect(caseStudyLink).toBeVisible();
+  await expect(caseStudyLink).toHaveAttribute("href", linkedinHref);
+  await expect(caseStudyLink).toHaveAttribute("target", "_blank");
+  await expect(caseStudyLink).toHaveAttribute("rel", "noopener noreferrer");
+});
+
+test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await openHome(page, true);
 
   await expect(page.getByText("Software engineer", { exact: true })).toBeVisible();
@@ -239,10 +354,14 @@ test("keeps the hero facts separate and the profile proof specific", async ({ pa
   await expect(onMyOwn).toHaveAttribute("href", "#work");
   await expect(onMyOwn).toContainText("On my own");
   await expect(onMyOwn).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
-  await expect(page.locator("#about").getByText(/Velo is a pre-launch dispatch prototype/)).toBeVisible();
-  await expect(page.locator("#about").getByText(/As Database Engineer at Ostrum Tech Limited/)).toBeVisible();
-  await expect(page.locator("#about").getByText(/For my own builds, I scope AI-agent tasks/)).toBeVisible();
-  await expect(page.locator("#about").getByText(/I clarify requested behavior with stakeholders/)).toBeVisible();
+  const whatIDo = page.locator("#about");
+  await expect(whatIDo.getByRole("heading", { name: "What I do" })).toBeVisible();
+  await expect(whatIDo.getByText("At Ostrum, I work on MySQL-backed API behaviour and versioned database releases.", { exact: true })).toBeVisible();
+  await expect(whatIDo.getByText("On my own, I take products from the backend to the interface, with AI coding agents doing scoped work under my review.", { exact: true })).toBeVisible();
+  await expect(whatIDo.getByText("I'm looking for work where backend and data meet the product.", { exact: true })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "Database workflows" })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "Release engineering" })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "Product engineering" })).toBeVisible();
   expect((await page.locator("body").innerText()).match(/forward deployed/gi)).toHaveLength(1);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
@@ -375,17 +494,22 @@ test("reduced motion renders the Experience mark and work content statically", a
   await expect(arcPath).toBeVisible();
   await expect(arcPath).not.toHaveAttribute("style", /stroke-dashoffset|pathLength/);
 
-  await experience.getByText("Selected engineering work", { exact: true }).click();
-  const workstreams = experience.locator("details[open] section");
+  const disclosure = experience.locator("#experience-full-toggle");
+  await disclosure.click();
+  await expect(disclosure).toHaveAttribute("aria-expanded", "true");
+  const workstreams = experience.locator("#experience-full section");
   await expect(workstreams).toHaveCount(4);
   for (let index = 0; index < 4; index += 1) {
-    await expect(workstreams.nth(index)).toBeVisible();
-    const state = await workstreams.nth(index).evaluate((element) => ({
-      opacity: Number.parseFloat(getComputedStyle(element).opacity),
-      transform: getComputedStyle(element).transform,
-    }));
-    expect(state.opacity).toBe(1);
-    expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(state.transform);
+    const workstream = workstreams.nth(index);
+    await expect(workstream).toBeVisible();
+    await expect.poll(
+      () => workstream.evaluate((element) => Number.parseFloat(getComputedStyle(element).opacity)),
+      { timeout: 250 }
+    ).toBe(1);
+    await expect.poll(
+      () => workstream.evaluate((element) => getComputedStyle(element).transform),
+      { timeout: 250 }
+    ).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   }
 });
 
@@ -443,13 +567,13 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expect(mobileNav.getByRole("link")).toHaveText([
     "Hero",
     "What I do",
-    "About",
     "Experience",
     "Work",
     "Stack",
     "Contact",
-    "Résumé",
+    "LinkedIn",
     "Email",
+    "Résumé",
   ]);
 
   const menuLinks = mobileNav.getByRole("link");
@@ -472,7 +596,10 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await mobileNav.getByRole("link", { name: "Experience", exact: true }).click();
   await expect(mobileNav).toBeHidden();
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
-  await expectMinimumTargetSize(page.locator("#contact a[aria-label]"));
+  const contact = page.locator("#contact");
+  await expectMinimumTargetSize(contact.locator('a[href^="mailto:"]'));
+  await expectMinimumTargetSize(contact.getByRole("link", { name: "Connect on LinkedIn" }));
+  await expectMinimumTargetSize(contact.getByRole("link", { name: "Download résumé" }));
 });
 
 test("touch layouts do not retain hover movement on project cards", async ({ page }, testInfo) => {
@@ -525,6 +652,13 @@ test("full-page sweep has no runtime, network, ID, or image failures", async ({
   });
 
   await openHome(page);
+  const experienceToggle = page.locator("#experience-full-toggle");
+  await experienceToggle.click();
+  const experienceImages = page.locator("#experience-full img");
+  for (const image of await experienceImages.all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  }
   await sweepWholePage(page);
 
   const integrity = await page.evaluate(() => {
@@ -596,4 +730,199 @@ test("Experience and Stack keep focused reduced-motion visual baselines", async 
   expect(stackScreenshot).toMatchSnapshot("stack.png", {
     maxDiffPixelRatio: 0.015,
   });
+});
+
+test("the contact email keeps one line at phone, tablet, and small desktop widths", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
+
+  for (const width of [375, 768, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openHome(page, true);
+    const link = page.locator('#contact a[class*="emailLink"]');
+    await link.scrollIntoViewIfNeeded();
+    const state = await link.evaluate((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      const rect = element.getBoundingClientRect();
+      const tops = Array.from(
+        new Set(
+          Array.from(range.getClientRects())
+            .filter((fragment) => fragment.width > 0)
+            .map((fragment) => Math.round(fragment.top))
+        )
+      ).sort((a, b) => a - b);
+      return {
+        text: element.textContent ?? "",
+        lines: tops.length,
+        overflow: element.scrollWidth - element.clientWidth,
+        height: rect.height,
+      };
+    });
+
+    expect(state.text).toContain("@");
+    expect(state.lines, `email lines at ${width}px`).toBe(1);
+    expect(state.overflow, `email overflow at ${width}px`).toBeLessThanOrEqual(1);
+    expect(state.height, `email height at ${width}px`).toBeLessThan(60);
+  }
+});
+
+test("the About heading keeps a readable measure on tablets", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
+
+  for (const width of [768, 900, 1023]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await openHome(page, true);
+    const heading = page.locator("#about h2");
+    await heading.scrollIntoViewIfNeeded();
+    const state = await heading.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const probe = document.createElement("span");
+      probe.textContent = "0".repeat(20);
+      probe.style.cssText = [
+        "position:absolute",
+        "visibility:hidden",
+        "white-space:nowrap",
+        `font-family:${style.fontFamily}`,
+        `font-size:${style.fontSize}`,
+        `font-weight:${style.fontWeight}`,
+        `letter-spacing:${style.letterSpacing}`,
+      ].join(";");
+      document.body.appendChild(probe);
+      const twentyCharacters = probe.getBoundingClientRect().width;
+      probe.remove();
+      return {
+        width: element.getBoundingClientRect().width,
+        twentyCharacters,
+        fontSize: Number.parseFloat(style.fontSize),
+      };
+    });
+
+    expect(state.twentyCharacters).toBeGreaterThan(0);
+    expect(state.width, `heading measure at ${width}px`).toBeGreaterThanOrEqual(
+      state.twentyCharacters - 0.5
+    );
+  }
+});
+
+test("the marquee pauses for a fine pointer and for keyboard focus", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
+  await openHome(page);
+  const marquee = page.locator("[data-marquee]");
+  await marquee.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400);
+  const track = marquee.locator('[class*="track"]');
+  const trackX = () =>
+    track.evaluate((element) => {
+      const transform = getComputedStyle(element).transform;
+      return transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
+    });
+
+  const movingStart = await trackX();
+  await page.waitForTimeout(450);
+  const movingEnd = await trackX();
+  expect(Math.abs(movingEnd - movingStart)).toBeGreaterThan(0.5);
+
+  const box = await marquee.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.waitForTimeout(250);
+  const hoverStart = await trackX();
+  await page.waitForTimeout(450);
+  const hoverEnd = await trackX();
+  expect(Math.abs(hoverEnd - hoverStart)).toBeLessThan(0.01);
+
+  await page.mouse.move(10, 10);
+  await page.waitForTimeout(250);
+  await marquee.focus();
+  await page.waitForTimeout(250);
+  const focusStart = await trackX();
+  await page.waitForTimeout(450);
+  const focusEnd = await trackX();
+  expect(Math.abs(focusEnd - focusStart)).toBeLessThan(0.01);
+});
+
+test("Velo dispatch screens show the whole desk on phones", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probe");
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/work/velo");
+  const image = page
+    .locator('img[alt="Velo Business admin dispatch screen with a live fleet map."]')
+    .first();
+  await image.scrollIntoViewIfNeeded();
+  const state = await image.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const imageElement = element as HTMLImageElement;
+    return {
+      fit: getComputedStyle(element).objectFit,
+      width: rect.width,
+      height: rect.height,
+      naturalWidth: imageElement.naturalWidth,
+      naturalHeight: imageElement.naturalHeight,
+    };
+  });
+
+  expect(state.fit).toBe("contain");
+  expect(state.naturalWidth).toBeGreaterThan(0);
+  const renderedRatio = state.width / state.height;
+  const naturalRatio = state.naturalWidth / state.naturalHeight;
+  expect(Math.abs(renderedRatio - naturalRatio)).toBeLessThan(0.02);
+});
+
+test("hovering a project photograph paints nothing over the card copy", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
+  await openHome(page);
+  const card = page.locator("#work [class*='workCard']").nth(1);
+  await card.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(500);
+
+  const thinRules = await card.evaluate((element) =>
+    Array.from(element.querySelectorAll<HTMLElement>("*")).filter((node) => {
+      const rect = node.getBoundingClientRect();
+      return rect.width > 0 && rect.width <= 2 && rect.height >= 100;
+    }).length
+  );
+  expect(thinRules).toBe(0);
+
+  const copy = card.locator('[class*="contentPanel"]');
+  await page.mouse.move(10, 10);
+  await page.waitForTimeout(400);
+  const before = await copy.screenshot({ animations: "disabled" });
+
+  const photo = card.locator("img").first();
+  const photoBox = await photo.boundingBox();
+  expect(photoBox).not.toBeNull();
+  await page.mouse.move(
+    photoBox!.x + photoBox!.width / 2,
+    photoBox!.y + photoBox!.height / 2
+  );
+  await page.waitForTimeout(900);
+  const after = await copy.screenshot({ animations: "disabled" });
+
+  expect(after.equals(before)).toBe(true);
+});
+
+test("reduced motion jumps to a section without a smooth animation", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "One native scroll probe");
+  await openHome(page, true);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+  await settleFrame(page);
+
+  await page
+    .locator('nav[aria-label="Section navigation"] a[href="#contact"]')
+    .click();
+  await settleFrame(page);
+  const firstFrame = await page.evaluate(() => window.scrollY);
+  await page.waitForTimeout(350);
+  const settled = await page.evaluate(() => window.scrollY);
+
+  expect(firstFrame).toBeGreaterThan(0);
+  expect(Math.abs(settled - firstFrame)).toBeLessThanOrEqual(1);
 });

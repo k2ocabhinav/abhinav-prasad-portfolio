@@ -1,30 +1,19 @@
 "use client";
 
-import { LazyMotion, MotionConfig, domAnimation } from "motion/react";
-import { ReactLenis } from "lenis/react";
+import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import PortalTransitionProvider from "@/components/beyond-terminal/PortalTransitionProvider";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+
+const HomeOnlyProviders = dynamic(() => import("./HomeOnlyProviders"));
 
 interface AppProvidersProps {
   children: ReactNode;
 }
 
 export default function AppProviders({ children }: AppProvidersProps) {
-  const prefersReducedMotion = useReducedMotion();
-  // Lenis owns smooth scrolling site-wide. Under reduced motion we collapse the
-  // smoothing (lerp: 1 = instant) so scroll stays native and non-vestibular.
-  const lenisOptions = prefersReducedMotion
-    ? { lerp: 1, smoothWheel: false, duration: 0 }
-    : { lerp: 0.09, smoothWheel: true };
+  const pathname = usePathname();
 
-  return (
-    <MotionConfig reducedMotion="user">
-      <LazyMotion features={domAnimation}>
-        <ReactLenis root options={lenisOptions}>
-          <PortalTransitionProvider>{children}</PortalTransitionProvider>
-        </ReactLenis>
-      </LazyMotion>
-    </MotionConfig>
-  );
+  if (pathname.startsWith("/work/")) return children;
+
+  return <HomeOnlyProviders>{children}</HomeOnlyProviders>;
 }

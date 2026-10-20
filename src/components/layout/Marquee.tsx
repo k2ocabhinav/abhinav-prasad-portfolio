@@ -13,15 +13,15 @@ import styles from "./Marquee.module.css";
 // pauses whenever a pointer or keyboard focus enters the band (WCAG 2.2.2).
 // =============================================================================
 
-// Names concrete work shown across the portfolio: agent orchestration,
-// operational workflows, release and database delivery, and browser QA.
 const ITEMS = [
-  "Operational workflows",
-  "Agent orchestration",
-  "Release automation",
-  "Database delivery",
-  "SQL release tooling",
-  "Browser QA rehearsals",
+  "Backend systems",
+  "Database design",
+  "API and data contracts",
+  "Reliable releases",
+  "Internal developer tools",
+  "Product interfaces",
+  "End-to-end builds",
+  "AI-assisted engineering",
 ];
 
 function wrapValue(min: number, max: number, value: number): number {

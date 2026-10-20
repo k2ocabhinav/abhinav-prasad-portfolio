@@ -131,16 +131,20 @@
 }
 
 .contactLinks {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.9rem;
   max-width: 100%;
 }
 
+/* The stamp and the address share a row when there is room. When there is not,
+   the contact block wraps to its own row so the address keeps a usable measure
+   instead of collapsing to one character per line. */
 .contactInfo {
   display: flex;
   min-width: 0;
+  flex: 1 1 13rem;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
@@ -148,6 +152,7 @@
 
 .emailLink {
   display: inline-flex;
+  max-width: 100%;
   min-height: 44px;
   align-items: center;
   color: var(--color-panel-accent, #F4BEBB);
@@ -155,7 +160,8 @@
   font-size: clamp(1rem, 2vw, 1.35rem);
   font-weight: 550;
   line-height: 1.3;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
   transition: opacity 0.3s ease;
 }
 
@@ -163,30 +169,26 @@
   opacity: 0.72;
 }
 
-.socials {
+/* Two print-press actions sit directly below the address: LinkedIn leads,
+   the résumé follows. Both share the panel's button tokens. */
+.contactActions {
   display: flex;
-  gap: 0.45rem;
-}
-
-.socialIcon {
-  display: flex;
-  width: 44px;
-  height: 44px;
+  max-width: 100%;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: var(--color-on-panel, #EDE6DA);
-  touch-action: manipulation;
-  transition: opacity 0.3s ease;
+  gap: 0.9rem;
 }
 
-.socialIcon:hover {
-  opacity: 0.72;
+.contactAction.contactAction {
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
 }
 
-.socialIcon:focus-visible {
-  outline: 2px solid var(--color-panel-accent, #F4BEBB);
-  outline-offset: 3px;
+.linkedinAction {
+  gap: 0.55rem;
+}
+
+.linkedinAction svg {
+  flex: none;
 }
 
 .footerTagline {
@@ -247,10 +249,42 @@
   border-bottom-width: 1px;
 }
 
+/* Just above the tablet breakpoint the two-column panel is narrow enough that
+   the 20.48px address would wrap. Trim the panel padding for that band so the
+   address still reads on one line. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  /* Raise specificity over the global .spec-body padding. */
+  .contactMotionRoot.contactMotionRoot {
+    padding: clamp(1.4rem, 2.4vw, 2rem);
+  }
+}
+
+/* The home gutter leaves the right-hand column too narrow for two columns on
+   tablets. Stack the map and the panel there so the email panel keeps a full
+   measure instead of collapsing to a few characters. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .contactComposition {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .mapContainer {
+    width: min(100%, 34rem);
+  }
+}
+
 @media (max-width: 767px) {
   .contactComposition {
     grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
+  }
+
+  .contactActions {
+    width: 100%;
+  }
+
+  .contactAction.contactAction {
+    width: 100%;
   }
 
   .mapContainer {
@@ -291,5 +325,12 @@
   .taglineText,
   .callout {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .contactAction.contactAction {
+    padding-inline: 0.85rem;
+    letter-spacing: 0.08em;
   }
 }

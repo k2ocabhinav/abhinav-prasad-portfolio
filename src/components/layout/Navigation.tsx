@@ -5,6 +5,7 @@ import { AnimatePresence, useReducedMotion } from "motion/react";
 import { FileText, Mail, Menu, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
+import LinkedInMark from "@/components/ui/LinkedInMark";
 import { navigationItems, navSpyTargets } from "@/data/navigation";
 import { panelSpring } from "@/lib/animations";
 import { scrollToSection, cn } from "@/lib/utils";
@@ -22,9 +23,18 @@ interface NavigationProps {
   resumeHref: string;
   /** Contact email, offered on the first screen from the rail and menu. */
   email: string;
+  /** Profile LinkedIn URL; the rail and menu omit the link when it is absent. */
+  linkedinHref?: string;
+  /** Full name used in the LinkedIn link's accessible name. */
+  fullName: string;
 }
 
-export default function Navigation({ resumeHref, email }: NavigationProps) {
+export default function Navigation({
+  resumeHref,
+  email,
+  linkedinHref,
+  fullName,
+}: NavigationProps) {
   const { activeId: activeSection, dark: overDarkField } =
     useScrollSpy(navSpyTargets);
   const navMode = useLandingNavMode(80);
@@ -233,6 +243,34 @@ export default function Navigation({ resumeHref, email }: NavigationProps) {
 
         <span className={styles.railRule} aria-hidden="true" />
 
+        {linkedinHref ? (
+          <a
+            href={linkedinHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${fullName} on LinkedIn (opens in a new tab)`}
+            className={cn(styles.railItem, styles.railAction)}
+          >
+            <span className={cn(styles.railLabel, styles.railLabelRoute)}>
+              LinkedIn
+            </span>
+            <LinkedInMark size={14} className={styles.railIcon} />
+          </a>
+        ) : null}
+        <a
+          href={`mailto:${email}`}
+          className={cn(styles.railItem, styles.railAction)}
+        >
+          <span className={cn(styles.railLabel, styles.railLabelRoute)}>
+            Email
+          </span>
+          <Mail
+            size={14}
+            className={styles.railIcon}
+            aria-hidden="true"
+            focusable="false"
+          />
+        </a>
         <a
           href={resumeHref}
           download
@@ -242,20 +280,6 @@ export default function Navigation({ resumeHref, email }: NavigationProps) {
             Résumé
           </span>
           <FileText
-            size={14}
-            className={styles.railIcon}
-            aria-hidden="true"
-            focusable="false"
-          />
-        </a>
-        <a
-          href={`mailto:${email}`}
-          className={cn(styles.railItem, styles.railAction)}
-        >
-          <span className={cn(styles.railLabel, styles.railLabelRoute)}>
-            Email
-          </span>
-          <Mail
             size={14}
             className={styles.railIcon}
             aria-hidden="true"
@@ -383,6 +407,29 @@ export default function Navigation({ resumeHref, email }: NavigationProps) {
 
                 <span className={styles.mobileDivider} aria-hidden="true" />
 
+                {linkedinHref ? (
+                  <a
+                    href={linkedinHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${fullName} on LinkedIn (opens in a new tab)`}
+                    onClick={closeMobileMenu}
+                    className={cn(
+                      styles.mobileNavItem,
+                      styles.mobileNavLinkedIn
+                    )}
+                  >
+                    <span>LinkedIn</span>
+                    <LinkedInMark size={16} />
+                  </a>
+                ) : null}
+                <a
+                  href={`mailto:${email}`}
+                  onClick={closeMobileMenu}
+                  className={cn(styles.mobileNavItem, styles.mobileNavRoute)}
+                >
+                  Email
+                </a>
                 <a
                   href={resumeHref}
                   download
@@ -390,13 +437,6 @@ export default function Navigation({ resumeHref, email }: NavigationProps) {
                   className={cn(styles.mobileNavItem, styles.mobileNavRoute)}
                 >
                   Résumé
-                </a>
-                <a
-                  href={`mailto:${email}`}
-                  onClick={closeMobileMenu}
-                  className={cn(styles.mobileNavItem, styles.mobileNavRoute)}
-                >
-                  Email
                 </a>
               </nav>
             </m.div>

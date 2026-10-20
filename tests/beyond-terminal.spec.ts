@@ -264,7 +264,7 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
 
   await page.locator("#about").scrollIntoViewIfNeeded();
   await expect(
-    page.getByText("I design and build across the database, API, and product interface.", { exact: true })
+    page.getByRole("heading", { name: "What I do", exact: true })
   ).toBeVisible();
   const widths = await page.evaluate(() => ({
     documentWidth: document.documentElement.scrollWidth,
@@ -351,7 +351,7 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
 
   await expect(
     page.getByRole("heading", {
-      name: "I design and build across the database, API, and product interface.",
+      name: "What I do",
       exact: true,
     })
   ).toBeVisible();
@@ -368,7 +368,7 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
   ).toHaveCount(1);
   await expect(
     page.getByRole("heading", {
-      name: "Interactive Engineering Portfolio & Content Platform",
+      name: "Portfolio publishing system",
       exact: true,
     })
   ).toHaveCount(1);
@@ -384,11 +384,11 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Interactive Engineering Portfolio & Content Platform",
+      name: "Portfolio publishing system",
       exact: true,
     })
   ).toBeVisible();
-  await expect(page.locator("main img")).toHaveCount(7);
+  await expect(page.locator('section[aria-labelledby="gallery-title"]')).toHaveCount(0);
 
   await page.goto("/work/velo");
   await expect(
@@ -427,6 +427,7 @@ test("desktop handoff into the profile section stays seam-free", async ({ page }
 test("How I work renders four clear steps on desktop", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
   await freezeHeroAmbientForSnapshot(page);
   await page.evaluate(() => {
     document.querySelector("#work aside[aria-labelledby='work-method-title']")?.scrollIntoView({ block: "center" });
@@ -450,6 +451,7 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
 test("How I work uses a vertical sequence on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
   await freezeHeroAmbientForSnapshot(page);
   await page.evaluate(() => {
     document.querySelector("#work aside[aria-labelledby='work-method-title']")?.scrollIntoView({ block: "start" });

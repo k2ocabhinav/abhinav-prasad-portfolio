@@ -5,11 +5,16 @@
   --plate-paper: var(--paper-linen, #FCF8F2);
 }
 
+.sectionContent {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
 .composition {
   display: grid;
   grid-template-columns: minmax(15rem, 0.38fr) minmax(0, 0.62fr);
-  max-width: 72rem;
-  margin-inline: auto;
   overflow: hidden;
   border: 1px solid rgba(11, 16, 17, 0.14);
   border-radius: 3px;
@@ -48,14 +53,14 @@
   position: absolute;
   right: 3%;
   bottom: 12%;
-  width: 36%;
   z-index: 1;
+  width: 36%;
 }
 
 .hintCopy {
   position: absolute;
-  left: 0.75rem;
   top: 0.75rem;
+  left: 0.75rem;
   display: grid;
   gap: 0.2rem;
   padding: 0.35rem 0.5rem;
@@ -94,42 +99,114 @@
   text-wrap: balance;
 }
 
-.proofList {
+.introLines {
   display: grid;
   gap: 0;
-  margin: clamp(1.1rem, 2vw, 1.6rem) 0 0;
-  padding: 0;
+  margin-top: clamp(1rem, 2vw, 1.5rem);
   border-top: 1px solid rgba(237, 230, 218, 0.3);
-  list-style: none;
 }
 
-.proofList li {
-  position: relative;
-  padding: 0.75rem 0 0.75rem 1.1rem;
+.introLines p {
+  margin: 0;
+  padding: 0.8rem 0;
   border-bottom: 1px solid rgba(237, 230, 218, 0.22);
   color: var(--color-on-panel, #EDE6DA);
   font-family: var(--font-body);
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
-.proofList li::before {
-  position: absolute;
-  top: 1.35rem;
-  left: 0;
-  width: 0.38rem;
-  height: 0.38rem;
-  background: var(--color-panel-accent, #F4BEBB);
-  content: "";
+.serviceList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--color-hairline);
+  border-bottom: 1px solid var(--color-hairline);
 }
 
-.philosophyText {
-  max-width: 65ch;
-  margin: 1.1rem 0 0;
-  color: var(--color-on-panel, #EDE6DA);
+.serviceRow {
+  min-width: 0;
+  padding: 1.1rem clamp(0.8rem, 1.7vw, 1.5rem) 1.2rem 0;
+}
+
+.serviceRow + .serviceRow {
+  padding-left: clamp(0.8rem, 1.7vw, 1.5rem);
+  border-left: 1px solid var(--color-hairline);
+}
+
+.serviceRow h3 {
+  margin: 0;
+  color: var(--color-black-cherry, #351E28);
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+  font-weight: 550;
+  line-height: 1.2;
+}
+
+.serviceRow p {
+  margin: 0.65rem 0 0;
+  color: var(--color-ink, #0B1011);
   font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.serviceRow ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.7rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.serviceRow li {
+  color: var(--color-burgundy, #6A2135);
+  font-family: var(--font-label);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .composition {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .portraitColumn {
+    grid-row: 1;
+    height: 6.5rem;
+    justify-items: start;
+    margin: 1.25rem 0 0 1.25rem;
+    padding: 0;
+    background: transparent;
+  }
+
+  .imageFrame {
+    width: 6rem;
+  }
+
+  .stillLife {
+    right: auto;
+    bottom: -0.15rem;
+    left: 4.8rem;
+    width: 3.2rem;
+  }
+
+  .hintCopy {
+    top: 1.2rem;
+    left: 7rem;
+  }
+
+  .composition .copyColumn {
+    grid-row: 2;
+    padding: 1.25rem 1.5rem 1.75rem;
+  }
+
+  .heading {
+    max-width: 22ch;
+    font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+  }
 }
 
 @media (max-width: 767px) {
@@ -159,7 +236,9 @@
   }
 
   .hintCopy {
-    display: none;
+    top: 1rem;
+    left: 6rem;
+    font-size: 0.53rem;
   }
 
   .copyColumn {
@@ -171,24 +250,34 @@
     font-size: clamp(1.55rem, 6vw, 2.05rem);
   }
 
-  .proofList {
+  .introLines {
     margin-top: 0.85rem;
   }
 
-  .proofList li,
-  .philosophyText {
+  .introLines p,
+  .serviceRow p {
     font-size: 0.96rem;
   }
 
-  .proofList li {
+  .introLines p {
     padding-block: 0.65rem;
   }
 
-  .proofList li::before {
-    top: 1.18rem;
+  .serviceList {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .philosophyText {
-    margin-top: 0.85rem;
+  .serviceRow,
+  .serviceRow + .serviceRow {
+    padding: 1rem 0;
+    border-left: 0;
+  }
+
+  .serviceRow + .serviceRow {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .serviceRow h3 {
+    font-size: 1.22rem;
   }
 }

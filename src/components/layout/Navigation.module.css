@@ -118,6 +118,25 @@
   color: var(--color-lead-deep);
 }
 
+/* On case-study routes the rail carries only the contact actions. Labels
+   stay out of the way until hover or keyboard focus, so the icons sit clear
+   of the reading column. */
+.desktopRailCompact .railLabelRoute {
+  padding: 0.28rem 0.45rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: 2px;
+  background: rgba(var(--color-surface-rgb), 0.96);
+  opacity: 0;
+  transform: translateX(1rem);
+  pointer-events: none;
+}
+
+.desktopRailCompact .railItem:hover .railLabelRoute,
+.desktopRailCompact .railItem:focus-visible .railLabelRoute {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* Over the burgundy bridge field the rail flips to bone ink so the active
    label and dots stay legible on the dark ink. */
 .desktopRail[data-nav-tone="dark"] .railLabel {
@@ -256,6 +275,21 @@
 
 .mobileNavRoute {
   color: var(--color-lead-deep);
+}
+
+/* Contact leads the group: a labelled row with the mark, sized like the
+   other menu actions (44px minimum) rather than a bare text link. */
+.mobileNavLinkedIn {
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-inline: 0.65rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: 2px;
+  color: var(--color-lead-deep);
+}
+
+.mobileNavLinkedIn svg {
+  flex: none;
 }
 
 .mobileDivider {

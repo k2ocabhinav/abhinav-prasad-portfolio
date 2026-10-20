@@ -65,7 +65,6 @@ export interface PersonalData {
   email: string;
   resumeHref: string;
   socials: SocialLink[];
-  philosophy: string;
   presenceDescription: string;
   footerTagline: string;
 }
@@ -82,17 +81,20 @@ export interface HeroSlide {
   alt: string;
 }
 
-/** A role held within a single employer experience */
-export interface ExperienceRole {
-  title: string;
-  date: string;
-  note?: string;
-}
-
 /** A semantically emphasized proof point within an experience workstream */
 export interface ExperiencePoint {
   lead: string;
   detail: string;
+  emphasis?: string;
+}
+
+/** A factual screenshot attached to an experience workstream */
+export interface ExperienceVisual {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
 }
 
 /** A coherent area of engineering ownership within an employer experience */
@@ -102,6 +104,7 @@ export interface ExperienceWorkstream {
   summary: string;
   points: ExperiencePoint[];
   tools: string[];
+  images?: ExperienceVisual[];
 }
 
 /** Portfolio project */
@@ -195,9 +198,10 @@ export interface ChronicleEntry {
   company: string;
   period: string;
   companyContext: string;
-  backendThesis: string;
-  functionality: string;
-  roles: ExperienceRole[];
+  roleTitle: string;
+  roleScope: string;
+  employmentNote: string;
+  summaryPoints: ExperiencePoint[];
   workstreams: ExperienceWorkstream[];
 }
 
