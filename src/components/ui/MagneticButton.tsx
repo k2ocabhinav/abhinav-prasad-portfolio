@@ -16,6 +16,9 @@ interface MagneticButtonProps {
   download?: boolean;
   className?: string;
   variant?: "outline" | "ghost" | "glow";
+  /** Set for external destinations so the link opens in a new tab. */
+  target?: "_blank";
+  rel?: string;
 }
 
 export default function MagneticButton({
@@ -24,6 +27,8 @@ export default function MagneticButton({
   download,
   className = "",
   variant = "outline",
+  target,
+  rel,
 }: MagneticButtonProps) {
   const prefersReducedMotion = useReducedMotion();
   const { ref, x, y } = useMagneticHover(0.04);
@@ -33,6 +38,8 @@ export default function MagneticButton({
       ref={prefersReducedMotion ? undefined : (ref as RefObject<HTMLAnchorElement>)}
       href={href}
       download={download}
+      target={target}
+      rel={rel}
       style={prefersReducedMotion ? undefined : { x, y }}
       className={`${styles.magneticButton} ${styles[variant]} ${className}`}
     >

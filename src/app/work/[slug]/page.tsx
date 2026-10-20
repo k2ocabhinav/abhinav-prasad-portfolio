@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import ContactRail from "@/components/layout/ContactRail";
 import ProjectDetailPage from "@/components/sections/ProjectDetailPage";
 import {
   getChronicleEntries,
@@ -78,6 +79,16 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
         {serializeJsonLd(structuredData)}
       </script>
       <ProjectDetailPage detail={detail} personal={profile.personal} />
+      <ContactRail
+        resumeHref={profile.personal.resumeHref}
+        email={profile.personal.email}
+        linkedinHref={
+          profile.personal.socials.find(
+            (social) => social.platform === "linkedin"
+          )?.href
+        }
+        fullName={profile.personal.fullName}
+      />
     </>
   );
 }
