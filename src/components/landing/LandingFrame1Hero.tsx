@@ -1,5 +1,6 @@
 import HeroTextColumn from "./HeroTextColumn";
-import PressRunController from "./PressRunController";
+import ExplodedStack from "./ExplodedStack";
+import AnimatedName from "./AnimatedName";
 import type { LandingHeroContent } from "@/types";
 import styles from "./LandingFrame1Hero.module.css";
 
@@ -19,14 +20,27 @@ export default function LandingFrame1Hero({
   return (
     <div className={styles.frame} data-home-hero-frame="true">
       <div className={styles.content}>
-        <HeroTextColumn
-          hero={hero}
+        <header className={styles.masthead} aria-label="Introduction">
+          <span className={styles.mastheadName}>{fullName}</span>
+        </header>
+        <AnimatedName
           name={name}
-          fullName={fullName}
-          linkedinHref={linkedinHref}
+          portalTrigger={{
+            href: "/beyond-terminal",
+            source: "easter-egg",
+            variant: "portal-bloom",
+            skin: "beyond-pastel-mist",
+          }}
         />
+        <div className={styles.heroGrid}>
+          <HeroTextColumn
+            hero={hero}
+            fullName={fullName}
+            linkedinHref={linkedinHref}
+          />
+          <ExplodedStack />
+        </div>
       </div>
-      <PressRunController />
     </div>
   );
 }

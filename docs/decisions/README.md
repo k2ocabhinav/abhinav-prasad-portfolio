@@ -10,3 +10,4 @@ Choices that are costly to reverse or likely to prompt "why?". Records are appen
 | [0004](0004-shorter-home-page.md) | A shorter home page: seven sections | accepted |
 | [0005](0005-hero-identity-and-separate-facts.md) | Hero: software engineer, with work and own builds in separate rows | accepted |
 | [0006](0006-site-storyline.md) | Six sections for one clear profile | accepted |
+| [0007](0007-hero-identity-full-stack.md) | Hero identity: full-stack engineer | accepted |

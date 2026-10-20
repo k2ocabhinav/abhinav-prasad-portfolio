@@ -354,7 +354,7 @@ test("LinkedIn is one tap away from the rail, phone menu, and case study", async
 test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await openHome(page, true);
 
-  await expect(page.getByText("Software engineer", { exact: true })).toBeVisible();
+  await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(page.getByText("I build products end to end, from the first conversation to release.", { exact: true })).toBeVisible();
   const atWork = page.locator('[data-hero-facts="true"] a').nth(0);
   const onMyOwn = page.locator('[data-hero-facts="true"] a').nth(1);
@@ -471,7 +471,7 @@ test("server-rendered hero facts stay visible before hydration", async ({ page }
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   const facts = page.locator('[data-hero-facts="true"] a');
-  await expect(page.getByText("Software engineer", { exact: true })).toBeVisible();
+  await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(facts).toHaveCount(2);
   await expect(facts.nth(0)).toContainText("Database Engineer, Ostrum Tech Limited");
   await expect(facts.nth(1)).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
@@ -514,7 +514,7 @@ test("hero facts use ink on hover and keyboard focus, with a static reduced-moti
 
   await rows.nth(0).hover();
   await expect(rows.nth(0)).toHaveCSS("color", "rgb(237, 230, 218)");
-  await expect(rows.nth(0)).toHaveCSS("box-shadow", "rgba(53, 30, 40, 0.2) 2px 2px 0px 0px");
+  await expect(rows.nth(0)).toHaveCSS("box-shadow", "rgba(53, 30, 40, 0.22) 2px 2px 0px 0px");
 
   await page.keyboard.press("Tab");
   await rows.nth(1).focus();

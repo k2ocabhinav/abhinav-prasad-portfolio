@@ -1,127 +1,36 @@
-.scene {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  overflow: clip;
-  pointer-events: none;
-}
-
-.cropMarks {
-  position: absolute;
-  inset: clamp(1rem, 3.6vw, 3rem);
-}
-
-.cropMark {
-  position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
-  overflow: visible;
-  fill: none;
-  stroke: rgba(106, 33, 53, 0.34);
-  stroke-width: 1;
-  stroke-dasharray: 48;
-  stroke-dashoffset: 0;
-  animation: drawCrop 300ms var(--motion-ease-out) 120ms both;
-}
-
-.topLeft {
-  inset: 0 auto auto 0;
-}
-
-.topRight {
-  inset: 0 0 auto auto;
-  transform: scaleX(-1);
-}
-
-.bottomLeft {
-  inset: auto auto 0 0;
-  transform: scaleY(-1);
-}
-
-.bottomRight {
-  inset: auto 0 0 auto;
-  transform: scale(-1);
-}
-
-.calibrationStrip {
-  position: absolute;
-  z-index: 3;
-  right: clamp(1.5rem, 6.7vw, 6rem);
-  bottom: clamp(1.15rem, 3.2vh, 2rem);
-  left: clamp(1.5rem, 6.7vw, 6rem);
-  display: flex;
-  min-height: 3rem;
-  align-items: center;
-  justify-content: flex-end;
-  border-top: 1px solid rgba(106, 33, 53, 0.24);
-  color: var(--color-black-cherry);
-  pointer-events: auto;
-  text-decoration: none;
-}
-
-.scrollCue {
+.scrollLink {
   display: inline-flex;
-  min-height: 2.75rem;
-  flex: 0 0 auto;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--color-burgundy);
-  font-family: var(--font-body);
-  font-size: 0.8125rem;
-  font-weight: 600;
+  justify-content: flex-start;
+  min-width: 8rem;
+  min-height: 3rem;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+  color: #351E28;
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  text-decoration: none;
+  transition: color 160ms var(--motion-ease-out);
 }
 
-.scrollCue span {
-  font-size: 1.1rem;
-  transition: transform 180ms var(--motion-ease-out);
+.scrollLink:hover {
+  color: #6A2135;
 }
 
-.calibrationStrip:hover .scrollCue span,
-.calibrationStrip:focus-visible .scrollCue span {
-  transform: translateY(2px);
-}
-
-.calibrationStrip:focus-visible {
-  outline: 2px solid var(--color-burgundy);
+.scrollLink:focus-visible {
+  outline: 2px solid #6A2135;
   outline-offset: 4px;
 }
 
-.calibrationStrip:active .scrollCue span {
-  transform: translateY(3px);
-  transition-duration: 80ms;
-}
-
-@keyframes drawCrop {
-  from {
-    stroke-dashoffset: 48;
-  }
-
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@media (max-width: 767px) {
-  .scrollCue {
-    gap: 0.3rem;
-    font-size: 0.72rem;
-  }
-}
-
-@media (max-width: 350px) {
-  .calibrationStrip {
-    right: 1.15rem;
-    left: 1.15rem;
-  }
+.scrollArrow {
+  color: #6A2135;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cropMark {
-    animation: none;
-    stroke-dashoffset: 0;
-  }
-
-  .scrollCue span {
+  .scrollLink {
     transition: none;
   }
 }

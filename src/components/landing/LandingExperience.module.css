@@ -28,7 +28,3 @@
   position: relative;
   scroll-snap-align: start;
 }
-
-.deferredFrames {
-  position: relative;
-}
