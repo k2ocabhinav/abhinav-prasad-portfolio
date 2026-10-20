@@ -11,7 +11,6 @@
   background: #6A2135;
   opacity: 0;
   pointer-events: none;
-  will-change: transform;
   transition:
     width 180ms var(--motion-ease-out),
     height 180ms var(--motion-ease-out),
@@ -22,6 +21,11 @@
 
 .orb[data-visible="true"] {
   opacity: 1;
+}
+
+/* Compositor hint only while the follower is catching up to the pointer. */
+.orb[data-moving="true"] {
+  will-change: transform;
 }
 
 .orb[data-active="true"] {
@@ -47,7 +51,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .orb {
+  .orb,
+  .orb[data-moving="true"] {
     transition: none;
     will-change: auto;
   }

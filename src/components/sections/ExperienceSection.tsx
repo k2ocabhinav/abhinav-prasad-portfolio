@@ -240,7 +240,7 @@ export default function ExperienceSection({
               className={styles.experienceArc}
             />
           </div>
-          <p className={styles.callout}>
+          <p className={styles.callout} data-experience-callout="true">
             The role spans stored programs, schema design, release tooling and cloud-supported delivery.
           </p>
         </header>

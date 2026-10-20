@@ -3,18 +3,57 @@
    No hairlines, no paper look: a full-bleed ink bar between sections.
    ============================================================================= */
 
-.marquee {
+.shell {
   position: relative;
   z-index: 1;
+}
+
+.marquee {
   overflow: hidden;
   padding: clamp(1.4rem, 4vw, 2.8rem) 0;
   background: var(--color-lead, #6A2135);
   color: var(--color-on-lead, #EDE6DA);
 }
 
-.marquee:focus-visible {
+/* Print-style transport control. Sits over the faded left edge of the band:
+   the fixed section rail owns the right edge on desktop. It is a sibling of
+   the moving section, so using it never triggers the hover pause underneath. */
+.control {
+  position: absolute;
+  top: 50%;
+  left: clamp(0.75rem, 2vw, 1.5rem);
+  z-index: 2;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 1px solid rgba(237, 230, 218, 0.55);
+  border-radius: 2px;
+  background: var(--color-lead, #6A2135);
+  color: var(--color-on-lead, #EDE6DA);
+  transition:
+    background-color 160ms var(--motion-ease-out),
+    border-color 160ms var(--motion-ease-out),
+    color 160ms var(--motion-ease-out);
+}
+
+.control:hover {
+  border-color: var(--color-on-lead, #EDE6DA);
+  background: var(--color-on-lead, #EDE6DA);
+  color: var(--color-lead, #6A2135);
+}
+
+.control[aria-pressed="true"] {
+  border-color: var(--color-on-lead, #EDE6DA);
+  background: var(--color-on-lead, #EDE6DA);
+  color: var(--color-lead, #6A2135);
+}
+
+.control:focus-visible {
   outline: 2px solid var(--color-on-lead, #EDE6DA);
-  outline-offset: -4px;
+  outline-offset: 3px;
 }
 
 .track {
@@ -22,15 +61,6 @@
   width: max-content;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-
-/* WCAG 2.2.2 safeguard: a fine pointer over the band pauses the track. The
-   rAF driver pauses in the component too; this keeps a CSS-driven track static
-   as well, without affecting the reduced-motion path. */
-@media (hover: hover) and (pointer: fine) {
-  .marquee:hover .track {
-    animation-play-state: paused;
-  }
 }
 
 .group {

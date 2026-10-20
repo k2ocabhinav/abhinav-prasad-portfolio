@@ -16,6 +16,9 @@ interface BeyondPhotoWallProps {
   };
 }
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 const colorClassMap: Record<BeyondAlbumColor, string> = {
   cobalt: styles.cobalt,
   coral: styles.coral,
@@ -80,6 +83,9 @@ function AlbumMedia({ item, large = false }: { item: BeyondAlbumItem; large?: bo
 export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) {
   const reduceMotion = useReducedMotion();
   const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [activeItem, setActiveItem] = useState<BeyondAlbumItem | null>(null);
 
   useEffect(() => {
@@ -115,19 +121,86 @@ export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) 
     }
 
     const originalOverflow = document.body.style.overflow;
+    const trigger = lastTriggerRef.current;
+
+    // Mark everything outside the dialog inert by walking up from the dialog
+    // to <body> and inerting each sibling. That covers the photo wall, the
+    // footer and the route chrome without hardcoding their selectors.
+    const dialog = panelRef.current?.closest<HTMLElement>('[role="dialog"]');
+    const background: Array<{ element: HTMLElement; wasInert: boolean }> = [];
+    let node: HTMLElement | null = dialog ?? null;
+    while (node && node !== document.body) {
+      const parent: HTMLElement | null = node.parentElement;
+      if (!parent) {
+        break;
+      }
+      Array.from(parent.children).forEach((child) => {
+        if (child !== node && child instanceof HTMLElement) {
+          background.push({ element: child, wasInert: child.inert });
+          child.inert = true;
+        }
+      });
+      node = parent;
+    }
+
     document.body.style.overflow = "hidden";
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      closeButtonRef.current?.focus({ preventScroll: true });
+    });
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
         setActiveItem(null);
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const panel = panelRef.current;
+      if (!panel) {
+        return;
+      }
+
+      const focusable = Array.from(
+        panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+      );
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (
+        event.shiftKey &&
+        (active === first || !panel.contains(active))
+      ) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = originalOverflow;
+      window.cancelAnimationFrame(focusFrame);
       window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = originalOverflow;
+      background.forEach(({ element, wasInert }) => {
+        element.inert = wasInert;
+      });
+      if (trigger?.isConnected) {
+        trigger.focus({ preventScroll: true });
+      }
     };
   }, [activeItem]);
 
@@ -153,7 +226,11 @@ export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) 
 
   return (
     <>
-      <section className={styles.hero} aria-labelledby="beyond-hero-title">
+      <section
+        className={styles.hero}
+        data-beyond-section="hero"
+        aria-labelledby="beyond-hero-title"
+      >
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>{intro.eyebrow}</span>
           <h1 id="beyond-hero-title" className={styles.title} tabIndex={-1}>
@@ -176,7 +253,11 @@ export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) 
         </div>
       </section>
 
-      <section className={styles.wallSection} aria-label="Beyond The Terminal photo wall">
+      <section
+        className={styles.wallSection}
+        data-beyond-section="wall"
+        aria-label="Beyond The Terminal photo wall"
+      >
         <div className={styles.wallMeta}>
           <span>Album wall</span>
           <span>{items.length.toString().padStart(2, "0")} entries</span>
@@ -203,7 +284,10 @@ export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) 
               }
               onPointerMove={(event) => handlePointerMove(event, item)}
               onPointerLeave={handlePointerLeave}
-              onClick={() => setActiveItem(item)}
+              onClick={(event) => {
+                lastTriggerRef.current = event.currentTarget;
+                setActiveItem(item);
+              }}
               aria-label={`Open ${item.title}`}
             >
               <AlbumMedia item={item} />
@@ -232,10 +316,12 @@ export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) 
           onClick={() => setActiveItem(null)}
         >
           <div
+            ref={panelRef}
             className={cn(styles.lightboxPanel, colorClassMap[activeItem.color])}
             onClick={(event) => event.stopPropagation()}
           >
             <button
+              ref={closeButtonRef}
               type="button"
               className={styles.closeButton}
               onClick={() => setActiveItem(null)}

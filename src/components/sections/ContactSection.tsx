@@ -86,7 +86,7 @@ export default function ContactSection({
                 scale: prefersReducedMotion ? 1 : sheetScale,
               }}
             >
-              <div className={cn("spec-body", styles.contactMotionRoot)}>
+              <div className={styles.contactMotionRoot}>
                 <h2 className={styles.heading}>Let&apos;s talk.</h2>
                 <p className={styles.callout}>Full-time roles, contract work or a scoped project: all welcome.</p>
 
@@ -97,6 +97,7 @@ export default function ContactSection({
                       <a
                         href={`mailto:${personal.email}`}
                         className={styles.emailLink}
+                        data-contact-email="true"
                         aria-label={personal.email}
                       >
                         {renderBreakableEmail(personal.email)}

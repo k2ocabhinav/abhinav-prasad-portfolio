@@ -2,6 +2,7 @@
 
 import * as m from "motion/react-m";
 import { useInView, useMotionValue, useScroll, useTransform, useVelocity } from "motion/react";
+import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "./Marquee.module.css";
@@ -9,8 +10,10 @@ import styles from "./Marquee.module.css";
 // =============================================================================
 // Marquee — scroll-velocity ribbon. Solid burgundy print band; the track
 // drifts left continuously and skews with scroll velocity (Lenis smooths the
-// input). The rAF loop stops while off-screen and under reduced motion, and
-// pauses whenever a pointer or keyboard focus enters the band (WCAG 2.2.2).
+// input). The rAF loop stops while off-screen and under reduced motion. A
+// visible print-style control satisfies WCAG 2.2.2; hovering the band still
+// pauses it, and keyboard focus on the control pauses it too. The control is
+// a sibling of the band so hovering it never fights the pause it triggers.
 // =============================================================================
 
 const ITEMS = [
@@ -34,6 +37,8 @@ export default function Marquee() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { amount: 0.01 });
   const [isPaused, setIsPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocusPaused, setIsFocusPaused] = useState(false);
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
@@ -43,7 +48,8 @@ export default function Marquee() {
     clamp: true,
   });
 
-  const running = isInView && !prefersReducedMotion && !isPaused;
+  const running =
+    isInView && !prefersReducedMotion && !isPaused && !isHovered && !isFocusPaused;
 
   useEffect(() => {
     if (!running) {
@@ -65,34 +71,68 @@ export default function Marquee() {
     return () => window.cancelAnimationFrame(frameId);
   }, [running, baseX, scrollVelocity]);
 
+  const togglePaused = () => {
+    if (isPaused) {
+      setIsPaused(false);
+      // Resume from a keyboard pause too; focus alone must not keep it stuck.
+      setIsFocusPaused(false);
+    } else {
+      setIsPaused(true);
+    }
+  };
+
   return (
-    <section
-      ref={sectionRef}
-      className={styles.marquee}
-      data-marquee="true"
-      aria-label="Areas of work"
-      tabIndex={0}
-      onPointerEnter={() => setIsPaused(true)}
-      onPointerLeave={() => setIsPaused(false)}
-      onFocus={() => setIsPaused(true)}
-      onBlur={() => setIsPaused(false)}
-    >
-      <m.div
-        className={styles.track}
-        aria-hidden="true"
-        style={{ x, skewX: running ? skewX : 0 }}
+    <div className={styles.shell}>
+      <section
+        ref={sectionRef}
+        className={styles.marquee}
+        data-marquee="true"
+        data-marquee-running={running}
+        aria-label="Areas of work"
+        onPointerEnter={(event) => {
+          if (event.pointerType === "mouse") setIsHovered(true);
+        }}
+        onPointerLeave={(event) => {
+          if (event.pointerType === "mouse") setIsHovered(false);
+        }}
       >
-        {[0, 1].map((dup) => (
-          <div className={styles.group} key={dup}>
-            {ITEMS.map((item) => (
-              <span className={styles.item} key={`${item}-${dup}`}>
-                {item}
-                <span className={styles.sep} />
-              </span>
-            ))}
-          </div>
-        ))}
-      </m.div>
-    </section>
+        <m.div
+          className={styles.track}
+          data-marquee-track="true"
+          aria-hidden="true"
+          style={{ x, skewX: running ? skewX : 0 }}
+        >
+          {[0, 1].map((dup) => (
+            <div className={styles.group} key={dup}>
+              {ITEMS.map((item) => (
+                <span className={styles.item} key={`${item}-${dup}`}>
+                  {item}
+                  <span className={styles.sep} />
+                </span>
+              ))}
+            </div>
+          ))}
+        </m.div>
+      </section>
+
+      {prefersReducedMotion ? null : (
+        <button
+          type="button"
+          className={styles.control}
+          data-marquee-control="true"
+          aria-pressed={isPaused}
+          aria-label={isPaused ? "Play areas of work ticker" : "Pause areas of work ticker"}
+          onClick={togglePaused}
+          onFocus={() => setIsFocusPaused(true)}
+          onBlur={() => setIsFocusPaused(false)}
+        >
+          {isPaused ? (
+            <Play size={14} aria-hidden="true" focusable="false" />
+          ) : (
+            <Pause size={14} aria-hidden="true" focusable="false" />
+          )}
+        </button>
+      )}
+    </div>
   );
 }

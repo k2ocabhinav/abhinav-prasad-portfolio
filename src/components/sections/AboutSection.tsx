@@ -34,7 +34,6 @@ export default function AboutSection({
                 width={640}
                 height={640}
                 className={styles.heroImage}
-                priority={false}
               />
             </div>
             <div className={styles.stillLife}>
@@ -46,7 +45,7 @@ export default function AboutSection({
             </span>
           </div>
 
-          <div className={`spec-body ${styles.copyColumn}`}>
+          <div className={styles.copyColumn}>
             <h2 className={styles.heading}>{intro.headline}</h2>
             <div className={styles.introLines}>
               {intro.proofLines.map((line) => (

@@ -6,7 +6,10 @@
   z-index: var(--z-nav);
   display: none;
   flex-direction: column;
-  gap: 1.25rem;
+  /* Rows are 44px tall; the old 24px row plus 20px gap put the dots 44px
+     apart. Dropping the gap keeps that rhythm while every target clears the
+     owner's 44px bar. */
+  gap: 0;
   align-items: flex-end;
 }
 
@@ -16,14 +19,14 @@
   }
 }
 
-/* Every rail item clears the 24x24 minimum target size. */
+/* Every rail item is a 44px-tall target; the dot stays a fixed 8px layout box
+   and scales on the compositor instead of resizing. */
 .railItem {
   display: flex;
+  min-height: 44px;
   align-items: center;
   justify-content: flex-end;
   gap: 0.7rem;
-  min-height: 24px;
-  transition: all 0.3s ease;
 }
 
 .railLabel {
@@ -35,7 +38,9 @@
   transform: translateX(1rem);
   pointer-events: none;
   color: var(--color-secondary-text);
-  transition: all 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s var(--motion-ease-out);
   white-space: nowrap;
 }
 
@@ -58,28 +63,31 @@
 }
 
 .railDot {
-  width: 4px;
-  height: 4px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: rgba(11, 16, 17, 0.35);
-  transition: all 0.5s ease;
+  transform: scale(0.5);
+  transition:
+    transform 0.3s var(--motion-ease-out),
+    background-color 0.3s ease;
 }
 
 .railItem:hover .railDot {
   background-color: var(--color-lead);
-  width: 6px;
-  height: 6px;
+  transform: scale(0.75);
 }
 
-.railDotActive {
-  width: 8px;
-  height: 8px;
+.railDotActive,
+.railItem:hover .railDotActive {
   background-color: var(--color-lead);
+  transform: scale(1);
 }
 
 /* Route chips — flat paper, hairline border. */
 .railItemRoute {
   gap: 0.75rem;
+  margin-block: 0.35rem;
   padding: 0.72rem 0.88rem;
   border: 1px solid var(--color-hairline);
   border-radius: 999px;
@@ -98,18 +106,23 @@
   height: 0.55rem;
   border-radius: 2px;
   background: var(--color-lead);
+  transform: none;
+}
+
+.railItem:hover .railDotRoute {
+  transform: scale(1.15);
 }
 
 /* Résumé and email — always-labelled actions below a hairline rule, so the
    two first-screen actions stay readable rather than being bare icons. */
 .railAction {
-  min-height: 28px;
+  min-height: 44px;
 }
 
 .railRule {
   width: 1.5rem;
   height: 1px;
-  margin-block: 0.1rem;
+  margin-block: 0.45rem;
   background: var(--color-hairline);
 }
 

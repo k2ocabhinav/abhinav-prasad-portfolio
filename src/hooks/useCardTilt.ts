@@ -1,74 +1,93 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useEffect, useRef, type RefObject } from "react";
+import { useMotionValue, useSpring, type MotionValue } from "motion/react";
+import { tiltSpring } from "@/lib/animations";
 
 // =============================================================================
-// useCardTilt — 3D tilt effect based on mouse position within element
+// useCardTilt — 3D tilt driven by motion values, not React state.
+// -----------------------------------------------------------------------------
+// The pointer loop writes straight to spring-smoothed rotateX/rotateY values,
+// so a card never re-renders while the cursor moves. The card rect is cached
+// on pointerenter and resize; no getBoundingClientRect inside the move handler.
+// Attached only for fine, hovering pointers with motion allowed; coarse
+// pointers and reduced motion get a completely static card.
 // =============================================================================
 
-interface TiltValues {
-  rotateX: number;
-  rotateY: number;
+interface CardTilt {
+  ref: RefObject<HTMLDivElement | null>;
+  rotateX: MotionValue<number>;
+  rotateY: MotionValue<number>;
 }
 
 const FINE_HOVER_QUERY = "(hover: hover) and (pointer: fine)";
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
-export function useCardTilt(maxDegrees = 5) {
+export function useCardTilt(maxDegrees = 5): CardTilt {
   const ref = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState<TiltValues>({ rotateX: 0, rotateY: 0 });
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!ref.current) return;
-      const rect = ref.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      setTilt({
-        rotateX: -y * maxDegrees,
-        rotateY: x * maxDegrees,
-      });
-    },
-    [maxDegrees]
-  );
-
-  const handleMouseLeave = useCallback(() => {
-    setTilt({ rotateX: 0, rotateY: 0 });
-  }, []);
+  const rotateX = useSpring(useMotionValue(0), tiltSpring);
+  const rotateY = useSpring(useMotionValue(0), tiltSpring);
 
   useEffect(() => {
-    const fineHoverMedia = window.matchMedia(FINE_HOVER_QUERY);
-    let removeElementListeners = () => {};
+    const element = ref.current;
+    if (!element) {
+      return;
+    }
+
+    const fineHover = window.matchMedia(FINE_HOVER_QUERY);
+    const reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY);
+
+    let rect = element.getBoundingClientRect();
+    const cacheRect = () => {
+      rect = element.getBoundingClientRect();
+    };
+
+    const handlePointerMove = (event: MouseEvent) => {
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      rotateX.set(-y * maxDegrees);
+      rotateY.set(x * maxDegrees);
+    };
+
+    const handlePointerLeave = () => {
+      rotateX.set(0);
+      rotateY.set(0);
+    };
+
+    let detach = () => {};
 
     const syncInputCapability = () => {
-      removeElementListeners();
-      removeElementListeners = () => {};
+      detach();
+      detach = () => {};
 
-      if (!fineHoverMedia.matches) {
-        handleMouseLeave();
+      if (!fineHover.matches || reducedMotion.matches) {
+        handlePointerLeave();
         return;
       }
 
-      const element = ref.current;
-      if (!element) {
-        return;
-      }
+      element.addEventListener("pointerenter", cacheRect);
+      element.addEventListener("pointermove", handlePointerMove);
+      element.addEventListener("pointerleave", handlePointerLeave);
+      window.addEventListener("resize", cacheRect);
 
-      element.addEventListener("mousemove", handleMouseMove);
-      element.addEventListener("mouseleave", handleMouseLeave);
-      removeElementListeners = () => {
-        element.removeEventListener("mousemove", handleMouseMove);
-        element.removeEventListener("mouseleave", handleMouseLeave);
+      detach = () => {
+        element.removeEventListener("pointerenter", cacheRect);
+        element.removeEventListener("pointermove", handlePointerMove);
+        element.removeEventListener("pointerleave", handlePointerLeave);
+        window.removeEventListener("resize", cacheRect);
       };
     };
 
     syncInputCapability();
-    fineHoverMedia.addEventListener("change", syncInputCapability);
+    fineHover.addEventListener("change", syncInputCapability);
+    reducedMotion.addEventListener("change", syncInputCapability);
 
     return () => {
-      fineHoverMedia.removeEventListener("change", syncInputCapability);
-      removeElementListeners();
+      fineHover.removeEventListener("change", syncInputCapability);
+      reducedMotion.removeEventListener("change", syncInputCapability);
+      detach();
     };
-  }, [handleMouseMove, handleMouseLeave]);
+  }, [maxDegrees, rotateX, rotateY]);
 
-  return { ref, tilt };
+  return { ref, rotateX, rotateY };
 }

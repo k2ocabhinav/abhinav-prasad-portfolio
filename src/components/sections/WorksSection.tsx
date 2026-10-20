@@ -114,7 +114,7 @@ function OrchestrationEvidence({
 
 function WorkCard({ project }: { project: Project }) {
   const prefersReducedMotion = useReducedMotion();
-  const { ref: tiltRef, tilt } = useCardTilt(1.5);
+  const { ref: tiltRef, rotateX, rotateY } = useCardTilt(1.5);
   // Scroll anchor is the plain content panel below — passing a motion-component
   // ref to useScroll can throw "Target ref is defined but not hydrated".
   const cardRef = useRef<HTMLDivElement>(null);
@@ -136,14 +136,19 @@ function WorkCard({ project }: { project: Project }) {
   const isVeloProject = project.detailSlug === "velo";
 
   return (
-    <div className={styles.workCard}>
+    <div className={styles.workCard} data-work-card="true">
       {/* Visual Panel */}
       <m.div
-        ref={prefersReducedMotion ? undefined : tiltRef}
-        animate={prefersReducedMotion ? {} : { rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
+        ref={tiltRef}
         whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
         transition={tiltSpring}
-        style={{ transformPerspective: 800, y: prefersReducedMotion ? 0 : visualY }}
+        style={{
+          transformPerspective: 800,
+          rotateX,
+          rotateY,
+          y: prefersReducedMotion ? 0 : visualY,
+        }}
+        data-work-media="true"
         className={cn(
           styles.visualPanel,
           hasScreenshots && styles.visualPanelRich,
@@ -206,6 +211,7 @@ function WorkCard({ project }: { project: Project }) {
       {/* Content Panel — also the scroll anchor for the visual parallax */}
       <div
         ref={cardRef}
+        data-work-copy="true"
         className={cn(
           styles.contentPanel,
           project.reversed && styles.contentReversed

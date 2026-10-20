@@ -83,12 +83,6 @@
   --color-accent-rose: var(--color-lead-deep);
   --color-accent-sky: var(--color-lead-deep);
 
-  /* Historical stock names alias the three paper rooms. */
-  --paper-blush: var(--paper-linen);
-  --paper-celadon: var(--paper-bone);
-  --paper-flax: var(--paper-linen);
-  --paper-cool: var(--paper-bone);
-
   /* Typography — next/font in layout.tsx injects the optimised font-family
      string via a class on <html>, overriding these :root values at runtime.
      These serve as pre-load fallbacks only. */
@@ -101,30 +95,12 @@
   --content-max-width: 1440px;
   --content-padding-x: clamp(1.5rem, 5vw, 6rem);
 
-  /* Matte cards (legacy "glass" token names kept; values are now flat) */
-  --glass-bg: #E9E5DC;
-  --glass-border: var(--color-hairline);
-  --glass-blur: 0px;
-  --glass-shadow: none;
-
   /* Display fonts — loaded via next/font, variables injected on <html>. */
   --font-display: "Fraunces", serif;
 
   /* ─── Motion Tokens (Landing Page) ────────────────────────────── */
   --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --motion-duration-micro: 150ms;
   --motion-duration-short: 280ms;
-  --motion-duration-medium: 480ms;
-  --motion-duration-long: 700ms;
-  --motion-duration-extra-long: 1000ms;
-  --motion-stagger-base: 80ms;
-  /* PRD motion tokens */
-  --motion-enter-fast: 220ms;
-  --motion-enter-base: 350ms;
-  --motion-section-shift: 550ms;
-  --motion-jitter-duration: 2s;
 
   /* ─── Dark Panel Legacy Aliases ───────────────────────────────── */
   --color-surface-dark: var(--color-panel);
@@ -174,7 +150,6 @@
   --surface-tone-pastel-cream: var(--color-paper);
 
   /* Z-index scale */
-  --z-artifact: 75;
   --z-orb: 100;
   --z-progress: 110;
   --z-nav: 50;
@@ -240,27 +215,6 @@ button {
   background: none;
 }
 
-/* ─── Typography Classes ─────────────────────────────────────────── */
-
-.editorial-italic {
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 450;
-}
-
-.label-micro {
-  font-family: var(--font-label);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-weight: 400;
-  color: var(--color-secondary-text);
-}
-
-.font-label {
-  font-family: var(--font-label);
-}
-
 /* ─── Layout Utilities ───────────────────────────────────────────── */
 
 .content-container {
@@ -294,64 +248,7 @@ button {
   }
 }
 
-.section-padding {
-  padding-top: var(--section-padding-y);
-  padding-bottom: var(--section-padding-y);
-}
-
-.snap-container {
-  scroll-snap-type: y proximity;
-}
-
-.snap-section {
-  scroll-snap-align: start;
-}
-
-/* ─── Grid System ────────────────────────────────────────────────── */
-
-.grid-12 {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-}
-
-@media (min-width: 768px) {
-  .grid-12 {
-    grid-template-columns: repeat(12, 1fr);
-  }
-}
-
-.col-4 {
-  grid-column: span 1;
-}
-
-.col-8 {
-  grid-column: span 1;
-}
-
-.col-5 {
-  grid-column: span 1;
-}
-
-.col-7 {
-  grid-column: span 1;
-}
-
-@media (min-width: 768px) {
-  .col-4 { grid-column: span 4; }
-  .col-5 { grid-column: span 5; }
-  .col-7 { grid-column: span 7; }
-  .col-8 { grid-column: span 8; }
-}
-
 /* ─── Component Classes ──────────────────────────────────────────── */
-
-/* Matte Card (class name kept from the glass era; values are flat) */
-.glass-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-}
 
 /* Tag / Pill */
 .tag {
@@ -371,13 +268,6 @@ button {
 .dot-grid {
   background-image: radial-gradient(rgba(11, 16, 17, 0.35) 1px, transparent 1px);
   background-size: 24px 24px;
-}
-
-/* Section Divider */
-.section-divider {
-  height: 1px;
-  background: var(--color-hairline);
-  transform-origin: left;
 }
 
 /* Spec Sheet Panel — black-cherry inversion beat: dark panels on paper */
@@ -410,42 +300,6 @@ button {
   display: none;
 }
 
-.spec-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  padding: 0.85rem 1.75rem;
-  background-color: rgba(237, 230, 218, 0.05);
-  border-bottom: 1px solid rgba(237, 230, 218, 0.12);
-  font-family: var(--font-label);
-  font-size: 0.65rem;
-  font-weight: 400;
-  letter-spacing: 0.15em;
-  color: rgba(237, 230, 218, 0.55);
-  position: relative;
-  z-index: 1;
-}
-
-.spec-body {
-  padding: clamp(1.5rem, 5vw, 3.5rem);
-  position: relative;
-  z-index: 1;
-}
-
-@media (max-width: 520px) {
-  .spec-header {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.58rem;
-    letter-spacing: 0.12em;
-  }
-
-  .spec-body {
-    padding: 1.5rem;
-  }
-}
-
 /* ─── Custom Scrollbar ───────────────────────────────────────────── */
 
 ::-webkit-scrollbar {
@@ -467,13 +321,23 @@ button {
 
 /* ─── Accessibility ──────────────────────────────────────────────── */
 
+/* Reduced-motion contract (single source of truth):
+   1. JS motion is gated by useReducedMotion/MotionConfig and renders a
+      finished static state.
+   2. CSS motion collapses to near-instant here. The declaration stays
+      !important so inline durations and third-party styles cannot leak past
+      the preference.
+   3. A component that genuinely needs a short, non-vestibular fade opts in by
+      setting --reduced-motion-duration on the animated element (see
+      BackdropCanvas). The token resolves on that element, so the universal
+      rule above still wins without any specificity overrides. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: var(--reduced-motion-duration, 0.01ms) !important;
   }
 }
 
@@ -512,53 +376,10 @@ button {
   }
 }
 
-/* Mobile type floor: body copy reads at 16px and mono labels at 12px on
-   phones so small print never drops into an illegible tier. */
+/* Mobile type floor: mono labels read at 12px on phones so small print never
+   drops into an illegible tier. */
 @media (max-width: 767px) {
-  .label-micro,
   .tag {
     font-size: 12px;
-  }
-}
-
-@media (max-width: 520px) {
-  .spec-header {
-    font-size: 12px;
-  }
-}
-
-/* ─── Responsive Helpers ─────────────────────────────────────────── */
-
-.hide-mobile {
-  display: none;
-}
-
-.hide-desktop {
-  display: block;
-}
-
-@media (min-width: 768px) {
-  .hide-mobile {
-    display: block;
-  }
-  .hide-desktop {
-    display: none;
-  }
-}
-
-/* Flex hide/show variants */
-.hide-mobile-flex {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .hide-mobile-flex {
-    display: flex;
-  }
-}
-
-@media (min-width: 640px) {
-  .show-sm-flex {
-    display: flex;
   }
 }

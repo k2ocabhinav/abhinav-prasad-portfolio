@@ -71,7 +71,8 @@ async function revealAndSettleHomepage(page: Page) {
     "#contact",
   ]) {
     await page.locator(selector).scrollIntoViewIfNeeded();
-    await page.waitForTimeout(350);
+    await expect(page.locator(selector)).toBeVisible();
+    await settleFrame(page);
   }
 }
 
@@ -87,7 +88,7 @@ async function scrollToElementTop(page: Page, selector: string) {
       const top = target.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top, behavior: "auto" });
     }, selector);
-    await page.waitForTimeout(50);
+    await settleFrame(page);
 
     const distance = await page.locator(selector).evaluate(
       (target) => target.getBoundingClientRect().top
@@ -464,7 +465,7 @@ test("aligns the arc with the Experience heading without collisions", async ({ p
 
   const title = experience.getByRole("heading", { level: 2 });
   const arc = experience.locator('[data-riso-mark="arc"]');
-  const callout = page.locator("#experience > div > div > header > p");
+  const callout = experience.locator("[data-experience-callout]");
   const dossier = experience.locator("article");
   await expect(title).toBeVisible();
   await expect(arc).toBeVisible();
@@ -740,7 +741,7 @@ test("the contact email keeps one line at phone, tablet, and small desktop width
   for (const width of [375, 768, 1024]) {
     await page.setViewportSize({ width, height: 900 });
     await openHome(page, true);
-    const link = page.locator('#contact a[class*="emailLink"]');
+    const link = page.locator("#contact [data-contact-email]");
     await link.scrollIntoViewIfNeeded();
     const state = await link.evaluate((element) => {
       const range = document.createRange();
@@ -806,43 +807,47 @@ test("the About heading keeps a readable measure on tablets", async ({ page }, t
   }
 });
 
-test("the marquee pauses for a fine pointer and for keyboard focus", async ({
+test("the marquee runs, pauses for hover, and has a visible transport control", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
   await openHome(page);
   const marquee = page.locator("[data-marquee]");
   await marquee.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(400);
-  const track = marquee.locator('[class*="track"]');
+  const track = marquee.locator("[data-marquee-track]");
+  const control = page.locator("[data-marquee-control]");
   const trackX = () =>
     track.evaluate((element) => {
       const transform = getComputedStyle(element).transform;
       return transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
     });
 
+  await expectMinimumTargetSize(control);
+  await expect(marquee).toHaveAttribute("data-marquee-running", "true");
+
   const movingStart = await trackX();
-  await page.waitForTimeout(450);
-  const movingEnd = await trackX();
-  expect(Math.abs(movingEnd - movingStart)).toBeGreaterThan(0.5);
+  await expect
+    .poll(async () => Math.abs((await trackX()) - movingStart))
+    .toBeGreaterThan(0.5);
 
   const box = await marquee.boundingBox();
   expect(box).not.toBeNull();
   await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
-  await page.waitForTimeout(250);
-  const hoverStart = await trackX();
-  await page.waitForTimeout(450);
-  const hoverEnd = await trackX();
-  expect(Math.abs(hoverEnd - hoverStart)).toBeLessThan(0.01);
+  await expect(marquee).toHaveAttribute("data-marquee-running", "false");
 
   await page.mouse.move(10, 10);
-  await page.waitForTimeout(250);
-  await marquee.focus();
-  await page.waitForTimeout(250);
-  const focusStart = await trackX();
-  await page.waitForTimeout(450);
-  const focusEnd = await trackX();
-  expect(Math.abs(focusEnd - focusStart)).toBeLessThan(0.01);
+  await expect(marquee).toHaveAttribute("data-marquee-running", "true");
+
+  await control.click();
+  await expect(control).toHaveAttribute("aria-pressed", "true");
+  await expect(marquee).toHaveAttribute("data-marquee-running", "false");
+  const pausedAt = await trackX();
+  await settleFrame(page);
+  expect(await trackX()).toBe(pausedAt);
+
+  await control.click();
+  await expect(control).toHaveAttribute("aria-pressed", "false");
+  await expect(marquee).toHaveAttribute("data-marquee-running", "true");
 });
 
 test("Velo dispatch screens show the whole desk on phones", async ({ page }, testInfo) => {
@@ -877,7 +882,7 @@ test("hovering a project photograph paints nothing over the card copy", async ({
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
   await openHome(page);
-  const card = page.locator("#work [class*='workCard']").nth(1);
+  const card = page.locator("#work [data-work-card]").nth(1);
   await card.scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
 
@@ -889,7 +894,7 @@ test("hovering a project photograph paints nothing over the card copy", async ({
   );
   expect(thinRules).toBe(0);
 
-  const copy = card.locator('[class*="contentPanel"]');
+  const copy = card.locator("[data-work-copy]");
   await page.mouse.move(10, 10);
   await page.waitForTimeout(400);
   const before = await copy.screenshot({ animations: "disabled" });
@@ -920,9 +925,89 @@ test("reduced motion jumps to a section without a smooth animation", async ({
     .click();
   await settleFrame(page);
   const firstFrame = await page.evaluate(() => window.scrollY);
-  await page.waitForTimeout(350);
-  const settled = await page.evaluate(() => window.scrollY);
 
   expect(firstFrame).toBeGreaterThan(0);
-  expect(Math.abs(settled - firstFrame)).toBeLessThanOrEqual(1);
+  await expect
+    .poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - firstFrame))
+    .toBeLessThanOrEqual(1);
+});
+
+test("desktop rail targets clear 44px and dots keep a fixed layout box", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop rail contract");
+  await openHome(page, true);
+
+  const rail = page.getByRole("navigation", { name: "Section navigation" });
+  const railTargets = rail.locator(":scope > a, :scope > button");
+  await expectMinimumTargetSize(railTargets);
+
+  const contactLink = rail.locator('a[href="#contact"]');
+  const contactDot = contactLink.locator("[data-rail-dot]");
+  const layoutBox = await contactDot.evaluate((dot) => ({
+    width: (dot as HTMLElement).offsetWidth,
+    height: (dot as HTMLElement).offsetHeight,
+  }));
+  expect(layoutBox).toEqual({ width: 8, height: 8 });
+
+  await contactLink.hover();
+  await expect(contactDot).toHaveCSS(
+    "transform",
+    "matrix(0.75, 0, 0, 0.75, 0, 0)"
+  );
+  const hoveredBox = await contactDot.evaluate((dot) => ({
+    width: (dot as HTMLElement).offsetWidth,
+    height: (dot as HTMLElement).offsetHeight,
+  }));
+  expect(hoveredBox).toEqual(layoutBox);
+
+  await page.goto("/work/velo");
+  const contactRail = page.getByRole("navigation", { name: "Contact navigation" });
+  await expectMinimumTargetSize(
+    contactRail.locator(":scope > a, :scope > button")
+  );
+});
+
+test("Velo tenant switcher swaps the dispatch visual in one fixed frame", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic probe");
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/work/velo");
+
+  const section = page.locator('section[aria-labelledby="tenant-story-title"]');
+  await section.scrollIntoViewIfNeeded();
+  const business = section.getByRole("radio", { name: "Velo Business" });
+  const saffron = section.getByRole("radio", {
+    name: "Saffron Routes (demo tenant)",
+  });
+  await expect(business).toBeChecked();
+
+  const image = section.locator("figure img");
+  await expect
+    .poll(() =>
+      image.evaluate((element) => (element as HTMLImageElement).naturalWidth)
+    )
+    .toBeGreaterThan(0);
+  const frame = section.locator("figure > div").first();
+  const frameBox = await frame.boundingBox();
+  expect(frameBox).not.toBeNull();
+
+  await saffron.check();
+  await expect(saffron).toBeChecked();
+  await expect(image).toHaveAttribute(
+    "alt",
+    "Saffron Routes admin dispatch screen with a live fleet map."
+  );
+  await expect
+    .poll(() =>
+      image.evaluate((element) => (element as HTMLImageElement).naturalWidth)
+    )
+    .toBeGreaterThan(0);
+  await expect(section.getByText("Saffron Routes is a demo tenant.")).toBeVisible();
+
+  const nextFrameBox = await frame.boundingBox();
+  expect(nextFrameBox).not.toBeNull();
+  expect(nextFrameBox!.width).toBeCloseTo(frameBox!.width, 0);
+  expect(nextFrameBox!.height).toBeCloseTo(frameBox!.height, 0);
 });

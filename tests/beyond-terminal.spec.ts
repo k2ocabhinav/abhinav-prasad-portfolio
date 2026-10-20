@@ -292,6 +292,40 @@ test("legacy journal routes redirect into the Beyond photo wall", async ({ page 
   await expectBeyondPhotoWallVisible(page);
 });
 
+test("album lightbox focuses close, traps Tab, and restores focus on close", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.goto("/beyond-terminal");
+
+  const hero = page.locator('[data-beyond-section="hero"]');
+  const wall = page.locator('[data-beyond-section="wall"]');
+  const chrome = page.locator("header").first();
+  const firstCard = wall.locator("button[aria-label^='Open ']").first();
+  await firstCard.scrollIntoViewIfNeeded();
+  await firstCard.click();
+
+  const dialog = page.getByRole("dialog");
+  const close = dialog.getByRole("button", { name: "Close album item" });
+  await expect(dialog).toBeVisible();
+  await expect(close).toBeFocused();
+  await expect(hero).toHaveAttribute("inert", "");
+  await expect(wall).toHaveAttribute("inert", "");
+  await expect(chrome).toHaveAttribute("inert", "");
+
+  await page.keyboard.press("Tab");
+  await expect(close).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(close).toBeFocused();
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(firstCard).toBeFocused();
+  await expect(wall).not.toHaveAttribute("inert", "");
+  await expect(hero).not.toHaveAttribute("inert", "");
+  await expect(chrome).not.toHaveAttribute("inert", "");
+});
+
 test("desktop Beyond shell matches the photo wall layout", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/beyond-terminal");
