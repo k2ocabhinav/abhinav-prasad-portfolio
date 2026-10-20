@@ -520,7 +520,7 @@ test("the scroll-linked arc draws during the Experience heading transit", async 
   test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic motion probe is sufficient");
   await openHome(page);
 
-  const header = page.locator("#experience > div > div > header");
+  const header = page.locator("[data-experience-header]");
   const path = page.locator('#experience [data-riso-arc-path="true"]');
   const headerTop = await header.evaluate(
     (element) => element.getBoundingClientRect().top + window.scrollY
@@ -610,13 +610,7 @@ test("touch layouts do not retain hover movement on project cards", async ({ pag
     await page.evaluate(() => matchMedia("(hover: hover) and (pointer: fine)").matches)
   ).toBe(false);
 
-  const workCard = page
-    .locator('#work a[href^="/work/"]')
-    .first()
-    .locator("..")
-    .locator("..")
-    .locator("..");
-  const card = workCard.locator(":scope > div").first();
+  const card = page.locator("#work [data-work-card] [data-work-media]").first();
   await card.scrollIntoViewIfNeeded();
   const before = await card.evaluate((element) => getComputedStyle(element).transform);
   await card.tap();
@@ -887,7 +881,13 @@ test("hovering a project photograph paints nothing over the card copy", async ({
   await openHome(page);
   const card = page.locator("#work [data-work-card]").nth(1);
   await card.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(500);
+  const photo = card.locator("img").first();
+  await expect
+    .poll(() =>
+      photo.evaluate((element) => (element as HTMLImageElement).naturalWidth)
+    )
+    .toBeGreaterThan(0);
+  await settleFrame(page);
 
   const thinRules = await card.evaluate((element) =>
     Array.from(element.querySelectorAll<HTMLElement>("*")).filter((node) => {
@@ -899,17 +899,20 @@ test("hovering a project photograph paints nothing over the card copy", async ({
 
   const copy = card.locator("[data-work-copy]");
   await page.mouse.move(10, 10);
-  await page.waitForTimeout(400);
+  await expect
+    .poll(() => photo.evaluate((element) => getComputedStyle(element).filter))
+    .toContain("grayscale");
   const before = await copy.screenshot({ animations: "disabled" });
 
-  const photo = card.locator("img").first();
   const photoBox = await photo.boundingBox();
   expect(photoBox).not.toBeNull();
   await page.mouse.move(
     photoBox!.x + photoBox!.width / 2,
     photoBox!.y + photoBox!.height / 2
   );
-  await page.waitForTimeout(900);
+  await expect
+    .poll(() => photo.evaluate((element) => getComputedStyle(element).filter))
+    .toBe("none");
   const after = await copy.screenshot({ animations: "disabled" });
 
   expect(after.equals(before)).toBe(true);
@@ -978,7 +981,9 @@ test("Velo tenant switcher swaps the dispatch visual in one fixed frame", async 
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/work/velo");
 
-  const section = page.locator('section[aria-labelledby="tenant-story-title"]');
+  const section = page.locator(
+    'section[aria-labelledby="velo-tenant-views-title"]'
+  );
   await section.scrollIntoViewIfNeeded();
   const business = section.getByRole("radio", { name: "Velo Business" });
   const saffron = section.getByRole("radio", {
