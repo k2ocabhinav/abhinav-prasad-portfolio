@@ -7,7 +7,7 @@ import {
   Newsreader,
 } from "next/font/google";
 import localFont from "next/font/local";
-import AppProviders from "@/components/providers/AppProviders";
+import HydrationMarker from "@/components/providers/HydrationMarker";
 import { getProfileContent } from "@/lib/portfolioContent";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 import "./globals.css";
@@ -187,7 +187,8 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <AppProviders>{children}</AppProviders>
+        <HydrationMarker />
+        {children}
         {process.env.VERCEL === "1" ? <SpeedInsights /> : null}
       </body>
     </html>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import BeyondShell from "@/components/beyond-terminal/BeyondShell";
+import ExperienceProvidersBoundary from "@/components/providers/ExperienceProvidersBoundary";
 import { absoluteUrl } from "@/lib/siteConfig";
 
 const display = Bricolage_Grotesque({
@@ -70,7 +71,9 @@ export default function BeyondTerminalLayout({
 }) {
   return (
     <div className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <BeyondShell>{children}</BeyondShell>
+      <ExperienceProvidersBoundary>
+        <BeyondShell>{children}</BeyondShell>
+      </ExperienceProvidersBoundary>
     </div>
   );
 }
