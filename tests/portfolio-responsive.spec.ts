@@ -368,12 +368,11 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await method.scrollIntoViewIfNeeded();
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
-  await expect(method.getByText("On my own builds, I choose the coding tool and model for each task, run independent pieces in parallel, and review every change before it ships.", { exact: true })).toBeVisible();
   await expect(method.locator("ol > li h4")).toHaveText([
-    "Scope",
-    "Assign",
-    "Review",
-    "Verify",
+    "1 Scope",
+    "2 Assign",
+    "3 Review",
+    "4 Verify",
   ]);
   await expect(method.locator("ol > li p")).toHaveText([
     "Define the change and what done means.",
@@ -392,6 +391,28 @@ test("server-rendered hero facts stay visible before hydration", async ({ page }
   await expect(facts).toHaveCount(2);
   await expect(facts.nth(0)).toContainText("Database Engineer, Ostrum Tech Limited");
   await expect(facts.nth(1)).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
+
+  const work = page.locator("#work");
+  const projects = work.locator("[data-work-project]");
+  await expect(projects).toHaveCount(2);
+  await expect(projects.nth(0).getByRole("heading", { name: "Velo" })).toBeVisible();
+  await expect(projects.nth(1).getByRole("heading", { name: "Portfolio publishing system" })).toBeVisible();
+  await expect(projects.nth(1).getByText(
+    "A typed content pipeline publishes the homepage and reusable case-study routes.",
+    { exact: true }
+  )).toBeVisible();
+  await expect(projects.nth(1).getByRole("link", { name: "Read the case study" })).toBeVisible();
+  await expect(projects.nth(0).getByRole("link", { name: "Read the case study" })).toHaveAttribute(
+    "href",
+    "/work/velo"
+  );
+  const method = work.locator("aside[aria-labelledby='work-method-title']");
+  await expect(method.locator("ol > li h4")).toHaveText([
+    "1 Scope",
+    "2 Assign",
+    "3 Review",
+    "4 Verify",
+  ]);
 
   for (let index = 0; index < 2; index += 1) {
     const row = facts.nth(index);
@@ -598,7 +619,7 @@ test("touch layouts do not retain hover movement on project cards", async ({ pag
     await page.evaluate(() => matchMedia("(hover: hover) and (pointer: fine)").matches)
   ).toBe(false);
 
-  const card = page.locator("#work [data-work-card] [data-work-media]").first();
+  const card = page.locator("#work [data-work-project] [data-work-frame]").first();
   await card.scrollIntoViewIfNeeded();
   const before = await card.evaluate((element) => getComputedStyle(element).transform);
   await card.tap();
@@ -642,6 +663,11 @@ test("full-page sweep has no runtime, network, ID, or image failures", async ({
     await image.scrollIntoViewIfNeeded();
     await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   }
+  const workImage = page.locator("#work img").last();
+  await workImage.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() => workImage.evaluate((element) => (element as HTMLImageElement).naturalWidth))
+    .toBeGreaterThan(0);
   await sweepWholePage(page);
 
   const integrity = await page.evaluate(() => {
@@ -862,12 +888,12 @@ test("Velo dispatch screens show the whole desk on phones", async ({ page }, tes
   expect(Math.abs(renderedRatio - naturalRatio)).toBeLessThan(0.02);
 });
 
-test("hovering a project photograph paints nothing over the card copy", async ({
+test("project details stay clear of the screenshot", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
   await openHome(page);
-  const card = page.locator("#work [data-work-card]").nth(1);
+  const card = page.locator("#work [data-work-project]").nth(1);
   await card.scrollIntoViewIfNeeded();
   const photo = card.locator("img").first();
   await expect
@@ -877,19 +903,20 @@ test("hovering a project photograph paints nothing over the card copy", async ({
     .toBeGreaterThan(0);
   await settleFrame(page);
 
-  const thinRules = await card.evaluate((element) =>
-    Array.from(element.querySelectorAll<HTMLElement>("*")).filter((node) => {
-      const rect = node.getBoundingClientRect();
-      return rect.width > 0 && rect.width <= 2 && rect.height >= 100;
-    }).length
-  );
-  expect(thinRules).toBe(0);
-
   const copy = card.locator("[data-work-copy]");
-  await page.mouse.move(10, 10);
+  const frameBox = await card.locator("[data-work-frame]").boundingBox();
+  const detailsBox = await copy.boundingBox();
+  expect(frameBox).not.toBeNull();
+  expect(detailsBox).not.toBeNull();
+  const imageAndCopyOverlap =
+    frameBox!.x < detailsBox!.x + detailsBox!.width &&
+    frameBox!.x + frameBox!.width > detailsBox!.x &&
+    frameBox!.y < detailsBox!.y + detailsBox!.height &&
+    frameBox!.y + frameBox!.height > detailsBox!.y;
+  expect(imageAndCopyOverlap).toBe(false);
   await expect
     .poll(() => photo.evaluate((element) => getComputedStyle(element).filter))
-    .toContain("grayscale");
+    .toBe("none");
   const before = await copy.screenshot({ animations: "disabled" });
 
   const photoBox = await photo.boundingBox();
@@ -898,9 +925,6 @@ test("hovering a project photograph paints nothing over the card copy", async ({
     photoBox!.x + photoBox!.width / 2,
     photoBox!.y + photoBox!.height / 2
   );
-  await expect
-    .poll(() => photo.evaluate((element) => getComputedStyle(element).filter))
-    .toBe("none");
   const after = await copy.screenshot({ animations: "disabled" });
 
   expect(after.equals(before)).toBe(true);
