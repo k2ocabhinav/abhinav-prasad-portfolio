@@ -1,6 +1,5 @@
 import type { PersonalData } from "@/types";
 import PrinterSlug from "@/components/art/PrinterSlug";
-import { cn } from "@/lib/utils";
 import styles from "./Footer.module.css";
 
 // =============================================================================
@@ -9,13 +8,11 @@ import styles from "./Footer.module.css";
 
 interface FooterProps {
   personal: Pick<PersonalData, "name">;
-  /** Home route only: park the colophon under the final field as a curtain. */
-  curtain?: boolean;
 }
 
-export default function Footer({ personal, curtain = false }: FooterProps) {
+export default function Footer({ personal }: FooterProps) {
   return (
-    <footer className={cn(styles.footer, curtain && styles.curtain)}>
+    <footer className={styles.footer}>
       <p className={styles.copyright}>
         © {new Date().getFullYear()} {personal.name}. All rights reserved.
       </p>

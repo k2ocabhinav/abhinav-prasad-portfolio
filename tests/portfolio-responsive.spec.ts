@@ -572,6 +572,9 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expect(toggle).toBeVisible();
   await expect(toggle).toHaveAccessibleName("Open menu");
   await expectMinimumTargetSize(toggle);
+  // The trigger tucks away on a downward scroll; keyboard focus (or an
+  // upward scroll) brings it back without moving the page.
+  await toggle.focus();
   await toggle.click();
 
   const mobileNav = page.getByRole("navigation", { name: "Mobile navigation" });
@@ -635,6 +638,49 @@ test("phone tab order reaches the menu before the page content", async ({
   await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
 });
 
+test("the phone menu trigger clears the reading column and returns on scroll up", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chrome", "One phone scroll contract");
+  await openHome(page, true);
+
+  const trigger = page.locator('[data-site-chrome="navigation-toggle"]');
+  const toggle = page.getByRole("button", { name: "Open menu" });
+  await expect(trigger).toHaveCSS("opacity", "1");
+
+  await page.evaluate(() => window.scrollTo({ top: 1400, behavior: "auto" }));
+  // Re-fire a small downward step so the assertion survives a listener that
+  // attaches after hydration lands.
+  await expect
+    .poll(async () => {
+      await page.evaluate(() => window.scrollBy({ top: 24, behavior: "auto" }));
+      return trigger.getAttribute("data-hamburger-hidden");
+    })
+    .toBe("true");
+  await expect.poll(() => trigger.evaluate((element) => getComputedStyle(element).opacity)).toBe("0");
+
+  // It stays in the tab order; focus restores it immediately.
+  await toggle.focus();
+  await expect(trigger).toHaveAttribute("data-hamburger-hidden", "false");
+  await expect(trigger).toHaveCSS("opacity", "1");
+
+  await page.evaluate(() => window.scrollBy({ top: -600, behavior: "auto" }));
+  await expect(trigger).toHaveAttribute("data-hamburger-hidden", "false");
+  await expect(trigger).toHaveCSS("opacity", "1");
+
+  // Opening the menu pins it visible.
+  await toggle.click();
+  await expect(page.getByRole("dialog", { name: "Site navigation" })).toBeVisible();
+  await expect(trigger).toHaveAttribute("data-hamburger-hidden", "false");
+  await page.keyboard.press("Escape");
+
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+  await expect.poll(() => trigger.evaluate((element) => getComputedStyle(element).opacity)).toBe("1");
+
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "auto" }));
+  await expect.poll(() => trigger.evaluate((element) => getComputedStyle(element).opacity)).toBe("1");
+});
+
 test("a phone menu choice moves focus into the chosen section", async ({
   page,
 }, testInfo) => {
@@ -663,71 +709,74 @@ test("case study skip link moves focus to the project content", async ({ page })
   await expect(page.locator("#project-content")).toBeFocused();
 });
 
-test("Stack rows counter-move with the section transit", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic motion probe");
-  await openHome(page);
-  const rows = page.locator("[data-stack-row]");
-  const rowX = (index: number) =>
-    rows.nth(index).evaluate((element) => {
-      const transform = getComputedStyle(element).transform;
-      return transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
-    });
-
-  await page.evaluate(() => {
-    const stack = document.querySelector("#stack");
-    if (!stack) throw new Error("Missing stack section");
-    window.scrollTo({
-      top: stack.getBoundingClientRect().top + window.scrollY - window.innerHeight,
-      behavior: "auto",
-    });
-  });
-  await settleFrame(page);
-  const [leftStart, rightStart] = [await rowX(0), await rowX(1)];
-
-  await page.evaluate(() => window.scrollBy({ top: window.innerHeight * 0.8, behavior: "auto" }));
-  await settleFrame(page);
-  const [leftEnd, rightEnd] = [await rowX(0), await rowX(1)];
-
-  expect(leftEnd).toBeLessThan(leftStart);
-  expect(rightEnd).toBeGreaterThan(rightStart);
-});
-
-test("Stack rows hold a static position under reduced motion", async ({ page }) => {
-  await openHome(page, true);
-  const row = page.locator("[data-stack-row]").first();
-  await page.locator("#stack").scrollIntoViewIfNeeded();
-  await settleFrame(page);
-  const before = await row.evaluate((element) => getComputedStyle(element).transform);
-  await page.evaluate(() => window.scrollBy({ top: 420, behavior: "auto" }));
-  await settleFrame(page);
-  expect(await row.evaluate((element) => getComputedStyle(element).transform)).toBe(before);
-});
-
-test("the footer curtain waits under Contact and is revealed at the page end", async ({
+test("Stack prints one static chip strip and the published evidence groups", async ({
   page,
-}, testInfo) => {
+}) => {
+  await openHome(page, true);
+  const stack = page.locator("#stack");
+  await stack.scrollIntoViewIfNeeded();
+
+  await expect(stack.locator("[data-stack-row]")).toHaveCount(0);
+
+  const strip = stack.getByRole("list", { name: "Tools I use" });
+  await expect(strip).toBeVisible();
+  await expect(strip.getByRole("listitem")).toHaveText([
+    "Java",
+    "Spring",
+    "PostgreSQL",
+    "Python",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "AWS",
+    "Docker",
+    "Agents",
+  ]);
+  expect(await strip.evaluate((element) => getComputedStyle(element).transform)).toBe(
+    "none"
+  );
+
+  await expect(stack.locator("[data-stack-evidence] h3")).toHaveText([
+    "Part of my workflow",
+    "Built in projects",
+    "Used at work",
+  ]);
+  await expect(stack.locator("[data-stack-evidence] li")).toHaveText([
+    "AI-assisted engineering",
+    "Backend systems and APIs",
+    "Web product development",
+    "Cloud delivery and reporting",
+    "Database engineering",
+  ]);
+});
+
+test("the footer follows Contact in normal flow", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic geometry probe");
   await page.setViewportSize({ width: 1440, height: 1000 });
   await openHome(page);
-  await scrollToElementTop(page, "#contact");
 
-  const covered = await page.evaluate(() => {
-    const footer = document.querySelector("footer");
-    if (!footer) throw new Error("Missing footer");
-    const top = footer.getBoundingClientRect().top;
-    return Boolean(document.elementFromPoint(200, top + 20)?.closest("footer"));
-  });
-  expect(covered).toBe(false);
+  const footer = page.locator("footer");
+  await footer.scrollIntoViewIfNeeded();
+  await expect(footer).toBeVisible();
+  expect(await page.locator("main footer").count()).toBe(0);
 
-  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "auto" }));
-  await settleFrame(page);
-  const revealed = await page.evaluate(() => {
-    const footer = document.querySelector("footer");
-    if (!footer) throw new Error("Missing footer");
-    const top = footer.getBoundingClientRect().top;
-    return Boolean(document.elementFromPoint(200, top + 20)?.closest("footer"));
+  const geometry = await page.evaluate(() => {
+    const contact = document.querySelector<HTMLElement>("#contact");
+    const footerElement = document.querySelector<HTMLElement>("footer");
+    if (!contact || !footerElement) {
+      throw new Error("Missing contact or footer");
+    }
+    const contactRect = contact.getBoundingClientRect();
+    const footerRect = footerElement.getBoundingClientRect();
+    return {
+      contactBottom: contactRect.bottom + window.scrollY,
+      footerTop: footerRect.top + window.scrollY,
+      position: getComputedStyle(footerElement).position,
+    };
   });
-  expect(revealed).toBe(true);
+
+  expect(geometry.position).toBe("relative");
+  expect(geometry.footerTop).toBeGreaterThanOrEqual(geometry.contactBottom - 2);
 });
 
 test("touch layouts do not retain hover movement on project cards", async ({ page }, testInfo) => {
@@ -864,7 +913,7 @@ test("the contact email keeps one line at phone, tablet, and small desktop width
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
 
-  for (const width of [375, 768, 1024]) {
+  for (const width of [320, 375, 768, 1024]) {
     await page.setViewportSize({ width, height: 900 });
     await openHome(page, true);
     const link = page.locator("#contact [data-contact-email]");
@@ -892,6 +941,45 @@ test("the contact email keeps one line at phone, tablet, and small desktop width
     expect(state.lines, `email lines at ${width}px`).toBe(1);
     expect(state.overflow, `email overflow at ${width}px`).toBeLessThanOrEqual(1);
     expect(state.height, `email height at ${width}px`).toBeLessThan(60);
+  }
+});
+
+test("the contact heading and actions fit the narrowest phones", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
+
+  for (const width of [320, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openHome(page, true);
+    const contact = page.locator("#contact");
+    const heading = contact.getByRole("heading", { name: "Let's talk." });
+    await heading.scrollIntoViewIfNeeded();
+
+    const headingState = await heading.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        scrollWidth: element.scrollWidth,
+        clientWidth: element.clientWidth,
+        left: rect.left,
+        right: rect.right,
+      };
+    });
+    expect(headingState.scrollWidth, `heading overflow at ${width}px`).toBeLessThanOrEqual(
+      headingState.clientWidth + 1
+    );
+    expect(headingState.left, `heading left at ${width}px`).toBeGreaterThanOrEqual(-1);
+    expect(headingState.right, `heading right at ${width}px`).toBeLessThanOrEqual(
+      width + 1
+    );
+
+    const linkedin = contact.getByRole("link", { name: "Connect on LinkedIn" });
+    const actionState = await linkedin.evaluate((element) => ({
+      overflow: element.scrollWidth - element.clientWidth,
+      height: element.getBoundingClientRect().height,
+      whiteSpace: getComputedStyle(element).whiteSpace,
+    }));
+    expect(actionState.whiteSpace).toBe("nowrap");
+    expect(actionState.overflow, `LinkedIn overflow at ${width}px`).toBeLessThanOrEqual(1);
+    expect(actionState.height, `LinkedIn height at ${width}px`).toBeLessThan(70);
   }
 });
 

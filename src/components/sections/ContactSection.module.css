@@ -2,12 +2,6 @@
   /* SectionWrapper paints --section-bg, so the field stays one declaration. */
   --section-bg: var(--paper-glacier, #D7EFFF);
   --section-padding-y: clamp(3.5rem, 6vw, 5.5rem);
-  /* A full screen of contact gives the colophon underneath something to be
-     revealed from. Content still breathes; shorter viewports grow naturally. */
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   color: var(--color-black-cherry, #351E28);
   --plate-ink: var(--color-black-cherry, #351E28);
   --plate-accent: var(--color-petrol, #1A5D74);
@@ -26,12 +20,10 @@
   margin: 0;
   color: var(--color-black-cherry, #351E28);
   font-family: var(--font-display);
-  font-size: clamp(4rem, 11vw, 11rem);
+  font-size: clamp(4rem, 9vw, 8rem);
   font-weight: 550;
   letter-spacing: -0.045em;
   line-height: 0.92;
-  /* Preserve the space RevealText keeps inside its inline-block word mask. */
-  white-space: pre-wrap;
 }
 
 /* The rule under the call separates the sentence from the coordinates. */
@@ -158,6 +150,7 @@
 
 .linkedinAction {
   gap: 0.55rem;
+  white-space: nowrap;
 }
 
 .linkedinAction svg {
@@ -199,6 +192,16 @@
   .callout {
     font-size: 12px;
     line-height: 1.55;
+  }
+}
+
+/* The LinkedIn label is the longest action. Tighten it instead of letting it
+   wrap or overflow the sheet on the narrowest phones. */
+@media (max-width: 520px) {
+  .contactActions .contactAction {
+    padding-inline: 0.85rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
   }
 }
 

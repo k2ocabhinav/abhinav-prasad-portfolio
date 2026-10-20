@@ -11,7 +11,6 @@ import WorksSection from "@/components/sections/WorksSection";
 import TechStackSection from "@/components/sections/TechStackSection";
 import ContactSection from "@/components/sections/ContactSection";
 import type { HomeContent } from "@/types";
-import styles from "./HomePage.module.css";
 
 interface HomePageProps {
   content: HomeContent;
@@ -85,19 +84,13 @@ export default function HomePage({ content }: HomePageProps) {
           stackItems={profile.profileIntro.stackItems}
           tone="pastel-peach"
         />
-
-        {/* The sticky colophon's containing block starts at Contact, so it can
-            only pin over the page once this final field is on screen. */}
-        <div className={styles.curtain}>
-          <div className={styles.curtainSurface}>
-            <ContactSection
-              personal={profile.personal}
-              presenceNodes={profile.presenceNodes}
-            />
-          </div>
-          <Footer personal={profile.personal} curtain />
-        </div>
+        <ContactSection
+          personal={profile.personal}
+          presenceNodes={profile.presenceNodes}
+        />
       </main>
+
+      <Footer personal={profile.personal} />
 
       <ScrollProgress />
     </>

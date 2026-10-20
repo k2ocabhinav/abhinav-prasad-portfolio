@@ -54,6 +54,7 @@ export default function Navigation({
   } = useSectionState();
   const prefersReducedMotion = useReducedMotion();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHamburgerHidden, setIsHamburgerHidden] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const restoreBodyScrollRef = useRef<(() => void) | null>(null);
@@ -225,6 +226,58 @@ export default function Navigation({
     };
   }, [closeMobileMenu]);
 
+  // Keep the phone trigger out of the reading column while the visitor is
+  // moving down the page. It returns on an upward gesture, at both ends of the
+  // page, on keyboard focus, and it never hides while the menu is open.
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      return;
+    }
+
+    let frame = 0;
+    let lastY = window.scrollY;
+    let maxScroll = 0;
+
+    // Cache the scroll range; only resize and content-height changes refresh
+    // it. The scroll handler then does no layout reads.
+    const measure = () => {
+      maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    };
+    measure();
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(document.body);
+    window.addEventListener("resize", measure, { passive: true });
+
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const delta = y - lastY;
+      if (Math.abs(delta) < 4) {
+        return;
+      }
+      lastY = y;
+
+      const atEdge = y <= 96 || maxScroll - y <= 96;
+      setIsHamburgerHidden(!atEdge && delta > 0);
+    };
+
+    const handleScroll = () => {
+      if (frame === 0) {
+        frame = window.requestAnimationFrame(update);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", measure);
+      resizeObserver.disconnect();
+      if (frame !== 0) {
+        window.cancelAnimationFrame(frame);
+      }
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <>
       <nav
@@ -333,8 +386,14 @@ export default function Navigation({
       </nav>
 
       <div
-        className={styles.mobileHamburger}
+        className={cn(
+          styles.mobileHamburger,
+          isHamburgerHidden && !isMobileMenuOpen && styles.mobileHamburgerHidden
+        )}
         data-site-chrome="navigation-toggle"
+        data-hamburger-hidden={
+          isHamburgerHidden && !isMobileMenuOpen ? "true" : "false"
+        }
         aria-hidden={isMobileMenuOpen ? "true" : undefined}
         style={{ visibility: isMobileMenuOpen ? "hidden" : undefined }}
       >
@@ -349,6 +408,7 @@ export default function Navigation({
               setIsMobileMenuOpen(true);
             }
           }}
+          onFocus={() => setIsHamburgerHidden(false)}
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-navigation-panel"

@@ -1,8 +1,8 @@
 import type { SectionTone, StackContext, StackGroup } from "@/types";
 import type { StackIconName } from "@/components/art/stack-icons/icons";
+import StackIcon from "@/components/art/stack-icons/StackIcon";
 import RevealText from "@/components/motion/RevealText";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import TechStackRows, { type StackRowItem } from "./TechStackSectionRows";
 import styles from "./TechStackSection.module.css";
 
 interface TechStackSectionProps {
@@ -39,11 +39,6 @@ export default function TechStackSection({
     return null;
   }
 
-  const rowItems: StackRowItem[] = stackItems.map((label) => ({
-    name: STACK_ICON_BY_LABEL[label.toLowerCase()] ?? "api",
-    label,
-  }));
-
   return (
     <SectionWrapper id="stack" tone={tone} className={styles.stackSection}>
       <div className={styles.header}>
@@ -51,11 +46,16 @@ export default function TechStackSection({
         <p className={styles.callout}>Tools grouped by where I use them.</p>
       </div>
 
-      <TechStackRows items={rowItems} />
-
-      <ul className={styles.srOnly} aria-label="Tools I use">
-        {rowItems.map((item) => (
-          <li key={item.label}>{item.label}</li>
+      <ul className={styles.chipStrip} aria-label="Tools I use">
+        {stackItems.map((label) => (
+          <li key={label} className={styles.chip}>
+            <StackIcon
+              name={STACK_ICON_BY_LABEL[label.toLowerCase()] ?? "api"}
+              size={16}
+              className={styles.chipIcon}
+            />
+            <span>{label}</span>
+          </li>
         ))}
       </ul>
 
