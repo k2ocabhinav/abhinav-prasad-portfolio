@@ -20,7 +20,7 @@ export default function LandingFrame1Hero({
   return (
     <div className={styles.frame} data-home-hero-frame="true">
       <div className={styles.content}>
-        <header className={styles.masthead} aria-label="Introduction">
+        <header className={styles.masthead}>
           <span className={styles.mastheadName}>{fullName}</span>
         </header>
         <AnimatedName

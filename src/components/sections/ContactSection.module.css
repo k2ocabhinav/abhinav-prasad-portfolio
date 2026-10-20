@@ -134,6 +134,13 @@
   opacity: 0.72;
 }
 
+/* The global burgundy ring disappears on the black-cherry sheet (1.4:1), so
+   the email gets a bone ring that clears 3:1 against the panel. */
+.emailLink:focus-visible {
+  outline: 2px solid var(--color-on-panel, #EDE6DA);
+  outline-offset: 3px;
+}
+
 /* The two actions sit below the address; the panel supplies their tokens. */
 .contactActions {
   display: flex;
