@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type {
-  LandingProofBeat,
   PersonalData,
   ProjectDetail,
   ProjectStoryVisual,
@@ -16,7 +15,6 @@ import styles from "./ProjectDetailPage.module.css";
 interface ProjectDetailPageProps {
   detail: ProjectDetail;
   personal: PersonalData;
-  proofBeats: LandingProofBeat[];
 }
 
 interface SectionIntroContent {
@@ -88,25 +86,12 @@ function LegacyGallery({ detail }: { detail: ProjectDetail }) {
   );
 }
 
-export default function ProjectDetailPage({ detail, personal, proofBeats }: ProjectDetailPageProps) {
+export default function ProjectDetailPage({ detail, personal }: ProjectDetailPageProps) {
   const storyboard = detail.storyboard;
   const visuals = storyboard?.visuals ?? [];
-  const isVelo = detail.slug === "velo";
-  const isPortfolioPlatform = detail.slug === "portfolio-platform";
   const getVisual = (id: string) => visuals.find((visual) => visual.id === id);
-  const getChapter = (id: string) => storyboard?.chapters.find((chapter) => chapter.id === id);
-  const liveryChapter = getChapter("livery");
-  const tenantChapter = getChapter("tenant-views");
-  const scheduleChapter = getChapter("weekly-work");
-  const dayVisual = getVisual("livery-day");
-  const nightVisual = getVisual("livery-night");
-  const mobileLiveryVisual = getVisual("livery-mobile");
-  const mobileHeroVisual = isVelo ? mobileLiveryVisual : undefined;
-  const brandingVisual = getVisual("saffron-branding");
-  const tripSheetVisual = getVisual("trip-sheet");
+  const mobileHeroVisual = storyboard ? getVisual(storyboard.mobileHeroVisualId) : undefined;
   const switcherOptions: ProjectTenantOption[] = storyboard?.tenantSwitcher.options ?? [];
-  const roleBeat = proofBeats.find((beat) => beat.label === "My Role");
-  const problemBeat = proofBeats.find((beat) => beat.label === "Problem");
   const tripVisuals = storyboard?.tripSteps.flatMap((step) => {
     const visual = getVisual(step.visualId);
     return visual ? [visual] : [];
@@ -114,10 +99,6 @@ export default function ProjectDetailPage({ detail, personal, proofBeats }: Proj
   const tenantVisuals = switcherOptions.flatMap((option) => {
     const visual = getVisual(option.visualId);
     return visual ? [visual] : [];
-  });
-  const architectureSections = detail.architectureSections.map((section) => {
-    if (!isPortfolioPlatform || section.title !== "Browser checks") return section;
-    return { ...section, points: [...section.points, ...detail.qualityHighlights] };
   });
 
   return (
@@ -136,23 +117,19 @@ export default function ProjectDetailPage({ detail, personal, proofBeats }: Proj
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{detail.eyebrow}</p>
-            {storyboard ? <p className={styles.statusStamp}>Pre-launch working prototype</p> : null}
+            {storyboard?.status ? <p className={styles.statusStamp}>{storyboard.status}</p> : null}
             <h1 className={styles.title}>{detail.title}</h1>
             <p className={styles.subtitle}>{detail.subtitle}</p>
-            {isPortfolioPlatform ? (
-              <>
-                {roleBeat ? <p className={styles.roleLine}>{roleBeat.short}</p> : null}
-                {problemBeat ? (
-                  <div className={styles.hardPart}>
-                    <p className={styles.hardPartLabel}>What was hard</p>
-                    <p className={styles.hardPartCopy}>{problemBeat.short} {problemBeat.detail}</p>
-                  </div>
-                ) : null}
-              </>
-            ) : (
-              <p className={styles.scopeSummary}>{detail.scopeSummary}</p>
-            )}
-            {storyboard ? <VeloRoutePlate /> : null}
+            {detail.roleLine
+              ? <p className={styles.roleLine}>{detail.roleLine}</p>
+              : <p className={styles.scopeSummary}>{detail.scopeSummary}</p>}
+            {detail.hardPart ? (
+              <div className={styles.hardPart}>
+                <p className={styles.hardPartLabel}>{detail.hardPart.label}</p>
+                <p className={styles.hardPartCopy}>{detail.hardPart.copy}</p>
+              </div>
+            ) : null}
+            {storyboard?.routePlate ? <VeloRoutePlate /> : null}
           </div>
 
           <figure className={styles.heroFigure}>
@@ -179,106 +156,117 @@ export default function ProjectDetailPage({ detail, personal, proofBeats }: Proj
 
         {storyboard ? (
           <div className={styles.factRail} aria-label="Project facts">
-            <p><span>Stage</span>Pre-launch working prototype</p>
-            <p><span>Product</span>Dispatch for pre-booked transfers</p>
-            <p><span>Quality</span>334 backend tests, 16 Oct 2026</p>
+            {storyboard.facts.map((fact) => (
+              <p key={fact.label}><span>{fact.label}</span>{fact.value}</p>
+            ))}
           </div>
         ) : null}
 
         {storyboard ? (
           <>
-            <section className={styles.section} aria-labelledby="trip-story-title">
-              <div className={styles.sectionIntro}>
-                <p className={styles.eyebrow}>01 / One trip</p>
-                <h2 id="trip-story-title" className={styles.sectionTitle}>Three workspaces, one dispatch flow.</h2>
-                <p className={styles.sectionSummary}>
-                  A pre-booked request moves from rider to dispatch to driver. Fleet movement shown here is simulated demo traffic.
-                </p>
-              </div>
+            <section className={styles.section} aria-labelledby={`${detail.slug}-trip-story-title`}>
+              <SectionIntro intro={storyboard.tripIntro} headingId={`${detail.slug}-trip-story-title`} />
               <DispatchReel steps={storyboard.tripSteps} visuals={tripVisuals} />
             </section>
 
-            {tenantChapter ? (
-              <section className={`${styles.section} ${styles.tenantSection}`} aria-labelledby="tenant-story-title">
-                <SectionIntro intro={tenantChapter} headingId="tenant-story-title" />
-                <TenantSwitcher
-                  label={storyboard.tenantSwitcher.label}
-                  defaultId={storyboard.tenantSwitcher.defaultId}
-                  options={switcherOptions}
-                  visuals={tenantVisuals}
-                />
-              </section>
-            ) : null}
+            {storyboard.chapters.map((chapter) => {
+              const headingId = `${detail.slug}-${chapter.id}-title`;
+              const chapterVisuals = chapter.visualIds.flatMap((id) => {
+                const visual = getVisual(id);
+                return visual ? [visual] : [];
+              });
 
-            {liveryChapter && dayVisual && nightVisual ? (
-              <section className={styles.section} aria-labelledby="livery-story-title">
-                <SectionIntro intro={liveryChapter} headingId="livery-story-title" />
-                <div className={styles.liveryPair}>
-                  <VisualFigure
-                    visual={dayVisual}
-                    className={styles.liveryFigure}
-                    frameClassName={styles.liveryFrame}
-                    imageClassName={styles.liveryImage}
-                    sizes="(max-width: 767px) 100vw, 600px"
-                  />
-                  <VisualFigure
-                    visual={nightVisual}
-                    className={styles.liveryFigure}
-                    frameClassName={styles.liveryFrame}
-                    imageClassName={styles.liveryImage}
-                    sizes="(max-width: 767px) 100vw, 600px"
-                  />
-                </div>
-                {mobileLiveryVisual ? (
-                  <div className={styles.mobileProof}>
-                    <div>
-                      <h3 className={styles.featureTitle}>The route view adapts to mobile.</h3>
-                      <p className={styles.featureSummary}>
-                        The day theme keeps the transfer map and booking actions in a single, vertical flow.
-                      </p>
-                    </div>
-                    <VisualFigure
-                      visual={mobileLiveryVisual}
-                      className={styles.mobileLiveryFigure}
-                      frameClassName={styles.mobileLiveryFrame}
-                      imageClassName={styles.liveryImage}
-                      sizes="(max-width: 767px) 76vw, 440px"
+              if (chapter.layout === "tenant-switcher") {
+                return (
+                  <section className={`${styles.section} ${styles.tenantSection}`} aria-labelledby={headingId} key={chapter.id}>
+                    <SectionIntro intro={chapter} headingId={headingId} />
+                    <TenantSwitcher
+                      label={storyboard.tenantSwitcher.label}
+                      defaultId={storyboard.tenantSwitcher.defaultId}
+                      options={switcherOptions}
+                      visuals={tenantVisuals}
                     />
-                  </div>
-                ) : null}
-              </section>
-            ) : null}
+                  </section>
+                );
+              }
 
-            {scheduleChapter && brandingVisual && tripSheetVisual ? (
-              <section className={styles.section} aria-labelledby="weekly-work-title">
-                <SectionIntro intro={scheduleChapter} headingId="weekly-work-title" />
-                <div className={styles.featureRow}>
-                  <div>
-                    <h3 className={styles.featureTitle}>Each tenant has its own identity and operating rules.</h3>
-                    <p className={styles.featureSummary}>
-                      Branding, role labels, tariffs, and service areas are configured per tenant. Saffron Routes is a demo tenant.
-                    </p>
-                  </div>
-                  <VisualFigure
-                    visual={brandingVisual}
-                    className={styles.featureFigure}
-                    frameClassName={styles.featureFrame}
-                    sizes="(max-width: 767px) 100vw, 720px"
-                  />
-                </div>
-                <div className={styles.scheduleProof}>
-                  <p className={styles.featureSummary}>
-                    Weekly trip templates create scheduled requests. The trip sheet groups work by time and supports CSV export.
-                  </p>
-                  <VisualFigure
-                    visual={tripSheetVisual}
-                    className={styles.tripSheetFigure}
-                    frameClassName={styles.tripSheetFrame}
-                    sizes="(max-width: 767px) 100vw, 1200px"
-                  />
-                </div>
-              </section>
-            ) : null}
+              if (chapter.layout === "theme-comparison") {
+                const mobileProofVisual = storyboard.mobileProof
+                  ? getVisual(storyboard.mobileProof.visualId)
+                  : undefined;
+                return (
+                  <section className={styles.section} aria-labelledby={headingId} key={chapter.id}>
+                    <SectionIntro intro={chapter} headingId={headingId} />
+                    {chapterVisuals.length >= 2 ? (
+                      <div className={styles.liveryPair}>
+                        {chapterVisuals.slice(0, 2).map((visual) => (
+                          <VisualFigure
+                            key={visual.id}
+                            visual={visual}
+                            className={styles.liveryFigure}
+                            frameClassName={styles.liveryFrame}
+                            imageClassName={styles.liveryImage}
+                            sizes="(max-width: 767px) 100vw, 600px"
+                          />
+                        ))}
+                      </div>
+                    ) : null}
+                    {storyboard.mobileProof && mobileProofVisual ? (
+                      <div className={styles.mobileProof}>
+                        <div>
+                          <h3 className={styles.featureTitle}>{storyboard.mobileProof.title}</h3>
+                          <p className={styles.featureSummary}>{storyboard.mobileProof.summary}</p>
+                        </div>
+                        <VisualFigure
+                          visual={mobileProofVisual}
+                          className={styles.mobileLiveryFigure}
+                          frameClassName={styles.mobileLiveryFrame}
+                          imageClassName={styles.liveryImage}
+                          sizes="(max-width: 767px) 76vw, 440px"
+                        />
+                      </div>
+                    ) : null}
+                  </section>
+                );
+              }
+
+              const featureProofVisual = storyboard.featureProof
+                ? getVisual(storyboard.featureProof.visualId)
+                : undefined;
+              const scheduleProofVisual = storyboard.scheduleProof
+                ? getVisual(storyboard.scheduleProof.visualId)
+                : undefined;
+              return (
+                <section className={styles.section} aria-labelledby={headingId} key={chapter.id}>
+                  <SectionIntro intro={chapter} headingId={headingId} />
+                  {storyboard.featureProof && featureProofVisual ? (
+                    <div className={styles.featureRow}>
+                      <div>
+                        <h3 className={styles.featureTitle}>{storyboard.featureProof.title}</h3>
+                        <p className={styles.featureSummary}>{storyboard.featureProof.summary}</p>
+                      </div>
+                      <VisualFigure
+                        visual={featureProofVisual}
+                        className={styles.featureFigure}
+                        frameClassName={styles.featureFrame}
+                        sizes="(max-width: 767px) 100vw, 720px"
+                      />
+                    </div>
+                  ) : null}
+                  {storyboard.scheduleProof && scheduleProofVisual ? (
+                    <div className={styles.scheduleProof}>
+                      <p className={styles.featureSummary}>{storyboard.scheduleProof.summary}</p>
+                      <VisualFigure
+                        visual={scheduleProofVisual}
+                        className={styles.tripSheetFigure}
+                        frameClassName={styles.tripSheetFrame}
+                        sizes="(max-width: 767px) 100vw, 1200px"
+                      />
+                    </div>
+                  ) : null}
+                </section>
+              );
+            })}
           </>
         ) : (
           <LegacyGallery detail={detail} />
@@ -287,7 +275,7 @@ export default function ProjectDetailPage({ detail, personal, proofBeats }: Proj
         <section className={styles.section} aria-labelledby="architecture-title">
           <SectionIntro intro={detail.sectionIntros.architecture} headingId="architecture-title" />
           <div className={styles.architectureGrid}>
-            {architectureSections.map((section, index) => (
+            {detail.architectureSections.map((section, index) => (
               <article className={styles.architectureCard} key={section.title}>
                 <p className={styles.cardIndex}>0{index + 1}</p>
                 <h3 className={styles.cardTitle}>{section.title}</h3>
@@ -314,7 +302,7 @@ export default function ProjectDetailPage({ detail, personal, proofBeats }: Proj
           </div>
         </section>
 
-        {detail.qualityHighlights.length > 0 && !isPortfolioPlatform ? (
+        {detail.qualityHighlights.length > 0 ? (
           <section className={`${styles.section} ${styles.qualitySection}`} aria-labelledby="quality-title">
             <div className={styles.qualityPanel}>
               <SectionIntro intro={detail.sectionIntros.quality} headingId="quality-title" />
@@ -351,7 +339,7 @@ export default function ProjectDetailPage({ detail, personal, proofBeats }: Proj
           </p>
           <div className={styles.contactActions}>
             <a className={styles.contactPrimary} href={`mailto:${personal.email}`}>
-              Email Abhinav
+              Email {personal.name}
             </a>
             <a className={styles.contactSecondary} href={personal.resumeHref} download>
               Download résumé

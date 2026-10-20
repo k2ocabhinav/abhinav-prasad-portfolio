@@ -40,8 +40,7 @@ export default function AboutSection({
               <StillLifePlate />
             </div>
             <span className={styles.hintCopy} data-secret-hint="true">
-              <span>Personal layer</span>
-              <span>v opens it</span>
+              {personal.hintCopy.map((line) => <span key={line}>{line}</span>)}
             </span>
           </div>
 

@@ -93,10 +93,10 @@ const fragmentMono = Fragment_Mono({
 
 const profile = getProfileContent();
 const seo = profile.seo;
-const title = seo?.title ?? `${profile.personal.fullName} | Engineering Portfolio`;
-const description = seo?.description ?? profile.personal.subtitle;
-const author = seo?.author ?? profile.personal.fullName;
-const openGraphImage = seo?.ogImage ?? "/og-image.jpg";
+const title = seo.title;
+const description = seo.description;
+const author = seo.author;
+const openGraphImage = seo.ogImage;
 
 export const metadata: Metadata = {
   metadataBase: siteConfig.url,
@@ -106,7 +106,7 @@ export const metadata: Metadata = {
   },
   description,
   applicationName: `${profile.personal.fullName} | Engineering Portfolio`,
-  keywords: seo?.keywords,
+  keywords: seo.keywords,
   authors: [{ name: author, url: absoluteUrl("/") }],
   creator: profile.personal.fullName,
   publisher: profile.personal.fullName,

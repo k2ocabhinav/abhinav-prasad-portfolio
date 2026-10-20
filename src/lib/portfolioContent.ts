@@ -3,17 +3,17 @@ import "server-only";
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { cache } from "react";
 import type {
   BeyondAlbumColor,
   BeyondAlbumKind,
   BeyondAlbumSize,
   ChronicleEntry,
   ExperienceVisual,
-  LandingAccentKey,
   LandingHeroContent,
-  LandingProofBeatLabel,
-  LandingStory,
-  LandingStoryVisual,
+  HomeContent,
+  HomeProfile,
+  LlmsContent,
   OrchestrationContent,
   ProfileIntroContent,
   PersonalData,
@@ -34,39 +34,33 @@ import type {
   ProjectTenantOption,
   ProjectStoryVisual,
   ProjectVisual,
+  ProjectCard,
   ServiceEntry,
   StackContext,
   StackGroup,
 } from "@/types";
+import {
+  accents,
+  beyondColors,
+  beyondKinds,
+  beyondSizes,
+  expectedContentCounts,
+  expectedHeroFactLinks,
+  projectIcons,
+  projectStoryThemes,
+  projectStoryViewports,
+  projectStoryLayouts,
+  projectTenantIds,
+  projectTripRoles,
+  socialPlatforms,
+  stackContextValues,
+  statusValues,
+} from "@/lib/portfolioSchema.mjs";
 
 const CONTENT_ROOT = path.join(process.cwd(), "src/content/portfolio");
 const PUBLIC_ROOT = path.join(process.cwd(), "public");
 
 type Frontmatter = Record<string, unknown>;
-
-const projectIcons = ["terminal", "cloud", "database", "sparkles", "cpu"] as const;
-const stackIcons = ["cloud", "cpu", "database", "terminal", "sparkles"] as const;
-const stackContextValues = ["Used at work", "Part of my workflow", "Built in projects"] as const;
-const accents = ["sage", "peach", "sky", "sand"] as const;
-const statusValues = ["draft", "published"] as const;
-const proofLabels = [
-  "Problem",
-  "My Role",
-  "Shipped",
-  "Impact",
-  "Built",
-  "Prototype scope",
-] as const;
-const visualKinds = ["screenshot", "system", "type"] as const;
-const codeTones = ["lime", "ember", "split"] as const;
-const beyondKinds = ["photo", "event", "quote", "person", "project"] as const;
-const beyondColors = ["cobalt", "coral", "lemon", "amber", "lilac", "pink"] as const;
-const beyondSizes = ["hero", "wide", "tall", "square"] as const;
-const socialPlatforms = ["github", "linkedin", "email"] as const;
-const projectStoryViewports = ["desktop", "mobile"] as const;
-const projectStoryThemes = ["day", "night"] as const;
-const projectTenantIds = ["velo-business", "saffron-routes"] as const;
-const projectTripRoles = ["rider", "dispatch", "driver"] as const;
 
 function fail(filePath: string, message: string): never {
   throw new Error(`[portfolio-content] ${path.relative(process.cwd(), filePath)}: ${message}`);
@@ -265,20 +259,6 @@ function byOrder<T extends { order?: number; id?: string; slug?: string }>(a: T,
   return (a.order ?? 999) - (b.order ?? 999) || (a.id ?? a.slug ?? "").localeCompare(b.id ?? b.slug ?? "");
 }
 
-function readVisual(data: Frontmatter, filePath: string): LandingStoryVisual {
-  const visual = objectValue(data, "visual", filePath);
-  const kind = enumValue(visual, "kind", visualKinds, filePath) as LandingStoryVisual["kind"];
-  const src = optionalString(visual, "src");
-  validatePublicAsset(src, filePath);
-
-  return {
-    kind,
-    src,
-    alt: stringValue(visual, "alt", filePath),
-    caption: stringValue(visual, "caption", filePath),
-  };
-}
-
 function readImage(data: Frontmatter, filePath: string): ProjectVisual {
   const src = stringValue(data, "src", filePath);
   validatePublicAsset(src, filePath);
@@ -350,6 +330,7 @@ function readStoryboard(data: Frontmatter, filePath: string): ProjectDetailStory
 
   const chapters = nonEmptyObjectArray(data, "chapters", filePath).map((chapter): ProjectStoryChapter => ({
     id: stringValue(chapter, "id", filePath),
+    layout: enumValue(chapter, "layout", projectStoryLayouts, filePath),
     eyebrow: stringValue(chapter, "eyebrow", filePath),
     title: stringValue(chapter, "title", filePath),
     summary: stringValue(chapter, "summary", filePath),
@@ -370,7 +351,7 @@ function readStoryboard(data: Frontmatter, filePath: string): ProjectDetailStory
     summary: stringValue(step, "summary", filePath),
     visualId: stringValue(step, "visualId", filePath),
   }));
-  if (tripSteps.length !== projectTripRoles.length) {
+  if (tripSteps.length !== expectedContentCounts.storyboardTripSteps) {
     fail(filePath, 'storyboard "tripSteps" must contain one step for rider, dispatch, and driver');
   }
   ensureUnique(tripSteps.map((step) => step.role), "storyboard trip role");
@@ -409,10 +390,57 @@ function readStoryboard(data: Frontmatter, filePath: string): ProjectDetailStory
     }
   });
 
+  const facts = nonEmptyObjectArray(data, "facts", filePath).map((fact) => ({
+    label: stringValue(fact, "label", filePath),
+    value: stringValue(fact, "value", filePath),
+  }));
+  ensureUnique(facts.map((fact) => fact.label), "storyboard fact label");
+
+  const mobileHeroVisualId = stringValue(data, "mobileHeroVisualId", filePath);
+  if (visualById.get(mobileHeroVisualId)?.viewport !== "mobile") {
+    fail(filePath, `storyboard mobileHeroVisualId "${mobileHeroVisualId}" must reference a mobile visual`);
+  }
+  const status = stringValue(data, "status", filePath);
+  const tripIntro = readSectionIntro(objectValue(data, "tripIntro", filePath), filePath);
+
+  const readProof = (key: "mobileProof" | "featureProof") => {
+    const proof = optionalObject(data, key);
+    if (!proof) return undefined;
+    const visualId = stringValue(proof, "visualId", filePath);
+    if (!visualById.has(visualId)) {
+      fail(filePath, `storyboard ${key} references missing visual "${visualId}"`);
+    }
+    return {
+      visualId,
+      title: stringValue(proof, "title", filePath),
+      summary: stringValue(proof, "summary", filePath),
+    };
+  };
+  const mobileProof = readProof("mobileProof");
+  const featureProof = readProof("featureProof");
+  const scheduleProofData = optionalObject(data, "scheduleProof");
+  const scheduleProof = scheduleProofData
+    ? {
+        visualId: stringValue(scheduleProofData, "visualId", filePath),
+        summary: stringValue(scheduleProofData, "summary", filePath),
+      }
+    : undefined;
+  if (scheduleProof && !visualById.has(scheduleProof.visualId)) {
+    fail(filePath, `storyboard scheduleProof references missing visual "${scheduleProof.visualId}"`);
+  }
+
   return {
     visuals,
     chapters,
     tripSteps,
+    status,
+    facts,
+    mobileHeroVisualId,
+    tripIntro,
+    ...(booleanValue(data, "routePlate") ? { routePlate: true } : {}),
+    ...(mobileProof ? { mobileProof } : {}),
+    ...(featureProof ? { featureProof } : {}),
+    ...(scheduleProof ? { scheduleProof } : {}),
     tenantSwitcher: {
       label: stringValue(tenantSwitcher, "label", filePath),
       defaultId,
@@ -442,8 +470,19 @@ function readDetail(data: Frontmatter, filePath: string): ProjectDetail | undefi
     slug: stringValue(detail, "slug", filePath),
     eyebrow: stringValue(detail, "eyebrow", filePath),
     title: stringValue(detail, "title", filePath),
+    seoTitle: stringValue(detail, "seoTitle", filePath),
+    seoDescription: stringValue(detail, "seoDescription", filePath),
     subtitle: stringValue(detail, "subtitle", filePath),
     scopeSummary: stringValue(detail, "scopeSummary", filePath),
+    ...(optionalString(detail, "roleLine") ? { roleLine: optionalString(detail, "roleLine") } : {}),
+    ...(optionalObject(detail, "hardPart")
+      ? {
+          hardPart: {
+            label: stringValue(objectValue(detail, "hardPart", filePath), "label", filePath),
+            copy: stringValue(objectValue(detail, "hardPart", filePath), "copy", filePath),
+          },
+        }
+      : {}),
     heroImage,
     gallery,
     architectureSections: objectArray(detail, "architectureSections", filePath).map((section) => ({
@@ -469,30 +508,19 @@ function readProject(filePath: string): PortfolioProject {
   const detail = readDetail(data, filePath);
   const slug = stringValue(data, "slug", filePath);
   const id = stringValue(data, "id", filePath);
-  const title = stringValue(data, "title", filePath);
   const tags = stringArray(data, "tags", filePath);
   const icon = enumValue(data, "icon", projectIcons, filePath);
-  const proofBeats = objectArray(data, "proofBeats", filePath).map((beat) => ({
-    label: enumValue(beat, "label", proofLabels, filePath) as LandingProofBeatLabel,
-    short: stringValue(beat, "short", filePath),
-    detail: stringValue(beat, "detail", filePath),
-  }));
-
   const screenshots = optionalObjectArray(data, "screenshots").map((item) => readImage(item, filePath));
-  const visual = readVisual(data, filePath);
   const detailCtaLabel = detail ? optionalString(objectValue(data, "detail", filePath), "detailCtaLabel") : undefined;
   const detailCtaSubline = detail ? optionalString(objectValue(data, "detail", filePath), "detailCtaSubline") : undefined;
 
   return {
     slug,
     status: enumValue(data, "status", statusValues, filePath) as PortfolioStatus,
-    featured: booleanValue(data, "featured", false),
-    featuredOrder: numberValue(data, "featuredOrder", 999),
     worksOrder: numberValue(data, "worksOrder", 999),
     id,
-    title,
+    title: stringValue(data, "title", filePath),
     description: stringValue(data, "description", filePath),
-    scopeSummary: optionalString(data, "scopeSummary"),
     icon,
     tags,
     screenshots,
@@ -500,22 +528,7 @@ function readProject(filePath: string): PortfolioProject {
     detailSlug: detail?.slug,
     detailCtaLabel,
     detailCtaSubline,
-    caseStudySlug: null,
     detail,
-    landingStory: {
-      id,
-      eyebrow: stringValue(data, "eyebrow", filePath),
-      title,
-      claim: stringValue(data, "claim", filePath),
-      summary: stringValue(data, "summary", filePath),
-      tags,
-      icon,
-      accent: enumValue(data, "accent", accents, filePath) as LandingAccentKey,
-      note: stringValue(data, "note", filePath),
-      proofBeats,
-      visual,
-      projectCodeTone: enumValue(data, "projectCodeTone", codeTones, filePath) as LandingStory["projectCodeTone"],
-    },
   };
 }
 
@@ -527,23 +540,16 @@ function readProfile(): PortfolioProfile {
   // P7: Structured, editable copy for the human-reviewed orchestration section.
   const orchestrationData = objectValue(data, "orchestration", filePath);
   const profileIntroData = objectValue(data, "profileIntro", filePath);
-  const seo = optionalObject(data, "seo");
+  const seo = objectValue(data, "seo", filePath);
+  const llmsData = objectValue(data, "llms", filePath);
 
   const personal: PersonalData = {
     name: stringValue(personalData, "name", filePath),
     fullName: stringValue(personalData, "fullName", filePath),
     title: stringValue(personalData, "title", filePath),
-    tagline: stringValue(personalData, "tagline", filePath),
     subtitle: stringValue(personalData, "subtitle", filePath),
-    hintCopy: optionalString(personalData, "hintCopy"),
-    heroAnnotations: [],
+    hintCopy: nonEmptyStringArray(personalData, "hintCopy", filePath),
     heroPhoto: stringValue(personalData, "heroPhoto", filePath),
-    heroSlides: objectArray(personalData, "heroSlides", filePath).map((slide) => ({
-      image: stringValue(slide, "image", filePath),
-      alt: stringValue(slide, "alt", filePath),
-    })),
-    heroSlideInterval: numberValue(personalData, "heroSlideInterval", 4000),
-    heroOverlayOpacity: numberValue(personalData, "heroOverlayOpacity", 0.3),
     location: {
       city: stringValue(objectValue(personalData, "location", filePath), "city", filePath),
       country: stringValue(objectValue(personalData, "location", filePath), "country", filePath),
@@ -560,8 +566,10 @@ function readProfile(): PortfolioProfile {
     presenceDescription: stringValue(personalData, "presenceDescription", filePath),
     footerTagline: stringValue(personalData, "footerTagline", filePath),
   };
+  if (personal.hintCopy.length !== expectedContentCounts.hintCopyLines) {
+    fail(filePath, `"personal.hintCopy" must contain ${expectedContentCounts.hintCopyLines} lines`);
+  }
   validatePublicAsset(personal.heroPhoto, filePath);
-  personal.heroSlides.forEach((slide) => validatePublicAsset(slide.image, filePath));
   validatePublicAsset(personal.resumeHref, filePath);
 
   const knowsAbout = nonEmptyStringArray(data, "knowsAbout", filePath);
@@ -589,9 +597,10 @@ function readProfile(): PortfolioProfile {
     proofLines: nonEmptyStringArray(profileIntroData, "proofLines", filePath),
     stackItems: nonEmptyStringArray(profileIntroData, "stackItems", filePath),
   };
-  if (profileIntro.proofLines.length !== 3) {
-    fail(filePath, '"profileIntro.proofLines" must contain three proof lines');
+  if (profileIntro.proofLines.length !== expectedContentCounts.profileProofLines) {
+    fail(filePath, `"profileIntro.proofLines" must contain ${expectedContentCounts.profileProofLines} proof lines`);
   }
+  ensureUnique(profileIntro.stackItems, "profile intro stack item");
   const orchestration: OrchestrationContent = {
     intro: stringValue(orchestrationData, "intro", filePath),
     steps: objectArray(orchestrationData, "steps", filePath).map((step) => ({
@@ -599,9 +608,33 @@ function readProfile(): PortfolioProfile {
       description: stringValue(step, "description", filePath),
     })),
   };
-  if (orchestration.steps.length !== 4) {
-    fail(filePath, '"orchestration.steps" must contain four steps');
+  if (orchestration.steps.length !== expectedContentCounts.orchestrationSteps) {
+    fail(filePath, `"orchestration.steps" must contain ${expectedContentCounts.orchestrationSteps} steps`);
   }
+  const facts = heroContent.facts;
+  if (facts.length !== expectedContentCounts.heroFacts) {
+    fail(filePath, `"hero.facts" must contain ${expectedContentCounts.heroFacts} rows`);
+  }
+  facts.forEach((fact, index) => {
+    const expected = expectedHeroFactLinks[index];
+    if (!expected || fact.label !== expected.label || fact.href !== expected.href) {
+      fail(filePath, `"hero.facts[${index}]" must be ${expected?.label ?? "a supported fact"} linking to ${expected?.href ?? "a section"}`);
+    }
+  });
+  const marqueeItems = nonEmptyStringArray(data, "marqueeItems", filePath);
+  ensureUnique(marqueeItems, "marquee item");
+  const llms: LlmsContent = {
+    positioningLines: nonEmptyStringArray(llmsData, "positioningLines", filePath),
+    homepageLines: nonEmptyStringArray(llmsData, "homepageLines", filePath),
+  };
+  const seoContent = {
+    title: stringValue(seo, "title", filePath),
+    description: stringValue(seo, "description", filePath),
+    keywords: stringArray(seo, "keywords", filePath),
+    author: stringValue(seo, "author", filePath),
+    ogImage: stringValue(seo, "ogImage", filePath),
+  };
+  validatePublicAsset(seoContent.ogImage, filePath);
 
   return {
     personal,
@@ -616,47 +649,74 @@ function readProfile(): PortfolioProfile {
     knowsAbout,
     orchestration,
     profileIntro,
-    seo: seo
-      ? {
-          title: stringValue(seo, "title", filePath),
-          description: stringValue(seo, "description", filePath),
-          keywords: stringArray(seo, "keywords", filePath),
-          author: stringValue(seo, "author", filePath),
-          ogImage: stringValue(seo, "ogImage", filePath),
-        }
-      : undefined,
+    marqueeItems,
+    llms,
+    seo: seoContent,
   };
 }
 
-export function getProfileContent() {
-  return readProfile();
+function projectCardProjection(project: PortfolioProject): ProjectCard {
+  return {
+    slug: project.slug,
+    id: project.id,
+    title: project.title,
+    description: project.description,
+    icon: project.icon,
+    tags: project.tags,
+    screenshots: project.screenshots,
+    links: project.links,
+    detailSlug: project.detailSlug,
+    detailCtaLabel: project.detailCtaLabel,
+    detailCtaSubline: project.detailCtaSubline,
+  };
 }
 
-export function getAllPortfolioProjects(): PortfolioProject[] {
+function homeProfileProjection(profile: PortfolioProfile): HomeProfile {
+  return {
+    personal: profile.personal,
+    hero: profile.hero,
+    presenceNodes: profile.presenceNodes,
+    orchestration: profile.orchestration,
+    profileIntro: profile.profileIntro,
+    marqueeItems: profile.marqueeItems,
+  };
+}
+
+export const getProfileContent = cache(readProfile);
+
+export const getAllPortfolioProjects = cache((): PortfolioProject[] => {
   const projects = listMdxFiles("projects").map(readProject);
   ensureUnique(projects.map((project) => project.slug), "project slug");
   ensureUnique(projects.map((project) => project.id), "project id");
   return projects.sort((a, b) => (a.worksOrder ?? 999) - (b.worksOrder ?? 999));
-}
+});
 
-export function getPublishedProjects(): PortfolioProject[] {
+export const getPublishedProjects = cache((): PortfolioProject[] => {
   return getAllPortfolioProjects().filter((project) => project.status === "published");
-}
+});
 
-export function getProjectDetailSlugs(): string[] {
+export const getPublishedProjectCards = cache((): ProjectCard[] => {
+  return getPublishedProjects().map(projectCardProjection);
+});
+
+export const getProjectDetailSlugs = cache((): string[] => {
   return getPublishedProjects()
     .filter((project) => Boolean(project.detail))
     .map((project) => project.detail!.slug);
-}
+});
 
-export function getProjectDetailBySlug(slug: string): ProjectDetail | null {
-  return getPublishedProjects().find((project) => project.detail?.slug === slug)?.detail ?? null;
-}
-
-export function getChronicleEntries(): ChronicleEntry[] {
+export const getChronicleEntries = cache((): ChronicleEntry[] => {
   const entries = listMdxFiles("chronicle").map((filePath) => {
     const data = readFrontmatter(filePath);
-    const workstreams = nonEmptyObjectArray(data, "workstreams", filePath).map((workstream) => {
+    const rawWorkstreams = nonEmptyObjectArray(data, "workstreams", filePath);
+    if (rawWorkstreams.length !== expectedContentCounts.experienceWorkstreams) {
+      fail(filePath, `"workstreams" must contain ${expectedContentCounts.experienceWorkstreams} full-experience sections`);
+    }
+    const rawSummaryPoints = nonEmptyObjectArray(data, "summaryPoints", filePath);
+    if (rawSummaryPoints.length !== expectedContentCounts.experienceSummaryPoints) {
+      fail(filePath, `"summaryPoints" must contain ${expectedContentCounts.experienceSummaryPoints} visible experience points`);
+    }
+    const workstreams = rawWorkstreams.map((workstream) => {
       const tools = nonEmptyStringArray(workstream, "tools", filePath);
       ensureUnique(tools, `tool in workstream "${stringValue(workstream, "id", filePath)}"`);
       const images = (workstream.images === undefined
@@ -696,7 +756,7 @@ export function getChronicleEntries(): ChronicleEntry[] {
       roleTitle: stringValue(data, "roleTitle", filePath),
       roleScope: stringValue(data, "roleScope", filePath),
       employmentNote: stringValue(data, "employmentNote", filePath),
-      summaryPoints: nonEmptyObjectArray(data, "summaryPoints", filePath).map((point) => {
+      summaryPoints: rawSummaryPoints.map((point) => {
         const emphasis = optionalNonEmptyString(point, "emphasis", filePath);
         return {
           lead: stringValue(point, "lead", filePath),
@@ -709,28 +769,25 @@ export function getChronicleEntries(): ChronicleEntry[] {
   });
   ensureUnique(entries.map((entry) => entry.slug), "chronicle slug");
   return entries.filter((entry) => entry.status === "published").sort(byOrder);
-}
+});
 
-export function getStackGroups(): StackGroup[] {
+export const getStackGroups = cache((): StackGroup[] => {
   const groups = listMdxFiles("stack").map((filePath) => {
     const data = readFrontmatter(filePath);
-    const items = nonEmptyStringArray(data, "items", filePath);
-    ensureUnique(items, `stack item in ${path.relative(process.cwd(), filePath)}`);
     return {
       id: stringValue(data, "id", filePath),
       status: enumValue(data, "status", statusValues, filePath) as PortfolioStatus,
       order: numberValue(data, "order", 999),
-      icon: enumValue(data, "icon", stackIcons, filePath),
       label: stringValue(data, "label", filePath),
       context: enumValue(data, "context", stackContextValues, filePath) as StackContext,
-      items,
+      highlighted: booleanValue(data, "highlighted", false),
     };
   });
   ensureUnique(groups.map((group) => group.id), "stack id");
   return groups.filter((group) => group.status === "published").sort(byOrder);
-}
+});
 
-export function getServiceEntries(): ServiceEntry[] {
+export const getServiceEntries = cache((): ServiceEntry[] => {
   const services = listMdxFiles("services").map((filePath) => {
     const data = readFrontmatter(filePath);
     return {
@@ -746,9 +803,9 @@ export function getServiceEntries(): ServiceEntry[] {
   });
   ensureUnique(services.map((service) => service.id), "service id");
   return services.filter((service) => service.status === "published").sort(byOrder);
-}
+});
 
-export function getBeyondAlbumItems(): PortfolioBeyondAlbumItem[] {
+export const getBeyondAlbumItems = cache((): PortfolioBeyondAlbumItem[] => {
   const items = listMdxFiles("beyond").map((filePath) => {
     const data = readFrontmatter(filePath);
     const image = optionalObject(data, "image");
@@ -779,15 +836,15 @@ export function getBeyondAlbumItems(): PortfolioBeyondAlbumItem[] {
   });
   ensureUnique(items.map((item) => item.id), "beyond item id");
   return items.filter((item) => item.status === "published").sort(byOrder);
-}
+});
 
-export function getHomeContent() {
+export const getHomeContent = cache((): HomeContent => {
   const profile = getProfileContent();
   return {
-    profile,
-    projects: getPublishedProjects(),
+    profile: homeProfileProjection(profile),
+    projects: getPublishedProjectCards(),
     chronicleEntries: getChronicleEntries(),
     stackGroups: getStackGroups(),
     services: getServiceEntries(),
   };
-}
+});

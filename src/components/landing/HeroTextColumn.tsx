@@ -13,11 +13,15 @@ import styles from "./HeroTextColumn.module.css";
 interface HeroTextColumnProps {
   hero: LandingHeroContent;
   name: string;
+  fullName: string;
+  linkedinHref: string | undefined;
 }
 
 export default function HeroTextColumn({
   hero,
   name,
+  fullName,
+  linkedinHref,
 }: HeroTextColumnProps) {
   return (
     <div className={styles.textColumn} data-home-hero-text="true">
@@ -56,18 +60,39 @@ export default function HeroTextColumn({
           </div>
         </nav>
 
-        <div className={styles.ctaGroup}>
-          {hero.ctas.map((cta) =>
-            cta.variant === "primary" ? (
-              <MagneticButton key={cta.label} href={cta.href} variant="glow">
+        <div className={styles.ctaGroup} data-hero-ctas="true">
+          {hero.ctas
+            .filter((cta) => cta.variant === "primary")
+            .map((cta) => (
+              <MagneticButton
+                key={cta.label}
+                href={cta.href}
+                variant="glow"
+                className={styles.primaryCta}
+              >
                 {cta.label}
               </MagneticButton>
-            ) : (
-              <a key={cta.label} href={cta.href} className={styles.secondaryCta}>
-                {cta.label}
+            ))}
+          <div className={styles.secondaryCtas}>
+            {hero.ctas
+              .filter((cta) => cta.variant === "secondary")
+              .map((cta) => (
+                <a key={cta.label} href={cta.href} className={styles.secondaryCta}>
+                  {cta.label}
+                </a>
+              ))}
+            {linkedinHref ? (
+              <a
+                href={linkedinHref}
+                className={styles.secondaryCta}
+                aria-label={`${fullName} on LinkedIn (opens in a new tab)`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn
               </a>
-            )
-          )}
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

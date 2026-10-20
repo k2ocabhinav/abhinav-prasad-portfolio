@@ -11,7 +11,7 @@
     "check:content": "node scripts/check-portfolio-content.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
-    "check:dead": "knip --include files,dependencies,unlisted,binaries,unresolved",
+    "check:dead": "knip --include files,dependencies,unlisted,binaries,unresolved,exports,types",
     "check:assets": "node scripts/check-public-assets.mjs",
     "check:security:prod": "npm audit --omit=dev --audit-level=moderate",
     "check:security:all": "npm audit --audit-level=high",

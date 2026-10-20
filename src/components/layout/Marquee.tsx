@@ -16,23 +16,16 @@ import styles from "./Marquee.module.css";
 // a sibling of the band so hovering it never fights the pause it triggers.
 // =============================================================================
 
-const ITEMS = [
-  "Backend systems",
-  "Database design",
-  "API and data contracts",
-  "Reliable releases",
-  "Internal developer tools",
-  "Product interfaces",
-  "End-to-end builds",
-  "AI-assisted engineering",
-];
+interface MarqueeProps {
+  items: string[];
+}
 
 function wrapValue(min: number, max: number, value: number): number {
   const range = max - min;
   return ((((value - min) % range) + range) % range) + min;
 }
 
-export default function Marquee() {
+export default function Marquee({ items }: MarqueeProps) {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { amount: 0.01 });
@@ -104,7 +97,7 @@ export default function Marquee() {
         >
           {[0, 1].map((dup) => (
             <div className={styles.group} key={dup}>
-              {ITEMS.map((item) => (
+              {items.map((item) => (
                 <span className={styles.item} key={`${item}-${dup}`}>
                   {item}
                   <span className={styles.sep} />

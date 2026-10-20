@@ -52,33 +52,16 @@ export interface PersonalData {
   name: string;
   fullName: string;
   title: string;
-  tagline: string;
   subtitle: string;
-  hintCopy?: string;
-  heroAnnotations: HeroAnnotation[];
+  hintCopy: string[];
   /** Personal portrait or approved identity image URL */
   heroPhoto: string;
-  heroSlides: HeroSlide[];
-  heroSlideInterval: number;
-  heroOverlayOpacity: number;
   location: Location;
   email: string;
   resumeHref: string;
   socials: SocialLink[];
   presenceDescription: string;
   footerTagline: string;
-}
-
-/** Hero section image annotations */
-export interface HeroAnnotation {
-  label: string;
-  position: "top-right" | "bottom-right" | "left";
-}
-
-/** Hero carousel slide */
-export interface HeroSlide {
-  image: string;
-  alt: string;
 }
 
 /** A semantically emphasized proof point within an experience workstream */
@@ -131,20 +114,10 @@ export interface Project {
   /** Icon key — resolved to Lucide component at render time */
   icon: "terminal" | "cloud" | "database" | "sparkles" | "cpu";
   tags: string[];
-  /** null = "Coming Soon", string = URL or slug */
-  caseStudySlug: string | null;
-  /** Reversed layout in grid */
-  reversed?: boolean;
-  /** Optional hero/support visuals for richer project storytelling */
+  /** Card visuals shown on the homepage */
   screenshots?: ProjectVisual[];
-  /** Optional architecture callouts shown as concise bullets */
-  architectureHighlights?: string[];
-  /** Optional grouped stack coverage for architecture depth */
-  techBuckets?: ProjectTechBucket[];
   /** Optional external CTA links */
   links?: ProjectLink[];
-  /** Optional scope summary line for product framing */
-  scopeSummary?: string;
   /** Optional internal deep-dive route slug */
   detailSlug?: string;
   /** Optional narrative CTA label for deep-dive teaser cards */
@@ -158,9 +131,30 @@ export interface PortfolioProfile {
   hero: LandingHeroContent;
   presenceNodes: PresenceNode[];
   knowsAbout: string[];
-  seo?: SEOData;
+  seo: SEOData;
   orchestration: OrchestrationContent;
   profileIntro: ProfileIntroContent;
+  marqueeItems: string[];
+  llms: LlmsContent;
+}
+
+export interface LlmsContent {
+  positioningLines: string[];
+  homepageLines: string[];
+}
+
+export type HomeProfile = Pick<PortfolioProfile, "personal" | "hero" | "presenceNodes" | "orchestration" | "profileIntro" | "marqueeItems">;
+
+export interface ProjectCard extends Project {
+  slug: string;
+}
+
+export interface HomeContent {
+  profile: HomeProfile;
+  projects: ProjectCard[];
+  chronicleEntries: ChronicleEntry[];
+  stackGroups: StackGroup[];
+  services: ServiceEntry[];
 }
 
 // ─── P7: Profile intro and AI coding-tool orchestration ────────────────────
@@ -184,10 +178,7 @@ export interface OrchestrationContent {
 export interface PortfolioProject extends Project {
   slug: string;
   status: PortfolioStatus;
-  featured: boolean;
-  featuredOrder?: number;
   worksOrder?: number;
-  landingStory: LandingStory;
   detail?: ProjectDetail;
 }
 
@@ -205,10 +196,13 @@ export interface ChronicleEntry {
   workstreams: ExperienceWorkstream[];
 }
 
-export interface StackGroup extends TechCategory {
+export interface StackGroup {
   id: string;
   status: PortfolioStatus;
   order?: number;
+  label: string;
+  context: StackContext;
+  highlighted: boolean;
 }
 
 export interface ServiceEntry extends Service {
@@ -248,6 +242,7 @@ export interface ProjectStoryVisual extends ProjectVisual {
 
 export interface ProjectStoryChapter {
   id: string;
+  layout: "tenant-switcher" | "theme-comparison" | "schedule";
   eyebrow: string;
   title: string;
   summary: string;
@@ -271,6 +266,14 @@ export interface ProjectDetailStory {
   visuals: ProjectStoryVisual[];
   chapters: ProjectStoryChapter[];
   tripSteps: ProjectTripStep[];
+  status: string;
+  facts: Array<{ label: string; value: string }>;
+  mobileHeroVisualId: string;
+  tripIntro: ProjectDetailSectionIntro;
+  routePlate?: boolean;
+  mobileProof?: { visualId: string; title: string; summary: string };
+  featureProof?: { visualId: string; title: string; summary: string };
+  scheduleProof?: { visualId: string; summary: string };
   tenantSwitcher: {
     label: string;
     defaultId: ProjectTenantId;
@@ -282,8 +285,12 @@ export interface ProjectDetail {
   slug: string;
   eyebrow: string;
   title: string;
+  seoTitle: string;
+  seoDescription: string;
   subtitle: string;
   scopeSummary: string;
+  roleLine?: string;
+  hardPart?: { label: string; copy: string };
   heroImage: ProjectVisual;
   gallery: ProjectVisual[];
   architectureSections: ProjectDetailSection[];
@@ -300,15 +307,7 @@ export interface ProjectDetail {
   storyboard?: ProjectDetailStory;
 }
 
-/** Tech stack category */
 export type StackContext = "Used at work" | "Part of my workflow" | "Built in projects";
-
-export interface TechCategory {
-  icon: "cloud" | "cpu" | "database" | "terminal" | "sparkles";
-  label: string;
-  context: StackContext;
-  items: string[];
-}
 
 /** Presence map node */
 export interface PresenceNode {
@@ -370,49 +369,6 @@ export interface LandingHeroContent {
   facts: LandingHeroFact[];
   /** CTA buttons rendered in order */
   ctas: LandingCTA[];
-}
-
-export type LandingProofBeatLabel =
-  | "Problem"
-  | "My Role"
-  | "Shipped"
-  | "Impact"
-  | "Built"
-  | "Prototype scope";
-
-export interface LandingProofBeat {
-  label: LandingProofBeatLabel;
-  short: string;
-  detail: string;
-}
-
-export interface LandingStoryVisual {
-  kind: "screenshot" | "system" | "type";
-  src?: string;
-  alt: string;
-  caption: string;
-}
-
-/** Featured project proof shown in the landing motion/story frame */
-export interface LandingStory {
-  id: string;
-  eyebrow: string;
-  title: string;
-  claim: string;
-  summary: string;
-  tags: string[];
-  icon: string;
-  accent: LandingAccentKey;
-  note: string;
-  proofBeats: LandingProofBeat[];
-  visual: LandingStoryVisual;
-  projectCodeTone: "lime" | "ember" | "split";
-  proof?: {
-    problem: string;
-    role: string;
-    shipped: string;
-    value: string;
-  };
 }
 
 // ─── Beyond The Terminal ─────────────────────────────────────────────────────

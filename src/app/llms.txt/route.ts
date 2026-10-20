@@ -22,19 +22,19 @@ export function GET() {
   const lines = [
     `# ${profile.personal.fullName}`,
     "",
-    `> ${profile.seo?.description ?? profile.personal.subtitle}`,
+    `> ${profile.seo.description}`,
     "",
     "## Positioning",
     "",
     profile.personal.title,
     profile.personal.subtitle,
     `At work: ${currentRole}, ${experience?.company ?? "the current employer"}.`,
-    "On my own: Velo, this portfolio, and AI-agent workflows.",
+    ...profile.llms.positioningLines,
     profile.personal.presenceDescription,
     "",
     "## Homepage sections",
     "",
-    "Hero, What I do, Experience, Work, Stack, and Contact. How I work appears below the projects in Work.",
+    ...profile.llms.homepageLines,
     "",
     "## Professional experience",
     "",
@@ -46,9 +46,10 @@ export function GET() {
       const linkedSource = project.links?.find((link) =>
         link.href?.startsWith("https://github.com/")
       )?.href;
-      const source = linkedSource ?? (detail.slug === "portfolio-platform"
-        ? "https://github.com/k2ocabhinav/abhinav-prasad-portfolio"
-        : undefined);
+      const detailSource = detail.references?.find((link) =>
+        link.href?.startsWith("https://github.com/")
+      )?.href;
+      const source = linkedSource ?? detailSource;
       const sourceNote = source ? ` Source: [GitHub](${source}).` : "";
       return `- [${projectSeoTitle(detail)}](${absoluteUrl(`/work/${detail.slug}`)}): ${project.description} Stack: ${project.tags.join(", ")}.${sourceNote}`;
     }),

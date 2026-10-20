@@ -82,38 +82,10 @@ function AlbumMedia({ item, large = false }: { item: BeyondAlbumItem; large?: bo
 
 export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) {
   const reduceMotion = useReducedMotion();
-  const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [activeItem, setActiveItem] = useState<BeyondAlbumItem | null>(null);
-
-  useEffect(() => {
-    if (reduceMotion) {
-      cardRefs.current.forEach((card) => {
-        if (card) card.dataset.revealed = "true";
-      });
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            (entry.target as HTMLElement).dataset.revealed = "true";
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.18 }
-    );
-
-    cardRefs.current.forEach((card) => {
-      if (card) observer.observe(card);
-    });
-
-    return () => observer.disconnect();
-  }, [items.length, reduceMotion]);
 
   useEffect(() => {
     if (!activeItem) {
@@ -264,24 +236,15 @@ export default function BeyondPhotoWall({ items, intro }: BeyondPhotoWallProps) 
         </div>
 
         <div className={styles.wallGrid}>
-          {items.map((item, index) => (
+          {items.map((item) => (
             <button
               key={item.id}
               type="button"
-              ref={(node) => {
-                cardRefs.current[index] = node;
-              }}
               className={cn(
                 styles.card,
                 sizeClassMap[item.size],
                 colorClassMap[item.color]
               )}
-              style={
-                {
-                  ["--card-index" as string]: index,
-                  ["--card-delay" as string]: `${Math.min(index * 44, 320)}ms`,
-                } as CSSProperties
-              }
               onPointerMove={(event) => handlePointerMove(event, item)}
               onPointerLeave={handlePointerLeave}
               onClick={(event) => {

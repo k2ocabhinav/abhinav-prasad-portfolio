@@ -2,7 +2,7 @@
 
 import * as m from "motion/react-m";
 import { useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import type { PersonalData, PresenceNode } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,18 @@ import SectionWrapper from "@/components/ui/SectionWrapper";
 import EnvelopeStamp from "@/components/art/EnvelopeStamp";
 import TimezoneMap from "@/components/art/TimezoneMap";
 import styles from "./ContactSection.module.css";
+
+function subscribeToHydration() {
+  return () => {};
+}
+
+function getHydratedSnapshot() {
+  return true;
+}
+
+function getServerHydratedSnapshot() {
+  return false;
+}
 
 interface ContactSectionProps {
   personal: PersonalData;
@@ -34,6 +46,11 @@ export default function ContactSection({
   presenceNodes,
 }: ContactSectionProps) {
   const prefersReducedMotion = useReducedMotion();
+  const hasMounted = useSyncExternalStore(
+    subscribeToHydration,
+    getHydratedSnapshot,
+    getServerHydratedSnapshot
+  );
   const riseRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: prefersReducedMotion ? undefined : riseRef,
@@ -82,8 +99,8 @@ export default function ContactSection({
             <m.div
               className={cn("spec-sheet", styles.contactSpecSheet)}
               style={{
-                y: prefersReducedMotion ? 0 : sheetY,
-                scale: prefersReducedMotion ? 1 : sheetScale,
+                y: !hasMounted || prefersReducedMotion ? 0 : sheetY,
+                scale: !hasMounted || prefersReducedMotion ? 1 : sheetScale,
               }}
             >
               <div className={styles.contactMotionRoot}>

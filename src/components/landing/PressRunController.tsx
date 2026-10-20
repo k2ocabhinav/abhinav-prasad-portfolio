@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 import * as m from "motion/react-m";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "./PressRunController.module.css";
@@ -45,13 +46,18 @@ function CropMark({ corner }: CropMarkProps) {
       viewBox="0 0 24 24"
       aria-hidden="true"
       focusable="false"
+      data-pressrun-crop-mark="true"
     >
       <path d="M23 1H1v22" />
     </svg>
   );
 }
 
-export default function PressRunController() {
+interface PressRunControllerProps {
+  proofCorner: ReactNode;
+}
+
+export default function PressRunController({ proofCorner }: PressRunControllerProps) {
   const sceneRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
@@ -62,9 +68,21 @@ export default function PressRunController() {
     const plate = heading?.querySelector<HTMLElement>("[data-ink-plate-drift='true']");
     const glacier = scene?.querySelector<HTMLElement>("[data-pressrun-depth='glacier']");
     const target = scene?.querySelector<HTMLElement>("[data-pressrun-depth='target']");
+    const proofPetrol = scene?.querySelector<HTMLElement>("[data-pressrun-depth='proof-petrol']");
+    const proofCornflower = scene?.querySelector<HTMLElement>("[data-pressrun-depth='proof-cornflower']");
     const strip = frame?.querySelector<HTMLAnchorElement>("[data-pressrun-strip]");
 
-    if (!scene || !frame || !heading || !plate || !glacier || !target || !strip) {
+    if (
+      !scene ||
+      !frame ||
+      !heading ||
+      !plate ||
+      !glacier ||
+      !target ||
+      !proofPetrol ||
+      !proofCornflower ||
+      !strip
+    ) {
       return;
     }
 
@@ -129,6 +147,8 @@ export default function PressRunController() {
       plate.style.willChange = value;
       glacier.style.willChange = value;
       target.style.willChange = value;
+      proofPetrol.style.willChange = value;
+      proofCornflower.style.willChange = value;
     };
 
     const readRects = () => {
@@ -204,6 +224,8 @@ export default function PressRunController() {
 
       plate.style.transform = `translate3d(${(pointerPlateX.position * 5).toFixed(2)}px, ${(pointerPlateY.position * 5 - scrollProgress * 6).toFixed(2)}px, 0)`;
       glacier.style.transform = `translate3d(${(pointerGlacierX.position * 3).toFixed(2)}px, ${(pointerGlacierY.position * 3 + scrollProgress * 12).toFixed(2)}px, 0)`;
+      proofPetrol.style.transform = `translate3d(${(pointerGlacierX.position * 3).toFixed(2)}px, ${(pointerGlacierY.position * 3 + scrollProgress * 8).toFixed(2)}px, 0)`;
+      proofCornflower.style.transform = `translate3d(${(pointerGlacierX.position * 4).toFixed(2)}px, ${(pointerGlacierY.position * 4 + scrollProgress * 10).toFixed(2)}px, 0)`;
       target.style.transform = `translate3d(${(pointerTargetX.position * 2).toFixed(2)}px, ${(pointerTargetY.position * 2).toFixed(2)}px, 0)`;
 
       if (
@@ -367,16 +389,59 @@ export default function PressRunController() {
           focusable="false"
         >
           <defs>
-            <pattern id="pressrun-glacier-dots" width="9" height="9" patternUnits="userSpaceOnUse">
-              <circle cx="2" cy="2" r="1.6" fill="#D7EFFF" />
+            <pattern id="pressrun-glacier-dots-small" width="12" height="12" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1.1" fill="#D7EFFF" />
             </pattern>
+            <pattern id="pressrun-glacier-dots-medium" width="20" height="20" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse">
+              <circle cx="3" cy="3" r="1.8" fill="#D7EFFF" />
+            </pattern>
+            <pattern id="pressrun-glacier-dots-large" width="28" height="28" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse">
+              <circle cx="4" cy="4" r="2.8" fill="#D7EFFF" />
+            </pattern>
+            <linearGradient id="pressrun-glacier-growth-medium" x1="0" y1="0" x2="320" y2="170" gradientUnits="userSpaceOnUse">
+              <stop offset="0.18" stopColor="white" stopOpacity="0" />
+              <stop offset="0.62" stopColor="white" stopOpacity="0.7" />
+              <stop offset="1" stopColor="white" />
+            </linearGradient>
+            <linearGradient id="pressrun-glacier-growth-large" x1="0" y1="0" x2="320" y2="170" gradientUnits="userSpaceOnUse">
+              <stop offset="0.42" stopColor="white" stopOpacity="0" />
+              <stop offset="0.78" stopColor="white" stopOpacity="0.55" />
+              <stop offset="1" stopColor="white" />
+            </linearGradient>
+            <radialGradient id="pressrun-glacier-fade" cx="78%" cy="78%" r="78%">
+              <stop offset="0" stopColor="white" stopOpacity="0.82" />
+              <stop offset="0.58" stopColor="white" stopOpacity="0.46" />
+              <stop offset="1" stopColor="black" stopOpacity="0" />
+            </radialGradient>
+            <mask id="pressrun-glacier-growth-mask-medium" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="170">
+              <rect width="320" height="170" fill="url(#pressrun-glacier-growth-medium)" />
+            </mask>
+            <mask id="pressrun-glacier-growth-mask-large" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="170">
+              <rect width="320" height="170" fill="url(#pressrun-glacier-growth-large)" />
+            </mask>
+            <mask id="pressrun-glacier-edge-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="170">
+              <rect width="320" height="170" fill="url(#pressrun-glacier-fade)" />
+            </mask>
           </defs>
-          <path
-            d="M0 18h89L106 1h214v151H191l-16 17H0z"
-            fill="url(#pressrun-glacier-dots)"
-          />
+          <g mask="url(#pressrun-glacier-edge-mask)">
+            <rect width="320" height="170" fill="url(#pressrun-glacier-dots-small)" opacity="0.78" />
+            <rect
+              width="320"
+              height="170"
+              fill="url(#pressrun-glacier-dots-medium)"
+              mask="url(#pressrun-glacier-growth-mask-medium)"
+              opacity="0.82"
+            />
+            <rect
+              width="320"
+              height="170"
+              fill="url(#pressrun-glacier-dots-large)"
+              mask="url(#pressrun-glacier-growth-mask-large)"
+              opacity="0.88"
+            />
+          </g>
         </svg>
-        <span className={styles.glacierRoller} />
+        <span className={styles.glacierRoller} data-pressrun-roller="true" />
       </div>
 
       <span className={styles.targetDepth} data-pressrun-depth="target" aria-hidden="true">
@@ -392,11 +457,13 @@ export default function PressRunController() {
         </m.svg>
       </span>
 
+      {proofCorner}
+
     </div>
     <a
       className={styles.calibrationStrip}
       href="#about"
-      aria-label="Scroll to What I do"
+      aria-label="Scroll to What I do. Print plates: Glacier, Burgundy, and Black cherry."
       data-pressrun-strip="true"
       data-pass="false"
       data-reduce-motion="false"
@@ -405,15 +472,15 @@ export default function PressRunController() {
       <span className={styles.swatches} aria-hidden="true">
         <span className={styles.swatch} data-plate="glacier">
           <span className={styles.fullLabel} data-full-label="true">Plate 1 | Glacier</span>
-          <span className={styles.compactLabel} data-compact-label="true">P1 Glacier</span>
+          <span className={styles.compactLabel} data-compact-label="true">P1</span>
         </span>
         <span className={styles.swatch} data-plate="burgundy">
           <span className={styles.fullLabel} data-full-label="true">Plate 2 | Burgundy</span>
-          <span className={styles.compactLabel} data-compact-label="true">P2 Burgundy</span>
+          <span className={styles.compactLabel} data-compact-label="true">P2</span>
         </span>
         <span className={styles.swatch} data-plate="cherry">
           <span className={styles.fullLabel} data-full-label="true">Plate 3 | Black cherry</span>
-          <span className={styles.compactLabel} data-compact-label="true">P3 Black cherry</span>
+          <span className={styles.compactLabel} data-compact-label="true">P3</span>
         </span>
       </span>
       <span className={styles.scrollCue}>What I do <span aria-hidden="true">↓</span></span>

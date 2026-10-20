@@ -21,6 +21,10 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   expect(html).toContain("Selected projects");
 
   await page.goto("/");
+  const homeOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
+  const homeTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
+  expect(new URL(homeOgImage!, page.url()).pathname).toBe("/og-image.jpg");
+  expect(homeTwitterImage).toBe(homeOgImage);
   const jsonLd = await page
     .locator('#portfolio-structured-data[type="application/ld+json"]')
     .textContent();
@@ -75,6 +79,86 @@ test("keeps local and preview surfaces out of search indexes", async ({ page, re
   expect(robots).toContain("User-Agent: *");
   expect(robots).toContain("Disallow: /");
   expect(robots).not.toContain("Sitemap:");
+});
+
+test("keeps each home section readable without JavaScript", async ({ page }) => {
+  await page.route("**/_next/static/**/*.js", (route) => route.abort());
+  await page.goto("/");
+
+  const sections = page.locator("main section");
+  const sectionCount = await sections.count();
+  let checkedSections = 0;
+
+  for (let index = 0; index < sectionCount; index += 1) {
+    const section = sections.nth(index);
+    const heading = section.locator("h1, h2, h3").first();
+    if ((await heading.count()) === 0) continue;
+
+    const paragraph = section.locator("p").first();
+    await expect(paragraph).toBeAttached();
+    await section.scrollIntoViewIfNeeded();
+    await expect(heading).toBeVisible();
+    await expect(paragraph).toBeVisible();
+
+    for (const content of [heading, paragraph]) {
+      const state = await content.evaluate((element) => {
+        let opacity = 1;
+        let offsetY = 0;
+        let current: HTMLElement | null = element as HTMLElement;
+
+        while (current) {
+          const style = getComputedStyle(current);
+          opacity *= Number(style.opacity);
+          if (style.transform !== "none") {
+            offsetY += new DOMMatrixReadOnly(style.transform).m42;
+          }
+          current = current.parentElement;
+        }
+
+        const textDescendants = Array.from(element.querySelectorAll<HTMLElement>("*"))
+          .filter((descendant) => descendant.textContent?.trim());
+        const hiddenText = textDescendants
+          .map((descendant) => ({
+            text: descendant.textContent?.trim(),
+            opacity: Number(getComputedStyle(descendant).opacity),
+          }))
+          .find((descendant) => descendant.opacity <= 0.01);
+
+        return { opacity, offsetY, hiddenText, text: element.textContent?.trim() };
+      });
+
+      expect(state.opacity, `${state.text} should have visible ancestors`).toBeGreaterThan(0.01);
+      expect(state.hiddenText, `${state.text} should not contain hidden text`).toBeUndefined();
+      expect(Math.abs(state.offsetY), `${state.text} should not start vertically offset`).toBeLessThan(4);
+    }
+    checkedSections += 1;
+  }
+
+  expect(checkedSections).toBeGreaterThan(0);
+});
+
+test("keeps Beyond photo wall cards readable without JavaScript", async ({ page }) => {
+  await page.route("**/_next/static/**/*.js", (route) => route.abort());
+  await page.goto("/beyond-terminal");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Beyond The Terminal" })
+  ).toBeVisible();
+  await expect(
+    page.getByText("Photos, people, notes, and the parts that don't fit inside a resume.")
+  ).toBeVisible();
+
+  const cards = page.getByRole("button", { name: /^Open / });
+  const cardCount = await cards.count();
+  expect(cardCount).toBeGreaterThan(0);
+
+  for (let index = 0; index < cardCount; index += 1) {
+    const card = cards.nth(index);
+    await card.scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => card.evaluate((element) => Number(getComputedStyle(element).opacity)))
+      .toBeGreaterThan(0.99);
+  }
 });
 
 test("allows the listed search, retrieval, and training agents in the public policy", () => {
@@ -159,8 +243,18 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
     "content",
     /Velo/
   );
+  const veloOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
+  const veloTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
+  expect(new URL(veloOgImage!, page.url()).pathname).toBe("/projects/velo/velo-livery-day.webp");
+  expect(veloTwitterImage).toBe(veloOgImage);
 
   await page.goto("/work/portfolio-platform");
+  const platformOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
+  const platformTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
+  expect(new URL(platformOgImage!, page.url()).pathname).toBe(
+    "/projects/portfolio-platform/portfolio-preview.svg"
+  );
+  expect(platformTwitterImage).toBe(platformOgImage);
   const portfolioJsonLd = await page.locator("#project-structured-data").textContent();
   expect(portfolioJsonLd).not.toBeNull();
   const portfolioGraph = JSON.parse(portfolioJsonLd!) as {
