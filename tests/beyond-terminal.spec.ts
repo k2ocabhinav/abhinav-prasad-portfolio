@@ -136,7 +136,11 @@ test("hero keeps its order and reserves the stack for wide screens", async ({ pa
     expect(actionsBox).not.toBeNull();
 
     if (width <= 767) {
-      expect(wordmarkBox!.y).toBeLessThan(identityBox!.y);
+      await expect(page.locator('[data-home-hero-frame] header')).toContainText("Abhinav Prasad");
+      expect(wordmarkBox!.y).toBeGreaterThan(identityBox!.y);
+      const wordmarkBottom = wordmarkBox!.y + wordmarkBox!.height;
+      expect(wordmarkBottom).toBeGreaterThanOrEqual(884);
+      expect(wordmarkBottom).toBeLessThanOrEqual(900);
       await expect(stack).toBeHidden();
     } else {
       expect(wordmarkBox!.y).toBeGreaterThan(actionsBox!.y);
@@ -595,6 +599,136 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
     "href",
     "https://github.com/k2ocabhinav/Velo"
   );
+});
+
+test("the phone drawer keeps Work active while the page is scroll-locked", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  await page.evaluate(() => {
+    const work = document.querySelector<HTMLElement>("#work");
+    if (!work) throw new Error("Missing Work section");
+    window.scrollTo({
+      top: work.getBoundingClientRect().top + window.scrollY + window.innerHeight / 2,
+      behavior: "instant",
+    });
+  });
+  await expect(page.locator('nav[aria-label="Section navigation"] a[href="#work"]'))
+    .toHaveAttribute("aria-current", "location");
+
+  await page.mouse.wheel(0, -120);
+  const openMenu = page.getByRole("button", { name: "Open menu" });
+  await expect(openMenu).toBeVisible();
+  await openMenu.click();
+
+  const dialog = page.getByRole("dialog", { name: "Site navigation" });
+  await expect(dialog.locator('a[href="#work"]')).toHaveAttribute("aria-current", "location");
+  await expect(dialog.locator('a[href="#contact"]')).not.toHaveAttribute("aria-current", "location");
+});
+
+test("the 320 pixel drawer leaves room below its last row", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open menu" }).click();
+
+  const lastRow = page.getByRole("dialog", { name: "Site navigation" }).locator("nav a").last();
+  const geometry = await lastRow.evaluate((element) => {
+    const panel = element.closest<HTMLElement>("[role='dialog']");
+    if (!panel) throw new Error("Missing menu panel");
+    return {
+      panelBottom: panel.getBoundingClientRect().bottom,
+      rowBottom: element.getBoundingClientRect().bottom,
+      panelScrollHeight: panel.scrollHeight,
+      panelClientHeight: panel.clientHeight,
+    };
+  });
+  expect(geometry.panelBottom - geometry.rowBottom).toBeGreaterThanOrEqual(32);
+  expect(geometry.panelScrollHeight).toBeLessThanOrEqual(geometry.panelClientHeight + 1);
+});
+
+test("the Velo phone hero preload stays on its route", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/");
+  await page.locator("#work").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(700);
+  await expect(page.locator('link[rel="preload"][as="image"][href*="velo-livery-day-mobile"]'))
+    .toHaveCount(0);
+
+  await page.goto("/work/velo");
+  const preload = page.locator('link[rel="preload"][as="image"][href*="velo-livery-day-mobile"]');
+  await expect(preload).toHaveCount(1);
+  await expect(preload).toHaveAttribute("media", "(max-width: 767px)");
+});
+
+test("the phone hero fits the shortest target viewports without crowding its cue", async ({ page }) => {
+  for (const viewport of [
+    { width: 320, height: 568 },
+    { width: 375, height: 667 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+
+    const geometry = await page.evaluate(() => {
+      const wordmark = document.querySelector('[data-home-hero-wordmark="true"]');
+      const cue = document.querySelector('[data-hero-scroll-cue="true"]');
+      const identity = document.querySelector('[data-hero-identity="true"]');
+      const frame = document.querySelector<HTMLElement>("[data-home-hero-frame]");
+      if (!wordmark || !cue || !identity || !frame) throw new Error("Hero elements are missing");
+      const rect = (element: Element) => {
+        const bounds = element.getBoundingClientRect();
+        return { top: bounds.top, bottom: bounds.bottom };
+      };
+      return {
+        wordmark: rect(wordmark),
+        cue: rect(cue),
+        identity: rect(identity),
+        frameHeight: frame.getBoundingClientRect().height,
+        viewportHeight: window.innerHeight,
+      };
+    });
+    expect(geometry.wordmark.top).toBeGreaterThan(geometry.identity.bottom);
+    expect(geometry.wordmark.top).toBeGreaterThan(geometry.cue.bottom);
+    expect(geometry.frameHeight).toBeLessThanOrEqual(geometry.viewportHeight + 1);
+  }
+});
+
+test("portfolio gallery frames keep each capture readable on phones and composed on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await page.goto("/work/portfolio-platform");
+
+  const gallery = page.locator('section[aria-labelledby="gallery-title"]');
+  const images = gallery.locator("img");
+  await expect(images).toHaveCount(3);
+  for (const image of await images.all()) {
+    await image.scrollIntoViewIfNeeded();
+    const frame = await image.evaluate((element) => {
+      const imageElement = element as HTMLImageElement;
+      const frameElement = imageElement.parentElement;
+      if (!frameElement || imageElement.naturalHeight === 0) {
+        throw new Error("Gallery image or frame is not ready");
+      }
+      const bounds = frameElement.getBoundingClientRect();
+      return {
+        width: bounds.width,
+        ratio: bounds.width / bounds.height,
+        imageRatio: imageElement.naturalWidth / imageElement.naturalHeight,
+      };
+    });
+    expect(frame.width).toBeGreaterThanOrEqual(300);
+    expect(Math.abs(frame.ratio - frame.imageRatio)).toBeLessThan(0.015);
+  }
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.reload();
+  const phoneFrame = await gallery.locator("figure").nth(1).locator("div").first().evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    return bounds.width / bounds.height;
+  });
+  expect(phoneFrame).toBeGreaterThan(0.7);
+  expect(phoneFrame).toBeLessThan(0.8);
+  await expect(gallery.locator("img").nth(1)).toHaveCSS("object-fit", "cover");
 });
 
 test("desktop handoff into the profile section stays seam-free", async ({ page }) => {

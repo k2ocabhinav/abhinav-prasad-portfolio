@@ -98,11 +98,12 @@
 
 @media (max-width: 767px) {
   .nameShell {
-    position: relative;
-    order: -1;
-    bottom: auto;
-    margin: 3.7rem 0 0.75rem;
-    width: calc(100% - 0.5rem);
+    position: absolute;
+    right: 0;
+    bottom: -0.5rem;
+    left: 0;
+    width: 100%;
+    margin: 0;
     font-size: clamp(4.25rem, 26cqw, 7.5rem);
     line-height: 0.86;
   }

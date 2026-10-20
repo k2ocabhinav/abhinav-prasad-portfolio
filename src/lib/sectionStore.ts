@@ -100,7 +100,9 @@ function startEngine(): () => void {
   }
 
   const visible = new Set<Element>();
+  const bodyScrollIsLocked = () => document.body.style.position === "fixed";
   const atPageBottom = () =>
+    !bodyScrollIsLocked() &&
     window.innerHeight + window.scrollY >=
     document.documentElement.scrollHeight - 2;
   const last = resolved[resolved.length - 1];

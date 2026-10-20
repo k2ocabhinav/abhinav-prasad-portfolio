@@ -40,21 +40,33 @@
 
 @media (max-width: 767px) {
   .copyright {
-    font-size: 12px;
+    max-width: 100%;
+    margin-inline: auto;
+    font-size: clamp(9px, 3vw, 10px);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
   }
 
   .colophon {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
 @media (max-width: 480px) {
   .colophonRow {
-    gap: 0.45rem;
+    flex-direction: column;
+    gap: 0.55rem;
   }
 
   .colophon {
-    max-width: 17rem;
+    max-width: 100%;
     line-height: 1.5;
+    text-wrap: balance;
+  }
+}
+
+@media (max-width: 350px) {
+  .footer {
+    padding-inline: 1rem;
   }
 }

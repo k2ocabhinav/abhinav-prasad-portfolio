@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { preload } from "react-dom";
+import type { CSSProperties } from "react";
 import type {
   PersonalData,
   ProjectDetail,
@@ -69,7 +71,13 @@ function LegacyGallery({ detail }: { detail: ProjectDetail }) {
       <div className={styles.legacyGallery} data-count={detail.gallery.length}>
         {detail.gallery.map((visual) => (
           <figure className={styles.legacyFigure} key={visual.src}>
-            <div className={styles.legacyFrame}>
+            <div
+              className={styles.legacyFrame}
+              data-gallery-portrait={visual.frameAspectRatio && visual.frameAspectRatio < 1 ? "true" : undefined}
+              style={visual.frameAspectRatio
+                ? { "--gallery-aspect-ratio": visual.frameAspectRatio } as CSSProperties
+                : undefined}
+            >
               <Image
                 src={visual.src}
                 alt={visual.alt}
@@ -103,21 +111,17 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
     return visual ? [visual] : [];
   });
 
+  if (mobileHeroVisual) {
+    preload(mobileHeroAvif ?? mobileHeroVisual.src, {
+      as: "image",
+      ...(mobileHeroAvif ? { type: "image/avif" } : {}),
+      media: "(max-width: 767px)",
+      fetchPriority: "high",
+    });
+  }
+
   return (
     <div className={styles.pageShell}>
-      {/* The art-directed mobile capture is the LCP on phones. Preload the exact
-          URL the <source>s below will select so it starts before the inline
-          stylesheet has been parsed; the media query keeps it off desktop. */}
-      {mobileHeroVisual ? (
-        <link
-          rel="preload"
-          as="image"
-          href={mobileHeroAvif ?? mobileHeroVisual.src}
-          type={mobileHeroAvif ? "image/avif" : undefined}
-          media="(max-width: 767px)"
-          fetchPriority="high"
-        />
-      ) : null}
       <a className={styles.skipLink} href="#project-content">Skip to project content</a>
       <header className={styles.chrome}>
         <div className={`content-container ${styles.chromeInner}`}>

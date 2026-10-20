@@ -615,7 +615,7 @@
     bottom: 0;
     left: 0;
     display: block;
-    width: 2.5rem;
+    width: 5rem;
     overflow: hidden;
     pointer-events: none;
   }
@@ -639,7 +639,7 @@
   .processSteps {
     grid-template-columns: minmax(0, 1fr);
     gap: clamp(1.4rem, 4vw, 2rem);
-    padding-left: 3.8rem;
+    padding-left: 5.2rem;
   }
 
   .processSteps li {
@@ -650,7 +650,7 @@
   .processSteps li::before {
     position: absolute;
     top: 0.15rem;
-    left: -3.65rem;
+    left: -3rem;
     width: 0.55rem;
     height: 0.55rem;
     border: 1px solid var(--lead);

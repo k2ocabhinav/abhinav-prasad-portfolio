@@ -98,19 +98,20 @@
 
   .content {
     display: flex;
-    min-height: 0;
+    min-height: calc(100svh - 2.1rem);
   }
 
   .masthead {
-    display: none;
+    flex: 0 0 auto;
   }
 
   .heroGrid {
     display: flex;
     flex-direction: column;
-    flex: none;
+    flex: 1;
+    min-height: 0;
     gap: 0;
     align-items: stretch;
-    padding: 0;
+    padding: 0 0 clamp(4.25rem, 24cqw, 6rem);
   }
 }

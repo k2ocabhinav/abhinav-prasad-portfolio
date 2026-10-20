@@ -182,7 +182,7 @@ function ProjectDetails({
 
       <div className={styles.projectActions}>
         {project.detailSlug ? (
-          <Link href={`/work/${project.detailSlug}`} className={styles.caseStudyButton}>
+          <Link href={`/work/${project.detailSlug}`} prefetch={false} className={styles.caseStudyButton}>
             <m.span whileHover={{ y: -1 }} transition={tiltSpring}>
               Read the case study
             </m.span>

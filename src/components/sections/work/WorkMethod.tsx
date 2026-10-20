@@ -69,15 +69,15 @@ export default function WorkMethod({ content }: WorkMethodProps) {
           <ClipReveal className={styles.mobileRouteReveal} from="bottom">
             <svg
               className={styles.mobileRoute}
-              viewBox="0 0 60 620"
+              viewBox="0 0 80 620"
               preserveAspectRatio="none"
               aria-hidden="true"
             >
-              <path className={styles.routeMobileScope} d="M30 10 V150" />
-              <path className={styles.routeMobileLane} d="M30 150 C30 190 10 185 10 225 V345 C10 380 30 380 30 420" />
-              <path className={styles.routeMobileLane} d="M30 150 V420" />
-              <path className={styles.routeMobileLane} d="M30 150 C30 190 50 185 50 225 V345 C50 380 30 380 30 420" />
-              <path className={styles.routeMobileVerify} d="M30 420 V610" />
+              <path className={styles.routeMobileScope} d="M40 10 V150" />
+              <path className={styles.routeMobileLane} d="M40 150 C40 190 10 185 10 225 V345 C10 380 40 380 40 420" />
+              <path className={styles.routeMobileLane} d="M40 150 V420" />
+              <path className={styles.routeMobileLane} d="M40 150 C40 190 70 185 70 225 V345 C70 380 40 380 40 420" />
+              <path className={styles.routeMobileVerify} d="M40 420 V610" />
             </svg>
           </ClipReveal>
 
