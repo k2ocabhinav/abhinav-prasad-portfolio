@@ -44,20 +44,25 @@
   display: block;
 }
 
+.clipInner {
+  display: block;
+  height: 100%;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  :global(html[data-js]) .clip {
+  :global(html[data-js]) .clipInner {
     transition: clip-path 1100ms var(--ease-out-expo);
   }
 
-  :global(html[data-js]) .clip[data-clip-from="bottom"]:not([data-in="true"]) {
+  :global(html[data-js]) .clip[data-clip-from="bottom"]:not([data-in="true"]) .clipInner {
     clip-path: inset(100% 0 0 0);
   }
 
-  :global(html[data-js]) .clip[data-clip-from="left"]:not([data-in="true"]) {
+  :global(html[data-js]) .clip[data-clip-from="left"]:not([data-in="true"]) .clipInner {
     clip-path: inset(0 100% 0 0);
   }
 
-  :global(html[data-js]:not([data-hydrated])) .clip:not([data-in="true"]) {
+  :global(html[data-js]:not([data-hydrated])) .clip:not([data-in="true"]) .clipInner {
     animation: clipFailsafe 1ms linear 2.5s forwards;
   }
 }
