@@ -1,4 +1,3 @@
-import InkPassController from "./InkPassController";
 import PortalNameTrigger from "./PortalNameTrigger";
 import type { PortalTransitionIntent } from "@/types";
 import styles from "./AnimatedName.module.css";
@@ -21,7 +20,6 @@ export default function AnimatedName({ name, portalTrigger }: AnimatedNameProps)
       data-pass="false"
       data-reduce-motion="false"
     >
-      <InkPassController />
       <span className={styles.plateDrift} data-ink-plate-drift="true" aria-hidden="true">
         <span className={styles.inkPlate}>{name}</span>
       </span>

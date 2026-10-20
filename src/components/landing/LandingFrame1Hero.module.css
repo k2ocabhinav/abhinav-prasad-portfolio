@@ -9,6 +9,8 @@
 }
 
 .content {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: flex-start;
   width: 100%;
@@ -33,7 +35,7 @@
   }
 
   .content {
-    padding-block: 6.25rem 5.5rem;
+    padding-block: 6.25rem 7rem;
   }
 }
 

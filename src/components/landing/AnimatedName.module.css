@@ -41,7 +41,6 @@
   pointer-events: none;
   color: var(--color-burgundy, #6A2135);
   transform: translate3d(0, 0, 0);
-  will-change: transform;
 }
 
 .inkPlate {
@@ -50,11 +49,11 @@
 }
 
 .nameShell[data-pass="true"] .inkPlate {
-  animation: inkSweep 700ms var(--motion-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+  animation: inkSweep 650ms var(--motion-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) 450ms both;
 }
 
 .nameShell[data-pass="true"] .plateDrift::after {
-  animation: rollerSweep 700ms var(--motion-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+  animation: rollerSweep 650ms var(--motion-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) 450ms both;
 }
 
 .plateDrift::after {
@@ -94,27 +93,14 @@
 
 @keyframes inkSweep {
   0% {
-    clip-path: none;
     transform: translate(2px, 2px);
   }
 
-  8% {
-    clip-path: none;
+  18% {
     transform: translate(4px, 3px);
-  }
-
-  14% {
-    clip-path: inset(0 100% 0 0);
-    transform: translate(4px, 3px);
-  }
-
-  82% {
-    clip-path: inset(0 18% 0 0);
-    transform: translate(3px, 2.5px);
   }
 
   100% {
-    clip-path: inset(0 0 0 0);
     transform: translate(2px, 2px);
   }
 }

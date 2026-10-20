@@ -121,6 +121,22 @@ test("wordmark and email action keep phone gutters from 320 to 430 pixels", asyn
     await page.setViewportSize({ width, height: 844 });
     await expectHeroNameToFit(page);
 
+    const scene = page.locator("[data-pressrun-scene='true']");
+    const strip = page.locator("[data-pressrun-strip='true']");
+    await expect(scene.locator("[data-pressrun-depth='glacier']")).toBeHidden();
+    await expect(scene.locator("[data-pressrun-depth='target']")).toBeHidden();
+    await expect(strip).toBeVisible();
+    const stripBounds = await strip.boundingBox();
+    const compactLabels = strip.locator("[data-compact-label='true']");
+    expect(stripBounds).not.toBeNull();
+    await expect(compactLabels).toHaveCount(3);
+    for (let index = 0; index < 3; index += 1) {
+      const bounds = await compactLabels.nth(index).boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds!.x).toBeGreaterThanOrEqual(stripBounds!.x);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(stripBounds!.x + stripBounds!.width);
+    }
+
     const email = await page
       .locator('[data-home-hero-text] a[href^="mailto:"]')
       .boundingBox();
@@ -145,7 +161,19 @@ test("server-rendered hero paints both ink layers before hydration", async ({ pa
   await expect(plate).toHaveCSS("clip-path", "none");
   await expect(plate).toHaveCSS("opacity", "1");
   await expect(page.getByText("Software engineer", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(
+      "I build products end to end, from the first conversation to release.",
+      { exact: true }
+    )
+  ).toBeVisible();
   await expect(page.locator('[data-hero-facts="true"] a')).toHaveCount(2);
+  await expect(page.getByRole("link", { name: "View work" })).toBeVisible();
+  await expect(
+    page.locator("[data-home-hero-text]").getByRole("link", {
+      name: "Email Abhinav",
+    })
+  ).toBeVisible();
 });
 
 test("home page does not expose an obvious Beyond CTA", async ({ page }) => {
@@ -525,21 +553,29 @@ test("desktop home hero wordmark keeps the editorial look", async ({ page }) => 
   });
 });
 
-test("desktop home hero keeps the matte scene visible above the fold", async ({
-  page,
-}) => {
+test("desktop home hero lays in the crop marks and calibration strip", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
-  await freezeHeroAmbientForSnapshot(page);
-  await page.waitForTimeout(900);
 
-  const screenshot = await page.locator('[data-home-hero-frame="true"]').screenshot({
-    animations: "disabled",
-  });
+  const scene = page.locator("[data-pressrun-scene='true']");
+  const strip = page.getByRole("link", { name: "Scroll to What I do" });
+  await expect(scene.locator("svg")).toHaveCount(6);
+  await expect(scene.locator("[data-pressrun-depth='glacier']")).toBeVisible();
+  await expect(scene.locator("[data-pressrun-depth='target']")).toBeVisible();
+  await expect(strip).toBeVisible();
+  await expect(strip).toHaveAttribute("href", "#services");
+  await expect(strip).toHaveCSS("min-height", "48px");
+});
 
-  expect(screenshot).toMatchSnapshot("home-hero-scene-desktop.png", {
-    maxDiffPixelRatio: 0.025,
-  });
+test("the calibration strip scrolls to What I do", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  await page.getByRole("link", { name: "Scroll to What I do" }).click();
+
+  await expect(page).toHaveURL(/#services$/);
+  await expect(page.locator("#services")).toBeInViewport();
+  await expect(page.locator("#services h2")).toHaveText("What I do");
 });
 
 test("ink pass sweeps the burgundy plate while the black wordmark stays still", async ({
@@ -569,8 +605,31 @@ test("ink pass stays static when reduced motion is requested", async ({ page }) 
   const plate = heading.locator('[data-ink-plate-drift="true"] span');
   await expect(heading).toHaveAttribute("data-reduce-motion", "true");
   await expect(heading).toHaveAttribute("data-pass", "false");
+  await expect(page.locator("[data-pressrun-scene='true']")).toHaveAttribute(
+    "data-reduce-motion",
+    "true"
+  );
+  await expect(page.locator("[data-pressrun-strip='true']")).toHaveAttribute(
+    "data-reduce-motion",
+    "true"
+  );
   await expect(plate).toHaveCSS("animation-name", "none");
   await expect(plate).toHaveCSS("clip-path", "none");
+
+  const decorationAnimations = await page
+    .locator("[data-pressrun-scene='true']")
+    .evaluate((element) =>
+      Array.from(element.querySelectorAll("svg"))
+        .map((decor) => getComputedStyle(decor).animationName)
+    );
+  expect(decorationAnimations).toEqual([
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+  ]);
 
   const restTransform = await plate.evaluate((element) => getComputedStyle(element).transform);
   await page.mouse.move(900, 640);

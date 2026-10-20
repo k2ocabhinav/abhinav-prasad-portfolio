@@ -1,4 +1,5 @@
 import HeroTextColumn from "./HeroTextColumn";
+import PressRunController from "./PressRunController";
 import type { LandingHeroContent } from "@/types";
 import styles from "./LandingFrame1Hero.module.css";
 
@@ -16,6 +17,7 @@ export default function LandingFrame1Hero({
       <div className={styles.content}>
         <HeroTextColumn hero={hero} name={name} />
       </div>
+      <PressRunController />
     </div>
   );
 }
