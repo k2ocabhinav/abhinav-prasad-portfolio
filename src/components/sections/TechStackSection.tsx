@@ -1,9 +1,8 @@
-import type { SectionTone, StackGroup } from "@/types";
-import StackStrip, {
-  type StackStripItem,
-} from "@/components/art/stack-icons/StackStrip";
+import type { SectionTone, StackContext, StackGroup } from "@/types";
 import type { StackIconName } from "@/components/art/stack-icons/icons";
+import RevealText from "@/components/motion/RevealText";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import TechStackRows, { type StackRowItem } from "./TechStackSectionRows";
 import styles from "./TechStackSection.module.css";
 
 interface TechStackSectionProps {
@@ -25,6 +24,12 @@ const STACK_ICON_BY_LABEL: Record<string, StackIconName> = {
   agents: "agents",
 };
 
+const EVIDENCE_ORDER: readonly StackContext[] = [
+  "Part of my workflow",
+  "Built in projects",
+  "Used at work",
+];
+
 export default function TechStackSection({
   techCategories,
   stackItems,
@@ -33,30 +38,51 @@ export default function TechStackSection({
   if (techCategories.length === 0) {
     return null;
   }
-  const highlightedCategories = techCategories.filter((category) => category.highlighted);
 
-  const iconItems: StackStripItem[] = stackItems.map((label) => ({
+  const rowItems: StackRowItem[] = stackItems.map((label) => ({
     name: STACK_ICON_BY_LABEL[label.toLowerCase()] ?? "api",
     label,
   }));
+
   return (
     <SectionWrapper id="stack" tone={tone} className={styles.stackSection}>
       <div className={styles.header}>
-        <div className={styles.headingBlock}>
-          <h2 className={styles.heading}>Stack</h2>
-          <p className={styles.callout}>Tools grouped by where I use them.</p>
-        </div>
-        <StackStrip items={iconItems} className={styles.iconStrip} />
+        <h2 className={styles.heading}>Stack</h2>
+        <p className={styles.callout}>Tools grouped by where I use them.</p>
       </div>
 
-      <ul className={styles.focusList}>
-        {highlightedCategories.map((group) => (
-          <li key={group.id}>
-            <span className={styles.groupLabel}>{group.label}</span>
-            <span className={styles.context}>{group.context}</span>
-          </li>
+      <TechStackRows items={rowItems} />
+
+      <ul className={styles.srOnly} aria-label="Tools I use">
+        {rowItems.map((item) => (
+          <li key={item.label}>{item.label}</li>
         ))}
       </ul>
+
+      <div className={styles.evidence} data-stack-evidence="true">
+        {EVIDENCE_ORDER.map((context) => {
+          const groups = techCategories.filter(
+            (group) => group.context === context
+          );
+
+          return (
+            <div key={context} className={styles.evidenceColumn}>
+              <RevealText
+                as="h3"
+                text={context}
+                className={styles.evidenceHeading}
+              />
+              <ul className={styles.evidenceList}>
+                {groups.map((group) => (
+                  <li key={group.id} className={styles.evidenceItem}>
+                    {group.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
     </SectionWrapper>
   );
 }

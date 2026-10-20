@@ -9,12 +9,13 @@
   --tone-accent-deep: var(--color-lovebird-deep, #4E5312);
 }
 
+/* The heading carries the section; the sentence sits at the baseline of the
+   display type instead of above it. */
 .header {
   display: grid;
-  grid-template-columns: minmax(12rem, 0.32fr) minmax(0, 0.68fr);
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.4fr);
+  align-items: end;
   gap: clamp(1.5rem, 4vw, 3.5rem);
-  margin-bottom: clamp(1.8rem, 3.5vw, 2.8rem);
 }
 
 .heading {
@@ -29,92 +30,109 @@
 
 .callout {
   max-width: 22rem;
-  margin: 0.8rem 0 0;
+  margin: 0 0 0.35rem;
   color: var(--color-lovebird-deep, #4E5312);
   font-family: var(--font-label);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
   line-height: 1.5;
+  text-align: right;
   text-transform: uppercase;
+  justify-self: end;
 }
 
-.iconStrip {
-  justify-content: flex-start;
-}
-
-.focusList {
+.evidence {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 0;
-  padding: 0;
-  border-bottom: 1px solid var(--color-hairline);
-  list-style: none;
-}
-
-.focusList li {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.9rem 1rem 0.9rem 0;
   border-top: 1px solid var(--color-hairline);
 }
 
-.focusList li + li {
-  padding-left: 1rem;
+.evidenceColumn {
+  min-width: 0;
+  padding: 1rem 1.25rem 0 0;
+}
+
+.evidenceColumn + .evidenceColumn {
+  padding-left: 1.25rem;
   border-left: 1px solid var(--color-hairline);
 }
 
-.groupLabel {
-  color: var(--color-black-cherry, #351E28);
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 1.6vw, 1.3rem);
-  font-weight: 570;
-  line-height: 1.25;
-}
-
-.context {
+.evidenceHeading {
+  margin: 0;
   color: var(--color-lovebird-deep, #4E5312);
   font-family: var(--font-label);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
+  font-weight: 400;
   letter-spacing: 0.1em;
   line-height: 1.45;
   text-transform: uppercase;
+  word-spacing: 0.32em;
+  /* RevealText keeps each separator inside its inline-block mask; pre-wrap
+     preserves that space instead of collapsing it at the mask edge. */
+  white-space: pre-wrap;
+}
+
+.evidenceList {
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.evidenceItem {
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--color-hairline);
+  color: var(--color-black-cherry, #351E28);
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  font-weight: 550;
+  line-height: 1.25;
+}
+
+.evidenceItem:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 @media (max-width: 767px) {
   .header {
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.25rem;
+    gap: 0.85rem;
   }
 
   .callout {
+    margin: 0;
     font-size: 12px;
+    text-align: left;
+    justify-self: start;
   }
 
-  .focusList {
+  .evidence {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .focusList li,
-  .focusList li + li {
-    flex-direction: row;
-    align-items: baseline;
-    padding: 0.75rem 0;
+  .evidenceColumn,
+  .evidenceColumn + .evidenceColumn {
+    padding: 1rem 0 0;
     border-left: 0;
   }
 
-  .groupLabel {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: 1.05rem;
+  .evidenceColumn + .evidenceColumn {
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--color-hairline);
   }
 
-  .context {
-    flex: 0 0 8rem;
-    max-width: 8rem;
-    text-align: right;
+  .evidenceHeading {
     font-size: 12px;
   }
 }

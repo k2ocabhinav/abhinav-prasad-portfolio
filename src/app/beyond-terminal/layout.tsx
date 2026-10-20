@@ -25,13 +25,22 @@ const mono = Space_Mono({
   display: "swap",
 });
 
+const beyondTitle = "Beyond The Terminal";
+const beyondDescription =
+  "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.";
+const beyondImage = {
+  url: absoluteUrl("/og-image.jpg"),
+  width: 1200,
+  height: 630,
+  alt: "Abhinav Prasad, Beyond The Terminal photo wall",
+};
+
 export const metadata: Metadata = {
   title: {
-    default: "Beyond The Terminal",
-    template: "%s | Beyond The Terminal",
+    default: beyondTitle,
+    template: `%s | ${beyondTitle}`,
   },
-  description:
-    "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.",
+  description: beyondDescription,
   robots: {
     index: false,
     follow: false,
@@ -41,10 +50,16 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Beyond The Terminal",
-    description:
-      "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.",
+    title: beyondTitle,
+    description: beyondDescription,
     url: absoluteUrl("/beyond-terminal"),
+    images: [beyondImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: beyondTitle,
+    description: beyondDescription,
+    images: [beyondImage],
   },
 };
 

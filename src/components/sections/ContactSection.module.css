@@ -1,9 +1,14 @@
 .contactSection {
-  /* SectionWrapper paints from --section-bg, so no background override (and no
-     doubled selector) is needed here. */
+  /* SectionWrapper paints --section-bg, so the field stays one declaration. */
   --section-bg: var(--paper-glacier, #D7EFFF);
+  --section-padding-y: clamp(3.5rem, 6vw, 5.5rem);
+  /* A full screen of contact gives the colophon underneath something to be
+     revealed from. Content still breathes; shorter viewports grow naturally. */
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   color: var(--color-black-cherry, #351E28);
-  --section-padding-y: clamp(3rem, 5vw, 4.5rem);
   --plate-ink: var(--color-black-cherry, #351E28);
   --plate-accent: var(--color-petrol, #1A5D74);
   --plate-second: var(--color-cornflower, #94B6EF);
@@ -15,16 +20,29 @@
   width: 100%;
   max-width: 76rem;
   margin-inline: auto;
-  padding: clamp(0.75rem, 2vw, 1.5rem);
 }
 
+.heading {
+  margin: 0;
+  color: var(--color-black-cherry, #351E28);
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 11vw, 11rem);
+  font-weight: 550;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+  /* Preserve the space RevealText keeps inside its inline-block word mask. */
+  white-space: pre-wrap;
+}
+
+/* The rule under the call separates the sentence from the coordinates. */
 .contactComposition {
-  position: relative;
-  z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  align-items: center;
-  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  margin-top: clamp(1.8rem, 3.5vw, 3rem);
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  border-top: 1px solid rgba(53, 30, 40, 0.24);
 }
 
 .presenceBlock {
@@ -34,9 +52,8 @@
 .mapContainer {
   position: relative;
   width: 100%;
-  max-width: 34rem;
+  max-width: 30rem;
   aspect-ratio: 2 / 1;
-  margin-inline: auto;
 }
 
 .mapContainer svg {
@@ -68,13 +85,13 @@
   margin: 1rem 0 0;
   color: var(--color-black-cherry, #351E28);
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
   font-weight: 570;
   line-height: 1.2;
 }
 
 .presenceDescription {
-  max-width: 48ch;
+  max-width: 38ch;
   margin: 0.45rem 0 0;
   color: var(--color-black-cherry, #351E28);
   font-size: 1rem;
@@ -82,54 +99,20 @@
 }
 
 .contactScene .contactSpecSheet {
-  max-width: 42rem;
+  max-width: none;
   margin: 0;
-  background-color: var(--color-panel, #351E28);
-  color: var(--color-on-panel, #EDE6DA);
+  padding: clamp(1.4rem, 3vw, 2.25rem);
   box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
-  --color-surface: var(--color-panel, #351E28);
-  --color-surface-rgb: var(--color-black-cherry-rgb, 53, 30, 40);
-  --color-on-surface: var(--color-on-panel, #EDE6DA);
-  --color-on-surface-rgb: 237, 230, 218;
-  --color-secondary-text: #D6CCBF;
-  --color-primary-brand: var(--color-panel-accent, #F4BEBB);
-  --color-primary-brand-rgb: 244, 190, 187;
-  --color-sage: var(--color-panel-accent, #F4BEBB);
-  --color-sage-rgb: 244, 190, 187;
-  --color-hairline: rgba(237, 230, 218, 0.2);
-  --color-accent-brown: var(--color-on-panel, #EDE6DA);
-}
-
-.contactMotionRoot {
-  position: relative;
-  padding: clamp(1.4rem, 3.5vw, 2.5rem);
-}
-
-.heading {
-  margin: 0;
-  color: var(--color-on-panel, #EDE6DA);
-  font-family: var(--font-display);
-  font-size: clamp(2.75rem, 6vw, 4.8rem);
-  font-weight: 550;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
 }
 
 .callout {
-  margin: 0.55rem 0 1.3rem;
+  margin: 0 0 1.4rem;
   color: var(--color-panel-accent, #F4BEBB);
   font-family: var(--font-label);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   line-height: 1.5;
   text-transform: uppercase;
-}
-
-.ctaContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.15rem;
 }
 
 .contactLinks {
@@ -140,18 +123,6 @@
   max-width: 100%;
 }
 
-/* The stamp and the address share a row when there is room. When there is not,
-   the contact block wraps to its own row so the address keeps a usable measure
-   instead of collapsing to one character per line. */
-.contactInfo {
-  display: flex;
-  min-width: 0;
-  flex: 1 1 13rem;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
 .emailLink {
   display: inline-flex;
   max-width: 100%;
@@ -159,7 +130,7 @@
   align-items: center;
   color: var(--color-panel-accent, #F4BEBB);
   font-family: var(--font-display);
-  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-size: clamp(1rem, 2vw, 1.4rem);
   font-weight: 550;
   line-height: 1.3;
   overflow-wrap: normal;
@@ -171,18 +142,18 @@
   opacity: 0.72;
 }
 
-/* Two print-press actions sit directly below the address: LinkedIn leads,
-   the résumé follows. Both share the panel's button tokens. */
+/* The two actions sit below the address; the panel supplies their tokens. */
 .contactActions {
   display: flex;
   max-width: 100%;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.9rem;
+  margin-top: 1.5rem;
 }
 
 .contactActions .contactAction {
-  padding-inline: clamp(1rem, 4vw, 2.5rem);
+  padding: 1rem clamp(0.9rem, 2.2vw, 1.6rem);
 }
 
 .linkedinAction {
@@ -193,145 +164,48 @@
   flex: none;
 }
 
-.footerTagline {
-  margin-top: 1.7rem;
-  color: var(--color-on-panel, #EDE6DA);
-  opacity: 0.78;
-}
-
-.taglineText {
-  margin: 0;
-  font-family: var(--font-label);
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
-  line-height: 1.55;
-  text-transform: uppercase;
-}
-
-.trimMarks {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.trimMarks span {
-  position: absolute;
-  width: 1rem;
-  aspect-ratio: 1;
-  border: 0 solid var(--color-petrol-deep, #174F61);
-  opacity: 0.6;
-}
-
-.trimMarks span:nth-child(1) {
-  top: 0;
-  left: 0;
-  border-top-width: 1px;
-  border-left-width: 1px;
-}
-
-.trimMarks span:nth-child(2) {
-  top: 0;
-  right: 0;
-  border-top-width: 1px;
-  border-right-width: 1px;
-}
-
-.trimMarks span:nth-child(3) {
-  bottom: 0;
-  left: 0;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-}
-
-.trimMarks span:nth-child(4) {
-  right: 0;
-  bottom: 0;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-}
-
-/* Just above the tablet breakpoint the two-column panel is narrow enough that
-   the 20.48px address would wrap. Trim the panel padding for that band so the
-   address still reads on one line. */
-@media (min-width: 1024px) and (max-width: 1199px) {
-  .contactMotionRoot {
-    padding: clamp(1.4rem, 2.4vw, 2rem);
-  }
-}
-
-/* The home gutter leaves the right-hand column too narrow for two columns on
-   tablets. Stack the map and the panel there so the email panel keeps a full
-   measure instead of collapsing to a few characters. */
 @media (min-width: 768px) and (max-width: 1023px) {
   .contactComposition {
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.25rem;
+    gap: 1.75rem;
   }
 
   .mapContainer {
-    width: min(100%, 34rem);
+    width: min(100%, 30rem);
   }
 }
 
 @media (max-width: 767px) {
   .contactComposition {
     grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-  }
-
-  .contactActions {
-    width: 100%;
-  }
-
-  .contactActions .contactAction {
-    width: 100%;
+    gap: 1.5rem;
   }
 
   .mapContainer {
-    width: min(100%, 23rem);
-    aspect-ratio: 2.7 / 1;
-  }
-
-  .location,
-  .presenceDescription {
-    max-width: 32rem;
-    margin-inline: auto;
-  }
-
-  .presenceDescription {
-    font-size: 0.96rem;
+    width: min(100%, 22rem);
+    aspect-ratio: 2.4 / 1;
   }
 
   .contactScene .contactSpecSheet {
     max-width: none;
   }
 
-  .contactMotionRoot {
-    padding: 1.3rem;
+  .contactActions,
+  .contactActions .contactAction {
+    width: 100%;
   }
 
-  .heading {
-    font-size: clamp(2.4rem, 10vw, 3.4rem);
-  }
-
-  .contactLinks {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .emailLink {
-    font-size: 1rem;
-  }
-
-  .taglineText,
+  .presenceDescription,
   .callout {
     font-size: 12px;
+    line-height: 1.55;
   }
 }
 
-@media (max-width: 520px) {
-  .contactActions .contactAction {
-    padding-inline: 0.85rem;
-    letter-spacing: 0.08em;
+/* At the narrowest phones the package clamp's 4rem floor is wider than the
+   text measure; step the heading down so "Let's talk." never clips. */
+@media (max-width: 359px) {
+  .heading {
+    font-size: clamp(3rem, 15vw, 3.6rem);
   }
 }

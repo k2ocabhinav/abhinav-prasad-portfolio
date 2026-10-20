@@ -11,6 +11,7 @@ import WorksSection from "@/components/sections/WorksSection";
 import TechStackSection from "@/components/sections/TechStackSection";
 import ContactSection from "@/components/sections/ContactSection";
 import type { HomeContent } from "@/types";
+import styles from "./HomePage.module.css";
 
 interface HomePageProps {
   content: HomeContent;
@@ -30,6 +31,20 @@ export default function HomePage({ content }: HomePageProps) {
       <header data-site-banner="true">
         <BrandMark />
       </header>
+
+      {/* Navigation leads the document so the phone menu trigger is reachable
+          in the first tabs; its chrome is fixed, so the visual order is
+          unchanged. */}
+      <Navigation
+        resumeHref={profile.personal.resumeHref}
+        email={profile.personal.email}
+        linkedinHref={
+          profile.personal.socials.find(
+            (social) => social.platform === "linkedin"
+          )?.href
+        }
+        fullName={profile.personal.fullName}
+      />
 
       <main
         id="site-content"
@@ -70,26 +85,21 @@ export default function HomePage({ content }: HomePageProps) {
           stackItems={profile.profileIntro.stackItems}
           tone="pastel-peach"
         />
-        <ContactSection
-          personal={profile.personal}
-          presenceNodes={profile.presenceNodes}
-        />
+
+        {/* The sticky colophon's containing block starts at Contact, so it can
+            only pin over the page once this final field is on screen. */}
+        <div className={styles.curtain}>
+          <div className={styles.curtainSurface}>
+            <ContactSection
+              personal={profile.personal}
+              presenceNodes={profile.presenceNodes}
+            />
+          </div>
+          <Footer personal={profile.personal} curtain />
+        </div>
       </main>
 
-      <Footer personal={profile.personal} />
-
       <ScrollProgress />
-
-      <Navigation
-        resumeHref={profile.personal.resumeHref}
-        email={profile.personal.email}
-        linkedinHref={
-          profile.personal.socials.find(
-            (social) => social.platform === "linkedin"
-          )?.href
-        }
-        fullName={profile.personal.fullName}
-      />
     </>
   );
 }

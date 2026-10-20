@@ -245,10 +245,20 @@ test("shows the Ostrum summary and opens the full technical experience", async (
 
   const stack = page.locator("#stack");
   await stack.scrollIntoViewIfNeeded();
-  for (const [label, context] of stackGroups) {
-    const group = stack.locator("li").filter({ hasText: label });
-    await expect(group).toHaveCount(1);
-    await expect(group).toContainText(context);
+  await expect(stack.locator("h3")).toHaveText([
+    "Part of my workflow",
+    "Built in projects",
+    "Used at work",
+  ]);
+  await expect(stack.locator("[data-stack-evidence] li")).toHaveText([
+    "AI-assisted engineering",
+    "Backend systems and APIs",
+    "Web product development",
+    "Cloud delivery and reporting",
+    "Database engineering",
+  ]);
+  for (const [label] of stackGroups) {
+    await expect(stack.getByText(label, { exact: true })).toBeVisible();
   }
 });
 
@@ -589,6 +599,114 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expectMinimumTargetSize(contact.locator('a[href^="mailto:"]'));
   await expectMinimumTargetSize(contact.getByRole("link", { name: "Connect on LinkedIn" }));
   await expectMinimumTargetSize(contact.getByRole("link", { name: "Download résumé" }));
+});
+
+test("phone tab order reaches the menu before the page content", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chrome", "One phone keyboard contract");
+  await openHome(page, true);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
+});
+
+test("a phone menu choice moves focus into the chosen section", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-safari", "One phone keyboard contract");
+  await openHome(page, true);
+
+  await page.getByRole("button", { name: "Open menu" }).click();
+  const mobileNav = page.getByRole("navigation", { name: "Mobile navigation" });
+  await mobileNav.getByRole("link", { name: "Stack", exact: true }).click();
+
+  await expect(mobileNav).toBeHidden();
+  await expect(page.locator("#stack h2")).toBeFocused();
+  const settled = await page.evaluate(() => window.scrollY);
+  await settleFrame(page);
+  await settleFrame(page);
+  expect(await page.evaluate(() => window.scrollY)).toBe(settled);
+});
+
+test("case study skip link moves focus to the project content", async ({ page }) => {
+  await page.goto("/work/velo");
+  const skip = page.getByRole("link", { name: "Skip to project content" });
+  await expect(skip).toBeAttached();
+  await skip.focus();
+  await expect(skip).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#project-content")).toBeFocused();
+});
+
+test("Stack rows counter-move with the section transit", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic motion probe");
+  await openHome(page);
+  const rows = page.locator("[data-stack-row]");
+  const rowX = (index: number) =>
+    rows.nth(index).evaluate((element) => {
+      const transform = getComputedStyle(element).transform;
+      return transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m41;
+    });
+
+  await page.evaluate(() => {
+    const stack = document.querySelector("#stack");
+    if (!stack) throw new Error("Missing stack section");
+    window.scrollTo({
+      top: stack.getBoundingClientRect().top + window.scrollY - window.innerHeight,
+      behavior: "auto",
+    });
+  });
+  await settleFrame(page);
+  const [leftStart, rightStart] = [await rowX(0), await rowX(1)];
+
+  await page.evaluate(() => window.scrollBy({ top: window.innerHeight * 0.8, behavior: "auto" }));
+  await settleFrame(page);
+  const [leftEnd, rightEnd] = [await rowX(0), await rowX(1)];
+
+  expect(leftEnd).toBeLessThan(leftStart);
+  expect(rightEnd).toBeGreaterThan(rightStart);
+});
+
+test("Stack rows hold a static position under reduced motion", async ({ page }) => {
+  await openHome(page, true);
+  const row = page.locator("[data-stack-row]").first();
+  await page.locator("#stack").scrollIntoViewIfNeeded();
+  await settleFrame(page);
+  const before = await row.evaluate((element) => getComputedStyle(element).transform);
+  await page.evaluate(() => window.scrollBy({ top: 420, behavior: "auto" }));
+  await settleFrame(page);
+  expect(await row.evaluate((element) => getComputedStyle(element).transform)).toBe(before);
+});
+
+test("the footer curtain waits under Contact and is revealed at the page end", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic geometry probe");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await openHome(page);
+  await scrollToElementTop(page, "#contact");
+
+  const covered = await page.evaluate(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) throw new Error("Missing footer");
+    const top = footer.getBoundingClientRect().top;
+    return Boolean(document.elementFromPoint(200, top + 20)?.closest("footer"));
+  });
+  expect(covered).toBe(false);
+
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "auto" }));
+  await settleFrame(page);
+  const revealed = await page.evaluate(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) throw new Error("Missing footer");
+    const top = footer.getBoundingClientRect().top;
+    return Boolean(document.elementFromPoint(200, top + 20)?.closest("footer"));
+  });
+  expect(revealed).toBe(true);
 });
 
 test("touch layouts do not retain hover movement on project cards", async ({ page }, testInfo) => {

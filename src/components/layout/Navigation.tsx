@@ -17,6 +17,19 @@ const DESKTOP_RAIL_QUERY =
 const MENU_FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+// Follow the jump with focus so keyboard and screen-reader users land inside
+// the section they chose. `preventScroll` keeps the smooth scroll single.
+function focusSectionHeading(id: string): void {
+  const section = document.getElementById(id);
+  if (!section) {
+    return;
+  }
+
+  const target = section.querySelector<HTMLElement>("h1, h2, h3") ?? section;
+  target.setAttribute("tabindex", "-1");
+  target.focus({ preventScroll: true });
+}
+
 interface NavigationProps {
   /** Resume PDF path, offered on the first screen from the rail and menu. */
   resumeHref: string;
@@ -45,6 +58,7 @@ export default function Navigation({
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const restoreBodyScrollRef = useRef<(() => void) | null>(null);
   const shouldRestoreFocusRef = useRef(false);
+  const pendingSectionFocusRef = useRef<string | null>(null);
 
   const closeMobileMenu = useCallback(() => {
     shouldRestoreFocusRef.current = true;
@@ -54,9 +68,20 @@ export default function Navigation({
   }, []);
 
   const handleNavClick = useCallback((id: string) => {
+    const wasMenuOpen = isMobileMenuOpen;
     closeMobileMenu();
     scrollToSection(id);
-  }, [closeMobileMenu]);
+
+    if (wasMenuOpen) {
+      // The menu's exit restores focus to its trigger by default. A chosen
+      // section should own focus instead, once the close commit has cleared
+      // the inert page.
+      shouldRestoreFocusRef.current = false;
+      pendingSectionFocusRef.current = id;
+    } else {
+      window.requestAnimationFrame(() => focusSectionHeading(id));
+    }
+  }, [closeMobileMenu, isMobileMenuOpen]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -167,6 +192,24 @@ export default function Navigation({
       }
     };
   }, [closeMobileMenu, isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      return;
+    }
+
+    const sectionId = pendingSectionFocusRef.current;
+    if (!sectionId) {
+      return;
+    }
+
+    pendingSectionFocusRef.current = null;
+    const frame = window.requestAnimationFrame(() =>
+      focusSectionHeading(sectionId)
+    );
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     const desktopRailMedia = window.matchMedia(DESKTOP_RAIL_QUERY);

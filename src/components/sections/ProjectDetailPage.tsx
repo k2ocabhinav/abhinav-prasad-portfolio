@@ -113,7 +113,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         </div>
       </header>
 
-      <main id="project-content" className={`content-container ${styles.main}`}>
+      <main id="project-content" tabIndex={-1} className={`content-container ${styles.main}`}>
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{detail.eyebrow}</p>

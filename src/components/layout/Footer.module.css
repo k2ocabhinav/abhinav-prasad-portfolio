@@ -8,6 +8,22 @@
   --plate-paper: var(--paper-linen, #FCF8F2);
 }
 
+/* Curtain: the colophon waits beneath the contact field and is revealed as
+   that section scrolls away. Its containing block starts at Contact, so it
+   never pins over earlier sections. */
+.curtain {
+  position: sticky;
+  bottom: 0;
+  z-index: 0;
+  background: var(--paper-bone, #F0EEE9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curtain {
+    position: static;
+  }
+}
+
 .copyright {
   font-family: var(--font-label);
   font-size: 11px;

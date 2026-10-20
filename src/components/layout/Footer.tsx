@@ -1,18 +1,21 @@
 import type { PersonalData } from "@/types";
 import PrinterSlug from "@/components/art/PrinterSlug";
+import { cn } from "@/lib/utils";
 import styles from "./Footer.module.css";
 
 // =============================================================================
-// Footer — Copyright and branding
+// Footer — Copyright, colophon and branding
 // =============================================================================
 
 interface FooterProps {
   personal: Pick<PersonalData, "name">;
+  /** Home route only: park the colophon under the final field as a curtain. */
+  curtain?: boolean;
 }
 
-export default function Footer({ personal }: FooterProps) {
+export default function Footer({ personal, curtain = false }: FooterProps) {
   return (
-    <footer className={styles.footer}>
+    <footer className={cn(styles.footer, curtain && styles.curtain)}>
       <p className={styles.copyright}>
         © {new Date().getFullYear()} {personal.name}. All rights reserved.
       </p>

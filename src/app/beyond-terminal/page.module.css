@@ -32,11 +32,14 @@
     box-shadow 180ms ease;
 }
 
-.homeLink:hover,
-.homeLink:focus-visible {
+.homeLink:hover {
   transform: translateY(-2px);
   box-shadow: 6px 7px 0 rgba(21, 21, 27, 0.9);
-  outline: none;
+}
+
+.homeLink:focus-visible {
+  outline: 3px solid #245DFF;
+  outline-offset: 3px;
 }
 
 @media (max-width: 767px) {
