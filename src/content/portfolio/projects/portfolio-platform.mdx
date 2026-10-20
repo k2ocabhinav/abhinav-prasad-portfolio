@@ -6,8 +6,8 @@ featuredOrder: 2
 worksOrder: 2
 id: "02"
 title: "Portfolio publishing system"
-description: "A Next.js 16 and React 19 site with typed MDX publishing, reusable case-study routes, and browser checks."
-scopeSummary: "Built with Next.js 16, React 19, TypeScript, CSS Modules, MDX, Motion, Lenis, and Playwright."
+description: "A typed content pipeline publishes the homepage and reusable case-study routes."
+scopeSummary: "Typed project content, shared page components, and browser checks."
 icon: "sparkles"
 accent: "sky"
 projectCodeTone: "lime"
@@ -24,20 +24,20 @@ tags:
   - "Playwright"
 links: []
 screenshots:
-  - src: "/projects/portfolio-platform/01-hero-wordmark.webp"
-    alt: "Portfolio homepage hero with the oversized Abhinav wordmark"
-    caption: "Homepage wordmark at desktop width."
+  - src: "/projects/portfolio-platform/portfolio-preview.svg"
+    alt: "A diagram showing typed project content feeding the homepage and project pages"
+    caption: "Typed content feeds the homepage and case studies."
 visual:
-  kind: "screenshot"
-  src: "/projects/portfolio-platform/01-hero-wordmark.webp"
-  alt: "Portfolio homepage hero with the oversized Abhinav wordmark"
-  caption: "The homepage pairs a responsive wordmark with a print-inspired layout."
+  kind: "system"
+  src: "/projects/portfolio-platform/portfolio-preview.svg"
+  alt: "A diagram showing typed project content feeding the homepage and project pages"
+  caption: "Typed content feeds the homepage and case studies."
 proofBeats:
   - label: "Problem"
-    short: "A typed source needed to support published projects and case-study pages."
-    detail: "The site needed validated project content, reusable case-study routes, and browser checks across screen sizes."
+    short: "This website is the project."
+    detail: "The hard part was validating typed content while keeping the homepage and reusable case-study routes in sync."
   - label: "My Role"
-    short: "Designed and built the site and content pipeline."
+    short: "I designed and built the site and content pipeline."
     detail: "Built the responsive interface, typed frontmatter source, reusable case-study pages, and interaction patterns."
   - label: "Shipped"
     short: "Typed MDX collections and static project routes."
@@ -50,37 +50,21 @@ detail:
   slug: "portfolio-platform"
   eyebrow: "Portfolio platform"
   title: "Portfolio publishing system"
-  subtitle: "Typed MDX publishes project content to reusable case-study pages, with Playwright checks for responsive behavior."
-  scopeSummary: "Built with Next.js 16, React 19, TypeScript, CSS Modules, MDX, Motion, Lenis, and Playwright."
+  subtitle: "A typed publishing system feeds the homepage and reusable project case studies."
+  scopeSummary: "I designed and built the site and content pipeline."
   detailCtaLabel: "Explore the platform case study"
   detailCtaSubline: "Typed content and browser checks"
   heroImage:
-    src: "/projects/portfolio-platform/01-hero-wordmark.webp"
-    alt: "Portfolio homepage hero with the oversized Abhinav wordmark"
-    caption: "Homepage wordmark at desktop width."
-  gallery:
-    - src: "/projects/portfolio-platform/02-about-philosophy.webp"
-      alt: "Portfolio About section with profile copy and a philosophy panel"
-      caption: "The About section pairs a short profile with a statement of working approach."
-    - src: "/projects/portfolio-platform/03-works-case-study.webp"
-      alt: "Portfolio Works section showing an engineering project card"
-      caption: "Published project entries render as work cards and case-study pages."
-    - src: "/projects/portfolio-platform/04-stack-riso.webp"
-      alt: "Portfolio Stack section with grouped technology coverage"
-      caption: "Technology groups distinguish work, project, and workflow tools."
-    - src: "/projects/portfolio-platform/05-contact-espresso.webp"
-      alt: "Portfolio Contact section with an email call to action"
-      caption: "The contact panel contains email, social links, and the résumé."
-    - src: "/projects/portfolio-platform/06-velo-case-study.webp"
-      alt: "Velo case-study page rendered inside the portfolio"
-      caption: "The Velo case study uses the shared project-detail layout."
+    src: "/projects/portfolio-platform/portfolio-preview.svg"
+    alt: "A diagram showing typed project content feeding the homepage and project pages"
+    caption: "Typed content feeds the homepage and case studies."
+  gallery: []
   architectureSections:
     - title: "Typed content publishing"
       description: "A server-side loader validates MDX frontmatter and prepares ordered content for the homepage and case-study routes."
       points:
         - "Status fields separate draft and published content."
         - "Ordered collections feed homepage components and static case-study routes."
-        - "Content preflight checks required fields, duplicate identifiers, statuses, and local assets."
     - title: "Responsive interface"
       description: "The homepage pairs a responsive wordmark with a print-inspired layout for desktop, tablet, and phone."
       points:
@@ -88,11 +72,10 @@ detail:
         - "Motion and Lenis handle scroll-linked effects and interface transitions."
         - "Controls support keyboard use and reduced-motion preferences."
     - title: "Browser checks"
-      description: "Content preflight and Playwright cover required content, interface behavior, and responsive layouts."
+      description: "Preflight checks the content before publication, then Playwright checks the pages in a browser."
       points:
-        - "The content preflight checks required fields, identifiers, status values, and referenced assets."
-        - "Playwright checks interface interactions and responsive behavior."
-        - "Desktop, tablet, and phone projects use focused visual baselines."
+        - "Preflight validates required fields, identifiers, publication status, and local assets."
+        - "Playwright covers interactions, accessibility, runtime behavior, and phone, tablet, and desktop layouts."
   stackBuckets:
     - label: "Product framework"
       items:
@@ -109,15 +92,12 @@ detail:
         - "Motion"
         - "Lenis"
         - "Reduced-motion fallbacks"
-    - label: "Quality"
+    - label: "Tests and linting"
       items:
-        - "Content validation"
         - "ESLint"
         - "Playwright"
   qualityHighlights:
-    - "Typed MDX loading supports draft and published content, ordered collections, reusable components, and static case-study routes."
-    - "Controls support keyboard activation, visible focus, and reduced-motion preferences."
-    - "Playwright checks interactions, accessibility, runtime behavior, and desktop, tablet, and phone layouts."
+    - "Interactive controls support keyboard activation, visible focus, and reduced-motion preferences."
   references:
     - label: "View portfolio source on GitHub"
       href: "https://github.com/k2ocabhinav/abhinav-prasad-portfolio"
@@ -133,7 +113,7 @@ detail:
       eyebrow: "03 / Quality"
       title: "What Playwright checks."
     references:
-      eyebrow: "04 / Source"
+      eyebrow: "03 / Source"
       title: "View portfolio source on GitHub."
 ---
 

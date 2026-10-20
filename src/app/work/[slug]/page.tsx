@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProjectDetailPage from "@/components/sections/ProjectDetailPage";
 import {
+  getAllPortfolioProjects,
   getChronicleEntries,
-  getProjectDetailBySlug,
   getProjectDetailSlugs,
   getProfileContent,
 } from "@/lib/portfolioContent";
@@ -18,26 +18,33 @@ export const dynamicParams = false;
 
 export async function generateMetadata({ params }: WorkDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const detail = getProjectDetailBySlug(slug);
+  const project = getAllPortfolioProjects().find(
+    (entry) => entry.status === "published" && entry.detail?.slug === slug,
+  );
+  const detail = project?.detail;
 
   if (!detail) {
     return {};
   }
 
   const title = projectSeoTitle(detail);
+  const roleLine = project.landingStory.proofBeats.find((beat) => beat.label === "My Role")?.short;
+  const description = detail.slug === "portfolio-platform" && roleLine
+    ? `${detail.subtitle} ${roleLine}`
+    : detail.subtitle;
   const imageUrl = absoluteUrl(detail.heroImage.src);
   const canonicalUrl = absoluteUrl(`/work/${detail.slug}`);
 
   return {
     title,
-    description: detail.subtitle,
+    description,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
       type: "article",
       title,
-      description: detail.subtitle,
+      description,
       url: canonicalUrl,
       images: [
         {
@@ -64,8 +71,11 @@ export function generateStaticParams() {
 export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
   const { slug } = await params;
 
-  const detail = getProjectDetailBySlug(slug);
-  if (!detail) {
+  const project = getAllPortfolioProjects().find(
+    (entry) => entry.status === "published" && entry.detail?.slug === slug,
+  );
+  const detail = project?.detail;
+  if (!detail || !project) {
     notFound();
   }
 
@@ -77,7 +87,11 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
       <script id="project-structured-data" type="application/ld+json">
         {serializeJsonLd(structuredData)}
       </script>
-      <ProjectDetailPage detail={detail} personal={profile.personal} />
+      <ProjectDetailPage
+        detail={detail}
+        personal={profile.personal}
+        proofBeats={project.landingStory.proofBeats}
+      />
     </>
   );
 }
