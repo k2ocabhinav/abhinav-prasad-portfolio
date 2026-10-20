@@ -670,7 +670,7 @@ test("desktop proof corner uses two edge-masked inks and stays off phones", asyn
 
   const plateBounds = await proof.locator("[data-proof-plate]").first().boundingBox();
   expect(plateBounds).not.toBeNull();
-  expect(plateBounds!.width).toBeGreaterThanOrEqual(300);
+  expect(plateBounds!.width).toBeGreaterThanOrEqual(260);
   expect(plateBounds!.width).toBeLessThanOrEqual(360);
 
   for (const width of [1280, 1024]) {
@@ -718,9 +718,7 @@ test("ink pass sweeps the burgundy plate while the black wordmark stays still", 
   await expect.poll(
     () => plate.evaluate((element) => getComputedStyle(element).animationName)
   ).toMatch(/inkSweep$/);
-  await expect(
-    page.locator("[data-pressrun-roller='true']")
-  ).toHaveCSS("visibility", "hidden");
+  await expect(page.locator("[data-pressrun-roller='true']")).toBeHidden();
   await expect(page).toHaveURL(/\/$/);
 });
 

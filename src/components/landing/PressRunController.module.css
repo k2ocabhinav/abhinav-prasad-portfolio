@@ -527,3 +527,11 @@
     transition: none;
   }
 }
+
+/* Between 1024 and 1199 px the wordmark reaches the proof column, so the
+   wedge steps aside and the target and plates carry the corner alone. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .proofWedge {
+    display: none;
+  }
+}
