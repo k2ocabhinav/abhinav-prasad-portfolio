@@ -369,10 +369,10 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await method.scrollIntoViewIfNeeded();
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
   await expect(method.locator("ol > li h4")).toHaveText([
-    "Scope",
-    "Assign",
-    "Review",
-    "Verify",
+    "1 Scope",
+    "2 Assign",
+    "3 Review",
+    "4 Verify",
   ]);
   await expect(method.locator("ol > li p")).toHaveText([
     "Define the change and what done means.",
@@ -397,12 +397,22 @@ test("server-rendered hero facts stay visible before hydration", async ({ page }
   await expect(projects).toHaveCount(2);
   await expect(projects.nth(0).getByRole("heading", { name: "Velo" })).toBeVisible();
   await expect(projects.nth(1).getByRole("heading", { name: "Portfolio publishing system" })).toBeVisible();
+  await expect(projects.nth(1).getByText(
+    "A typed content pipeline publishes the homepage and reusable case-study routes.",
+    { exact: true }
+  )).toBeVisible();
+  await expect(projects.nth(1).getByRole("link", { name: "Read the case study" })).toBeVisible();
   await expect(projects.nth(0).getByRole("link", { name: "Read the case study" })).toHaveAttribute(
     "href",
     "/work/velo"
   );
   const method = work.locator("aside[aria-labelledby='work-method-title']");
-  await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
+  await expect(method.locator("ol > li h4")).toHaveText([
+    "1 Scope",
+    "2 Assign",
+    "3 Review",
+    "4 Verify",
+  ]);
 
   for (let index = 0; index < 2; index += 1) {
     const row = facts.nth(index);
@@ -653,6 +663,11 @@ test("full-page sweep has no runtime, network, ID, or image failures", async ({
     await image.scrollIntoViewIfNeeded();
     await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   }
+  const workImage = page.locator("#work img").last();
+  await workImage.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() => workImage.evaluate((element) => (element as HTMLImageElement).naturalWidth))
+    .toBeGreaterThan(0);
   await sweepWholePage(page);
 
   const integrity = await page.evaluate(() => {
@@ -873,7 +888,7 @@ test("Velo dispatch screens show the whole desk on phones", async ({ page }, tes
   expect(Math.abs(renderedRatio - naturalRatio)).toBeLessThan(0.02);
 });
 
-test("project details stay in a separate band below the screenshot", async ({
+test("project details stay clear of the screenshot", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
@@ -893,7 +908,12 @@ test("project details stay in a separate band below the screenshot", async ({
   const detailsBox = await copy.boundingBox();
   expect(frameBox).not.toBeNull();
   expect(detailsBox).not.toBeNull();
-  expect(frameBox!.y + frameBox!.height).toBeLessThanOrEqual(detailsBox!.y);
+  const imageAndCopyOverlap =
+    frameBox!.x < detailsBox!.x + detailsBox!.width &&
+    frameBox!.x + frameBox!.width > detailsBox!.x &&
+    frameBox!.y < detailsBox!.y + detailsBox!.height &&
+    frameBox!.y + frameBox!.height > detailsBox!.y;
+  expect(imageAndCopyOverlap).toBe(false);
   await expect
     .poll(() => photo.evaluate((element) => getComputedStyle(element).filter))
     .toBe("none");

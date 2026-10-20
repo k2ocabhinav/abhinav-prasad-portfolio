@@ -3,12 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import * as m from "motion/react-m";
-import { useMotionValueEvent, useScroll, useSpring, useTransform } from "motion/react";
-import { useRef, useState } from "react";
+import { useScroll, useSpring, useTransform } from "motion/react";
+import { useRef } from "react";
+import ClipReveal from "@/components/motion/ClipReveal";
 import { tiltSpring } from "@/lib/animations";
 import { renderIcon } from "@/lib/utils";
-import ClipReveal from "@/components/motion/ClipReveal";
-import RevealText from "@/components/motion/RevealText";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { Project } from "@/types";
 import styles from "../WorksSection.module.css";
@@ -25,23 +24,25 @@ const portfolioImage = {
 export default function WorkReel({ projects }: WorkReelProps) {
   return (
     <div className={styles.projectsList}>
-      {projects.map((project, index) => (
-        <div className={styles.projectGroup} key={project.id}>
-          {index > 0 ? <ProjectRule /> : null}
-          <ProjectSequence project={project} index={index} />
-        </div>
-      ))}
+      {projects.map((project, index) => {
+        const isPortfolio = project.detailSlug === "portfolio-platform";
+
+        return (
+          <div className={styles.projectGroup} key={project.id}>
+            {index > 0 ? <ProjectRule /> : null}
+            {isPortfolio ? (
+              <PortfolioCard project={project} />
+            ) : (
+              <VeloFeature project={project} />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-function ProjectSequence({
-  project,
-  index,
-}: {
-  project: Project;
-  index: number;
-}) {
+function VeloFeature({ project }: { project: Project }) {
   const trackRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -53,76 +54,39 @@ function ProjectSequence({
     damping: 22,
     mass: 0.6,
   });
-  const scale = useTransform(progress, [0, 0.82, 1], [0.62, 0.98, 1]);
-  const clipPath = useTransform(
-    progress,
-    [0, 0.82, 1],
-    ["inset(1.5% 3.5% round 2px)", "inset(0 round 1px)", "inset(0 round 0px)"]
-  );
-  const titleY = useTransform(progress, [0, 0.24], [18, 0]);
-  const caseY = useTransform(progress, [0, 0.2], [14, 0]);
-  const finalCaseNumber = Number(project.id);
-  const [visibleCaseNumber, setVisibleCaseNumber] = useState(finalCaseNumber);
-  const displayedCaseNumber = useRef(finalCaseNumber);
-  const caseCount = useTransform(progress, [0, 0.2], [0, finalCaseNumber]);
-
-  useMotionValueEvent(caseCount, "change", (value) => {
-    if (prefersReducedMotion) return;
-    const next = Math.min(finalCaseNumber, Math.floor(value));
-    if (displayedCaseNumber.current === next) return;
-    displayedCaseNumber.current = next;
-    setVisibleCaseNumber(next);
-  });
-
-  const isPortfolio = project.detailSlug === "portfolio-platform";
-  const heroScreenshot = isPortfolio
-    ? portfolioImage
-    : project.screenshots?.[0];
-  const title = project.detailSlug === "velo" ? "Velo" : project.title;
-  const caseNumber = String(visibleCaseNumber).padStart(2, "0");
+  const scale = useTransform(progress, [0, 0.82, 1], [0.72, 0.98, 1]);
+  const screenshot = project.screenshots?.[0];
   const sourceLink = project.links?.find((link) => link.href);
-  const eyebrow = isPortfolio ? "Portfolio platform" : "Velo / Dispatch Atlas";
 
   return (
     <article
       ref={trackRef}
-      className={styles.projectTrack}
-      aria-labelledby={`work-project-${project.detailSlug ?? project.id}`}
-      data-work-project={project.detailSlug ?? project.id}
+      className={`${styles.projectTrack} ${styles.veloTrack}`}
+      aria-labelledby="work-project-velo"
+      data-work-project="velo"
+      data-project-kind="velo"
     >
       <div className={styles.projectStage}>
-        <div className={styles.projectHeading}>
-          <m.span className={styles.caseNumber} style={{ y: caseY }}>
-            {caseNumber}
-          </m.span>
-          <h3
-            className={`${styles.projectTitle} ${isPortfolio ? styles.projectTitleLong : ""}`}
-            id={`work-project-${project.detailSlug ?? project.id}`}
-          >
-            <m.span style={{ y: titleY }}>
-              <RevealText text={title} />
-            </m.span>
-          </h3>
-        </div>
+        <header className={styles.projectHeading}>
+          <span className={styles.caseNumber} aria-hidden="true">01</span>
+          <h3 className={styles.projectTitle} id="work-project-velo">Velo</h3>
+        </header>
 
-        <ClipReveal className={styles.mobileClip} from="bottom">
-          <div className={styles.imageRevealInner}>
+        <div className={styles.featureLayout}>
+          <ClipReveal className={styles.projectImageReveal} from="bottom">
             <m.figure
               className={styles.projectFrame}
               data-work-frame="true"
-              style={{
-                scale: prefersReducedMotion ? 1 : scale,
-                clipPath: prefersReducedMotion ? "inset(0)" : clipPath,
-              }}
+              style={{ scale: prefersReducedMotion ? 1 : scale }}
             >
-              {heroScreenshot ? (
+              {screenshot ? (
                 <Image
-                  src={heroScreenshot.src}
-                  alt={heroScreenshot.alt}
+                  src={screenshot.src}
+                  alt={screenshot.alt}
                   fill
-                  sizes="(max-width: 1023px) 100vw, 92vw"
+                  sizes="(min-width: 1024px) 64vw, 100vw"
                   className={styles.projectImage}
-                  priority={index === 0}
+                  priority
                 />
               ) : (
                 <div className={styles.projectFallback} aria-hidden="true">
@@ -130,48 +94,113 @@ function ProjectSequence({
                 </div>
               )}
             </m.figure>
-          </div>
-        </ClipReveal>
+          </ClipReveal>
 
-        <div className={styles.detailsBand} data-work-copy="true">
-          <div className={styles.projectSummary}>
-            <p className={styles.projectEyebrow}>{eyebrow}</p>
-            <p className={styles.projectDescription}>{project.description}</p>
-          </div>
-
-          {project.tags.length > 0 ? (
-            <ul className={styles.projectTags} aria-label={`${title} technologies`}>
-              {project.tags.map((tag) => (
-                <li key={tag}>{tag}</li>
-              ))}
-            </ul>
-          ) : null}
-
-          <div className={styles.projectActions}>
-            {project.detailSlug ? (
-              <Link
-                href={`/work/${project.detailSlug}`}
-                className={styles.caseStudyButton}
-              >
-                <m.span whileHover={{ y: -1 }} transition={tiltSpring}>
-                  Read the case study
-                </m.span>
-              </Link>
-            ) : null}
-            {sourceLink?.href ? (
-              <a
-                href={sourceLink.href}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.sourceLink}
-              >
-                View project source
-              </a>
-            ) : null}
-          </div>
+          <ProjectDetails
+            project={project}
+            title="Velo"
+            eyebrow="Velo / Dispatch Atlas"
+            sourceLink={sourceLink?.href ? sourceLink : undefined}
+            className={styles.featureDetails}
+          />
         </div>
       </div>
     </article>
+  );
+}
+
+function PortfolioCard({ project }: { project: Project }) {
+  const screenshot = portfolioImage;
+
+  return (
+    <article
+      className={`${styles.projectTrack} ${styles.portfolioTrack}`}
+      aria-labelledby="work-project-portfolio-platform"
+      data-work-project="portfolio-platform"
+      data-project-kind="portfolio"
+    >
+      <div className={styles.portfolioCard}>
+        <header className={styles.projectHeading}>
+          <span className={styles.caseNumber} aria-hidden="true">02</span>
+          <h3
+            className={`${styles.projectTitle} ${styles.projectTitleLong}`}
+            id="work-project-portfolio-platform"
+          >
+            Portfolio publishing system
+          </h3>
+        </header>
+
+        <div className={styles.featureLayout}>
+          <ClipReveal className={styles.projectImageReveal} from="bottom">
+            <figure className={styles.projectFrame} data-work-frame="true">
+              <Image
+                src={screenshot.src}
+                alt={screenshot.alt}
+                fill
+                sizes="(min-width: 1024px) 64vw, 100vw"
+                className={styles.projectImage}
+              />
+            </figure>
+          </ClipReveal>
+
+          <ProjectDetails
+            project={project}
+            title="Portfolio publishing system"
+            eyebrow="Portfolio platform"
+            className={styles.portfolioDetails}
+          />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ProjectDetails({
+  project,
+  title,
+  eyebrow,
+  sourceLink,
+  className,
+}: {
+  project: Project;
+  title: string;
+  eyebrow: string;
+  sourceLink?: NonNullable<Project["links"]>[number];
+  className: string;
+}) {
+  return (
+    <div className={`${styles.detailsBand} ${className}`} data-work-copy="true">
+      <div className={styles.projectSummary}>
+        <p className={styles.projectEyebrow}>{eyebrow}</p>
+        <p className={styles.projectDescription}>{project.description}</p>
+      </div>
+
+      {project.tags.length > 0 ? (
+        <ul className={styles.projectTags} aria-label={`${title} technologies`}>
+          {project.tags.map((tag) => <li key={tag}>{tag}</li>)}
+        </ul>
+      ) : null}
+
+      <div className={styles.projectActions}>
+        {project.detailSlug ? (
+          <Link href={`/work/${project.detailSlug}`} className={styles.caseStudyButton}>
+            <m.span whileHover={{ y: -1 }} transition={tiltSpring}>
+              Read the case study
+            </m.span>
+          </Link>
+        ) : null}
+        {sourceLink?.href ? (
+          <a
+            href={sourceLink.href}
+            target="_blank"
+            rel="noreferrer"
+            className={styles.sourceLink}
+          >
+            View project source
+          </a>
+        ) : null}
+      </div>
+    </div>
   );
 }
 

@@ -4,11 +4,13 @@
   --muted: var(--color-secondary-text, #63605A);
   --lead: var(--color-lead, #6A2135);
   --hairline: var(--color-hairline, rgba(11, 16, 17, 0.14));
+  --work-rail-clearance: 0px;
 }
 
 .sectionHeader {
-  margin-bottom: clamp(2.5rem, 5vw, 5rem);
   max-width: 52rem;
+  margin-bottom: clamp(2.5rem, 5vw, 5rem);
+  padding-right: var(--work-rail-clearance);
 }
 
 .heading {
@@ -34,13 +36,17 @@
   flex-direction: column;
 }
 
+.projectGroup {
+  min-width: 0;
+}
+
 .projectRuleReveal {
   display: block;
-  width: 100vw;
-  height: min(24vh, 12rem);
-  margin-inline: calc(50% - 50vw);
-  padding-inline: clamp(1.25rem, 4vw, 4rem);
+  width: calc(100vw - var(--work-rail-clearance));
+  height: clamp(4rem, 9vw, 7rem);
+  margin-left: calc(50% - 50vw);
   align-content: center;
+  padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 
 .projectRule {
@@ -48,125 +54,88 @@
   height: 1px;
   margin: 0;
   border: 0;
-  background: rgba(11, 16, 17, 0.68);
-  transform-origin: left center;
-}
-
-.projectRuleReveal {
-  clip-path: none !important;
-}
-
-:global(html[data-js]) .projectRuleReveal {
-  animation: none !important;
-  transition: none !important;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  :global(html[data-js]) .projectRuleReveal:not([data-in="true"]) .projectRule {
-    clip-path: inset(0 100% 0 0);
-    animation: workClipFailsafe 1ms linear 4s forwards;
-    transition: clip-path 850ms var(--ease-out-expo);
-  }
-
-  :global(html[data-js]) .projectRuleReveal[data-in="true"] .projectRule {
-    clip-path: inset(0);
-    animation: none;
-  }
+  background: rgba(11, 16, 17, 0.72);
 }
 
 .projectTrack {
   position: relative;
-  width: 100vw;
-  height: 220svh;
-  margin-inline: calc(50% - 50vw);
+  min-width: 0;
   background: var(--section-bg);
+}
+
+.veloTrack {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+
+.projectStage,
+.portfolioCard {
+  position: relative;
+  min-width: 0;
 }
 
 .projectStage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  min-height: 650px;
-  overflow: clip;
-  isolation: isolate;
-  background: var(--section-bg);
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 4vw, 4rem);
 }
 
 .projectHeading {
-  position: absolute;
-  z-index: 2;
-  top: clamp(4.5rem, 8vh, 5rem);
-  left: clamp(1.5rem, 5vw, 5rem);
-  right: clamp(1.5rem, 5vw, 5rem);
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  pointer-events: none;
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  min-width: 0;
 }
 
 .projectTitle {
-  max-width: min(82vw, 72rem);
+  max-width: 72rem;
   margin: 0;
   color: var(--ink);
   font-family: var(--font-display);
   font-size: clamp(3.25rem, 6.5vw, 6rem);
   font-weight: 500;
   letter-spacing: -0.055em;
-  line-height: 0.86;
-}
-
-.projectTitle > span {
-  display: block;
+  line-height: 0.9;
 }
 
 .projectTitleLong {
-  font-size: clamp(3rem, 5.4vw, 4.8rem);
-  letter-spacing: -0.025em;
-}
-
-.projectTitle :global([data-reveal]) {
-  display: inline-block;
+  max-width: 60rem;
+  font-size: clamp(2.6rem, 5.1vw, 4.75rem);
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
 }
 
 .caseNumber {
-  order: 2;
   flex: 0 0 auto;
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
   color: var(--lead);
   font-family: var(--font-label);
   font-size: 0.72rem;
   letter-spacing: 0.1em;
 }
 
-.mobileClip {
-  position: absolute;
-  top: 16.5vh;
-  left: 50%;
-  width: 92vw;
-  height: 58vh;
-  transform: translateX(-50%);
+.featureLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(15rem, 0.78fr);
+  align-items: stretch;
+  gap: clamp(1rem, 2.4vw, 2.5rem);
+  min-width: 0;
+  margin-top: clamp(1.5rem, 3.2vw, 3rem);
+}
+
+.projectImageReveal {
+  display: block;
+  min-width: 0;
+  align-self: center;
   overflow: visible;
-  clip-path: none !important;
-}
-
-:global(html[data-js]) .mobileClip {
-  animation: none !important;
-  transition: none !important;
-}
-
-.imageRevealInner {
-  width: 100%;
-  height: 100%;
 }
 
 .projectFrame {
   position: relative;
+  display: block;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16 / 9;
   margin: 0;
   overflow: hidden;
-  border: 1px solid rgba(11, 16, 17, 0.42);
+  border: 1px solid rgba(11, 16, 17, 0.5);
   border-radius: 2px;
   background: var(--paper-linen, #FCF8F2);
   transform-origin: center;
@@ -175,6 +144,17 @@
 .projectImage {
   object-fit: cover;
   object-position: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html[data-js]) .portfolioTrack .projectImage {
+    transform: scale(1.06);
+    transition: transform 1000ms var(--ease-out-expo);
+  }
+
+  :global(html[data-js]) .portfolioTrack .projectImageReveal[data-in="true"] .projectImage {
+    transform: scale(1);
+  }
 }
 
 .projectFallback {
@@ -186,18 +166,14 @@
 }
 
 .detailsBand {
-  position: absolute;
-  z-index: 1;
-  right: 4vw;
-  bottom: 3vh;
-  left: 4vw;
-  display: grid;
-  grid-template-columns: minmax(13rem, 0.9fr) minmax(14rem, 1.1fr) auto;
-  align-items: center;
-  gap: clamp(1rem, 2.5vw, 2.5rem);
-  min-height: 19vh;
-  padding: clamp(1rem, 1.8vw, 1.6rem) clamp(1.25rem, 2.5vw, 2.5rem);
-  border-top: 1px solid var(--lead);
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(1rem, 2.2vh, 1.5rem);
+  padding: clamp(1.25rem, 2.4vw, 2.25rem);
+  border-left: 1px solid var(--lead);
   background: var(--paper-linen, #FCF8F2);
   color: var(--ink);
 }
@@ -207,7 +183,7 @@
 }
 
 .projectEyebrow {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.65rem;
   color: var(--muted);
   font-family: var(--font-label);
   font-size: 0.64rem;
@@ -220,14 +196,14 @@
   margin: 0;
   font-family: var(--font-body);
   font-size: clamp(0.9rem, 1.05vw, 1rem);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .projectTags {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.2rem 0.8rem;
+  gap: 0.25rem 0.75rem;
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -239,30 +215,33 @@
 }
 
 .projectTags li {
-  border-bottom: 1px solid rgba(11, 16, 17, 0.18);
+  border-bottom: 1px solid rgba(11, 16, 17, 0.2);
 }
 
 .projectActions {
   display: flex;
+  min-width: 0;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
-  gap: 0.15rem;
-  min-width: max-content;
+  gap: 0.2rem;
 }
 
 .caseStudyButton,
 .sourceLink {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
   border-radius: 2px;
   color: var(--ink);
   font-family: var(--font-label);
   font-size: 0.68rem;
   text-decoration: none;
-  transition: color 180ms var(--ease-out-expo), background-color 180ms var(--ease-out-expo), transform 180ms var(--ease-out-expo), box-shadow 180ms var(--ease-out-expo);
+  transition:
+    color 180ms var(--ease-out-expo),
+    background-color 180ms var(--ease-out-expo),
+    transform 180ms var(--ease-out-expo),
+    box-shadow 180ms var(--ease-out-expo);
 }
 
 .caseStudyButton {
@@ -298,22 +277,34 @@
   outline-offset: 4px;
 }
 
+.portfolioTrack {
+  padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+.portfolioCard {
+  padding-inline: 0;
+}
+
+.portfolioCard .featureLayout {
+  grid-template-columns: minmax(0, 1.6fr) minmax(15rem, 0.8fr);
+}
+
+.portfolioDetails {
+  border-left-color: var(--hairline);
+}
+
 .methodSequence {
   position: relative;
   width: 100vw;
-  height: 200svh;
   margin-inline: calc(50% - 50vw);
   border-top: 1px solid var(--hairline);
   background: var(--section-bg);
 }
 
 .methodStage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  min-height: 680px;
-  overflow: clip;
-  padding: 11vh clamp(1.5rem, 5.5vw, 5.5rem) 5vh;
+  position: relative;
+  min-height: 0;
+  padding: clamp(3.5rem, 8vh, 6rem) clamp(1.25rem, 4vw, 4rem) 4rem;
   background: var(--section-bg);
 }
 
@@ -335,27 +326,22 @@
 
 .methodCanvas {
   position: relative;
-  margin-top: clamp(4.5rem, 13vh, 8rem);
-  padding-top: 21vh;
-}
-
-.desktopRoute,
-.mobileRoute {
-  position: absolute;
-  overflow: visible;
-  pointer-events: none;
+  margin-top: clamp(2.5rem, 6vh, 4.5rem);
+  padding-top: clamp(6rem, 15vh, 9rem);
 }
 
 .desktopRoute {
+  position: absolute;
   top: 0;
   left: 0;
   display: block;
   width: 100%;
-  height: 18vh;
-  min-height: 105px;
+  height: clamp(6rem, 15vh, 9rem);
+  overflow: visible;
+  pointer-events: none;
 }
 
-.mobileRoute {
+.mobileRouteReveal {
   display: none;
 }
 
@@ -364,14 +350,17 @@
 .routeTop,
 .routeMiddle,
 .routeBottom,
-.routeVerify {
+.routeVerify,
+.routeMobileScope,
+.routeMobileLane,
+.routeMobileVerify {
   fill: none;
   stroke-width: 1.5px;
   vector-effect: non-scaling-stroke;
 }
 
 .routeBase {
-  stroke: rgba(11, 16, 17, 0.78);
+  stroke: rgba(11, 16, 17, 0.72);
 }
 
 .routeScope,
@@ -398,40 +387,9 @@
   vector-effect: non-scaling-stroke;
 }
 
-.agentDotTop,
-.agentDotMiddle,
-.agentDotBottom {
-  stroke: var(--section-bg);
-  stroke-width: 1px;
-  vector-effect: non-scaling-stroke;
-}
-
-.agentDotTop {
-  fill: var(--lead);
-}
-
-.agentDotMiddle {
-  fill: var(--color-petrol, #1A5D74);
-}
-
-.agentDotBottom {
-  fill: var(--color-cornflower-deep, #25447B);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .routeScope,
-  .routeTop,
-  .routeMiddle,
-  .routeBottom,
-  .routeVerify {
-    stroke-dasharray: 1 !important;
-    stroke-dashoffset: 0 !important;
-  }
-}
-
 .processSteps {
   display: grid;
-  grid-template-columns: 21% 39% 24% 16%;
+  grid-template-columns: 21% 37% 26% 16%;
   align-items: start;
   gap: 0;
   margin: 0;
@@ -441,40 +399,47 @@
 
 .processSteps li {
   min-width: 0;
-  padding-right: clamp(0.75rem, 2vw, 2rem);
+  padding-right: clamp(0.5rem, 1.5vw, 1.5rem);
 }
 
 .stationRule {
   display: block;
   width: 1.5rem;
   height: 1px;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.75rem;
   background: var(--lead);
 }
 
 .processSteps h4 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
   color: var(--ink);
   font-family: var(--font-headline);
-  font-size: clamp(1.45rem, 2.3vw, 2rem);
+  font-size: clamp(1.3rem, 2.1vw, 1.9rem);
   font-weight: 500;
   letter-spacing: -0.025em;
   line-height: 1.05;
 }
 
+.stationNumber {
+  color: var(--lead);
+  font-family: var(--font-label);
+  font-size: 0.64em;
+  letter-spacing: 0;
+}
+
 .processSteps p {
-  max-width: 33ch;
+  max-width: 34ch;
   margin-top: 0.7rem;
-  color: rgba(11, 16, 17, 0.78);
+  color: rgba(11, 16, 17, 0.82);
   font-family: var(--font-body);
   font-size: clamp(0.78rem, 0.95vw, 0.92rem);
   line-height: 1.55;
 }
 
 .methodCaption {
-  position: absolute;
-  right: 0;
-  bottom: 5vh;
-  left: 0;
+  margin-top: clamp(2rem, 6vh, 4rem);
   color: var(--muted);
   font-family: var(--font-label);
   font-size: 0.62rem;
@@ -482,104 +447,131 @@
   line-height: 1.5;
 }
 
-@media (max-width: 1023px) {
-  .projectTrack {
+@media (min-width: 768px) {
+  .worksSection {
+    --work-rail-clearance: clamp(6rem, 9vw, 9rem);
+  }
+
+  .methodStage {
+    padding-right: var(--work-rail-clearance);
+  }
+
+  .portfolioCard {
+    padding-right: var(--work-rail-clearance);
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  :global(html[data-js]) .veloTrack {
+    height: 160svh;
+  }
+
+  :global(html[data-js]) .veloTrack .projectStage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 680px;
+    overflow: clip;
+  }
+
+  :global(html[data-js]) .veloTrack .projectHeading {
+    position: absolute;
+    top: clamp(4rem, 8vh, 5rem);
+    right: calc(var(--work-rail-clearance) + 4vw);
+    left: 4vw;
+  }
+
+  :global(html[data-js]) .veloTrack .featureLayout {
+    position: absolute;
+    top: clamp(13rem, 23vh, 15rem);
+    right: var(--work-rail-clearance);
+    bottom: clamp(2rem, 5vh, 4rem);
+    left: 4vw;
+    grid-template-columns: minmax(0, 2.3fr) minmax(15rem, 0.72fr);
+    margin-top: 0;
+  }
+
+  :global(html[data-js]) .veloTrack .projectImageReveal {
     width: 100%;
-    height: auto;
-    min-height: 0;
-    margin-inline: 0;
-    padding-block: clamp(2.25rem, 7vw, 4rem);
+    max-width: min(92vw, 149.33svh, calc(100vw - var(--work-rail-clearance) - 4vw - 15rem - 2.5rem));
+    clip-path: none !important;
+    animation: none !important;
+    transition: none !important;
   }
 
+  :global(html[data-js]) .veloTrack .detailsBand {
+    border-left-width: 1px;
+  }
+
+  :global(html[data-js]) .methodSequence {
+    height: 120svh;
+  }
+
+  :global(html[data-js]) .methodStage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 680px;
+    overflow: clip;
+  }
+
+  :global(html[data-js]) .methodCaption {
+    position: absolute;
+    right: var(--work-rail-clearance);
+    bottom: 5vh;
+    left: 4vw;
+    width: min(calc(100% - 4vw - var(--work-rail-clearance)), 80rem);
+  }
+}
+
+@media (max-width: 1023px) {
   .projectStage {
-    position: relative;
-    top: auto;
-    display: flex;
-    height: auto;
-    min-height: 0;
-    flex-direction: column;
-    overflow: visible;
-    padding-inline: var(--content-padding-x, 1.25rem);
-  }
-
-  .projectHeading {
-    position: relative;
-    inset: auto;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 0.75rem;
-    order: 0;
+    padding-left: var(--content-padding-x, 1.25rem);
+    padding-right: var(--work-rail-clearance);
   }
 
   .projectTitle {
-    max-width: none;
-    font-size: clamp(3rem, 10vw, 6.25rem);
-    line-height: 0.92;
+    font-size: clamp(3rem, 9vw, 5.75rem);
   }
 
-  .caseNumber {
-    order: 0;
-    margin-top: 0.6rem;
+  .projectTitleLong {
+    font-size: clamp(2.55rem, 7vw, 4.25rem);
   }
 
-  .mobileClip {
-    position: relative;
-    top: auto;
-    left: auto;
+  .featureLayout,
+  .portfolioCard .featureLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .projectImageReveal {
     width: 100%;
-    height: auto;
-    margin-top: clamp(1.25rem, 3vw, 2rem);
-    transform: none;
     overflow: hidden;
   }
 
-  .imageRevealInner {
-    width: 100%;
-    height: auto;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    :global(html[data-js]) .mobileClip:not([data-in="true"]) .imageRevealInner {
-      clip-path: inset(100% 0 0 0);
-      animation: workClipFailsafe 1ms linear 4s forwards;
-      transition: clip-path 900ms var(--ease-out-expo);
-    }
-
-    :global(html[data-js]) .mobileClip[data-in="true"] .imageRevealInner {
-      clip-path: inset(0);
-      animation: none;
-    }
-
-    :global(html[data-js]) .mobileClip:not([data-in="true"]) .projectImage {
-      transform: scale(1.06);
-      transition: transform 1050ms var(--ease-out-expo);
-    }
-
-    :global(html[data-js]) .mobileClip[data-in="true"] .projectImage {
-      transform: scale(1);
-    }
-  }
-
   .projectFrame {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
     transform: none !important;
-    clip-path: none !important;
+  }
+
+  :global(html[data-js]) .projectImage {
+    transform: scale(1.06);
+    transition: transform 1000ms var(--ease-out-expo);
+  }
+
+  :global(html[data-js]) .projectImageReveal[data-in="true"] .projectImage {
+    transform: scale(1);
   }
 
   .detailsBand {
-    position: relative;
-    inset: auto;
-    grid-template-columns: 1fr;
-    gap: 1.1rem;
-    min-height: 0;
-    margin-top: 1.1rem;
-    padding: clamp(1.1rem, 4vw, 1.65rem);
+    gap: 1rem;
+    margin-top: 0;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-top: 1px solid var(--lead);
+    border-left: 0;
   }
 
   .projectDescription {
-    max-width: 56ch;
+    max-width: 58ch;
   }
 
   .projectTags {
@@ -592,29 +584,20 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem 1rem;
-    min-width: 0;
   }
 
-  .projectRuleReveal {
-    width: auto;
-    height: clamp(4rem, 12vw, 6rem);
-    margin-inline: var(--content-padding-x, 1.25rem);
-    padding-inline: 0;
+  .portfolioTrack {
+    padding-right: var(--work-rail-clearance);
   }
 
   .methodSequence {
     width: auto;
-    height: auto;
     margin-inline: 0;
   }
 
   .methodStage {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 0;
-    overflow: hidden;
-    padding: clamp(3.5rem, 9vw, 5.5rem) var(--content-padding-x, 1.25rem) 3.5rem;
+    padding: clamp(3.5rem, 9vw, 5.5rem) var(--work-rail-clearance) 3.5rem
+      var(--content-padding-x, 1.25rem);
   }
 
   .methodCanvas {
@@ -626,13 +609,31 @@
     display: none;
   }
 
-  .mobileRoute {
+  .mobileRouteReveal {
+    position: absolute;
     top: 0;
     bottom: 0;
-    left: 0.1rem;
+    left: 0;
     display: block;
     width: 2.5rem;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .mobileRoute {
+    display: block;
+    width: 100%;
     height: 100%;
+    overflow: visible;
+  }
+
+  .routeMobileScope,
+  .routeMobileVerify {
+    stroke: var(--lead);
+  }
+
+  .routeMobileLane {
+    stroke: rgba(11, 16, 17, 0.78);
   }
 
   .processSteps {
@@ -669,7 +670,6 @@
   }
 
   .methodCaption {
-    position: static;
     margin-top: 2.2rem;
     padding-left: 3.8rem;
   }
@@ -698,8 +698,21 @@
     overflow-wrap: anywhere;
   }
 
+  .projectTitleLong {
+    font-size: clamp(2.4rem, 10vw, 3.7rem);
+  }
+
   .caseNumber {
+    margin-top: 0.6rem;
     font-size: 0.64rem;
+  }
+
+  .portfolioCard .projectHeading {
+    padding-left: 1.15rem;
+  }
+
+  .portfolioCard .featureLayout {
+    padding-inline: 1.15rem;
   }
 
   .detailsBand {
@@ -723,6 +736,11 @@
     font-size: 0.72rem;
   }
 
+  .projectRuleReveal {
+    height: 4rem;
+    padding-inline: 1.15rem;
+  }
+
   .methodStage {
     padding-inline: 1.15rem;
   }
@@ -737,83 +755,45 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .projectTrack,
+  .veloTrack,
   .methodSequence {
-    height: auto;
+    height: auto !important;
     min-height: 0;
-  }
-
-  .projectTrack {
-    padding-block: clamp(2rem, 6vw, 3.5rem);
   }
 
   .projectStage,
   .methodStage {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 0;
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
   }
 
-  .projectStage {
-    display: flex;
-    flex-direction: column;
-    overflow: visible;
-    padding-inline: var(--content-padding-x, 1.25rem);
-  }
-
-  .projectHeading {
-    position: relative;
-    inset: auto;
-    justify-content: flex-start;
-  }
-
-  .mobileClip {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 100%;
-    height: auto;
-    margin-top: clamp(1.25rem, 3vw, 2rem);
-    transform: none;
-    overflow: hidden;
-  }
-
-  .projectFrame {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
+  .projectFrame,
+  .projectImage {
     transform: none !important;
-    clip-path: none !important;
-  }
-
-  .detailsBand {
-    position: relative;
-    inset: auto;
-    grid-template-columns: 1fr;
-    min-height: 0;
-    margin-top: 1.1rem;
+    transition: none !important;
   }
 
   .methodStage {
-    overflow: visible;
+    overflow: visible !important;
   }
 
   .methodCaption {
     position: static;
+    width: min(100%, 80rem);
     margin-top: 2rem;
+    padding-left: 0;
   }
 
-  .imageRevealInner,
-  .projectRule {
+  .mobileRouteReveal,
+  .projectImageReveal {
     clip-path: none !important;
     animation: none !important;
     transition: none !important;
   }
-}
 
-@keyframes workClipFailsafe {
-  to {
-    clip-path: inset(0);
+  .routeAccent {
+    clip-path: none !important;
   }
 }

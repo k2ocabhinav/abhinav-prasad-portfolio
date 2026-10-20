@@ -1,26 +1,24 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
+import { useScroll, useSpring, useTransform } from "motion/react";
 import { useRef } from "react";
+import ClipReveal from "@/components/motion/ClipReveal";
 import type { OrchestrationContent } from "@/types";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
 import styles from "../WorksSection.module.css";
 
 interface WorkMethodProps {
   content: OrchestrationContent;
 }
 
-const parallelPath = {
-  top: "M250 100 C310 100 300 42 365 42 H645 C710 42 710 100 760 100",
-  middle: "M250 100 H760",
-  bottom: "M250 100 C310 100 300 158 365 158 H645 C710 158 710 100 760 100",
-};
-const stationProgress = [0, 0.16, 0.68, 0.94] as const;
+const lanePaths = [
+  "M250 100 C300 100 300 46 365 46 H565 C615 46 615 100 650 100",
+  "M250 100 H650",
+  "M250 100 C300 100 300 154 365 154 H565 C615 154 615 100 650 100",
+] as const;
 
 export default function WorkMethod({ content }: WorkMethodProps) {
   const trackRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: trackRef,
     offset: ["start start", "end end"],
@@ -30,16 +28,7 @@ export default function WorkMethod({ content }: WorkMethodProps) {
     damping: 22,
     mass: 0.6,
   });
-  const scopeProgress = useTransform(progress, [0, 0.22], [0, 1]);
-  const laneProgress = useTransform(progress, [0.22, 0.68], [0, 1]);
-  const verifyProgress = useTransform(progress, [0.68, 1], [0, 1]);
-  const activeRoute = prefersReducedMotion ? 1 : undefined;
-  const topX = useTransform(laneProgress, [0, 0.2, 0.78, 1], [250, 365, 645, 760]);
-  const middleX = useTransform(laneProgress, [0, 1], [250, 760]);
-  const bottomX = useTransform(laneProgress, [0, 0.2, 0.78, 1], [250, 365, 645, 760]);
-  const topY = useTransform(laneProgress, [0, 0.2, 0.78, 1], [100, 42, 42, 100]);
-  const bottomY = useTransform(laneProgress, [0, 0.2, 0.78, 1], [100, 158, 158, 100]);
-  const dotOpacity = useTransform(laneProgress, [0, 0.04, 0.96, 1], [0, 1, 1, 0]);
+  const pathWipe = useTransform(progress, [0, 1], ["inset(0 100% 0 0)", "inset(0)"]);
 
   return (
     <aside
@@ -56,122 +45,54 @@ export default function WorkMethod({ content }: WorkMethodProps) {
         <div className={styles.methodCanvas}>
           <svg
             className={styles.desktopRoute}
-            viewBox="0 0 1200 200"
+            viewBox="0 0 1000 200"
             preserveAspectRatio="none"
             role="img"
             aria-label="Scope leads to Assign, splits into three parallel lanes, converges for Review, and continues to Verify."
           >
-            <path className={styles.routeBase} d="M40 100 H250" />
-            <path className={styles.routeBase} d={parallelPath.top} />
-            <path className={styles.routeBase} d={parallelPath.middle} />
-            <path className={styles.routeBase} d={parallelPath.bottom} />
-            <path className={styles.routeBase} d="M760 100 C850 100 960 100 1160 100" />
-            <m.path
-              className={styles.routeScope}
-              d="M40 100 H250"
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? scopeProgress }}
-            />
-            <m.path
-              className={styles.routeTop}
-              d={parallelPath.top}
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? laneProgress }}
-            />
-            <m.path
-              className={styles.routeMiddle}
-              d={parallelPath.middle}
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? laneProgress }}
-            />
-            <m.path
-              className={styles.routeBottom}
-              d={parallelPath.bottom}
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? laneProgress }}
-            />
-            <m.path
-              className={styles.routeVerify}
-              d="M760 100 C850 100 960 100 1160 100"
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? verifyProgress }}
-            />
-            <circle className={styles.stationAnchor} cx="40" cy="100" r="5" />
+            <path className={styles.routeBase} d="M30 100 H250" />
+            {lanePaths.map((path) => <path className={styles.routeBase} d={path} key={path} />)}
+            <path className={styles.routeBase} d="M650 100 H840" />
+            <m.g className={styles.routeAccent} style={{ clipPath: pathWipe }}>
+              <path className={styles.routeScope} d="M30 100 H250" />
+              <path className={styles.routeTop} d={lanePaths[0]} />
+              <path className={styles.routeMiddle} d={lanePaths[1]} />
+              <path className={styles.routeBottom} d={lanePaths[2]} />
+              <path className={styles.routeVerify} d="M650 100 H840" />
+            </m.g>
+            <circle className={styles.stationAnchor} cx="30" cy="100" r="5" />
             <circle className={styles.stationAnchor} cx="250" cy="100" r="5" />
-            <circle className={styles.stationAnchor} cx="760" cy="100" r="5" />
-            <circle className={styles.stationAnchor} cx="1160" cy="100" r="5" />
-            <m.circle
-              className={styles.agentDotTop}
-              r="4"
-              style={{ cx: prefersReducedMotion ? 507 : topX, cy: prefersReducedMotion ? 42 : topY, opacity: prefersReducedMotion ? 1 : dotOpacity }}
-            />
-            <m.circle
-              className={styles.agentDotMiddle}
-              r="4"
-              style={{ cx: prefersReducedMotion ? 507 : middleX, cy: 100, opacity: prefersReducedMotion ? 1 : dotOpacity }}
-            />
-            <m.circle
-              className={styles.agentDotBottom}
-              r="4"
-              style={{ cx: prefersReducedMotion ? 507 : bottomX, cy: prefersReducedMotion ? 158 : bottomY, opacity: prefersReducedMotion ? 1 : dotOpacity }}
-            />
+            <circle className={styles.stationAnchor} cx="650" cy="100" r="5" />
+            <circle className={styles.stationAnchor} cx="840" cy="100" r="5" />
           </svg>
 
-          <svg
-            className={styles.mobileRoute}
-            viewBox="0 0 60 620"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path className={styles.routeBase} d="M30 10 V160" />
-            <path className={styles.routeBase} d="M30 160 C30 196 10 190 10 230 V360 C10 390 30 390 30 420" />
-            <path className={styles.routeBase} d="M30 160 V420" />
-            <path className={styles.routeBase} d="M30 160 C30 196 50 190 50 230 V360 C50 390 30 390 30 420" />
-            <path className={styles.routeBase} d="M30 420 V610" />
-            <m.path
-              className={styles.routeScope}
-              d="M30 10 V160"
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? scopeProgress }}
-            />
-            <m.path
-              className={styles.routeTop}
-              d="M30 160 C30 196 10 190 10 230 V360 C10 390 30 390 30 420"
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? laneProgress }}
-            />
-            <m.path
-              className={styles.routeMiddle}
-              d="M30 160 V420"
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? laneProgress }}
-            />
-            <m.path
-              className={styles.routeBottom}
-              d="M30 160 C30 196 50 190 50 230 V360 C50 390 30 390 30 420"
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? laneProgress }}
-            />
-            <m.path
-              className={styles.routeVerify}
-              d="M30 420 V610"
-              pathLength={1}
-              style={{ pathLength: activeRoute ?? verifyProgress }}
-            />
-          </svg>
+          <ClipReveal className={styles.mobileRouteReveal} from="bottom">
+            <svg
+              className={styles.mobileRoute}
+              viewBox="0 0 60 620"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path className={styles.routeMobileScope} d="M30 10 V150" />
+              <path className={styles.routeMobileLane} d="M30 150 C30 190 10 185 10 225 V345 C10 380 30 380 30 420" />
+              <path className={styles.routeMobileLane} d="M30 150 V420" />
+              <path className={styles.routeMobileLane} d="M30 150 C30 190 50 185 50 225 V345 C50 380 30 380 30 420" />
+              <path className={styles.routeMobileVerify} d="M30 420 V610" />
+            </svg>
+          </ClipReveal>
 
           <ol className={styles.processSteps}>
-            {content.steps.map((step, index) => {
-              return (
-                <MethodStep
-                  key={step.title}
-                  step={step}
-                  index={index}
-                  progress={progress}
-                  prefersReducedMotion={prefersReducedMotion}
-                />
-              );
-            })}
+            {content.steps.map((step, index) => (
+              <li key={step.title}>
+                <span className={styles.stationRule} aria-hidden="true" />
+                <h4>
+                  <span className={styles.stationNumber}>{index + 1}</span>
+                  {" "}
+                  <span>{step.title}</span>
+                </h4>
+                <p>{step.description}</p>
+              </li>
+            ))}
           </ol>
         </div>
 
@@ -180,42 +101,5 @@ export default function WorkMethod({ content }: WorkMethodProps) {
         </p>
       </div>
     </aside>
-  );
-}
-
-function MethodStep({
-  step,
-  index,
-  progress,
-  prefersReducedMotion,
-}: {
-  step: OrchestrationContent["steps"][number];
-  index: number;
-  progress: MotionValue<number>;
-  prefersReducedMotion: boolean;
-}) {
-  const stepProgress = stationProgress[index] ?? 1;
-  const revealOpacity = useTransform(
-    progress,
-    [Math.max(0, stepProgress - 0.12), stepProgress],
-    [0.42, 1]
-  );
-  const revealY = useTransform(
-    progress,
-    [Math.max(0, stepProgress - 0.12), stepProgress],
-    [12, 0]
-  );
-
-  return (
-    <m.li
-      style={{
-        opacity: prefersReducedMotion ? 1 : revealOpacity,
-        y: prefersReducedMotion ? 0 : revealY,
-      }}
-    >
-      <span className={styles.stationRule} aria-hidden="true" />
-      <h4>{step.title}</h4>
-      <p>{step.description}</p>
-    </m.li>
   );
 }
