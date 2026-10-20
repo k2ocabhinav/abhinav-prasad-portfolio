@@ -65,7 +65,6 @@ export interface PersonalData {
   email: string;
   resumeHref: string;
   socials: SocialLink[];
-  philosophy: string;
   presenceDescription: string;
   footerTagline: string;
 }

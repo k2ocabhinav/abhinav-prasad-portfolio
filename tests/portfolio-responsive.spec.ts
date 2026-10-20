@@ -12,7 +12,7 @@ const workstreamNames = [
 const stackGroups = [
   ["AI-assisted engineering", "Part of my workflow"],
   ["Backend systems and APIs", "Built in projects"],
-  ["Cloud delivery and release checks", "Used at work"],
+  ["Cloud delivery and reporting", "Used at work"],
 ] as const;
 
 const screenshotProjects = new Set([
@@ -64,7 +64,6 @@ async function sweepWholePage(page: Page) {
 
 async function revealAndSettleHomepage(page: Page) {
   for (const selector of [
-    "#services",
     "#about",
     "#experience",
     "#work",
@@ -290,7 +289,7 @@ test("uses the approved marquee and contact copy", async ({ page }) => {
   const contact = page.locator("#contact");
   await contact.scrollIntoViewIfNeeded();
   await expect(contact.getByRole("heading", { name: "Let's talk." })).toBeVisible();
-  await expect(contact.getByText("For software roles, product work or a project question.", { exact: true })).toBeVisible();
+  await expect(contact.getByText("Full-time roles, contract work or a scoped project: all welcome.", { exact: true })).toBeVisible();
   await expect(contact.getByRole("link", { name: "abhinavp0304@gmail.com" })).toBeVisible();
   await expect(contact.getByRole("link", { name: "Download résumé" })).toBeVisible();
   for (const name of ["GitHub", "LinkedIn", "Email Abhinav"]) {
@@ -298,7 +297,7 @@ test("uses the approved marquee and contact copy", async ({ page }) => {
   }
 });
 
-test("keeps the hero facts separate and the profile proof specific", async ({ page }) => {
+test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await openHome(page, true);
 
   await expect(page.getByText("Software engineer", { exact: true })).toBeVisible();
@@ -312,10 +311,14 @@ test("keeps the hero facts separate and the profile proof specific", async ({ pa
   await expect(onMyOwn).toHaveAttribute("href", "#work");
   await expect(onMyOwn).toContainText("On my own");
   await expect(onMyOwn).toContainText("Forward deployed builds: Velo, this site, AI-agent workflows");
-  await expect(page.locator("#about").getByText(/Velo is a pre-launch dispatch prototype/)).toBeVisible();
-  await expect(page.locator("#about").getByText(/As Database Engineer at Ostrum Tech Limited/)).toBeVisible();
-  await expect(page.locator("#about").getByText(/For my own builds, I scope AI-agent tasks/)).toBeVisible();
-  await expect(page.locator("#about").getByText(/I clarify expected behavior, trace the API and database changes/)).toBeVisible();
+  const whatIDo = page.locator("#about");
+  await expect(whatIDo.getByRole("heading", { name: "What I do" })).toBeVisible();
+  await expect(whatIDo.getByText("At Ostrum, I work on MySQL-backed API behaviour and versioned database releases.", { exact: true })).toBeVisible();
+  await expect(whatIDo.getByText("On my own, I take products from the backend to the interface, with AI coding agents doing scoped work under my review.", { exact: true })).toBeVisible();
+  await expect(whatIDo.getByText("I'm looking for work where backend and data meet the product.", { exact: true })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "Database workflows" })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "Release engineering" })).toBeVisible();
+  await expect(whatIDo.getByRole("heading", { name: "Product engineering" })).toBeVisible();
   expect((await page.locator("body").innerText()).match(/forward deployed/gi)).toHaveLength(1);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
@@ -508,7 +511,6 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expect(mobileNav.getByRole("link")).toHaveText([
     "Hero",
     "What I do",
-    "About",
     "Experience",
     "Work",
     "Stack",

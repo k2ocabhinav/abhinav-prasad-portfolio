@@ -146,7 +146,7 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
 
   await page.locator("#about").scrollIntoViewIfNeeded();
   await expect(
-    page.getByText("I design and build across the database, API, and product interface.", { exact: true })
+    page.getByRole("heading", { name: "What I do", exact: true })
   ).toBeVisible();
   const widths = await page.evaluate(() => ({
     documentWidth: document.documentElement.scrollWidth,
@@ -247,7 +247,7 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
 
   await expect(
     page.getByRole("heading", {
-      name: "I design and build across the database, API, and product interface.",
+      name: "What I do",
       exact: true,
     })
   ).toBeVisible();
@@ -323,6 +323,7 @@ test("desktop handoff into the profile section stays seam-free", async ({ page }
 test("orchestration panel keeps the build method readable on desktop", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
   await freezeHeroAmbientForSnapshot(page);
   await page.evaluate(() => {
     document.querySelector("#work aside[aria-labelledby='work-method-title']")?.scrollIntoView({ block: "center" });
@@ -344,6 +345,7 @@ test("orchestration panel keeps the build method readable on desktop", async ({ 
 test("orchestration panel keeps the build method readable on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
   await freezeHeroAmbientForSnapshot(page);
   await page.evaluate(() => {
     document.querySelector("#work aside[aria-labelledby='work-method-title']")?.scrollIntoView({ block: "start" });

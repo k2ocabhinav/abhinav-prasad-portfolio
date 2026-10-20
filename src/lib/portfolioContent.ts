@@ -557,7 +557,6 @@ function readProfile(): PortfolioProfile {
       label: stringValue(social, "label", filePath),
       href: stringValue(social, "href", filePath),
     })),
-    philosophy: stringValue(personalData, "philosophy", filePath),
     presenceDescription: stringValue(personalData, "presenceDescription", filePath),
     footerTagline: stringValue(personalData, "footerTagline", filePath),
   };

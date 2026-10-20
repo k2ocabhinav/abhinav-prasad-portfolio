@@ -110,7 +110,7 @@ export default function ContactSection({
             >
               <div className={cn("spec-body", styles.contactMotionRoot)}>
                 <h2 className={styles.heading}>Let&apos;s talk.</h2>
-                <p className={styles.callout}>For software roles, product work or a project question.</p>
+                <p className={styles.callout}>Full-time roles, contract work or a scoped project: all welcome.</p>
 
                 <div className={styles.ctaContainer}>
                   <MagneticButton href={personal.resumeHref} download>
@@ -120,7 +120,11 @@ export default function ContactSection({
                   <div className={styles.contactLinks}>
                     <EnvelopeStamp />
                     <div className={styles.contactInfo}>
-                      <a href={`mailto:${personal.email}`} className={styles.emailLink}>
+                      <a
+                        href={`mailto:${personal.email}`}
+                        className={styles.emailLink}
+                        aria-label={personal.email}
+                      >
                         {renderBreakableEmail(personal.email)}
                       </a>
                       <div className={styles.socials}>

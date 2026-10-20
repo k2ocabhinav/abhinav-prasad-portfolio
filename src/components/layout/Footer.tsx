@@ -19,7 +19,7 @@ export default function Footer({ personal }: FooterProps) {
       <div className={styles.colophonRow}>
         <PrinterSlug />
         <p className={styles.colophon}>
-          Set in Fraunces, Newsreader &amp; Fragment Mono · Mumbai, IN
+          Typeset in Fraunces, Newsreader, Hanken Grotesk, and Fragment Mono.
         </p>
       </div>
     </footer>

@@ -35,6 +35,7 @@ test("serves recruiter-readable content and structured data in the initial HTML"
     worksFor: { name: "Ostrum Tech Limited" },
     hasOccupation: { name: "Database Engineer" },
   });
+  expect(person?.knowsAbout).toContain("AI-assisted engineering");
   expect(JSON.stringify(person)).not.toMatch(/Software Engineer(?: Intern)?/i);
   await expect(page.locator("#experience article")).not.toContainText(/Software Engineer/i);
   expect(person?.sameAs).toEqual([
@@ -127,6 +128,8 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   expect(llms).toContain("Software engineer");
   expect(llms).toContain("At work: Database Engineer, Ostrum Tech Limited.");
   expect(llms).toContain("On my own: Velo, this portfolio, and AI-agent workflows.");
+  expect(llms).toContain("Hero, What I do, Experience, Work, Stack, and Contact.");
+  expect(llms).toContain("How I work appears below the projects in Work.");
   expect(llms).not.toMatch(/Forward deployed/i);
   expect(llms).toContain("## Professional experience");
   expect(llms).toContain("[Velo, a white-label dispatch prototype]");
