@@ -165,3 +165,15 @@ export function optionalObjectArrayField(data, key, filePath, field = key) {
   }
   return value;
 }
+
+/**
+ * Inline emphasis syntax for experience copy: `**bold**`. Markers must pair up,
+ * hold text, and never nest or touch whitespace on their inside edge.
+ * @param {string} text @returns {boolean}
+ */
+export function hasBalancedEmphasis(text) {
+  const parts = text.split("**");
+  if (parts.length % 2 === 0) return false;
+  if (text.includes("***")) return false;
+  return parts.every((part, index) => index % 2 === 0 || (part.length > 0 && part === part.trim()));
+}
