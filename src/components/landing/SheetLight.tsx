@@ -39,6 +39,7 @@ const format = (value: number) => value.toFixed(4);
 export default function SheetLight({ children }: SheetLightProps) {
   const heroRef = useRef<HTMLElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const fibreRef = useRef<HTMLCanvasElement>(null);
   const reducedMotion = useReducedMotion();
   const lightX = useMotionValue(0);
   const lightY = useMotionValue(0);
@@ -80,6 +81,63 @@ export default function SheetLight({ children }: SheetLightProps) {
   useMotionValueEvent(shade, "change", (value) => {
     scrollValues.current.shade = value;
   });
+
+  useEffect(() => {
+    const canvas = fibreRef.current;
+    if (!canvas || !window.matchMedia("(max-width: 767px)").matches) {
+      return;
+    }
+
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) {
+      return;
+    }
+
+    const image = new Image();
+    image.decoding = "async";
+    let canvasWidth = 0;
+    let canvasHeight = 0;
+
+    const drawTexture = () => {
+      if (!image.complete || image.naturalWidth === 0 || canvasWidth <= 0 || canvasHeight <= 0) {
+        return;
+      }
+
+      const pixelRatio = window.devicePixelRatio || 1;
+      canvas.width = Math.round(canvasWidth * pixelRatio);
+      canvas.height = Math.round(canvasHeight * pixelRatio);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      context.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      const pattern = context.createPattern(image, "repeat");
+      if (!pattern) {
+        return;
+      }
+
+      context.fillStyle = pattern;
+      context.fillRect(0, 0, canvasWidth, canvasHeight);
+    };
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const bounds = entries[0]?.contentRect;
+      if (!bounds) {
+        return;
+      }
+
+      canvasWidth = bounds.width;
+      canvasHeight = bounds.height;
+      drawTexture();
+    });
+
+    resizeObserver.observe(canvas);
+    image.onload = drawTexture;
+    image.src = "/landing/paper-fibre.avif";
+
+    return () => {
+      resizeObserver.disconnect();
+      image.onload = null;
+    };
+  }, []);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -361,7 +419,7 @@ export default function SheetLight({ children }: SheetLightProps) {
         <div className={styles.frame} data-home-hero-frame="true">
           <div ref={sheetRef} className={styles.sheet} data-hero-sheet="true">
             <div className={styles.paper} aria-hidden="true">
-              <div className={styles.fibre} />
+              <canvas ref={fibreRef} className={styles.fibre} />
               <div className={styles.sheen} />
             </div>
             <div className={styles.content} data-hero-content="true">

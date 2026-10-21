@@ -76,6 +76,8 @@
 .fibre {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   background-image: url("/landing/paper-fibre.webp");
   background-image: image-set(
     url("/landing/paper-fibre.avif") type("image/avif"),
