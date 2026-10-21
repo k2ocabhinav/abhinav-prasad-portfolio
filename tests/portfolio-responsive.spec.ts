@@ -551,7 +551,7 @@ test("Stack groups sit in a two-column tablet grid with readable chips and the p
   expect(geometry.cardWidths[0]).toBeGreaterThan(geometry.cardWidths[1] * 1.8);
   expect(geometry.cardTops[1]).toBe(geometry.cardTops[2]);
   expect(geometry.cardTops[3]).toBe(geometry.cardTops[4]);
-  expect(geometry.sample).toHaveLength(32);
+  expect(geometry.sample).toHaveLength(43);
   for (const chip of geometry.sample) {
     expect(chip.fontSize).toBeGreaterThanOrEqual(14);
     expect(chip.weight).toBeGreaterThanOrEqual(500);

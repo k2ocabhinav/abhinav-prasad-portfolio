@@ -15,7 +15,7 @@ export const stackToneValues = ["lovebird", "petrol", "burgundy", "cornflower", 
  * must draw exactly these (its record is typed from this list), and both the
  * loader and the content check reject any other name, so a chip can never fall
  * back to a stand-in icon silently.
- * @type {readonly ["claude-code", "codex", "agents", "checklist", "review", "browser-check", "context", "java", "spring", "key", "api", "websocket", "bolt", "repeat-equals", "typescript", "react", "nextjs", "motion", "cube", "mdx", "cloud", "pipeline", "github-actions", "docker", "steps", "python", "database", "postgresql", "table", "gauge", "chart"]}
+ * @type {readonly ["claude-code", "codex", "agents", "checklist", "review", "browser-check", "context", "mcp", "rag", "evals", "llm-apis", "agent-frameworks", "guardrails", "java", "spring", "key", "api", "websocket", "bolt", "repeat-equals", "kafka", "microservices", "typescript", "react", "nextjs", "motion", "cube", "mdx", "cloud", "pipeline", "github-actions", "docker", "steps", "python", "kubernetes", "terraform", "observability", "database", "postgresql", "table", "gauge", "chart"]}
  */
 export const stackIconNames = [
   "claude-code",
@@ -25,6 +25,12 @@ export const stackIconNames = [
   "review",
   "browser-check",
   "context",
+  "mcp",
+  "rag",
+  "evals",
+  "llm-apis",
+  "agent-frameworks",
+  "guardrails",
   "java",
   "spring",
   "key",
@@ -32,6 +38,8 @@ export const stackIconNames = [
   "websocket",
   "bolt",
   "repeat-equals",
+  "kafka",
+  "microservices",
   "typescript",
   "react",
   "nextjs",
@@ -44,6 +52,9 @@ export const stackIconNames = [
   "docker",
   "steps",
   "python",
+  "kubernetes",
+  "terraform",
+  "observability",
   "database",
   "postgresql",
   "table",
