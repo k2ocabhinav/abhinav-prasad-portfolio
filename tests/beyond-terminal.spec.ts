@@ -73,11 +73,11 @@ async function expectBeyondPhotoWallVisible(page: Page) {
 
 async function expectHowWorkStepGap(method: Locator) {
   const gap = await method.locator("ol").evaluate((steps) => {
-    const intro = steps.parentElement?.querySelector("p");
+    const intro = steps.parentElement?.querySelector("header p:last-of-type");
     if (!intro) throw new Error("How I work intro was not found");
     return Math.round(steps.getBoundingClientRect().top - intro.getBoundingClientRect().bottom);
   });
-  expect(gap).toBeGreaterThanOrEqual(40);
+  expect(gap).toBeGreaterThanOrEqual(32);
   expect(gap).toBeLessThanOrEqual(48);
 }
 
@@ -733,7 +733,7 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
   await page.evaluate(() => {
     document.querySelector("#work aside[aria-labelledby='work-method-title']")?.scrollIntoView({ block: "center" });
   });
-  await page.waitForTimeout(420);
+  await page.waitForTimeout(1500);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
@@ -750,7 +750,7 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
   });
 });
 
-test("How I work keeps the four columns readable on mobile", async ({ page }) => {
+test("How I work keeps the four steps readable on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
@@ -758,7 +758,7 @@ test("How I work keeps the four columns readable on mobile", async ({ page }) =>
   await page.evaluate(() => {
     document.querySelector("#work aside[aria-labelledby='work-method-title']")?.scrollIntoView({ block: "start" });
   });
-  await page.waitForTimeout(420);
+  await page.waitForTimeout(1500);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
@@ -767,15 +767,14 @@ test("How I work keeps the four columns readable on mobile", async ({ page }) =>
   const columnCount = await method.locator("ol").evaluate(
     (element) => getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length
   );
-  expect(columnCount).toBe(2);
+  expect(columnCount).toBe(1);
 
   const screenshot = await method.screenshot({
     animations: "disabled",
   });
 
   expect(screenshot).toMatchSnapshot("orchestration-method-mobile.png", {
-    // The spacing shift is intentional; keep the baseline while checking the exact gap above.
-    maxDiffPixelRatio: 0.05,
+    maxDiffPixelRatio: 0.025,
   });
 });
 

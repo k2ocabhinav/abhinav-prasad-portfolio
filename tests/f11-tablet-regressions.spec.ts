@@ -134,7 +134,7 @@ test.describe("F11 tablet and tall viewport regressions", () => {
     }
   });
 
-  test("work method keeps the four current steps in distinct columns", async ({ page }, testInfo) => {
+  test("work method lays the four steps out as a contained 2x2 grid", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop-chromium", "Geometry checks in one engine");
     for (const viewport of [
       { width: 1024, height: 768 },
@@ -157,7 +157,7 @@ test.describe("F11 tablet and tall viewport regressions", () => {
           contained: stepBounds.every((box) => box.left >= bounds.left && box.right <= bounds.right),
         };
       });
-      expect(metrics.listColumns).toBe(4);
+      expect(metrics.listColumns).toBe(2);
       expect(metrics.labels).toEqual(["Scope", "Assign", "Review", "Verify"]);
       expect(metrics.contained).toBe(true);
     }

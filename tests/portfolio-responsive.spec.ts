@@ -450,13 +450,13 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
     "Read every change against the task and the existing code.",
     "Run the checks and walk the real flow in a browser.",
   ]);
-  await expect(method.locator("ol > li span")).toHaveText(["01", "02", "03", "04"]);
+  await expect(method.locator("ol > li svg")).toHaveCount(4);
   await expect(method.locator("svg[viewBox='0 0 420 500']")).toBeVisible();
   await expect(method).toHaveCSS("background-color", "rgb(53, 30, 40)");
   const stepColumns = await method.locator("ol").evaluate(
     (list) => getComputedStyle(list).gridTemplateColumns.trim().split(/\s+/).length
   );
-  expect(stepColumns).toBe(page.viewportSize()!.width <= 900 ? 2 : 4);
+  expect(stepColumns).toBe(page.viewportSize()!.width < 768 ? 1 : 2);
   await expect(page.locator("#stack p")).toHaveText("Tools I use across work and projects");
 });
 
