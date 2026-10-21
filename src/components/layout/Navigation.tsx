@@ -322,6 +322,7 @@ export default function Navigation({
               key={item.id}
               href={`#${item.id}`}
               className={styles.railItem}
+              tabIndex={-1}
               aria-label={item.label}
               aria-current={activeSection === item.id ? "location" : undefined}
               onClick={(event) => {
