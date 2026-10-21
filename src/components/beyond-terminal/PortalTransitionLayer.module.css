@@ -5,6 +5,23 @@
   pointer-events: auto;
 }
 
+.root[data-portal-skin="beyond-room"] .cover {
+  background: var(--color-beyond-lilac);
+}
+
+.root[data-portal-skin="beyond-room"] .blur {
+  opacity: 0 !important;
+}
+
+.root[data-portal-skin="beyond-room"] .frame,
+.root[data-portal-skin="beyond-room"] .grain {
+  display: none;
+}
+
+.root[data-portal-skin="beyond-room"] .content {
+  display: none;
+}
+
 .rootReduced .cover {
   background:
     linear-gradient(180deg, rgba(var(--color-beyond-paper-rgb), 0.98), rgba(var(--color-beyond-yellow-rgb), 0.94)),
@@ -13,6 +30,10 @@
       rgba(var(--color-beyond-coral-rgb), 0.18),
       transparent 42%
     );
+}
+
+.root[data-portal-skin="beyond-room"].rootReduced .cover {
+  background: var(--color-beyond-lilac);
 }
 
 .rootRevealing {

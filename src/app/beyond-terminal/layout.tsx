@@ -1,39 +1,39 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import BeyondShell from "@/components/beyond-terminal/BeyondShell";
 import ExperienceProvidersBoundary from "@/components/providers/ExperienceProvidersBoundary";
 import { absoluteUrl } from "@/lib/siteConfig";
 
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
+const display = localFont({
+  src: "./fonts/bricolage-grotesque-latin.woff2",
   variable: "--font-beyond-display",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: "400 800",
   display: "swap",
 });
 
-const body = Plus_Jakarta_Sans({
-  subsets: ["latin"],
+const body = localFont({
+  src: "./fonts/plus-jakarta-sans-latin.woff2",
   variable: "--font-beyond-body",
-  weight: ["400", "500", "600", "700"],
+  weight: "400 700",
   display: "swap",
 });
 
-const mono = Space_Mono({
-  subsets: ["latin"],
+const mono = localFont({
+  src: "./fonts/space-mono-subset.woff",
   variable: "--font-beyond-mono",
   weight: "400",
   display: "swap",
 });
 
-const beyondTitle = "Beyond The Terminal";
+const beyondTitle = "Beyond the terminal";
 const beyondDescription =
-  "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.";
+  "A small room for photos, notes and moments outside the work.";
 const beyondImage = {
   url: absoluteUrl("/og-image.82ccc069.jpg"),
   width: 1200,
   height: 630,
-  alt: "Abhinav Prasad, Beyond The Terminal photo wall",
+  alt: "Abhinav Prasad, Beyond the terminal",
 };
 
 export const metadata: Metadata = {

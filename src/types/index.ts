@@ -466,7 +466,7 @@ export interface PortalTransitionIntent {
   originY: number;
   source: "easter-egg" | "navigation";
   variant: "portal-bloom" | "accessible-fade";
-  skin: "default" | "beyond-pastel-mist";
+  skin: "default" | "beyond-pastel-mist" | "beyond-room";
 }
 
 export type PortalTransitionPhase = "idle" | "covering" | "navigating" | "revealing";
