@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import * as m from "motion/react-m";
-import { useScroll, useTransform } from "motion/react";
+import { useTransform } from "motion/react";
 import { useRef } from "react";
 import { ChevronRight } from "lucide-react";
 import type { OrchestrationContent, Project, SectionTone } from "@/types";
@@ -15,6 +15,7 @@ import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
+import { useGatedScrollProgress } from "@/components/ui/useGatedScrollProgress";
 import CaseNumeral from "@/components/art/CaseNumeral";
 import PrintRunPoster from "@/components/art/PrintRunPoster";
 import VeloRoutePlate from "@/components/art/VeloRoutePlate";
@@ -23,6 +24,9 @@ import styles from "./WorksSection.module.css";
 // =============================================================================
 // WorksSection — Project showcase with alternating layouts and card tilt
 // =============================================================================
+
+// Progress runs 0 → 1 over the element's whole pass through the viewport.
+const FULL_TRANSIT: ["start end", "end start"] = ["start end", "end start"];
 
 interface WorksSectionProps {
   projects: Project[];
@@ -93,10 +97,11 @@ function OrchestrationEvidence({
 }) {
   const prefersReducedMotion = useReducedMotion();
   const posterRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : posterRef,
-    offset: ["start end", "end start"],
-  });
+  const scrollYProgress = useGatedScrollProgress(
+    posterRef,
+    FULL_TRANSIT,
+    !prefersReducedMotion
+  );
 
   const steps = content.steps.map((step, index) => (
     <m.li
@@ -158,10 +163,11 @@ function WorkCard({ project }: { project: Project }) {
   // Scroll anchor is the plain content panel below — passing a motion-component
   // ref to useScroll can throw "Target ref is defined but not hydrated".
   const cardRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : cardRef,
-    offset: ["start end", "end start"],
-  });
+  const scrollYProgress = useGatedScrollProgress(
+    cardRef,
+    FULL_TRANSIT,
+    !prefersReducedMotion
+  );
   // Subtle scroll-linked drift on the media so the card feels alive while scrolling.
   const visualY = useTransform(scrollYProgress, [0, 1], [24, -24]);
   const screenshots = project.screenshots ?? [];
