@@ -8,11 +8,14 @@ const port = process.env.PLAYWRIGHT_PORT ?? "3000";
 // working tree; an existing server is never reused in that mode, otherwise a
 // stale dev server could silently stand in for the build under test.
 const prod = process.env.PLAYWRIGHT_PROD === "1";
+const reuseProductionServer = process.env.PLAYWRIGHT_REUSE_PROD_SERVER === "1";
 
 export default defineConfig({
   testDir: "./tests",
   outputDir: process.env.PLAYWRIGHT_OUTPUT_DIR ?? "test-results",
   timeout: 60_000,
+  // Avoid exhausting headless Chromium's SwiftShader contexts during the room tests.
+  workers: prod ? 1 : undefined,
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
@@ -78,7 +81,7 @@ export default defineConfig({
       ? `npm run build && npm run start -- --hostname 127.0.0.1 --port ${port}`
       : `npm run dev -- --hostname 127.0.0.1 --port ${port}`,
     url: `http://127.0.0.1:${port}`,
-    reuseExistingServer: !prod,
+    reuseExistingServer: prod ? reuseProductionServer : true,
     timeout: prod ? 300_000 : 120_000,
     ...(prod
       ? { env: { WHATSAPP_E164: process.env.WHATSAPP_E164 ?? "" } }

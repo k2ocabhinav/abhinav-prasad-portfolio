@@ -12,7 +12,6 @@ export function useHamburgerVisibility(isMobileMenuOpen: boolean) {
       return;
     }
 
-    let frame = 0;
     let lastY = window.scrollY;
     let maxScroll = 0;
 
@@ -26,8 +25,9 @@ export function useHamburgerVisibility(isMobileMenuOpen: boolean) {
     resizeObserver.observe(document.body);
     window.addEventListener("resize", measure, { passive: true });
 
-    const update = () => {
-      frame = 0;
+    // Runs in the scroll event itself (one per frame), so the scrollY read
+    // never lands after the frame's style writes and forces a recalculation.
+    const handleScroll = () => {
       const y = window.scrollY;
       const delta = y - lastY;
       if (Math.abs(delta) < 4) {
@@ -39,20 +39,11 @@ export function useHamburgerVisibility(isMobileMenuOpen: boolean) {
       setIsHamburgerHidden(!atEdge && delta > 0);
     };
 
-    const handleScroll = () => {
-      if (frame === 0) {
-        frame = window.requestAnimationFrame(update);
-      }
-    };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", measure);
       resizeObserver.disconnect();
-      if (frame !== 0) {
-        window.cancelAnimationFrame(frame);
-      }
     };
   }, [isMobileMenuOpen]);
 

@@ -9,7 +9,7 @@ import { navSpyTargets } from "@/data/navigation";
 // Navigation, the cursor, the backdrop and the brand mark all need the same
 // answer: which section owns the viewport midline, is it a dark ink field, and
 // has the page left the hero. This module owns one IntersectionObserver and
-// one rAF-throttled scroll read; consumers subscribe instead of re-deriving
+// one scroll read per event; consumers subscribe instead of re-deriving
 // the same state.
 //
 // `useSyncExternalStore` only notifies on an actual change, so scrolling does
@@ -47,7 +47,7 @@ const PAPER_STOCK_BY_SECTION: Record<string, PaperStock> = {
   about: "bone",
   experience: "linen",
   work: "linen",
-  stack: "bone",
+  stack: "linen",
   contact: "bone",
 };
 
@@ -106,10 +106,24 @@ function startEngine(): () => void {
   const visible = new Set<Element>();
   let marqueeOverlapsRail = false;
   const bodyScrollIsLocked = () => document.body.style.position === "fixed";
+  // scrollHeight and innerHeight are layout reads: taken inside a scroll or
+  // rAF callback after style writes they force a synchronous recalculation.
+  // The page size only changes on resize or a content-height change, so it is
+  // cached here and refreshed from a ResizeObserver (which runs post-layout).
+  let pageHeight = 0;
+  let viewportHeight = 0;
+  const measurePage = () => {
+    pageHeight = document.documentElement.scrollHeight;
+    viewportHeight = window.innerHeight;
+  };
+  measurePage();
+  const pageResizeObserver = new ResizeObserver(measurePage);
+  pageResizeObserver.observe(document.documentElement);
+  pageResizeObserver.observe(document.body);
+  window.addEventListener("resize", measurePage, { passive: true });
   const atPageBottom = () =>
     !bodyScrollIsLocked() &&
-    window.innerHeight + window.scrollY >=
-    document.documentElement.scrollHeight - 2;
+    viewportHeight + window.scrollY >= pageHeight - 2;
   const last = resolved[resolved.length - 1];
   const marquee = document.querySelector("[data-marquee]");
   const railToneObserver = marquee
@@ -161,11 +175,11 @@ function startEngine(): () => void {
 
   resolved.forEach(({ element }) => observer.observe(element));
 
-  // One scroll read, coalesced into a frame, publishing only on a threshold
-  // change. Passive so it never delays the scroll itself.
-  let frame = 0;
+  // One scroll read per scroll event (the browser already coalesces these to
+  // one per frame), publishing only on a threshold change. It runs in the
+  // event, ahead of the frame's rAF writes, so the scrollY read never forces a
+  // style recalculation. Passive so it never delays the scroll itself.
   const readNavMode = () => {
-    frame = 0;
     publish({
       navMode: window.scrollY > NAV_MODE_THRESHOLD ? "glass" : "transparent",
       railDark: snapshot.dark || marqueeOverlapsRail,
@@ -182,22 +196,16 @@ function startEngine(): () => void {
       });
     }
   };
-  const handleScroll = () => {
-    if (frame === 0) {
-      frame = window.requestAnimationFrame(readNavMode);
-    }
-  };
 
   readNavMode();
-  window.addEventListener("scroll", handleScroll, { passive: true });
+  window.addEventListener("scroll", readNavMode, { passive: true });
 
   return () => {
     observer.disconnect();
     railToneObserver?.disconnect();
-    if (frame !== 0) {
-      window.cancelAnimationFrame(frame);
-    }
-    window.removeEventListener("scroll", handleScroll);
+    pageResizeObserver.disconnect();
+    window.removeEventListener("resize", measurePage);
+    window.removeEventListener("scroll", readNavMode);
   };
 }
 

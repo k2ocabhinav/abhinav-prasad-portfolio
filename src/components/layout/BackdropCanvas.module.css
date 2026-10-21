@@ -5,12 +5,26 @@
   pointer-events: none;
   overflow: hidden;
   background: var(--paper-bone);
-  transition: background-color 0.8s ease;
 }
 
-/* Palette v2 paper rooms. Glacier and burgundy are section-painted fields. */
-.canvas[data-stock="linen"] {
+/* Palette v2 paper rooms. Glacier and burgundy are section-painted fields.
+   Linen is a second full-bleed sheet laid over the bone one and faded in with
+   opacity. Cross-fading two opaque sheets gives the same colour at every step
+   as the old background-color transition, but opacity runs on the compositor:
+   a background-color transition repainted and re-rastered this whole fixed
+   viewport layer on every frame of the 0.8 s fade (twice per pass down the
+   page). */
+.canvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: var(--paper-linen);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.canvas[data-stock="linen"]::before {
+  opacity: 1;
 }
 
 

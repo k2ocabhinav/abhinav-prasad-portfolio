@@ -154,28 +154,18 @@ test("keeps each home section readable without JavaScript", async ({ browser, ba
   await context.close();
 });
 
-test("keeps Beyond photo wall cards readable without JavaScript", async ({ page }) => {
+test("serves the Beyond room poster and intro without JavaScript", async ({ page }) => {
   await page.route("**/_next/static/**/*.js", (route) => route.abort());
   await page.goto("/beyond-terminal");
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Beyond The Terminal" })
+    page.getByRole("heading", { level: 1, name: "Beyond the terminal" })
   ).toBeVisible();
   await expect(
-    page.getByText("Photos, people, notes, and the parts that don't fit inside a resume.")
+    page.getByText("Photos, notes and people from the other side of the work.")
   ).toBeVisible();
-
-  const cards = page.getByRole("button", { name: /^Open / });
-  const cardCount = await cards.count();
-  expect(cardCount).toBeGreaterThan(0);
-
-  for (let index = 0; index < cardCount; index += 1) {
-    const card = cards.nth(index);
-    await card.scrollIntoViewIfNeeded();
-    await expect
-      .poll(() => card.evaluate((element) => Number(getComputedStyle(element).opacity)))
-      .toBeGreaterThan(0.99);
-  }
+  await expect(page.locator("[data-room-poster]")).toBeVisible();
+  await expect(page.locator("[data-fallback-deck]")).toHaveCount(0);
 });
 
 test("allows the listed search, retrieval, and training agents in the public policy", () => {
@@ -229,7 +219,7 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   // The LLM summary keeps its independent profile source; this package changes hero identity and seo.title.
   expect(llms).toContain("At work: Database Engineer, Ostrum Tech Limited.");
   expect(llms).toContain("On my own: Velo, this portfolio, and AI-agent workflows.");
-  expect(llms).toContain("Hero, What I do, Experience, Work, Stack, and Contact.");
+  expect(llms).toContain("Hero, What I do, Stack, Experience, Work, and Contact.");
   expect(llms).toContain("How I work appears below the projects in Work.");
   expect(llms).not.toMatch(/Forward deployed/i);
   expect(llms).toContain("## Professional experience");

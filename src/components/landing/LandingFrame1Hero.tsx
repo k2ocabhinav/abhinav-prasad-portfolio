@@ -29,7 +29,7 @@ export default function LandingFrame1Hero({
           href: "/beyond-terminal",
           source: "easter-egg",
           variant: "portal-bloom",
-          skin: "beyond-pastel-mist",
+          skin: "beyond-room",
         }}
       />
       <PressRunController />

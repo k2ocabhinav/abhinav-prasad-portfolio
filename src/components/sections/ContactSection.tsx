@@ -1,7 +1,7 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useScroll, useTransform } from "motion/react";
+import { useTransform } from "motion/react";
 import { useRef, useSyncExternalStore } from "react";
 import type { PersonalData, PresenceNode } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -10,6 +10,7 @@ import LinkedInMark from "@/components/ui/LinkedInMark";
 import WhatsAppMark from "@/components/ui/WhatsAppMark";
 import DownloadMark from "@/components/ui/DownloadMark";
 import MagneticButton from "@/components/ui/MagneticButton";
+import { useGatedScrollProgress } from "@/components/ui/useGatedScrollProgress";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import EnvelopeStamp from "@/components/art/EnvelopeStamp";
 import TimezoneMap from "@/components/art/TimezoneMap";
@@ -29,6 +30,8 @@ function getServerHydratedSnapshot() {
   return false;
 }
 
+const RISE_OFFSET: ["start end", "start 0.55"] = ["start end", "start 0.55"];
+
 interface ContactSectionProps {
   personal: PersonalData;
   whatsappHref: string | null;
@@ -47,10 +50,11 @@ export default function ContactSection({
     getServerHydratedSnapshot
   );
   const riseRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : riseRef,
-    offset: ["start end", "start 0.55"],
-  });
+  const scrollYProgress = useGatedScrollProgress(
+    riseRef,
+    RISE_OFFSET,
+    !prefersReducedMotion
+  );
   const sheetY = useTransform(scrollYProgress, [0, 1], [32, 0]);
   const sheetScale = useTransform(scrollYProgress, [0, 1], [0.98, 1]);
   const linkedinHref = personal.socials.find(

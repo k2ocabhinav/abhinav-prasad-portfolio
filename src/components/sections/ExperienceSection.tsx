@@ -1,12 +1,12 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useScroll } from "motion/react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { ChronicleEntry, ExperiencePoint, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import { useGatedScrollProgress } from "@/components/ui/useGatedScrollProgress";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./ExperienceSection.module.css";
@@ -26,19 +26,48 @@ const visibleSummaryLeads = new Set([
   "Designed and built",
 ]);
 
-function ExperiencePointText({ point }: { point: ExperiencePoint }) {
-  if (point.emphasis) {
-    return (
-      <>
-        <strong>{point.lead} <span>{point.emphasis}</span></strong>, {point.detail}
-      </>
-    );
-  }
+/**
+ * Renders content strings that mark scan-words as **bold**. Markers are
+ * validated at build time (balanced, non-empty, not nested); odd segments
+ * become <strong>, so no HTML is ever injected.
+ */
+function renderInlineEmphasis(text: string): ReactNode[] {
+  return text.split("**").map((part, index) =>
+    index % 2 === 1 ? (
+      <strong key={index} className={styles.keyword}>
+        {part}
+      </strong>
+    ) : (
+      part
+    )
+  );
+}
 
+function ExperiencePointItem({ point }: { point: ExperiencePoint }) {
   return (
-    <>
-      <strong>{point.lead}.</strong> {point.detail}
-    </>
+    <li className={point.metric ? styles.hasMetric : undefined}>
+      <p className={styles.pointText}>
+        {point.emphasis ? (
+          <>
+            <strong className={styles.lead}>
+              {point.lead} <span>{point.emphasis}</span>
+            </strong>
+            , {renderInlineEmphasis(point.detail)}
+          </>
+        ) : (
+          <>
+            <strong className={styles.lead}>{point.lead}.</strong>{" "}
+            {renderInlineEmphasis(point.detail)}
+          </>
+        )}
+      </p>
+      {point.metric ? (
+        <p className={styles.metric}>
+          <span className={styles.metricLabel}>{point.metric.label}</span>
+          <span className={styles.metricValue}>{point.metric.value}</span>
+        </p>
+      ) : null}
+    </li>
   );
 }
 
@@ -100,9 +129,7 @@ function ExperienceDossier({ experience }: ExperienceDossierProps) {
         </div>
         <ul className={styles.pointList}>
           {visibleSummaryPoints.map((point) => (
-            <li key={`${point.lead}-${point.detail}`}>
-              <ExperiencePointText point={point} />
-            </li>
+            <ExperiencePointItem key={`${point.lead}-${point.detail}`} point={point} />
           ))}
         </ul>
       </div>
@@ -137,9 +164,7 @@ function ExperienceDossier({ experience }: ExperienceDossierProps) {
             <p className={styles.roleScope}>{experience.roleScope}</p>
             <ul className={styles.detailPoints}>
               {additionalSummaryPoints.map((point) => (
-                <li key={`${point.lead}-${point.detail}`}>
-                  <ExperiencePointText point={point} />
-                </li>
+                <ExperiencePointItem key={`${point.lead}-${point.detail}`} point={point} />
               ))}
             </ul>
             <div className={styles.workstreamGrid}>
@@ -167,9 +192,7 @@ function ExperienceDossier({ experience }: ExperienceDossierProps) {
                     <p className={styles.workstreamSummary}>{workstream.summary}</p>
                     <ul className={styles.workstreamPoints}>
                       {workstream.points.map((point) => (
-                        <li key={`${point.lead}-${point.detail}`}>
-                          <ExperiencePointText point={point} />
-                        </li>
+                        <ExperiencePointItem key={`${point.lead}-${point.detail}`} point={point} />
                       ))}
                     </ul>
 
@@ -214,10 +237,11 @@ export default function ExperienceSection({
 }: ExperienceSectionProps) {
   const prefersReducedMotion = useReducedMotion();
   const headerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : headerRef,
-    offset: ["start 0.86", "start 0.50"],
-  });
+  const scrollYProgress = useGatedScrollProgress(
+    headerRef,
+    ["start 0.86", "start 0.50"],
+    !prefersReducedMotion
+  );
 
   if (experiences.length === 0) {
     return null;

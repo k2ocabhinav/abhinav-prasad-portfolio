@@ -1,7 +1,7 @@
 import { cache } from "react";
 import path from "path";
-import type { ChronicleEntry, PortfolioStatus } from "@/types";
-import { expectedContentCounts, statusValues } from "@/lib/portfolioSchema.mjs";
+import type { ChronicleEntry, ExperiencePoint, PortfolioStatus } from "@/types";
+import { expectedContentCounts, hasBalancedEmphasis, statusValues } from "@/lib/portfolioSchema.mjs";
 import {
   byOrder,
   ensureUnique,
@@ -11,12 +11,31 @@ import {
   nonEmptyObjectArray,
   nonEmptyStringArray,
   numberValue,
+  optionalObject,
   optionalObjectArray,
   optionalNonEmptyString,
   readExperienceImage,
   readFrontmatter,
   stringValue,
+  type Frontmatter,
 } from "./shared";
+
+function readPoint(point: Frontmatter, filePath: string): ExperiencePoint {
+  const emphasis = optionalNonEmptyString(point, "emphasis", filePath);
+  const rawMetric = optionalObject(point, "metric", filePath);
+  const detail = stringValue(point, "detail", filePath);
+  if (!hasBalancedEmphasis(detail)) {
+    fail(filePath, `experience detail has unbalanced or empty **bold** markers: "${detail}"`);
+  }
+  return {
+    lead: stringValue(point, "lead", filePath),
+    detail,
+    ...(emphasis ? { emphasis } : {}),
+    ...(rawMetric
+      ? { metric: { label: stringValue(rawMetric, "label", filePath), value: stringValue(rawMetric, "value", filePath) } }
+      : {}),
+  };
+}
 
 export const getChronicleEntries = cache((): ChronicleEntry[] => {
   const entries = listMdxFiles("chronicle").map((filePath) => {
@@ -39,14 +58,7 @@ export const getChronicleEntries = cache((): ChronicleEntry[] => {
         id: stringValue(workstream, "id", filePath),
         title: stringValue(workstream, "title", filePath),
         summary: stringValue(workstream, "summary", filePath),
-        points: nonEmptyObjectArray(workstream, "points", filePath).map((point) => {
-          const emphasis = optionalNonEmptyString(point, "emphasis", filePath);
-          return {
-            lead: stringValue(point, "lead", filePath),
-            detail: stringValue(point, "detail", filePath),
-            ...(emphasis ? { emphasis } : {}),
-          };
-        }),
+        points: nonEmptyObjectArray(workstream, "points", filePath).map((point) => readPoint(point, filePath)),
         tools,
         ...(images.length > 0 ? { images } : {}),
       };
@@ -67,14 +79,7 @@ export const getChronicleEntries = cache((): ChronicleEntry[] => {
       roleTitle: stringValue(data, "roleTitle", filePath),
       roleScope: stringValue(data, "roleScope", filePath),
       employmentNote: stringValue(data, "employmentNote", filePath),
-      summaryPoints: rawSummaryPoints.map((point) => {
-        const emphasis = optionalNonEmptyString(point, "emphasis", filePath);
-        return {
-          lead: stringValue(point, "lead", filePath),
-          detail: stringValue(point, "detail", filePath),
-          ...(emphasis ? { emphasis } : {}),
-        };
-      }),
+      summaryPoints: rawSummaryPoints.map((point) => readPoint(point, filePath)),
       workstreams,
     };
   });

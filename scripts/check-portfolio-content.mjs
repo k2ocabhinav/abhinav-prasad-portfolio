@@ -11,6 +11,7 @@ import {
   beyondSizes as beyondSizeValues,
   expectedContentCounts,
   expectedHeroFactLinks,
+  hasBalancedEmphasis,
   projectIcons as projectIconValues,
   projectStoryLayouts as projectStoryLayoutValues,
   projectStoryThemes as projectStoryThemeValues,
@@ -20,6 +21,8 @@ import {
   projectTripRoles as projectTripRoleValues,
   socialPlatforms as socialPlatformValues,
   stackContextValues as stackContextValueList,
+  stackIconNames as stackIconNameList,
+  stackToneValues as stackToneValueList,
   statusValues as statusValueList,
   objectField,
   optionalBooleanField,
@@ -38,6 +41,8 @@ const publicRoot = path.join(root, "public");
 const statuses = new Set(statusValueList);
 const projectIcons = new Set(projectIconValues);
 const stackContextValues = new Set(stackContextValueList);
+const stackIconNames = new Set(stackIconNameList);
+const stackTones = new Set(stackToneValueList);
 const accents = new Set(accentValues);
 const beyondKinds = new Set(beyondKindValues);
 const beyondColors = new Set(beyondColorValues);
@@ -365,7 +370,6 @@ function validateProfile() {
   if (stringArray(profileIntro, "proofLines", filePath).length !== expectedContentCounts.profileProofLines) {
     fail(filePath, `"profileIntro.proofLines" must contain ${expectedContentCounts.profileProofLines} proof lines`);
   }
-  unique(stringArray(profileIntro, "stackItems", filePath), "profile intro stack item");
   const orchestration = objectValue(data, "orchestration", filePath);
   stringValue(orchestration, "intro", filePath);
   const steps = objectArray(orchestration, "steps", filePath);
@@ -466,6 +470,20 @@ function validateProjects() {
   );
 }
 
+function validateExperiencePoint(point, filePath) {
+  stringValue(point, "lead", filePath);
+  const detail = stringValue(point, "detail", filePath);
+  if (!hasBalancedEmphasis(detail)) {
+    fail(filePath, `experience detail has unbalanced or empty **bold** markers: "${detail}"`);
+  }
+  if (point.emphasis !== undefined) stringValue(point, "emphasis", filePath);
+  const metric = optionalObject(point, "metric", filePath);
+  if (metric) {
+    stringValue(metric, "label", filePath);
+    stringValue(metric, "value", filePath);
+  }
+}
+
 function validateChronicle() {
   const entries = mdxFiles("chronicle").map((filePath) => {
     const data = read(filePath);
@@ -479,11 +497,7 @@ function validateChronicle() {
     if (summaryPoints.length !== expectedContentCounts.experienceSummaryPoints) {
       fail(filePath, `"summaryPoints" must contain ${expectedContentCounts.experienceSummaryPoints} visible experience points`);
     }
-    summaryPoints.forEach((point) => {
-      stringValue(point, "lead", filePath);
-      stringValue(point, "detail", filePath);
-      if (point.emphasis !== undefined) stringValue(point, "emphasis", filePath);
-    });
+    summaryPoints.forEach((point) => validateExperiencePoint(point, filePath));
 
     const workstreams = objectArray(data, "workstreams", filePath);
     if (workstreams.length !== expectedContentCounts.experienceWorkstreams) {
@@ -495,11 +509,7 @@ function validateChronicle() {
       if (points.length === 0) {
         fail(filePath, `workstream "${workstream.id}" must contain at least one point`);
       }
-      points.forEach((point) => {
-        stringValue(point, "lead", filePath);
-        stringValue(point, "detail", filePath);
-        if (point.emphasis !== undefined) stringValue(point, "emphasis", filePath);
-      });
+      points.forEach((point) => validateExperiencePoint(point, filePath));
       const tools = stringArray(workstream, "tools", filePath);
       unique(tools, `tool in workstream "${workstream.id}"`);
       const images = optionalObjectArray(workstream, "images", filePath);
@@ -529,12 +539,31 @@ function validateStack() {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
     enumValue(data, "context", stackContextValues, filePath);
+    enumValue(data, "tone", stackTones, filePath);
     ["id", "label"].forEach((key) => stringValue(data, key, filePath));
+    optionalString(data, "summary", filePath);
     optionalNumber(data, "order", filePath);
-    optionalBooleanField(data, "highlighted", rel(filePath), false);
+    optionalBooleanField(data, "featured", rel(filePath), false);
+    const skills = objectArray(data, "skills", filePath);
+    if (skills.length === 0) {
+      fail(filePath, '"skills" must list at least one skill');
+    }
+    skills.forEach((skill) => {
+      stringValue(skill, "label", filePath);
+      // A chip names its glyph explicitly: an unknown name fails the build
+      // here instead of rendering a stand-in icon.
+      enumValue(skill, "icon", stackIconNames, filePath);
+    });
+    unique(skills.map((skill) => skill.label), `stack skill in ${rel(filePath)}`);
     return data;
   });
   unique(groups.map((group) => group.id), "stack id");
+  const published = groups.filter((group) => group.status === "published");
+  unique(published.flatMap((group) => group.skills.map((skill) => skill.label)), "stack skill");
+  unique(published.map((group) => group.tone), "stack tone");
+  if (published.filter((group) => group.featured === true).length !== 1) {
+    throw new Error("[portfolio-content] stack: exactly one published group must be featured");
+  }
 }
 
 function validateServices() {

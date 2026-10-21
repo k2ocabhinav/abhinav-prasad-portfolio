@@ -2,6 +2,8 @@
 // Portfolio — Shared Type Definitions
 // =============================================================================
 
+import type { stackIconNames, stackToneValues } from "@/lib/portfolioSchema.mjs";
+
 /** Scroll navigation section definition */
 export interface NavSection {
   kind: "section";
@@ -67,8 +69,16 @@ export interface PersonalData {
 /** A semantically emphasized proof point within an experience workstream */
 export interface ExperiencePoint {
   lead: string;
+  /** Plain text; wrap the 1-3 words a reader scans for in **double asterisks**. */
   detail: string;
   emphasis?: string;
+  metric?: ExperienceMetric;
+}
+
+/** A quantified outcome shown as a small callout beside its point */
+export interface ExperienceMetric {
+  label: string;
+  value: string;
 }
 
 /** A factual screenshot attached to an experience workstream */
@@ -173,7 +183,6 @@ export interface HomeContent {
 export interface ProfileIntroContent {
   headline: string;
   proofLines: string[];
-  stackItems: string[];
 }
 
 export interface OrchestrationStep {
@@ -207,13 +216,23 @@ export interface ChronicleEntry {
   workstreams: ExperienceWorkstream[];
 }
 
+export interface StackSkill {
+  label: string;
+  icon: StackIconName;
+}
+
 export interface StackGroup {
   id: string;
   status: PortfolioStatus;
   order?: number;
   label: string;
   context: StackContext;
-  highlighted: boolean;
+  tone: StackTone;
+  /** The featured group renders as a wide card. Exactly one group sets it. */
+  featured: boolean;
+  /** One optional line under the group name, used by the featured card. */
+  summary?: string;
+  skills: StackSkill[];
 }
 
 export interface ServiceEntry extends Service {
@@ -319,6 +338,8 @@ export interface ProjectDetail {
   storyboard?: ProjectDetailStory;
 }
 
+export type StackTone = (typeof stackToneValues)[number];
+export type StackIconName = (typeof stackIconNames)[number];
 export type StackContext = "Used at work" | "Part of my workflow" | "Built in projects";
 
 /** Presence map node */
@@ -445,7 +466,7 @@ export interface PortalTransitionIntent {
   originY: number;
   source: "easter-egg" | "navigation";
   variant: "portal-bloom" | "accessible-fade";
-  skin: "default" | "beyond-pastel-mist";
+  skin: "default" | "beyond-pastel-mist" | "beyond-room";
 }
 
 export type PortalTransitionPhase = "idle" | "covering" | "navigating" | "revealing";

@@ -11,6 +11,21 @@
   background: rgba(var(--paper-bone-rgb), 0.92);
   border: 1px solid var(--color-hairline);
   border-radius: 2px;
+  /* Hidden over the hero, revealed once the page scrolls. The fade and 12px
+     slide are opacity and transform only, so they run on the compositor
+     (this was a motion animation writing inline styles on the main thread). */
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+  transition:
+    opacity 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.brandMark[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
 }
 
 .initial {

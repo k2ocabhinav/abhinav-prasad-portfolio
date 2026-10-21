@@ -8,8 +8,10 @@ import { tiltSpring } from "@/lib/animations";
 // useCardTilt — 3D tilt driven by motion values, not React state.
 // -----------------------------------------------------------------------------
 // The pointer loop writes straight to spring-smoothed rotateX/rotateY values,
-// so a card never re-renders while the cursor moves. The card rect is cached
-// on pointerenter and resize; no getBoundingClientRect inside the move handler.
+// so a card never re-renders while the cursor moves. The card rect is read
+// lazily: pointerenter and resize only mark it stale, and the next pointermove
+// measures it once. Cards that scroll under a still pointer fire pointerenter
+// with no move, so they never force a layout.
 // Attached only for fine, hovering pointers with motion allowed; coarse
 // pointers and reduced motion get a completely static card.
 // =============================================================================
@@ -37,12 +39,13 @@ export function useCardTilt(maxDegrees = 5): CardTilt {
     const fineHover = window.matchMedia(FINE_HOVER_QUERY);
     const reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY);
 
-    let rect = element.getBoundingClientRect();
-    const cacheRect = () => {
-      rect = element.getBoundingClientRect();
+    let rect: DOMRect | null = null;
+    const invalidateRect = () => {
+      rect = null;
     };
 
     const handlePointerMove = (event: MouseEvent) => {
+      rect ??= element.getBoundingClientRect();
       const x = (event.clientX - rect.left) / rect.width - 0.5;
       const y = (event.clientY - rect.top) / rect.height - 0.5;
       rotateX.set(-y * maxDegrees);
@@ -65,16 +68,16 @@ export function useCardTilt(maxDegrees = 5): CardTilt {
         return;
       }
 
-      element.addEventListener("pointerenter", cacheRect);
+      element.addEventListener("pointerenter", invalidateRect);
       element.addEventListener("pointermove", handlePointerMove);
       element.addEventListener("pointerleave", handlePointerLeave);
-      window.addEventListener("resize", cacheRect);
+      window.addEventListener("resize", invalidateRect);
 
       detach = () => {
-        element.removeEventListener("pointerenter", cacheRect);
+        element.removeEventListener("pointerenter", invalidateRect);
         element.removeEventListener("pointermove", handlePointerMove);
         element.removeEventListener("pointerleave", handlePointerLeave);
-        window.removeEventListener("resize", cacheRect);
+        window.removeEventListener("resize", invalidateRect);
       };
     };
 

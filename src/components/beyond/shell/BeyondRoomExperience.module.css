@@ -1,0 +1,149 @@
+.experience {
+  display: grid;
+  min-width: 0;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: clamp(32rem, calc(100svh - 7rem), 66rem);
+  overflow: hidden;
+  border: 2px solid #16131a;
+  border-radius: 0.65rem;
+  background: #b9a3ff;
+  box-shadow: 6px 7px 0 #16131a;
+  isolation: isolate;
+}
+
+.posterLayer,
+.sceneLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.posterLayer {
+  z-index: 0;
+  transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.experience[data-mode="night"] .posterLayer {
+  filter: brightness(0.68) saturate(0.86);
+}
+
+.experience[data-room-arrived="true"] .posterLayer {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sceneLayer {
+  z-index: 1;
+  overflow: hidden;
+}
+
+.sceneLayer > div,
+.sceneLayer canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.loading {
+  position: absolute;
+  inset: auto 1rem 1rem auto;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #16131a;
+  border-radius: 0.35rem;
+  background: #fff8ec;
+  font-size: 0.84rem;
+}
+
+.enterButton,
+.terminalButton {
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.9rem;
+  border: 2px solid #16131a;
+  border-radius: 0.4rem;
+  color: #16131a;
+  background: #ffe05a;
+  box-shadow: 3px 4px 0 #16131a;
+  font: 700 0.9rem var(--font-beyond-body);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.enterButton {
+  inset: auto auto 1.25rem 50%;
+  transform: translateX(-50%);
+}
+
+.terminalButton {
+  inset: 1.25rem 1.25rem auto auto;
+}
+
+@media (min-width: 701px) and (max-width: 1023px) {
+  .stage {
+    height: clamp(30rem, 84vw, 46rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* The room sits in the right of the stage, so the button joins the title column. */
+  .terminalButton {
+    inset: auto auto 1.5rem clamp(1.25rem, 3vw, 2.5rem);
+  }
+}
+
+.arrivalSticker {
+  position: absolute;
+  z-index: 2;
+  top: 44%;
+  left: 52%;
+  display: grid;
+  width: clamp(3rem, 8vw, 6rem);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 3px solid #16131a;
+  border-radius: 0.45rem;
+  color: #16131a;
+  background: #ff7a3d;
+  box-shadow: 4px 5px 0 #16131a;
+  font: 800 clamp(2rem, 6vw, 4.4rem)/1 var(--font-beyond-display);
+  pointer-events: none;
+}
+
+.enterButton:focus-visible,
+.terminalButton:focus-visible {
+  outline: 3px solid #16131a;
+  outline-offset: 4px;
+}
+
+@media (max-width: 700px) {
+  .stage {
+    /* The whole room fits the width, so a shorter stage leaves less empty sky. */
+    height: min(70svh, 31rem);
+    min-height: 24rem;
+  }
+
+  .arrivalSticker {
+    top: 49%;
+  }
+
+  .enterButton {
+    bottom: 1.15rem;
+  }
+
+  .terminalButton {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .posterLayer {
+    transition-duration: 0.01ms;
+  }
+}

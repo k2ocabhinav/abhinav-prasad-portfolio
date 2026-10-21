@@ -1,59 +1,12 @@
 .shell {
-  --beyond-paper: var(--color-beyond-paper);
-  --beyond-ink: var(--color-beyond-ink);
-  --beyond-cobalt: var(--color-beyond-blue);
-  --beyond-coral: var(--color-beyond-coral);
-  --beyond-lemon: var(--color-beyond-yellow);
-  --beyond-amber: var(--color-beyond-amber);
-  --beyond-lilac: var(--color-beyond-lilac);
-  --beyond-pink: var(--color-beyond-pink);
-  --beyond-border: rgba(var(--color-beyond-ink-rgb), 0.18);
-  min-height: 100vh;
-  color: var(--beyond-ink);
+  min-height: 100svh;
   overflow-x: clip;
-  isolation: isolate;
-  background:
-    radial-gradient(circle at 8% 12%, rgba(var(--color-beyond-coral-rgb), 0.26), transparent 24%),
-    radial-gradient(circle at 92% 8%, rgba(var(--color-beyond-blue-rgb), 0.24), transparent 25%),
-    radial-gradient(circle at 76% 84%, rgba(var(--color-beyond-amber-rgb), 0.32), transparent 28%),
-    linear-gradient(180deg, var(--color-beyond-paper) 0%, #FFF0D9 48%, var(--color-beyond-paper) 100%);
-}
-
-.backdrop,
-.grid {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-}
-
-.backdrop {
-  z-index: 0;
-  background:
-    radial-gradient(circle at 22% 24%, rgba(var(--color-beyond-yellow-rgb), 0.72) 0 0.42rem, transparent 0.48rem),
-    radial-gradient(circle at 74% 22%, rgba(var(--color-beyond-pink-rgb), 0.48) 0 0.34rem, transparent 0.4rem),
-    radial-gradient(circle at 46% 78%, rgba(var(--color-beyond-lilac-rgb), 0.42) 0 0.44rem, transparent 0.5rem);
-  opacity: 0.8;
-}
-
-.grid {
-  z-index: 0;
-  background:
-    linear-gradient(90deg, rgba(var(--color-beyond-ink-rgb), 0.055) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(var(--color-beyond-ink-rgb), 0.045) 1px, transparent 1px);
-  background-size: clamp(3.8rem, 7vw, 6rem) clamp(3.8rem, 7vw, 6rem);
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 88%);
+  color: #16131a;
+  background: #b9a3ff;
 }
 
 .main {
-  position: relative;
-  z-index: 1;
   width: min(100%, 1560px);
-  margin: 0 auto;
-  padding: clamp(6.4rem, 9vw, 8.4rem) clamp(1rem, 4vw, 3.2rem) clamp(3.5rem, 8vw, 6rem);
-}
-
-@media (max-width: 767px) {
-  .main {
-    padding-top: 5.8rem;
-  }
+  margin-inline: auto;
+  padding: 0.4rem clamp(1rem, 4vw, 3.2rem) 1.2rem;
 }

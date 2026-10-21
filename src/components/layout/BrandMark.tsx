@@ -1,6 +1,5 @@
 "use client";
 
-import * as m from "motion/react-m";
 import { useSectionState } from "@/lib/sectionStore";
 import styles from "./BrandMark.module.css";
 
@@ -9,24 +8,18 @@ export default function BrandMark() {
   const isVisible = navMode === "glass";
 
   return (
-    <m.a
+    <a
       href="#hero"
       aria-label="Abhinav, back to top"
       data-site-chrome="brand"
+      data-visible={isVisible ? "true" : "false"}
       className={styles.brandMark}
-      initial={false}
-      animate={isVisible ? "visible" : "hidden"}
       inert={!isVisible}
-      variants={{
-        hidden: { opacity: 0, y: -12, pointerEvents: "none" },
-        visible: { opacity: 1, y: 0, pointerEvents: "auto" },
-      }}
-      transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
     >
       <span className={styles.initial} aria-hidden="true">
         A
       </span>
       <span className={styles.name}>Abhinav</span>
-    </m.a>
+    </a>
   );
 }

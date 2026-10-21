@@ -84,6 +84,16 @@
   width: max-content;
 }
 
+/* While the ribbon is drifting, give the track its own compositor layer: the
+   per-frame x/skew write then only moves a cached texture. Without the layer
+   every frame repaints and re-rasterises the full-width band (about 400
+   raster tasks per 3 s in view, against about 20 with it). Dropped again when
+   the ribbon stops (off-screen, paused, reduced motion) so no texture is held
+   for a band nobody sees. */
+.marquee[data-marquee-running="true"] .track {
+  will-change: transform;
+}
+
 /* With the transport control present, the left edge stays solid under it and
    fades after it, so the ribbon text never runs on both sides of the button. */
 .shell:has(.control) .marquee::before {

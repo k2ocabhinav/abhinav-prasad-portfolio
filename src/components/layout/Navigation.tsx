@@ -90,7 +90,9 @@ export default function Navigation({
                   styles.railDot,
                   activeSection === item.id && styles.railDotActive
                 )}
-              />
+              >
+                <span className={styles.railDotDark} aria-hidden="true" />
+              </div>
             </a>
           ) : (
             <PortalEntryTrigger
@@ -108,7 +110,9 @@ export default function Navigation({
               <div
                 data-rail-dot="true"
                 className={cn(styles.railDot, styles.railDotRoute)}
-              />
+              >
+                <span className={styles.railDotDark} aria-hidden="true" />
+              </div>
             </PortalEntryTrigger>
           )
         )}
