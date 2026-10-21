@@ -6,6 +6,7 @@
     "scripts/*.mjs",
     "scripts/beyond/*.mjs",
     "scripts/hero/*.mjs",
+    "scripts/beyond/*.mjs",
     "tests/**/*.ts"
   ],
   "project": [

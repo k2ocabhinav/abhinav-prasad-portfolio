@@ -20,6 +20,8 @@
     "build": "npm run check:content && next build",
     "build:lighthouse": "SITE_URL=http://127.0.0.1:3001 LIGHTHOUSE_CI=1 next build",
     "capture:portfolio": "node scripts/capture-portfolio-assets.mjs",
+    "beyond:perf": "node scripts/beyond/perf.mjs",
+    "beyond:poster": "node scripts/beyond/poster.mjs",
     "start": "next start",
     "test:e2e": "playwright test",
     "test:e2e:prod": "PLAYWRIGHT_PROD=1 playwright test",
