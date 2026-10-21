@@ -1,4 +1,15 @@
-import type { Transition } from "motion/react";
+import type { Transition, Variants } from "motion/react";
+
+const easeSignature: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+export const staggerItem: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: easeSignature },
+  },
+};
 
 export const magneticSpring: Transition = {
   type: "spring",
@@ -24,3 +35,15 @@ export const progressSpring = {
   damping: 30,
   restDelta: 0.001,
 };
+
+export function landingStagger(staggerDelay = 0.08): Variants {
+  return {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: staggerDelay,
+        delayChildren: 0.1,
+      },
+    },
+  };
+}

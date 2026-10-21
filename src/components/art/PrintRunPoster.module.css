@@ -1,0 +1,14 @@
+.poster {
+  display: block;
+  width: min(100%, 25rem);
+  height: auto;
+  overflow: visible;
+}
+
+.paperLayer,
+.routeLayer,
+.ticketLayer,
+.registrationLayer {
+  transform-box: fill-box;
+  transform-origin: center;
+}

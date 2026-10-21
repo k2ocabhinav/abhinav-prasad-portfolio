@@ -9,13 +9,12 @@
   --tone-accent-deep: var(--color-lovebird-deep, #4E5312);
 }
 
-/* The heading carries the section; the sentence sits at the baseline of the
-   display type instead of above it. */
 .header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.4fr);
-  align-items: end;
+  grid-template-columns: minmax(12rem, 0.32fr) minmax(0, 0.68fr);
+  align-items: center;
   gap: clamp(1.5rem, 4vw, 3.5rem);
+  margin-bottom: clamp(1.8rem, 3.5vw, 2.8rem);
 }
 
 .heading {
@@ -30,143 +29,92 @@
 
 .callout {
   max-width: 22rem;
-  margin: 0 0 0.35rem;
+  margin: 0.8rem 0 0;
   color: var(--color-lovebird-deep, #4E5312);
   font-family: var(--font-label);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
   line-height: 1.5;
-  text-align: right;
-  text-wrap: balance;
   text-transform: uppercase;
-  justify-self: end;
 }
 
-/* One static strip: the tools themselves, printed as chips. It replaces the
-   moving rows; no transform, no idle motion. */
-.chipStrip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem 0.65rem;
-  margin: clamp(2rem, 4vw, 3rem) 0 clamp(2.75rem, 5.5vw, 4.5rem);
+.iconStrip {
+  justify-content: flex-start;
+}
+
+.focusList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
   padding: 0;
+  border-bottom: 1px solid var(--color-hairline);
   list-style: none;
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-  max-width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-hairline);
-  border-radius: 3px;
-  background: transparent;
-  color: var(--color-ink, #0B1011);
-  font-family: var(--font-label);
-  font-size: 10.5px;
-  font-weight: 400;
-  letter-spacing: 0.07em;
-  line-height: 1;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.chipIcon {
-  flex: 0 0 auto;
-  color: var(--color-lead, #6A2135);
-}
-
-.evidence {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.focusList li {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem 0.9rem 0;
   border-top: 1px solid var(--color-hairline);
 }
 
-.evidenceColumn {
-  min-width: 0;
-  padding: 1rem 1.25rem 0 0;
-}
-
-.evidenceColumn + .evidenceColumn {
-  padding-left: 1.25rem;
+.focusList li + li {
+  padding-left: 1rem;
   border-left: 1px solid var(--color-hairline);
 }
 
-.evidenceHeading {
-  margin: 0;
-  color: var(--color-lovebird-deep, #4E5312);
-  font-family: var(--font-label);
-  font-size: 0.7rem;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  line-height: 1.45;
-  text-transform: uppercase;
-  word-spacing: 0.32em;
-}
-
-.evidenceList {
-  margin: 0.85rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.evidenceItem {
-  padding: 0.7rem 0;
-  border-top: 1px solid var(--color-hairline);
+.groupLabel {
   color: var(--color-black-cherry, #351E28);
   font-family: var(--font-display);
-  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
-  font-weight: 550;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  font-weight: 570;
   line-height: 1.25;
 }
 
-.evidenceItem:first-child {
-  padding-top: 0;
-  border-top: 0;
+.context {
+  color: var(--color-lovebird-deep, #4E5312);
+  font-family: var(--font-label);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  line-height: 1.45;
+  text-transform: uppercase;
 }
 
-/* Three columns need real measure. Below 901px the home rail takes a gutter
-   and the labels wrap into slivers, so the header and evidence stack instead. */
-@media (max-width: 900px) {
+@media (max-width: 767px) {
   .header {
     grid-template-columns: minmax(0, 1fr);
-    gap: 0.85rem;
+    gap: 1.25rem;
   }
 
   .callout {
-    margin: 0;
-    font-size: 12px;
-    text-align: left;
-    justify-self: start;
-  }
-
-  .chipStrip {
-    margin-block: 1.5rem 2.25rem;
-    gap: 0.5rem;
-  }
-
-  .chip {
     font-size: 12px;
   }
 
-  .evidence {
+  .focusList {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .evidenceColumn,
-  .evidenceColumn + .evidenceColumn {
-    padding: 1rem 0 0;
+  .focusList li,
+  .focusList li + li {
+    flex-direction: row;
+    align-items: baseline;
+    padding: 0.75rem 0;
     border-left: 0;
   }
 
-  .evidenceColumn + .evidenceColumn {
-    margin-top: 0.5rem;
-    border-top: 1px solid var(--color-hairline);
+  .groupLabel {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.05rem;
   }
 
-  .evidenceHeading {
+  .context {
+    flex: 0 0 8rem;
+    max-width: 8rem;
+    text-align: right;
     font-size: 12px;
   }
 }
