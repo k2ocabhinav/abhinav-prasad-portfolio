@@ -88,15 +88,17 @@
 }
 
 @media (max-width: 767px) {
+  /* Phones fill the first screen up to 40rem: short phones keep the whole
+     composition on screen, tall phones no longer leave a blank band between
+     the cue and the bottom wordmark. */
   .frame {
-    min-height: 100vh;
-    min-height: 100svh;
+    min-height: min(100svh, 40rem);
     padding: 0.85rem 1.25rem 1.25rem;
   }
 
   .content {
     display: flex;
-    min-height: calc(100svh - 2.1rem);
+    min-height: calc(min(100svh, 40rem) - 2.1rem);
   }
 
   .masthead {
