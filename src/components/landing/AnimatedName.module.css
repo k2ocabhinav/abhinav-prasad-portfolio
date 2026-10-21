@@ -1,10 +1,6 @@
 .nameShell {
-  --wordmark-size: min(27.9cqw, 40svh);
-  position: absolute;
+  position: relative;
   z-index: 5;
-  right: 0;
-  bottom: 0.22em;
-  left: 0;
   width: 100%;
   margin: 0;
   color: #0B1011;
@@ -26,6 +22,7 @@
   font: inherit;
   font-variation-settings: inherit;
   line-height: inherit;
+  pointer-events: none;
 }
 
 .lettersLayer {
@@ -80,26 +77,6 @@
   );
 }
 
-.glint {
-  position: absolute;
-  z-index: 3;
-  inset: 0 auto auto 0;
-  display: none;
-  color: transparent;
-  background-image: none;
-  background-position: 100% 0;
-  background-repeat: no-repeat;
-  background-size: 140% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  opacity: 1;
-  font: inherit;
-  font-variation-settings: inherit;
-  line-height: inherit;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
 .portalButton {
   position: absolute;
   z-index: 10;
@@ -124,49 +101,8 @@
   outline-offset: 3px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  :global(html[data-js]) .glint {
-    display: block;
-    background-image: linear-gradient(
-      105deg,
-      transparent 45%,
-      rgba(255, 253, 248, 0.55) 50%,
-      transparent 55%
-    );
-    opacity: 0;
-    animation: ink-glint 700ms ease-out 950ms backwards;
-  }
-}
-
-@keyframes ink-glint {
-  0% {
-    background-position: 100% 0;
-    opacity: 0;
-  }
-  24% { opacity: 0; }
-  50% { opacity: 0.8; }
-  76% { opacity: 0.8; }
-  100% {
-    background-position: -100% 0;
-    opacity: 0;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .nameShell {
-    --wordmark-size: min(27.9cqw, 40svh);
-  }
-}
-
 @media (max-width: 767px) {
   .nameShell {
-    --wordmark-size: min(27.9cqw, 11svh);
-    position: relative;
-    right: auto;
-    bottom: auto;
-    left: auto;
-    width: 100%;
-    margin-top: 1.5rem;
     line-height: 0.86;
   }
 
@@ -177,23 +113,5 @@
   .portalButton {
     right: 0.06em;
     width: max(13%, 44px);
-  }
-}
-
-@media (min-width: 768px) and (max-height: 800px) {
-  .nameShell {
-    --wordmark-size: min(27.9cqw, 28svh);
-    position: relative;
-    right: auto;
-    bottom: auto;
-    left: auto;
-    margin-top: 5rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :global(html[data-js]) .glint {
-    display: none;
-    animation: none;
   }
 }

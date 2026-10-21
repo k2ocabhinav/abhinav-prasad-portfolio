@@ -5,8 +5,7 @@
 
 .shell {
   position: relative;
-  z-index: 3;
-  box-shadow: 0 -10px 0 rgba(53, 30, 40, 0.18);
+  z-index: 1;
 }
 
 .marquee {

@@ -70,9 +70,6 @@ export default function AnimatedName({ name, portalTrigger }: AnimatedNameProps)
             </span>
           ))}
         </span>
-        <span className={styles.glint} aria-hidden="true" data-ink-glint="true">
-          {name}
-        </span>
       </span>
       {portalTrigger ? <PortalNameTrigger trigger={portalTrigger} /> : null}
     </h1>

@@ -8,6 +8,7 @@ const LAYER = "[data-hero-layer]";
 const RAIL = '[data-site-chrome="navigation-rail"]';
 
 const WIDTHS = [
+  { width: 1920, height: 1080 },
   { width: 1440, height: 900 },
   { width: 1280, height: 800 },
   { width: 1024, height: 768 },
@@ -314,6 +315,202 @@ test.describe("hero harness", () => {
     }
   });
 
+  test("the cue follows the wordmark and the hero rows share one measure", async ({
+    page,
+  }) => {
+    await openHero(page);
+
+    for (const viewport of [
+      { width: 1920, height: 1080 },
+      { width: 1440, height: 900 },
+      { width: 1440, height: 700 },
+      { width: 1200, height: 900 },
+      { width: 1280, height: 800 },
+      { width: 768, height: 1024 },
+      { width: 390, height: 844 },
+      { width: 320, height: 568 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(300);
+
+      const layout = await page.evaluate(() => {
+        const hero = document.querySelector("[data-hero]");
+        const content = hero?.querySelector<HTMLElement>("[data-hero-content]");
+        const text = hero?.querySelector<HTMLElement>("[data-hero-text]");
+        const wordmark = hero?.querySelector<HTMLElement>("[data-hero-wordmark]");
+        const cue = hero?.querySelector<HTMLAnchorElement>("[data-hero-scroll-cue]");
+        const facts = hero?.querySelector<HTMLElement>("[data-hero-facts]");
+        const cta = hero?.querySelector<HTMLElement>("[data-hero-ctas]");
+        if (!content || !text || !wordmark || !cue || !facts || !cta) {
+          throw new Error("The hero layout is incomplete");
+        }
+
+        const rect = (element: Element) => {
+          const box = element.getBoundingClientRect();
+          return {
+            left: box.left,
+            top: box.top,
+            right: box.right,
+            bottom: box.bottom,
+            width: box.width,
+          };
+        };
+        const visualWordmark = wordmark.firstElementChild;
+        const hLetter = wordmark.querySelector<HTMLElement>(
+          '[data-hero-print-layer="ink"] > span:nth-child(3)'
+        );
+        const vLetter = wordmark.querySelector<HTMLElement>(
+          '[data-hero-print-layer="ink"] > span:nth-child(7)'
+        );
+        const vRange = document.createRange();
+        if (vLetter) vRange.selectNodeContents(vLetter);
+        const range = document.createRange();
+        range.selectNodeContents(cue.firstElementChild ?? cue);
+        const cueText = range.getBoundingClientRect();
+        const onMyOwnValue = facts.querySelector<HTMLElement>(
+          "a:nth-child(2) span:last-child"
+        );
+        const valueRange = document.createRange();
+        if (onMyOwnValue) valueRange.selectNodeContents(onMyOwnValue);
+        const rail = document.querySelector<HTMLElement>(
+          '[data-site-chrome="navigation-rail"]'
+        );
+        const linkedinLabel = rail?.querySelector<HTMLElement>(
+          'a[target="_blank"] span'
+        ) ?? null;
+        const railRange = document.createRange();
+        if (linkedinLabel) railRange.selectNodeContents(linkedinLabel);
+        const railText = railRange.getBoundingClientRect();
+        const menu = document.querySelector<HTMLButtonElement>(
+          'button[aria-label="Open menu"]'
+        );
+
+        return {
+          content: rect(content),
+          text: rect(text),
+          facts: rect(facts),
+          cta: rect(cta),
+          wordmark: rect(wordmark),
+          visualWordmark: visualWordmark ? rect(visualWordmark) : null,
+          hInkTop: hLetter?.getBoundingClientRect().top ?? 0,
+          hRight: hLetter?.getBoundingClientRect().right ?? null,
+          vInkRight: vRange.getBoundingClientRect().right,
+          cue: rect(cue),
+          cueTextX: cueText.left,
+          cueTextY: cueText.top,
+          valueLines: onMyOwnValue ? valueRange.getClientRects().length : 0,
+          railTextLeft: linkedinLabel ? railText.left : Number.POSITIVE_INFINITY,
+          menu: menu ? rect(menu) : null,
+          textLines: ["[data-hero-identity=\"true\"]", ".value"].map((selector) => {
+            const paragraph = hero?.querySelector<HTMLElement>(selector);
+            if (!paragraph) return [];
+            const textRange = document.createRange();
+            textRange.selectNodeContents(paragraph);
+            return Array.from(textRange.getClientRects()).map((box) => ({
+              left: box.left,
+              right: box.right,
+              top: box.top,
+              bottom: box.bottom,
+            }));
+          }),
+          wordmarkBeforeCue: Boolean(
+            wordmark.compareDocumentPosition(cue) & Node.DOCUMENT_POSITION_FOLLOWING
+          ),
+        };
+      });
+
+      expect(layout.wordmarkBeforeCue, `${viewport.width}px: cue order`).toBe(true);
+      expect(
+        layout.cue.top - layout.wordmark.bottom,
+        `${viewport.width}px: wordmark to cue gap`
+      ).toBeGreaterThanOrEqual(18);
+      expect(
+        layout.cue.top - layout.wordmark.bottom,
+        `${viewport.width}px: wordmark to cue gap`
+      ).toBeLessThanOrEqual(28);
+      expect(
+        layout.cueTextY - layout.wordmark.bottom,
+        `${viewport.width}px: wordmark to visible cue gap`
+      ).toBeGreaterThanOrEqual(18);
+      expect(
+        layout.cueTextY - layout.wordmark.bottom,
+        `${viewport.width}px: wordmark to visible cue gap`
+      ).toBeLessThanOrEqual(28);
+      expect(
+        Math.abs(layout.cueTextX - (layout.visualWordmark?.left ?? 0)),
+        `${viewport.width}px: cue left edge`
+      ).toBeLessThanOrEqual(2);
+
+      if (viewport.width >= 1200) {
+        const expectedCtaGap = Math.min(80, Math.max(48, viewport.height * 0.07));
+        expect(
+          layout.hInkTop - layout.cta.bottom,
+          `${viewport.width}x${viewport.height}: CTA to wordmark ascenders`
+        ).toBeGreaterThanOrEqual(48);
+        expect(
+          layout.hInkTop - layout.cta.bottom,
+          `${viewport.width}x${viewport.height}: CTA to wordmark ascenders`
+        ).toBeLessThanOrEqual(expectedCtaGap + 1);
+        expect(
+          Math.abs(layout.facts.right - (layout.hRight ?? layout.facts.right)),
+          `${viewport.width}px: facts edge aligns to the h`
+        ).toBeLessThanOrEqual(2);
+        if (viewport.height >= 800) {
+          expect(
+            layout.valueLines,
+            `${viewport.width}x${viewport.height}: On my own facts stay on one line`
+          ).toBe(1);
+        }
+        expect(
+          layout.railTextLeft - layout.vInkRight,
+          `${viewport.width}px: wordmark clears the navigation rail`
+        ).toBeGreaterThanOrEqual(40);
+      }
+
+      if (viewport.width === 1440 && viewport.height === 900) {
+        const topSpace = layout.text.top - layout.content.top;
+        const bottomSpace = layout.content.bottom - layout.cue.bottom;
+        expect(
+          Math.abs(topSpace - bottomSpace),
+          "1440x900: top and bottom paper balance"
+        ).toBeLessThanOrEqual(24);
+      }
+
+      if (viewport.width === 768 || viewport.width === 390 || viewport.width === 320) {
+        const fill = (layout.visualWordmark?.width ?? 0) / layout.content.width;
+        expect(fill, `${viewport.width}px: wordmark fills the content measure`).toBeGreaterThanOrEqual(
+          viewport.width === 768 ? 0.98 : 0.97
+        );
+        expect(fill, `${viewport.width}px: wordmark fits the content measure`).toBeLessThanOrEqual(
+          1.03
+        );
+      }
+
+      if (viewport.width <= 390 && layout.menu) {
+        const collisions = layout.textLines.flat().filter(
+          (line) =>
+            line.top < layout.menu!.bottom &&
+            line.bottom > layout.menu!.top &&
+            line.right > layout.menu!.left - 1
+        );
+        expect(collisions, `${viewport.width}px: text clears the menu`).toEqual([]);
+      }
+
+      if (viewport.width === 390 || viewport.width === 320) {
+        const aboutLabel = page.locator("#about h2");
+        await expect(aboutLabel, `${viewport.width}px: About label exists`).toHaveCount(1);
+        const aboutLabelTop = await aboutLabel.evaluate(
+          (element) => element.getBoundingClientRect().top
+        );
+        expect(
+          aboutLabelTop - layout.cue.bottom,
+          `${viewport.width}px: cue to first About content`
+        ).toBeLessThanOrEqual(120);
+      }
+    }
+  });
+
   test("hero images declare intrinsic size and are not over-fetched", async ({
     page,
   }) => {
@@ -407,13 +604,13 @@ test.describe("hero harness", () => {
           depth: style.getPropertyValue("--d").trim(),
           transform: style.transform,
           shade: style.getPropertyValue("--shade").trim(),
-          glint: getComputedStyle(sheet.querySelector("[data-ink-glint]")!).display,
+          glintCount: sheet.querySelectorAll("[data-ink-glint]").length,
         };
       });
       expect(staticState.depth).toBe("1");
       expect(staticState.transform).toBe("none");
       expect(staticState.shade).toBe("0");
-      expect(staticState.glint).toBe("none");
+      expect(staticState.glintCount).toBe(0);
 
       const first = await hero.screenshot({ caret: "hide" });
       await page.waitForTimeout(600);

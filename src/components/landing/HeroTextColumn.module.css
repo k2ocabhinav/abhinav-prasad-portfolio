@@ -1,5 +1,4 @@
 .textColumn {
-  --wordmark-size: min(27.9cqw, 40svh);
   position: relative;
   z-index: 2;
   box-sizing: border-box;
@@ -292,10 +291,27 @@
   }
 }
 
+@media (min-width: 1200px) {
+  .textColumn {
+    max-width: min(100%, calc(var(--wordmark-size) * 1.767));
+  }
+
+  .factLink {
+    grid-template-columns: minmax(4rem, 0.18fr) minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .textColumn {
+    margin-bottom: calc(
+      clamp(48px, 7svh, 80px) - clamp(1.25rem, 2.2svh, 1.75rem)
+    );
+  }
+}
+
 @media (max-width: 767px) {
   .textColumn {
-    --wordmark-size: min(27.9cqw, 11svh);
-    flex: 1;
     max-width: none;
     justify-content: flex-start;
   }
@@ -358,9 +374,12 @@
     font-size: 0.68rem;
     letter-spacing: 0.04em;
   }
+}
 
-  .scrollLink {
-    margin-top: 0.35rem;
+@media (max-width: 479px) {
+  .identity,
+  .value {
+    padding-inline-end: 64px;
   }
 }
 

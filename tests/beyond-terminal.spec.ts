@@ -110,7 +110,7 @@ test("home hero keeps the full name inside the mobile viewport", async ({ page }
   await expectHeroNameToFit(page);
 });
 
-test("hero keeps the text above the wordmark across widths", async ({ page }) => {
+test("hero keeps the text, wordmark, and cue in order across widths", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
 
@@ -135,14 +135,11 @@ test("hero keeps the text above the wordmark across widths", async ({ page }) =>
     expect(identityBox).not.toBeNull();
     expect(actionsBox).not.toBeNull();
 
-    if (width <= 767) {
-      const cueBox = await cue.boundingBox();
-      expect(cueBox).not.toBeNull();
-      expect(wordmarkBox!.y).toBeGreaterThan(cueBox!.y + cueBox!.height);
-    } else {
-      expect(wordmarkBox!.y).toBeGreaterThan(actionsBox!.y);
-      expect(wordmarkBox!.y).toBeGreaterThan(identityBox!.y);
-    }
+    const cueBox = await cue.boundingBox();
+    expect(cueBox).not.toBeNull();
+    expect(wordmarkBox!.y).toBeGreaterThan(actionsBox!.y + actionsBox!.height);
+    expect(wordmarkBox!.y).toBeGreaterThan(identityBox!.y);
+    expect(cueBox!.y).toBeGreaterThan(wordmarkBox!.y + wordmarkBox!.height);
   }
 });
 
@@ -370,19 +367,18 @@ test("reduced motion keeps the hero sheet static", async ({ page }) => {
 
   const staticHeroState = await page.locator("[data-hero]").evaluate((hero) => {
     const sheet = hero.querySelector<HTMLElement>("[data-hero-sheet]");
-    const glint = hero.querySelector<HTMLElement>("[data-ink-glint]");
-    if (!sheet || !glint) throw new Error("Hero sheet or glint is missing");
+    if (!sheet) throw new Error("Hero sheet is missing");
     const sheetStyle = getComputedStyle(sheet);
     return {
       depth: sheetStyle.getPropertyValue("--d").trim(),
       transform: sheetStyle.transform,
-      glintDisplay: getComputedStyle(glint).display,
+      glintCount: hero.querySelectorAll("[data-ink-glint]").length,
       shade: sheetStyle.getPropertyValue("--shade").trim(),
     };
   });
   expect(staticHeroState.depth).toBe("1");
   expect(staticHeroState.transform).toBe("none");
-  expect(staticHeroState.glintDisplay).toBe("none");
+  expect(staticHeroState.glintCount).toBe(0);
   expect(staticHeroState.shade).toBe("0");
 
   await page.locator("#about").scrollIntoViewIfNeeded();
@@ -657,7 +653,8 @@ test("the phone hero fits the shortest target viewports without crowding its cue
       };
     });
     expect(geometry.wordmark.top).toBeGreaterThan(geometry.identity.bottom);
-    expect(geometry.wordmark.top).toBeGreaterThan(geometry.cue.bottom);
+    expect(geometry.cue.top).toBeGreaterThan(geometry.wordmark.bottom);
+    expect(geometry.cue.bottom).toBeLessThanOrEqual(geometry.frameHeight + 1);
   }
 });
 

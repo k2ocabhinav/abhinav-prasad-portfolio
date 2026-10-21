@@ -1,5 +1,6 @@
 import HeroTextColumn from "./HeroTextColumn";
 import AnimatedName from "./AnimatedName";
+import PressRunController from "./PressRunController";
 import type { LandingHeroContent } from "@/types";
 
 interface LandingFrame1HeroProps {
@@ -31,6 +32,7 @@ export default function LandingFrame1Hero({
           skin: "beyond-pastel-mist",
         }}
       />
+      <PressRunController />
     </>
   );
 }

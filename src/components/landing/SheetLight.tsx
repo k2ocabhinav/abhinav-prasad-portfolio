@@ -365,7 +365,7 @@ export default function SheetLight({ children }: SheetLightProps) {
               <div className={styles.sheen} />
             </div>
             <div className={styles.content} data-hero-content="true">
-              {children}
+              <div className={styles.layout}>{children}</div>
             </div>
             <div className={styles.pressShade} aria-hidden="true" />
           </div>
