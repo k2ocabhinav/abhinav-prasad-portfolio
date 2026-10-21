@@ -235,13 +235,24 @@
   }
 }
 
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .textColumn {
+    max-width: 900px;
+    margin-top: 0;
+  }
+}
+
 @media (max-width: 767px) {
   .textColumn {
+    flex: 1;
     max-width: none;
+    justify-content: flex-start;
   }
 
   .stack {
-    gap: 0.45rem;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    gap: 0.5rem;
   }
 
   .identity {
@@ -256,7 +267,7 @@
   }
 
   .factSheet {
-    margin-top: 0.75rem;
+    margin-top: 1.25rem;
   }
 
   .factLink {
@@ -275,7 +286,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 0.5rem 0.75rem;
     width: 100%;
-    margin-top: 0.95rem;
+    margin-top: 1rem;
   }
 
   .primaryCta {
@@ -295,6 +306,10 @@
     min-height: 2.75rem;
     font-size: 0.68rem;
     letter-spacing: 0.04em;
+  }
+
+  .scrollLink {
+    margin-top: 0.35rem;
   }
 }
 

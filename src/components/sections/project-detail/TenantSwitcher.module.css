@@ -111,13 +111,12 @@
 }
 
 @media (max-width: 767px) {
-  /* Keep the whole dispatch desk visible on phones: a square cover crop cuts
-     the side panel and loses the point of the tenant comparison. */
   .frameInner {
-    aspect-ratio: 1440 / 750;
+    aspect-ratio: 1;
   }
 
   .image {
-    object-fit: contain;
+    object-fit: cover;
+    object-position: 50% center;
   }
 }

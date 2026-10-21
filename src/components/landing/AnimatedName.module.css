@@ -4,7 +4,7 @@
   position: absolute;
   z-index: 5;
   right: 0;
-  bottom: 0;
+  bottom: 0.22em;
   left: 0;
   width: 100%;
   margin: 0;
@@ -46,7 +46,7 @@
   display: block;
   margin-inline: 0;
   padding-inline: 0.03em;
-  overflow: clip;
+  overflow: visible;
 }
 
 .letter,
@@ -62,10 +62,10 @@
 .portalButton {
   position: absolute;
   z-index: 2;
-  top: 0;
+  top: -0.22em;
   right: 0.06em;
   width: max(14%, 44px);
-  height: 100%;
+  height: calc(100% + 0.44em);
   padding: 0;
   border: 0;
   background: transparent;
@@ -85,25 +85,31 @@
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .nameShell {
-    bottom: 0;
     font-size: clamp(9rem, 27cqw, 15rem);
   }
 }
 
-@media (min-width: 768px) and (max-height: 700px) {
+@media (min-width: 768px) and (max-height: 1100px) {
   .nameShell {
-    font-size: clamp(8rem, min(24cqw, 25svh), 13rem);
+    font-size: clamp(9rem, min(27.5cqw, 30svh), 28rem);
+  }
+}
+
+@media (min-width: 768px) and (max-height: 800px) {
+  .nameShell {
+    font-size: clamp(7.5rem, min(27.5cqw, 26svh), 17rem);
   }
 }
 
 @media (max-width: 767px) {
   .nameShell {
-    position: relative;
-    order: -1;
-    bottom: auto;
-    margin: 3.7rem 0 0.75rem;
-    width: calc(100% - 0.5rem);
-    font-size: clamp(4.25rem, 26cqw, 7.5rem);
+    position: absolute;
+    right: 0;
+    bottom: 0.22em;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    font-size: clamp(4.25rem, min(26cqw, 9.5svh), 7.5rem);
     line-height: 0.86;
   }
 

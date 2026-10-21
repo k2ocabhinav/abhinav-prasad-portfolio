@@ -41,7 +41,7 @@ export default function ExplodedStack() {
             <path d="M520 12v192" />
             <path d="M260 12v334" />
             <path className={styles.agentLeader} d="M232 25h92v-6h24" />
-            <text className={styles.agentLabel} x="70" y="28">
+            <text className={styles.agentLabel} x="54" y="28">
               AI agents, reviewed by me
             </text>
           </g>

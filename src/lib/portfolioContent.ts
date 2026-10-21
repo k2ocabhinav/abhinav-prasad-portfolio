@@ -272,10 +272,16 @@ function byOrder<T extends { order?: number; id?: string; slug?: string }>(a: T,
 function readImage(data: Frontmatter, filePath: string): ProjectVisual {
   const src = stringValue(data, "src", filePath);
   validatePublicAsset(src, filePath);
+  const frameAspectRatio = data.frameAspectRatio;
+  if (frameAspectRatio !== undefined &&
+      (typeof frameAspectRatio !== "number" || !Number.isFinite(frameAspectRatio) || frameAspectRatio < 0.2 || frameAspectRatio > 5)) {
+    fail(filePath, 'optional "frameAspectRatio" must be a number between 0.2 and 5');
+  }
   return {
     src,
     alt: stringValue(data, "alt", filePath),
     caption: stringValue(data, "caption", filePath),
+    ...(typeof frameAspectRatio === "number" ? { frameAspectRatio } : {}),
   };
 }
 

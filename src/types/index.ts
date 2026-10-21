@@ -95,6 +95,8 @@ export interface ProjectVisual {
   src: string;
   alt: string;
   caption: string;
+  /** Art-directed frame ratio for the image when it appears in a gallery. */
+  frameAspectRatio?: number;
 }
 
 /** Share image with verified intrinsic dimensions for Open Graph metadata. */

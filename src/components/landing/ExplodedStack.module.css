@@ -328,6 +328,12 @@
   }
 }
 
+@media (min-width: 1200px) and (max-height: 1100px) {
+  .stackColumn {
+    transform: translateY(-clamp(3rem, 7vh, 5rem));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .stackStage[data-stack-motion="settling"] .interfaceLayer,
   .stackStage[data-stack-motion="settling"] .backendLayer,

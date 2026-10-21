@@ -181,6 +181,10 @@ function validateImage(image, filePath, requireSrc = true) {
   const src = requireSrc ? stringValue(image, "src", filePath) : optionalString(image, "src");
   validatePublicAsset(src, filePath);
   stringValue(image, "alt", filePath);
+  if (image.frameAspectRatio !== undefined &&
+      (typeof image.frameAspectRatio !== "number" || !Number.isFinite(image.frameAspectRatio) || image.frameAspectRatio < 0.2 || image.frameAspectRatio > 5)) {
+    fail(filePath, 'optional "frameAspectRatio" must be a number between 0.2 and 5');
+  }
   if (requireSrc) {
     stringValue(image, "caption", filePath);
   }

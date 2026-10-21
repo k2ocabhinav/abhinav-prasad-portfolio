@@ -56,13 +56,13 @@ export default function AboutSection({
           <colgroup>
             <col className={styles.areaColumn} />
             <col className={styles.descriptionColumn} />
-            <col className={styles.proofColumn} />
+            <col className={styles.evidenceColumn} />
           </colgroup>
           <thead>
             <tr>
               <th scope="col">Area</th>
               <th scope="col">Where it shows</th>
-              <th scope="col">Proof tags</th>
+              <th scope="col">Evidence</th>
             </tr>
           </thead>
           <tbody>
@@ -79,10 +79,10 @@ export default function AboutSection({
                 <td data-label="Where it shows">
                   <p className={styles.serviceDescription}>{service.description}</p>
                 </td>
-                <td data-label="Proof tags">
+                <td data-label="Evidence">
                   <ul
                     className={styles.serviceTags}
-                    aria-label={`${service.title} proof tags`}
+                    aria-label={`${service.title} evidence`}
                   >
                     {service.tags?.map((tag) => <li key={tag}>{tag}</li>)}
                   </ul>

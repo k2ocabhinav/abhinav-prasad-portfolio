@@ -275,6 +275,13 @@
   -webkit-overflow-scrolling: touch;
 }
 
+@media (max-width: 350px) {
+  .mobileMenu {
+    padding-top: max(4rem, calc(env(safe-area-inset-top) + 3rem));
+    padding-bottom: max(3rem, calc(env(safe-area-inset-bottom) + 2rem));
+  }
+}
+
 .mobileBackdrop {
   position: fixed;
   inset: 0;
@@ -330,9 +337,7 @@
 .mobileNavLinkedIn {
   justify-content: space-between;
   gap: 0.75rem;
-  padding-inline: 0.65rem;
-  border: 1px solid var(--color-hairline);
-  border-radius: 2px;
+  padding-inline: 0.25rem;
   color: var(--color-lead-deep);
 }
 
@@ -360,4 +365,10 @@
   background: rgba(240, 238, 233, 0.95);
   border-color: var(--color-hairline);
   color: #0B1011;
+}
+
+@media (max-width: 350px) {
+  .mobileNav {
+    gap: 0.25rem;
+  }
 }

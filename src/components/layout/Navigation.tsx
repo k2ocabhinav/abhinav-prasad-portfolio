@@ -49,7 +49,7 @@ export default function Navigation({
 }: NavigationProps) {
   const {
     activeId: activeSection,
-    dark: overDarkField,
+    railDark: overDarkField,
     navMode,
   } = useSectionState();
   const prefersReducedMotion = useReducedMotion();
