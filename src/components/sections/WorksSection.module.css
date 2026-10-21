@@ -217,9 +217,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
+  transition:
+    background-color 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
   grid-column: span 1;
   border: 1px solid var(--color-hairline);
+  box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
 }
 
 .visualPanelRich {
@@ -250,12 +254,7 @@
 .visualPanel:hover {
   background: var(--section-panel-bg);
   border-color: rgba(11, 16, 17, 0.4);
-}
-
-/* The print offset belongs to the photograph, not the whole panel: an offset
-   on the panel paints a hard vertical edge outside the media frame, which
-   reads as a stray rule beside the card copy. */
-.visualPanel:hover .heroShot {
+  /* Keep the original hard-edge print offset on the panel as it enters hover. */
   box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
 }
 
