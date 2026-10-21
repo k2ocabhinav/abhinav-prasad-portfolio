@@ -11,6 +11,7 @@ import {
   beyondSizes as beyondSizeValues,
   expectedContentCounts,
   expectedHeroFactLinks,
+  hasBalancedEmphasis,
   projectIcons as projectIconValues,
   projectStoryLayouts as projectStoryLayoutValues,
   projectStoryThemes as projectStoryThemeValues,
@@ -466,6 +467,20 @@ function validateProjects() {
   );
 }
 
+function validateExperiencePoint(point, filePath) {
+  stringValue(point, "lead", filePath);
+  const detail = stringValue(point, "detail", filePath);
+  if (!hasBalancedEmphasis(detail)) {
+    fail(filePath, `experience detail has unbalanced or empty **bold** markers: "${detail}"`);
+  }
+  if (point.emphasis !== undefined) stringValue(point, "emphasis", filePath);
+  const metric = optionalObject(point, "metric", filePath);
+  if (metric) {
+    stringValue(metric, "label", filePath);
+    stringValue(metric, "value", filePath);
+  }
+}
+
 function validateChronicle() {
   const entries = mdxFiles("chronicle").map((filePath) => {
     const data = read(filePath);
@@ -479,11 +494,7 @@ function validateChronicle() {
     if (summaryPoints.length !== expectedContentCounts.experienceSummaryPoints) {
       fail(filePath, `"summaryPoints" must contain ${expectedContentCounts.experienceSummaryPoints} visible experience points`);
     }
-    summaryPoints.forEach((point) => {
-      stringValue(point, "lead", filePath);
-      stringValue(point, "detail", filePath);
-      if (point.emphasis !== undefined) stringValue(point, "emphasis", filePath);
-    });
+    summaryPoints.forEach((point) => validateExperiencePoint(point, filePath));
 
     const workstreams = objectArray(data, "workstreams", filePath);
     if (workstreams.length !== expectedContentCounts.experienceWorkstreams) {
@@ -495,11 +506,7 @@ function validateChronicle() {
       if (points.length === 0) {
         fail(filePath, `workstream "${workstream.id}" must contain at least one point`);
       }
-      points.forEach((point) => {
-        stringValue(point, "lead", filePath);
-        stringValue(point, "detail", filePath);
-        if (point.emphasis !== undefined) stringValue(point, "emphasis", filePath);
-      });
+      points.forEach((point) => validateExperiencePoint(point, filePath));
       const tools = stringArray(workstream, "tools", filePath);
       unique(tools, `tool in workstream "${workstream.id}"`);
       const images = optionalObjectArray(workstream, "images", filePath);

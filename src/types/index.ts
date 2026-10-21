@@ -67,8 +67,16 @@ export interface PersonalData {
 /** A semantically emphasized proof point within an experience workstream */
 export interface ExperiencePoint {
   lead: string;
+  /** Plain text; wrap the 1-3 words a reader scans for in **double asterisks**. */
   detail: string;
   emphasis?: string;
+  metric?: ExperienceMetric;
+}
+
+/** A quantified outcome shown as a small callout beside its point */
+export interface ExperienceMetric {
+  label: string;
+  value: string;
 }
 
 /** A factual screenshot attached to an experience workstream */
