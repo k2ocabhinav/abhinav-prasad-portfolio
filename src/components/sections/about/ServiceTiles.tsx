@@ -50,6 +50,9 @@ export default function ServiceTiles({ services }: ServiceTilesProps) {
       viewport={{ once: true, amount: 0.2 }}
     >
       {items}
+      <noscript>
+        <style>{`.${styles.gridItem}{opacity:1!important;transform:none!important;}`}</style>
+      </noscript>
     </m.div>
   );
 }

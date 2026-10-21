@@ -171,6 +171,11 @@
   opacity: 0.72;
 }
 
+.emailLink:focus-visible {
+  outline: 2px solid var(--color-on-panel, #EDE6DA);
+  outline-offset: 3px;
+}
+
 /* Two print-press actions sit directly below the address: LinkedIn leads,
    the résumé follows. Both share the panel's button tokens. */
 .contactActions {

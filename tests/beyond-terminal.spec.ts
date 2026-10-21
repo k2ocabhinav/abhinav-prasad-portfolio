@@ -386,18 +386,15 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
     "Verify",
   ]);
 
-  const workProjects = page.locator("#work [data-work-project]");
-  await expect(workProjects).toHaveCount(2);
-  const staticWorkState = await workProjects.first().evaluate((article) => {
-    const stage = article.querySelector("[data-work-frame]")?.parentElement?.parentElement;
-    const frame = article.querySelector("[data-work-frame]");
-    return {
-      stagePosition: stage ? getComputedStyle(stage).position : null,
-      frameTransform: frame ? getComputedStyle(frame).transform : null,
-    };
-  });
-  expect(staticWorkState.stagePosition).toBe("static");
-  expect(staticWorkState.frameTransform).toBe("none");
+  const workCards = page.locator("#work [data-work-card='true']");
+  await expect(workCards).toHaveCount(2);
+  const firstMedia = workCards.first().locator("[data-work-media='true']");
+  await firstMedia.scrollIntoViewIfNeeded();
+  const staticTransform = await firstMedia.evaluate(
+    (element) => getComputedStyle(element).transform
+  );
+  await firstMedia.hover();
+  await expect(firstMedia).toHaveCSS("transform", staticTransform);
 
   const plateState = await page.locator('[data-home-hero-heading="true"] [data-ink-plate-drift="true"]').evaluate((element) => ({
     clipPath: getComputedStyle(element).clipPath,
@@ -554,7 +551,7 @@ test("deferred sections still render cleanly when scrolled into view", async ({ 
 
   await expect(page.locator("#experience article")).toHaveCount(1);
   await expect(
-    page.getByRole("heading", { name: "Velo", exact: true })
+    page.getByRole("heading", { name: "Velo, a white-label dispatch prototype", exact: true })
   ).toHaveCount(1);
   await expect(
     page.getByRole("heading", {
@@ -741,9 +738,8 @@ test("desktop handoff into the profile section stays seam-free", async ({ page }
 
   const about = page.locator("#about").first();
   await expect(about).toBeVisible();
-  const screenshot = await page.screenshot({
+  const screenshot = await about.screenshot({
     animations: "disabled",
-    scale: "css",
   });
 
   expect(screenshot).toMatchSnapshot("home-about-handoff-desktop.png", {
@@ -764,14 +760,9 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
-  await expect(method.locator("ol > li h4")).toHaveText([
-    "1 Scope",
-    "2 Assign",
-    "3 Review",
-    "4 Verify",
-  ]);
+  await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
 
-  const screenshot = await method.locator("[data-work-method-stage]").screenshot({
+  const screenshot = await method.screenshot({
     animations: "disabled",
   });
 
@@ -780,86 +771,7 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
   });
 });
 
-test("Velo zooms beside visible details while Portfolio stays a static card", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/");
-  await page.evaluate(() => document.fonts.ready);
-
-  const firstProject = page.locator("#work [data-work-project]").first();
-  const portfolio = page.locator("#work [data-work-project]").nth(1);
-  await expect(firstProject.getByRole("heading", { name: "Velo" })).toBeVisible();
-  await page.evaluate(() => {
-    document.querySelector("#work [data-work-project]")?.scrollIntoView({ block: "start" });
-  });
-  await page.waitForTimeout(500);
-
-  const initial = await firstProject.evaluate((article) => {
-    const frame = article.querySelector("[data-work-frame]");
-    const stage = frame?.closest("[class*='projectStage']");
-    const rect = frame?.getBoundingClientRect();
-    return {
-      position: stage ? getComputedStyle(stage).position : null,
-      width: rect?.width ?? 0,
-      right: rect?.right ?? 0,
-    };
-  });
-  expect(initial.position).toBe("sticky");
-  expect(initial.right).toBeLessThan(1440 - 100);
-
-  const firstCta = firstProject.getByRole("link", { name: "Read the case study" });
-  await expect(firstCta).toBeVisible();
-  const ctaBox = await firstCta.boundingBox();
-  expect(ctaBox).not.toBeNull();
-  expect(ctaBox!.y).toBeGreaterThanOrEqual(0);
-  expect(ctaBox!.y + ctaBox!.height).toBeLessThanOrEqual(900);
-  await expect(firstCta).toHaveCSS("opacity", "1");
-
-  const trackEnd = await firstProject.evaluate((article) => {
-    const rect = article.getBoundingClientRect();
-    return rect.top + window.scrollY + rect.height - window.innerHeight;
-  });
-  await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), trackEnd);
-  await page.waitForTimeout(650);
-
-  const final = await firstProject.evaluate((article) => {
-    const frame = article.querySelector("[data-work-frame]");
-    const details = article.querySelector("[data-work-copy]");
-    const imageBox = frame?.getBoundingClientRect();
-    const detailsBox = details?.getBoundingClientRect();
-    return {
-      imageWidth: imageBox?.width ?? 0,
-      imageRight: imageBox ? imageBox.right : 0,
-      detailsLeft: detailsBox ? detailsBox.left : 0,
-      detailsRight: detailsBox ? detailsBox.right : 0,
-    };
-  });
-
-  expect(final.imageWidth).toBeGreaterThan(initial.width + 100);
-  expect(final.imageRight).toBeLessThanOrEqual(final.detailsLeft);
-  expect(final.detailsRight).toBeLessThanOrEqual(1440 - 100);
-  await expect(firstCta).toHaveAttribute(
-    "href",
-    "/work/velo"
-  );
-  await expect(firstProject.getByRole("link", { name: "View project source" })).toHaveAttribute(
-    "href",
-    "https://github.com/k2ocabhinav/Velo"
-  );
-
-  const portfolioState = await portfolio.evaluate((article) => {
-    const stage = article.querySelector("[data-work-frame]")?.closest("[class*='projectStage']");
-    const frame = article.querySelector("[data-work-frame]");
-    return {
-      position: stage ? getComputedStyle(stage).position : null,
-      transform: frame ? getComputedStyle(frame).transform : null,
-    };
-  });
-  expect(portfolioState.position).not.toBe("sticky");
-  expect(portfolioState.transform).toBe("none");
-  await expect(portfolio.getByRole("link", { name: "Read the case study" })).toBeVisible();
-});
-
-test("How I work uses a vertical sequence on mobile", async ({ page }) => {
+test("How I work keeps the four columns readable on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
@@ -871,16 +783,11 @@ test("How I work uses a vertical sequence on mobile", async ({ page }) => {
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
-  await expect(method.locator("ol > li h4")).toHaveText([
-    "1 Scope",
-    "2 Assign",
-    "3 Review",
-    "4 Verify",
-  ]);
+  await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
   const columnCount = await method.locator("ol").evaluate(
     (element) => getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length
   );
-  expect(columnCount).toBe(1);
+  expect(columnCount).toBe(2);
 
   const screenshot = await method.screenshot({
     animations: "disabled",
@@ -903,10 +810,18 @@ test("About statement and services keep a static composition on desktop", async 
   });
   await page.waitForTimeout(420);
   await expect(about.getByRole("heading", { level: 2, name: "What I do" })).toBeVisible();
-  await expect(about.locator("[data-scrub] p")).toHaveCount(4);
+  await expect(about.locator("[data-service-id]")).toHaveCount(3);
   for (const name of ["Backend and APIs", "Full-stack products", "AI-assisted delivery"]) {
     await expect(about.getByRole("heading", { level: 3, name })).toBeVisible();
   }
+  await expect(about.locator(".spec-sheet p")).toHaveText(
+    "I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface."
+  );
+  await expect(about.locator(".spec-sheet li")).toHaveText([
+    "At Ostrum, I work on MySQL-backed API behaviour and versioned database releases.",
+    "On my own, I take products from the backend to the interface, with AI coding agents doing scoped work under my review.",
+    "Open to full-time roles, contract work and scoped projects.",
+  ]);
   await page.evaluate(() => document.fonts.ready);
   await page.addStyleTag({
     content: '[data-site-chrome], .skip-link { display: none !important; }',
@@ -939,10 +854,13 @@ test("About statement and services keep a static composition on mobile", async (
   });
   await page.waitForTimeout(420);
   await expect(about.getByRole("heading", { level: 2, name: "What I do" })).toBeVisible();
-  await expect(about.locator("[data-scrub] p")).toHaveCount(4);
+  await expect(about.locator("[data-service-id]")).toHaveCount(3);
   for (const name of ["Backend and APIs", "Full-stack products", "AI-assisted delivery"]) {
     await expect(about.getByRole("heading", { level: 3, name })).toBeVisible();
   }
+  await expect(about.locator(".spec-sheet p")).toHaveText(
+    "I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface."
+  );
   await page.evaluate(() => document.fonts.ready);
   await page.addStyleTag({
     content: '[data-site-chrome], .skip-link { display: none !important; }',
@@ -959,6 +877,41 @@ test("About statement and services keep a static composition on mobile", async (
   });
 
   expect(screenshot).toMatchSnapshot("home-about-reduced-mobile.png", {
+    maxDiffPixelRatio: 0.025,
+  });
+});
+
+test("What I do spec sheet keeps its print composition on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+
+  const specSheet = page.locator("#about .spec-sheet");
+  await specSheet.scrollIntoViewIfNeeded();
+  await page.evaluate(() => document.fonts.ready);
+  await expect(specSheet).toBeVisible();
+  await expect(specSheet.locator("img")).toHaveAttribute("alt", "Abhinav Prasad editorial monogram");
+
+  const screenshot = await specSheet.screenshot({ animations: "disabled" });
+  expect(screenshot).toMatchSnapshot("home-profile-stage-desktop.png", {
+    maxDiffPixelRatio: 0.025,
+  });
+});
+
+test("What I do spec sheet keeps its print composition on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await freezeHeroAmbientForSnapshot(page);
+
+  const specSheet = page.locator("#about .spec-sheet");
+  await specSheet.scrollIntoViewIfNeeded();
+  await page.evaluate(() => document.fonts.ready);
+  await expect(specSheet).toBeVisible();
+
+  const screenshot = await specSheet.screenshot({ animations: "disabled" });
+  expect(screenshot).toMatchSnapshot("home-profile-stage-mobile.png", {
     maxDiffPixelRatio: 0.025,
   });
 });

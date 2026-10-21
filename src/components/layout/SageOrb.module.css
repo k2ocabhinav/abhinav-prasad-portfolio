@@ -53,6 +53,7 @@
 @media (prefers-reduced-motion: reduce) {
   .orb,
   .orb[data-moving="true"] {
+    display: none;
     transition: none;
     will-change: auto;
   }

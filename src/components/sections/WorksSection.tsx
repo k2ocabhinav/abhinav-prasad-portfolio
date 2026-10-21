@@ -16,6 +16,7 @@ import SectionWrapper from "@/components/ui/SectionWrapper";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import CaseNumeral from "@/components/art/CaseNumeral";
+import PrintRunPoster from "@/components/art/PrintRunPoster";
 import VeloRoutePlate from "@/components/art/VeloRoutePlate";
 import styles from "./WorksSection.module.css";
 
@@ -91,21 +92,42 @@ function OrchestrationEvidence({
 }: {
   content: OrchestrationContent;
 }) {
+  const prefersReducedMotion = useReducedMotion();
+  const posterRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: prefersReducedMotion ? undefined : posterRef,
+    offset: ["start end", "end start"],
+  });
+
   return (
-    <aside className={styles.orchestrationStrip} aria-labelledby="work-method-title">
-      <header className={styles.methodHeader}>
-        <h3 id="work-method-title">How I work</h3>
-        <p>{content.intro}</p>
-      </header>
-      <ol className={styles.processSteps}>
-        {content.steps.map((step, index) => (
-          <li key={step.title}>
-            <span className={styles.stepNumber} aria-hidden="true">{index + 1}</span>
-            <h4>{step.title}</h4>
-            <p>{step.description}</p>
-          </li>
-        ))}
-      </ol>
+    <aside
+      className={styles.orchestrationStrip}
+      aria-labelledby="work-method-title"
+      data-cursor-theme="dark"
+    >
+      <div ref={posterRef} className={styles.posterColumn}>
+        <PrintRunPoster
+          progress={scrollYProgress}
+          reducedMotion={prefersReducedMotion}
+        />
+      </div>
+      <div className={styles.evidenceContent}>
+        <header className={styles.evidenceHeading}>
+          <h3 id="work-method-title">How I work</h3>
+        </header>
+        <p className={styles.orchestrationIntro}>{content.intro}</p>
+        <ol className={styles.processSteps}>
+          {content.steps.map((step, index) => (
+            <li key={step.title}>
+              <span className={styles.stepNumber} aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h4>{step.title}</h4>
+              <p>{step.description}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </aside>
   );
 }
@@ -229,7 +251,11 @@ function WorkCard({ project }: { project: Project }) {
 
         {hasDeepDive ? (
           <div className={styles.deepDiveCta}>
-            <Link href={`/work/${project.detailSlug}`} className={styles.deepDiveLink}>
+            <Link
+              href={`/work/${project.detailSlug}`}
+              prefetch={false}
+              className={styles.deepDiveLink}
+            >
               {deepDiveLabel} <ChevronRight size={16} />
             </Link>
             {project.detailCtaSubline ? (

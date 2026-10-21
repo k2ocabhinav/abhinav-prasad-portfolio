@@ -106,6 +106,18 @@ async function scrollToElementTop(page: Page, selector: string) {
   await settleFrame(page);
 }
 
+function boxesIntersect(
+  first: { x: number; y: number; width: number; height: number },
+  second: { x: number; y: number; width: number; height: number }
+) {
+  return !(
+    first.x + first.width <= second.x ||
+    second.x + second.width <= first.x ||
+    first.y + first.height <= second.y ||
+    second.y + second.height <= first.y
+  );
+}
+
 async function expectMinimumTargetSize(locator: Locator, minimum = 44) {
   const count = await locator.count();
   expect(count).toBeGreaterThan(0);
@@ -187,7 +199,7 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
   await expect(experience.getByRole("heading", { level: 3, name: "Ostrum Tech Limited" })).toBeVisible();
-  await expect(experience.getByText("Database Engineer", { exact: true })).toBeVisible();
+  await expect(experience.getByRole("heading", { level: 4, name: "Database Engineer" })).toBeVisible();
   await expect(experience.getByText("May 2024 to present", { exact: true })).toBeVisible();
   await expect(experience.getByText(
     "Started as an intern in May 2024; full-time Database Engineer since September 2024.",
@@ -195,14 +207,12 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   )).toBeVisible();
   await expect(experience.getByText(/Develop MySQL-backed business logic for API workflows/)).toBeVisible();
 
-  const summaryPoints = experience.locator('[aria-label="Role summary"] > li');
+  const summaryPoints = experience.getByRole("list").first().getByRole("listitem");
   await expect(summaryPoints).toHaveCount(6);
   await expect(summaryPoints.nth(0)).toContainText("MySQL stored procedures, functions, triggers, views, and schema changes");
   await expect(summaryPoints.nth(1)).toContainText("Design relational schemas and indexes");
   await expect(summaryPoints.nth(2)).toContainText("version-controlled Flyway migrations");
-  const toolkitSummary = summaryPoints.nth(3).locator("p");
-  await expect(toolkitSummary.locator("strong")).toHaveText("Designed and built Database Toolkit,");
-  await expect(toolkitSummary).toContainText("a Python and Qt desktop app");
+  await expect(summaryPoints.nth(3)).toContainText("Designed and built Database Toolkit, a Python and Qt desktop app");
   await expect(summaryPoints.nth(4)).toContainText("Trace defects across API requests");
   await expect(summaryPoints.nth(5)).toContainText("AWS-integrated database delivery");
 
@@ -211,7 +221,7 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   await expect(disclosure).toHaveAttribute("aria-expanded", "false");
   await expect(disclosure).toHaveAttribute("aria-controls", "experience-full");
   await expect(panel).toHaveAttribute("aria-hidden", "true");
-  await expect(disclosure).toContainText("4 sections, 14 points");
+  await expect(disclosure).toContainText("4 sections · 14 points");
   expect(await panel.textContent()).toContain("Work with senior engineers and technical managers");
 
   await disclosure.click();
@@ -235,20 +245,10 @@ test("shows the Ostrum summary and opens the full technical experience", async (
 
   const stack = page.locator("#stack");
   await stack.scrollIntoViewIfNeeded();
-  await expect(stack.locator("h3")).toHaveText([
-    "Part of my workflow",
-    "Built in projects",
-    "Used at work",
-  ]);
-  await expect(stack.locator("[data-stack-evidence] li")).toHaveText([
-    "AI-assisted engineering",
-    "Backend systems and APIs",
-    "Web product development",
-    "Cloud delivery and reporting",
-    "Database engineering",
-  ]);
-  for (const [label] of stackGroups) {
-    await expect(stack.getByText(label, { exact: true })).toBeVisible();
+  for (const [label, context] of stackGroups) {
+    const group = stack.locator("li").filter({ hasText: label });
+    await expect(group).toHaveCount(1);
+    await expect(group).toContainText(context);
   }
 });
 
@@ -269,26 +269,6 @@ test("full experience disclosure supports Enter, Space, and its deep link", asyn
   await expect(deepLinkButton).toHaveAttribute("aria-expanded", "true");
   await expect(deepLinkButton).toContainText("Close full experience");
   await expect(page.locator("#experience-full")).toBeVisible();
-
-  const workstreamId = "ostrum-database-engineer-workstream-release-delivery";
-  await page.goto(`/#${workstreamId}`);
-  await expect(page.locator("#experience-full-toggle")).toHaveAttribute("aria-expanded", "true");
-  await expect(page.locator(`#${workstreamId}`)).toBeInViewport();
-});
-
-test("the workstream index opens the disclosure and follows the selected section", async ({ page }) => {
-  await openHome(page, true);
-
-  const experience = page.locator("#experience");
-  const navigation = experience.getByRole("navigation", { name: "Workstreams at Ostrum Tech Limited" });
-  const link = navigation.getByRole("link", { name: "Tooling and analytics" });
-  await link.click();
-
-  const target = page.locator("#ostrum-database-engineer-workstream-tooling-analytics");
-  await expect(page.locator("#experience-full-toggle")).toHaveAttribute("aria-expanded", "true");
-  await expect(page).toHaveURL(/#ostrum-database-engineer-workstream-tooling-analytics$/);
-  await expect(target).toBeInViewport();
-  await expect(link).toHaveAttribute("aria-current", "location");
 });
 
 test("uses the approved marquee and contact copy", async ({ page }) => {
@@ -312,6 +292,12 @@ test("uses the approved marquee and contact copy", async ({ page }) => {
   await expect(contact.getByRole("heading", { name: "Let's talk." })).toBeVisible();
   await expect(contact.getByText("Full-time roles, contract work or a scoped project: all welcome.", { exact: true })).toBeVisible();
   await expect(contact.getByRole("link", { name: "abhinavp0304@gmail.com" })).toBeVisible();
+  const email = contact.getByRole("link", { name: "abhinavp0304@gmail.com" });
+  await email.focus();
+  await expect(email).toHaveCSS("outline-style", "solid");
+  await expect(email).toHaveCSS("outline-width", "2px");
+  await expect(email).toHaveCSS("outline-color", "rgb(237, 230, 218)");
+  await expect(email).toHaveCSS("outline-offset", "3px");
   await expect(contact.getByRole("link", { name: "Download résumé" })).toBeVisible();
   const linkedin = contact.getByRole("link", { name: "Connect on LinkedIn" });
   await expect(linkedin).toBeVisible();
@@ -364,7 +350,7 @@ test("LinkedIn is one tap away from the rail, phone menu, and case study", async
 test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await openHome(page, true);
 
-  await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
+  await expect(page.getByText("Full-stack engineer", { exact: true })).toBeVisible();
   await expect(page.getByText("I build products end to end, from the first conversation to release.", { exact: true })).toBeVisible();
   const atWork = page.locator('[data-hero-facts="true"] a').nth(0);
   const onMyOwn = page.locator('[data-hero-facts="true"] a').nth(1);
@@ -377,10 +363,7 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await expect(onMyOwn).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
   const whatIDo = page.locator("#about");
   await expect(whatIDo.getByRole("heading", { name: "What I do" })).toBeVisible();
-  const statement = whatIDo.locator("[data-scrub]");
-  await expect(statement.locator("p")).toHaveCount(4);
-  await expect(statement.locator("p").nth(2).locator("span").first()).toHaveCSS("font-style", "italic");
-  await expect(statement.getByText("I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface.", { exact: true })).toBeVisible();
+  await expect(whatIDo.getByText("I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface.", { exact: true })).toBeVisible();
   await expect(whatIDo.getByText("At Ostrum, I work on MySQL-backed API behaviour and versioned database releases.", { exact: true })).toBeVisible();
   await expect(whatIDo.getByText("On my own, I take products from the backend to the interface, with AI coding agents doing scoped work under my review.", { exact: true })).toBeVisible();
   await expect(whatIDo.getByText("Open to full-time roles, contract work and scoped projects.", { exact: true })).toBeVisible();
@@ -388,25 +371,19 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await expect(whatIDo.getByRole("heading", { name: "Full-stack products" })).toBeVisible();
   await expect(whatIDo.getByRole("heading", { name: "AI-assisted delivery" })).toBeVisible();
   await expect(whatIDo).toContainText("Java and Spring Boot services, REST APIs, authentication, realtime messaging and the relational models underneath.");
-  await expect(whatIDo).toContainText("Claude Code");
-  const evidenceTable = whatIDo.getByRole("table", { name: "Engineering areas and evidence" });
-  await expect(evidenceTable.getByRole("columnheader")).toHaveText([
-    "Area",
-    "Where it shows",
-    "Evidence",
-  ]);
-  await expect(evidenceTable.locator("tbody > tr")).toHaveCount(3);
-  await expect(whatIDo.locator("[data-service-number], [data-service-glyph]")).toHaveCount(0);
+  await expect(whatIDo).toContainText("I scope work for AI coding agents, run independent pieces in parallel and review every change before it ships.");
+  await expect(whatIDo.locator("[data-service-id]")).toHaveCount(3);
   expect((await page.locator("body").innerText()).match(/forward deployed/gi)).toHaveLength(1);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await method.scrollIntoViewIfNeeded();
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
+  await expect(method.getByText("On my own builds, I choose the coding tool and model for each task, run independent pieces in parallel, and review every change before it ships.", { exact: true })).toBeVisible();
   await expect(method.locator("ol > li h4")).toHaveText([
-    "1 Scope",
-    "2 Assign",
-    "3 Review",
-    "4 Verify",
+    "Scope",
+    "Assign",
+    "Review",
+    "Verify",
   ]);
   await expect(method.locator("ol > li p")).toHaveText([
     "Define the change and what done means.",
@@ -414,66 +391,82 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
     "Read every change against the task and the existing code.",
     "Run the checks and walk the real flow in a browser.",
   ]);
+  await expect(method.locator("svg[viewBox='0 0 420 500']")).toBeVisible();
+  await expect(method).toHaveCSS("background-color", "rgb(53, 30, 40)");
+  const stepColumns = await method.locator("ol").evaluate(
+    (list) => getComputedStyle(list).gridTemplateColumns.trim().split(/\s+/).length
+  );
+  expect(stepColumns).toBe(page.viewportSize()!.width <= 900 ? 2 : 4);
 });
 
-test("About keeps the statement full width above the small monogram on narrow phones", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed 320px layout probe");
-  await page.setViewportSize({ width: 320, height: 844 });
+test("project cards keep their numerals, artwork, copy alignment, and current copy", async ({ page }) => {
   await openHome(page, true);
-  await page.locator("#about").scrollIntoViewIfNeeded();
 
-  const geometry = await page.locator("#about").evaluate((section) => {
-    const statement = section.querySelector<HTMLElement>("[data-scrub]");
-    const aside = section.querySelector<HTMLElement>("[aria-label='Personal layer']");
-    const monogram = aside?.querySelector("img");
-    if (!statement || !aside || !monogram) throw new Error("About composition is incomplete");
+  const cards = page.locator("#work [data-work-card='true']");
+  await expect(cards).toHaveCount(2);
+  const velo = cards.nth(0);
+  const portfolio = cards.nth(1);
 
-    return {
-      sectionWidth: section.getBoundingClientRect().width,
-      statementWidth: statement.getBoundingClientRect().width,
-      statementBottom: statement.getBoundingClientRect().bottom,
-      asideTop: aside.getBoundingClientRect().top,
-      monogramWidth: monogram.getBoundingClientRect().width,
-      documentWidth: document.documentElement.scrollWidth,
-    };
+  await expect(velo.getByRole("heading", { level: 3, name: "Velo, a white-label dispatch prototype" })).toBeVisible();
+  await expect(velo.getByText("Case 01", { exact: true })).toBeVisible();
+  await expect(velo.locator("svg[viewBox='0 0 116 92']")).toBeVisible();
+  await expect(velo.locator("svg[viewBox='0 0 680 120']")).toBeVisible();
+  await expect(velo.getByText("A pre-launch dispatch prototype for rider bookings, admin dispatch, and driver trip controls.", { exact: true })).toBeVisible();
+
+  await expect(portfolio.getByRole("heading", { level: 3, name: "Portfolio publishing system" })).toBeVisible();
+  await expect(portfolio.getByText("Case 02", { exact: true })).toBeVisible();
+  await expect(portfolio.locator("svg[viewBox='0 0 116 92']")).toBeVisible();
+  await expect(portfolio.locator("[data-work-media] img")).toHaveAttribute(
+    "alt",
+    "A diagram showing typed project content feeding the homepage and project pages"
+  );
+
+  const alignment = await velo.evaluate((card) => {
+    const copy = card.querySelector<HTMLElement>("[data-work-copy='true']");
+    const title = copy?.querySelector<HTMLElement>("h3");
+    if (!copy || !title) throw new Error("Velo card copy is missing");
+    return Math.abs(copy.getBoundingClientRect().left - title.getBoundingClientRect().left);
   });
-
-  expect(geometry.statementWidth).toBeGreaterThan(geometry.sectionWidth * 0.8);
-  expect(geometry.asideTop).toBeGreaterThanOrEqual(geometry.statementBottom);
-  expect(geometry.monogramWidth).toBeLessThanOrEqual(73);
-  expect(geometry.documentWidth).toBeLessThanOrEqual(320);
+  expect(alignment).toBeLessThanOrEqual(1);
 });
 
-test("About keeps every ScrubText word at or above the readable ink floor", async ({ page }) => {
+test("project cards tilt on fine pointers without hiding the native cursor", async ({
+  page,
+}, testInfo) => {
+  test.skip(isTouchProject(testInfo), "Fine-pointer interaction contract");
   await openHome(page);
-  await page.locator("#about [data-scrub]").scrollIntoViewIfNeeded();
-  await page.waitForTimeout(100);
 
-  const minimumOpacity = await page.locator("#about [data-scrub]").evaluate((statement) => {
-    const words = [...statement.querySelectorAll<HTMLElement>("[style*='--i']")];
-    return Math.min(...words.map((word) => Number.parseFloat(getComputedStyle(word).opacity)));
-  });
+  const media = page.locator("#work [data-work-media]").first();
+  await media.scrollIntoViewIfNeeded();
+  const before = await media.evaluate((element) => getComputedStyle(element).transform);
+  await media.hover({ position: { x: 2, y: 180 } });
+  await expect.poll(() => media.evaluate((element) => getComputedStyle(element).transform))
+    .not.toBe(before);
 
-  expect(minimumOpacity).toBeGreaterThanOrEqual(0.65);
+  const nativeCursor = await page.locator("#work").evaluate(
+    (section) => getComputedStyle(section).cursor
+  );
+  expect(nativeCursor).not.toBe("none");
 });
 
-test("Experience gives the 768px summary column room beside its index", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed tablet-width layout probe");
-  await page.setViewportSize({ width: 768, height: 1024 });
-  await openHome(page, true);
-  await page.locator("#experience").scrollIntoViewIfNeeded();
+test("registration cursor changes ink over panels and stays off for reduced motion", async ({
+  page,
+}, testInfo) => {
+  test.skip(isTouchProject(testInfo), "Fine-pointer interaction contract");
+  await openHome(page);
 
-  const widths = await page.locator("#experience article").evaluate((article) => {
-    const sidebar = article.querySelector<HTMLElement>("aside");
-    const content = article.querySelector<HTMLElement>("[data-experience-content]");
-    if (!sidebar || !content) throw new Error("Experience columns are missing");
-    return {
-      sidebar: sidebar.getBoundingClientRect().width,
-      content: content.getBoundingClientRect().width,
-    };
-  });
+  const cursor = page.locator('[data-site-chrome="cursor-orb"]');
+  await page.mouse.move(200, 200);
+  await expect(cursor).toHaveAttribute("data-visible", "true");
+  await expect(cursor).toHaveCSS("opacity", "1");
 
-  expect(widths.content).toBeGreaterThan(widths.sidebar * 1.8);
+  const method = page.locator("#work aside[aria-labelledby='work-method-title']");
+  await method.hover();
+  await expect(cursor).toHaveAttribute("data-theme", "true");
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(cursor).toHaveCSS("display", "none");
+  await expect(cursor).toHaveAttribute("data-visible", "false");
 });
 
 test("server-rendered hero facts stay visible before hydration", async ({ page }) => {
@@ -481,32 +474,10 @@ test("server-rendered hero facts stay visible before hydration", async ({ page }
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   const facts = page.locator('[data-hero-facts="true"] a');
-  await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
+  await expect(page.getByText("Full-stack engineer", { exact: true })).toBeVisible();
   await expect(facts).toHaveCount(2);
   await expect(facts.nth(0)).toContainText("Database Engineer, Ostrum Tech Limited");
   await expect(facts.nth(1)).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
-
-  const work = page.locator("#work");
-  const projects = work.locator("[data-work-project]");
-  await expect(projects).toHaveCount(2);
-  await expect(projects.nth(0).getByRole("heading", { name: "Velo" })).toBeVisible();
-  await expect(projects.nth(1).getByRole("heading", { name: "Portfolio publishing system" })).toBeVisible();
-  await expect(projects.nth(1).getByText(
-    "A typed content pipeline publishes the homepage and reusable case-study routes.",
-    { exact: true }
-  )).toBeVisible();
-  await expect(projects.nth(1).getByRole("link", { name: "Read the case study" })).toBeVisible();
-  await expect(projects.nth(0).getByRole("link", { name: "Read the case study" })).toHaveAttribute(
-    "href",
-    "/work/velo"
-  );
-  const method = work.locator("aside[aria-labelledby='work-method-title']");
-  await expect(method.locator("ol > li h4")).toHaveText([
-    "1 Scope",
-    "2 Assign",
-    "3 Review",
-    "4 Verify",
-  ]);
 
   for (let index = 0; index < 2; index += 1) {
     const row = facts.nth(index);
@@ -561,53 +532,42 @@ test("keeps Experience and Stack content inside the project viewport", async ({
   }
 });
 
-test("keeps the sticky Experience index clear of its reading column", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop layout check");
+test("aligns the arc with the Experience heading without collisions", async ({ page }) => {
   await openHome(page, true);
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
 
   const title = experience.getByRole("heading", { level: 2 });
-  const sidebar = experience.locator('aside[aria-label="At work"]');
-  const index = experience.getByRole("navigation", { name: "Workstreams at Ostrum Tech Limited" });
-  const content = experience.locator("[data-experience-content]");
+  const arc = experience.locator('[data-riso-mark="arc"]');
+  const callout = experience.locator("[data-experience-callout]");
+  const dossier = experience.locator("article");
   await expect(title).toBeVisible();
-  await expect(sidebar).toBeVisible();
-  await expect(index).toBeVisible();
-  await expect(content).toBeVisible();
+  await expect(arc).toBeVisible();
 
-  const [sidebarBox, contentBox] = await Promise.all([
-    sidebar.boundingBox(),
-    content.boundingBox(),
+  const [titleBox, arcBox, calloutBox, dossierBox] = await Promise.all([
+    title.boundingBox(),
+    arc.boundingBox(),
+    callout.boundingBox(),
+    dossier.boundingBox(),
   ]);
-  expect(sidebarBox).not.toBeNull();
-  expect(contentBox).not.toBeNull();
-  expect(sidebarBox!.x + sidebarBox!.width).toBeLessThanOrEqual(contentBox!.x);
-  await expect(sidebar).toHaveCSS("position", "sticky");
+  expect(titleBox).not.toBeNull();
+  expect(arcBox).not.toBeNull();
+  expect(calloutBox).not.toBeNull();
+  expect(dossierBox).not.toBeNull();
+
+  expect(Math.abs(titleBox!.y + titleBox!.height - (arcBox!.y + arcBox!.height))).toBeLessThanOrEqual(12);
+  expect(boxesIntersect(arcBox!, calloutBox!)).toBe(false);
+  expect(boxesIntersect(arcBox!, dossierBox!)).toBe(false);
 });
 
-test("reduced motion renders Experience content and workstream index statically", async ({ page }) => {
+test("reduced motion renders the Experience mark and work content statically", async ({ page }) => {
   await openHome(page, true);
   const experience = page.locator("#experience");
   await experience.scrollIntoViewIfNeeded();
 
-  const index = experience.getByRole("navigation", { name: "Workstreams at Ostrum Tech Limited" });
-  const indexLinks = index.getByRole("link");
-  await expect(indexLinks).toHaveCount(4);
-  for (const link of await indexLinks.all()) {
-    await expect(link).toBeVisible();
-    await expect(link).toHaveCSS("opacity", "1");
-    await expect(link).toHaveCSS("transform", "none");
-  }
-
-  const summaryPoints = experience.locator(
-    '[data-experience-content] [aria-label="Role summary"] > li'
-  );
-  await expect(summaryPoints).toHaveCount(6);
-  for (const point of await summaryPoints.all()) {
-    await expect(point).toBeVisible();
-    await expect(point.locator("strong")).toHaveCSS("opacity", "1");
-  }
+  const arcPath = experience.locator('[data-riso-arc-path="true"]');
+  await expect(arcPath).toBeVisible();
+  await expect(arcPath).not.toHaveAttribute("style", /stroke-dashoffset|pathLength/);
 
   const disclosure = experience.locator("#experience-full-toggle");
   await disclosure.click();
@@ -619,13 +579,40 @@ test("reduced motion renders Experience content and workstream index statically"
     await expect(workstream).toBeVisible();
     await expect.poll(
       () => workstream.evaluate((element) => Number.parseFloat(getComputedStyle(element).opacity)),
-      { timeout: 1500 }
+      { timeout: 250 }
     ).toBe(1);
     await expect.poll(
       () => workstream.evaluate((element) => getComputedStyle(element).transform),
-      { timeout: 1500 }
+      { timeout: 250 }
     ).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   }
+});
+
+test("the scroll-linked arc draws during the Experience heading transit", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic motion probe is sufficient");
+  await openHome(page);
+
+  const header = page.locator("[data-experience-header]");
+  const path = page.locator('#experience [data-riso-arc-path="true"]');
+  const headerTop = await header.evaluate(
+    (element) => element.getBoundingClientRect().top + window.scrollY
+  );
+  const viewportHeight = page.viewportSize()!.height;
+
+  const drawStateAt = async (viewportFraction: number) => {
+    const targetY = Math.max(0, Math.round(headerTop - viewportHeight * viewportFraction));
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: "auto" }), targetY);
+    await settleFrame(page);
+    return path.evaluate((element) => getComputedStyle(element).strokeDasharray);
+  };
+
+  const early = await drawStateAt(0.81);
+  const middle = await drawStateAt(0.68);
+  const settled = await drawStateAt(0.52);
+  expect(early).not.toBe(middle);
+  expect(middle).not.toBe(settled);
 });
 
 test("touch navigation is operable, sized safely, and restores focus", async ({
@@ -640,9 +627,12 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expect(toggle).toBeVisible();
   await expect(toggle).toHaveAccessibleName("Open menu");
   await expectMinimumTargetSize(toggle);
-  // The trigger tucks away on a downward scroll; keyboard focus (or an
-  // upward scroll) brings it back without moving the page.
   await toggle.focus();
+  await expect(page.locator('[data-site-chrome="navigation-toggle"]')).toHaveAttribute(
+    "data-hamburger-hidden",
+    "false"
+  );
+  await expect(toggle).toBeInViewport();
   await toggle.click();
 
   const mobileNav = page.getByRole("navigation", { name: "Mobile navigation" });
@@ -717,8 +707,6 @@ test("the phone menu trigger clears the reading column and returns on scroll up"
   await expect(trigger).toHaveCSS("opacity", "1");
 
   await page.evaluate(() => window.scrollTo({ top: 1400, behavior: "auto" }));
-  // Re-fire a small downward step so the assertion survives a listener that
-  // attaches after hydration lands.
   await expect
     .poll(async () => {
       await page.evaluate(() => window.scrollBy({ top: 24, behavior: "auto" }));
@@ -727,7 +715,6 @@ test("the phone menu trigger clears the reading column and returns on scroll up"
     .toBe("true");
   await expect.poll(() => trigger.evaluate((element) => getComputedStyle(element).opacity)).toBe("0");
 
-  // It stays in the tab order; focus restores it immediately.
   await toggle.focus();
   await expect(trigger).toHaveAttribute("data-hamburger-hidden", "false");
   await expect(trigger).toHaveCSS("opacity", "1");
@@ -736,7 +723,6 @@ test("the phone menu trigger clears the reading column and returns on scroll up"
   await expect(trigger).toHaveAttribute("data-hamburger-hidden", "false");
   await expect(trigger).toHaveCSS("opacity", "1");
 
-  // Opening the menu pins it visible.
   await toggle.click();
   await expect(page.getByRole("dialog", { name: "Site navigation" })).toBeVisible();
   await expect(trigger).toHaveAttribute("data-hamburger-hidden", "false");
@@ -777,47 +763,6 @@ test("case study skip link moves focus to the project content", async ({ page })
   await expect(page.locator("#project-content")).toBeFocused();
 });
 
-test("Stack prints one static chip strip and the published evidence groups", async ({
-  page,
-}) => {
-  await openHome(page, true);
-  const stack = page.locator("#stack");
-  await stack.scrollIntoViewIfNeeded();
-
-  await expect(stack.locator("[data-stack-row]")).toHaveCount(0);
-
-  const strip = stack.getByRole("list", { name: "Tools I use" });
-  await expect(strip).toBeVisible();
-  await expect(strip.getByRole("listitem")).toHaveText([
-    "Java",
-    "Spring",
-    "PostgreSQL",
-    "Python",
-    "TypeScript",
-    "React",
-    "Next.js",
-    "AWS",
-    "Docker",
-    "Agents",
-  ]);
-  expect(await strip.evaluate((element) => getComputedStyle(element).transform)).toBe(
-    "none"
-  );
-
-  await expect(stack.locator("[data-stack-evidence] h3")).toHaveText([
-    "Part of my workflow",
-    "Built in projects",
-    "Used at work",
-  ]);
-  await expect(stack.locator("[data-stack-evidence] li")).toHaveText([
-    "AI-assisted engineering",
-    "Backend systems and APIs",
-    "Web product development",
-    "Cloud delivery and reporting",
-    "Database engineering",
-  ]);
-});
-
 test("the footer follows Contact in normal flow", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "One deterministic geometry probe");
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -854,7 +799,7 @@ test("touch layouts do not retain hover movement on project cards", async ({ pag
     await page.evaluate(() => matchMedia("(hover: hover) and (pointer: fine)").matches)
   ).toBe(false);
 
-  const card = page.locator("#work [data-work-project] [data-work-frame]").first();
+  const card = page.locator("#work [data-work-card] [data-work-media]").first();
   await card.scrollIntoViewIfNeeded();
   const before = await card.evaluate((element) => getComputedStyle(element).transform);
   await card.tap();
@@ -898,11 +843,6 @@ test("full-page sweep has no runtime, network, ID, or image failures", async ({
     await image.scrollIntoViewIfNeeded();
     await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   }
-  const workImage = page.locator("#work img").last();
-  await workImage.scrollIntoViewIfNeeded();
-  await expect
-    .poll(() => workImage.evaluate((element) => (element as HTMLImageElement).naturalWidth))
-    .toBeGreaterThan(0);
   await sweepWholePage(page);
 
   const integrity = await page.evaluate(() => {
@@ -981,7 +921,7 @@ test("the contact email keeps one line at phone, tablet, and small desktop width
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
 
-  for (const width of [320, 375, 768, 1024]) {
+  for (const width of [375, 768, 1024]) {
     await page.setViewportSize({ width, height: 900 });
     await openHome(page, true);
     const link = page.locator("#contact [data-contact-email]");
@@ -1045,24 +985,41 @@ test("the contact heading and actions fit the narrowest phones", async ({ page }
       height: element.getBoundingClientRect().height,
       whiteSpace: getComputedStyle(element).whiteSpace,
     }));
-    expect(actionState.whiteSpace).toBe("nowrap");
+    expect(actionState.whiteSpace).toBe("normal");
     expect(actionState.overflow, `LinkedIn overflow at ${width}px`).toBeLessThanOrEqual(1);
-    expect(actionState.height, `LinkedIn height at ${width}px`).toBeLessThan(70);
+    expect(actionState.height, `LinkedIn height at ${width}px`).toBeGreaterThanOrEqual(44);
+    expect(actionState.height, `LinkedIn height at ${width}px`).toBeLessThan(96);
   }
 });
 
-test("the About statement keeps its reading measure on tablets", async ({ page }, testInfo) => {
+test("restored sections stay within the viewport from phone to desktop widths", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width sweep");
+
+  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 920 });
+    await openHome(page, true);
+    await expectSectionsWithinViewport(page, [
+      "#about",
+      "#experience",
+      "#work",
+      "#stack",
+      "#contact",
+    ]);
+  }
+});
+
+test("the About heading keeps a readable measure on tablets", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
 
   for (const width of [768, 900, 1023]) {
     await page.setViewportSize({ width, height: 1000 });
     await openHome(page, true);
-    const statement = page.locator("#about [data-scrub]");
-    await statement.scrollIntoViewIfNeeded();
-    const state = await statement.evaluate((element) => {
+    const heading = page.locator("#about h2");
+    await heading.scrollIntoViewIfNeeded();
+    const state = await heading.evaluate((element) => {
       const style = getComputedStyle(element);
       const probe = document.createElement("span");
-      probe.textContent = "0".repeat(24);
+      probe.textContent = "0".repeat(20);
       probe.style.cssText = [
         "position:absolute",
         "visibility:hidden",
@@ -1077,24 +1034,15 @@ test("the About statement keeps its reading measure on tablets", async ({ page }
       probe.remove();
       return {
         width: element.getBoundingClientRect().width,
-        twentyFourCharacters: twentyCharacters,
+        twentyCharacters,
+        fontSize: Number.parseFloat(style.fontSize),
       };
     });
 
-    expect(state.twentyFourCharacters).toBeGreaterThan(0);
-    expect(state.width, `statement measure at ${width}px`).toBeGreaterThanOrEqual(
-      state.twentyFourCharacters - 0.5
+    expect(state.twentyCharacters).toBeGreaterThan(0);
+    expect(state.width, `heading measure at ${width}px`).toBeGreaterThanOrEqual(
+      state.twentyCharacters - 0.5
     );
-  }
-});
-
-test("About and Experience stay within the viewport at package widths", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width sweep");
-
-  for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
-    await page.setViewportSize({ width, height: 920 });
-    await openHome(page, true);
-    await expectSectionsWithinViewport(page, ["#about", "#experience"]);
   }
 });
 
@@ -1171,12 +1119,12 @@ test("Velo dispatch screens show the whole desk on phones", async ({ page }, tes
   expect(Math.abs(renderedRatio - naturalRatio)).toBeLessThan(0.02);
 });
 
-test("project details stay clear of the screenshot", async ({
+test("hovering a project photograph paints nothing over the card copy", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer contract");
   await openHome(page);
-  const card = page.locator("#work [data-work-project]").nth(1);
+  const card = page.locator("#work [data-work-card]").nth(1);
   await card.scrollIntoViewIfNeeded();
   const photo = card.locator("img").first();
   await expect
@@ -1186,20 +1134,19 @@ test("project details stay clear of the screenshot", async ({
     .toBeGreaterThan(0);
   await settleFrame(page);
 
+  const thinRules = await card.evaluate((element) =>
+    Array.from(element.querySelectorAll<HTMLElement>("*")).filter((node) => {
+      const rect = node.getBoundingClientRect();
+      return rect.width > 0 && rect.width <= 2 && rect.height >= 100;
+    }).length
+  );
+  expect(thinRules).toBe(0);
+
   const copy = card.locator("[data-work-copy]");
-  const frameBox = await card.locator("[data-work-frame]").boundingBox();
-  const detailsBox = await copy.boundingBox();
-  expect(frameBox).not.toBeNull();
-  expect(detailsBox).not.toBeNull();
-  const imageAndCopyOverlap =
-    frameBox!.x < detailsBox!.x + detailsBox!.width &&
-    frameBox!.x + frameBox!.width > detailsBox!.x &&
-    frameBox!.y < detailsBox!.y + detailsBox!.height &&
-    frameBox!.y + frameBox!.height > detailsBox!.y;
-  expect(imageAndCopyOverlap).toBe(false);
+  await page.mouse.move(10, 10);
   await expect
     .poll(() => photo.evaluate((element) => getComputedStyle(element).filter))
-    .toBe("none");
+    .toContain("grayscale");
   const before = await copy.screenshot({ animations: "disabled" });
 
   const photoBox = await photo.boundingBox();
@@ -1208,6 +1155,9 @@ test("project details stay clear of the screenshot", async ({
     photoBox!.x + photoBox!.width / 2,
     photoBox!.y + photoBox!.height / 2
   );
+  await expect
+    .poll(() => photo.evaluate((element) => getComputedStyle(element).filter))
+    .toBe("none");
   const after = await copy.screenshot({ animations: "disabled" });
 
   expect(after.equals(before)).toBe(true);

@@ -23,6 +23,8 @@ export default function SageOrb() {
     let currentX = targetX;
     let currentY = targetY;
     let frame = 0;
+    let attached = false;
+    let unsubscribeSection = () => {};
 
     // The cursor turns pale over dark ink fields. It reads the shared section
     // store for page-level dark bands (the marquee) and the pointer target for
@@ -34,26 +36,16 @@ export default function SageOrb() {
       cursor.dataset.theme = String(sectionIsDark || pointerOnDarkSurface);
     };
 
-    const unsubscribe = subscribeToSection(() => {
-      sectionIsDark = getSectionSnapshot().dark;
-      applyTheme();
-    });
-
     const animate = () => {
       frame = 0;
-      if (reducedMotion.matches) {
-        currentX = targetX;
-        currentY = targetY;
-      } else {
-        currentX += (targetX - currentX) * 0.24;
-        currentY += (targetY - currentY) * 0.24;
-      }
+      currentX += (targetX - currentX) * 0.24;
+      currentY += (targetY - currentY) * 0.24;
 
       const settled =
         Math.abs(targetX - currentX) <= 0.1 && Math.abs(targetY - currentY) <= 0.1;
 
       cursor.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0) translate(-50%, -50%)`;
-      if (reducedMotion.matches || settled) {
+      if (settled) {
         cursor.dataset.moving = "false";
         return;
       }
@@ -93,35 +85,57 @@ export default function SageOrb() {
     };
 
     const enable = () => {
-      if (!finePointer.matches) return;
+      if (
+        attached ||
+        !finePointer.matches ||
+        reducedMotion.matches ||
+        document.visibilityState !== "visible"
+      ) {
+        return;
+      }
+      attached = true;
+      sectionIsDark = getSectionSnapshot().dark;
+      unsubscribeSection = subscribeToSection(() => {
+        sectionIsDark = getSectionSnapshot().dark;
+        applyTheme();
+      });
+      applyTheme();
       window.addEventListener("pointermove", handlePointerMove, { passive: true });
       window.addEventListener("pointerout", handlePointerLeave, { passive: true });
       window.addEventListener("blur", hide);
     };
 
     const disable = () => {
+      attached = false;
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerout", handlePointerLeave);
       window.removeEventListener("blur", hide);
+      unsubscribeSection();
+      unsubscribeSection = () => {};
       hide();
+      pointerOnDarkSurface = false;
+      applyTheme();
       if (frame !== 0) {
         window.cancelAnimationFrame(frame);
         frame = 0;
       }
     };
 
-    const handlePointerCapabilityChange = () => {
+    const syncAvailability = () => {
       disable();
       enable();
     };
 
     enable();
-    finePointer.addEventListener("change", handlePointerCapabilityChange);
+    finePointer.addEventListener("change", syncAvailability);
+    reducedMotion.addEventListener("change", syncAvailability);
+    document.addEventListener("visibilitychange", syncAvailability);
 
     return () => {
-      unsubscribe();
       disable();
-      finePointer.removeEventListener("change", handlePointerCapabilityChange);
+      finePointer.removeEventListener("change", syncAvailability);
+      reducedMotion.removeEventListener("change", syncAvailability);
+      document.removeEventListener("visibilitychange", syncAvailability);
     };
   }, []);
 
