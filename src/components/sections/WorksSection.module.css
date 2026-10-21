@@ -16,6 +16,7 @@
 }
 
 .heading {
+  position: relative;
   font-family: var(--font-headline);
   font-style: normal;
   font-weight: 550;
@@ -23,10 +24,29 @@
   line-height: 1.05;
   letter-spacing: -0.01em;
   color: var(--color-on-surface);
+  text-wrap: balance;
+}
+
+.heading::after {
+  position: absolute;
+  inset: 0;
+  color: var(--tone-accent, var(--color-lead, #6A2135));
+  content: attr(data-overprint);
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  opacity: 0.4;
+  pointer-events: none;
+  text-wrap: inherit;
+  transform: translate(2px, 1px);
+  white-space: normal;
+  mix-blend-mode: multiply;
 }
 
 .headingFlip {
-  display: inline-block;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .headingFlipToken {
@@ -40,6 +60,7 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-secondary-text);
+  text-wrap: balance;
 }
 
 .projectsList {
@@ -300,6 +321,12 @@
   box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
 }
 
+.heroFrame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
 .visualPanelVelo .heroShot {
   min-height: 0;
   aspect-ratio: 16 / 9;
@@ -320,6 +347,11 @@
   object-fit: cover;
   filter: grayscale(1) contrast(1.05);
   transition: filter 0.4s var(--motion-ease-out);
+}
+
+.visualPanelPlatform .heroShotImage {
+  object-fit: contain;
+  background: var(--paper-linen, #FCF8F2);
 }
 
 .visualPanel:hover .heroShotImage {
@@ -420,6 +452,7 @@
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .caseMarker {
@@ -545,6 +578,7 @@
   letter-spacing: 0.04em;
   font-family: var(--font-label);
   transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
 }
 
 .deepDiveLink:hover {
@@ -684,5 +718,70 @@
 
   .processSteps p {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .workCard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .visualPanel,
+  .contentPanel {
+    grid-column: 1;
+  }
+
+  .visualPanel {
+    grid-row: 1;
+    order: 0;
+  }
+
+  .contentPanel {
+    grid-row: 2;
+    order: 0;
+  }
+
+  .visualReversed,
+  .contentReversed {
+    order: 0;
+  }
+
+  .processSteps {
+    column-gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .deepDiveLink {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .heroShot,
+  .visualPanelVelo .heroShot {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.45rem;
+    min-height: 0;
+    aspect-ratio: auto;
+    overflow: visible;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .heroFrame {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--section-panel-border);
+    border-radius: 2px;
+    box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
+  }
+
+  .mediaCaption {
+    position: static;
+    width: 100%;
+    padding: 0.35rem 0.5rem;
   }
 }

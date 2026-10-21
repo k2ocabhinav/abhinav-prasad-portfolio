@@ -131,6 +131,25 @@
   color: var(--color-lead-deep);
 }
 
+@media (min-width: 768px) and (max-width: 1099px) and (hover: hover) and (pointer: fine) {
+  .desktopRail:not(.desktopRailCompact) .railLabel,
+  .desktopRail:not(.desktopRailCompact) .railItem:hover .railLabel,
+  .desktopRail:not(.desktopRailCompact) .railItem:focus-visible .railLabel {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+}
+
+@media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
+  .desktopRail[data-marquee-under-rail="true"] .railLabel,
+  .desktopRail[data-marquee-under-rail="true"] .railItem:hover .railLabel,
+  .desktopRail[data-marquee-under-rail="true"] .railItem:focus-visible .railLabel {
+    opacity: 0;
+    transform: translateX(1rem);
+    transition: opacity 160ms ease, transform 160ms var(--motion-ease-out);
+  }
+}
+
 /* On case-study routes the rail carries only the contact actions. Labels
    stay out of the way until hover or keyboard focus, so the icons sit clear
    of the reading column. */
@@ -334,14 +353,14 @@
 
 /* Contact leads the group: a labelled row with the mark, sized like the
    other menu actions (44px minimum) rather than a bare text link. */
-.mobileNavLinkedIn {
+.mobileNavAction {
   justify-content: space-between;
   gap: 0.75rem;
   padding-inline: 0.25rem;
   color: var(--color-lead-deep);
 }
 
-.mobileNavLinkedIn svg {
+.mobileNavAction svg {
   flex: none;
 }
 

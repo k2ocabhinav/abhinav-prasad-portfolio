@@ -55,11 +55,37 @@ export default function Navigation({
   const prefersReducedMotion = useReducedMotion();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHamburgerHidden, setIsHamburgerHidden] = useState(false);
+  const [isMarqueeUnderRail, setIsMarqueeUnderRail] = useState(false);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const restoreBodyScrollRef = useRef<(() => void) | null>(null);
   const shouldRestoreFocusRef = useRef(false);
   const pendingSectionFocusRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const marquee = document.querySelector<HTMLElement>('[data-marquee="true"]');
+    if (!marquee) {
+      return;
+    }
+
+    let observer: IntersectionObserver | undefined;
+    const observeCenterBand = () => {
+      observer?.disconnect();
+      const inset = Math.round(window.innerHeight * 0.45);
+      observer = new IntersectionObserver(
+        (entries) => setIsMarqueeUnderRail(Boolean(entries[0]?.isIntersecting)),
+        { rootMargin: `-${inset}px 0px -${inset}px 0px`, threshold: 0 }
+      );
+      observer.observe(marquee);
+    };
+
+    observeCenterBand();
+    window.addEventListener("resize", observeCenterBand, { passive: true });
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", observeCenterBand);
+    };
+  }, []);
 
   const closeMobileMenu = useCallback(() => {
     shouldRestoreFocusRef.current = true;
@@ -283,6 +309,7 @@ export default function Navigation({
       <nav
         data-site-chrome="navigation-rail"
         data-nav-tone={overDarkField ? "dark" : "light"}
+        data-marquee-under-rail={isMarqueeUnderRail ? "true" : undefined}
         className={cn(
           styles.desktopRail,
           navMode === "transparent" && styles.desktopRailTransparent
@@ -295,6 +322,7 @@ export default function Navigation({
               key={item.id}
               href={`#${item.id}`}
               className={styles.railItem}
+              aria-label={item.label}
               aria-current={activeSection === item.id ? "location" : undefined}
               onClick={(event) => {
                 event.preventDefault();
@@ -356,6 +384,7 @@ export default function Navigation({
         ) : null}
         <a
           href={`mailto:${email}`}
+          aria-label={`Email ${fullName}`}
           className={cn(styles.railItem, styles.railAction)}
         >
           <span className={cn(styles.railLabel, styles.railLabelRoute)}>
@@ -371,6 +400,7 @@ export default function Navigation({
         <a
           href={resumeHref}
           download
+          aria-label={`Download ${fullName}'s résumé`}
           className={cn(styles.railItem, styles.railAction)}
         >
           <span className={cn(styles.railLabel, styles.railLabelRoute)}>
@@ -520,7 +550,7 @@ export default function Navigation({
                     onClick={closeMobileMenu}
                     className={cn(
                       styles.mobileNavItem,
-                      styles.mobileNavLinkedIn
+                      styles.mobileNavAction
                     )}
                   >
                     <span>LinkedIn</span>
@@ -530,17 +560,19 @@ export default function Navigation({
                 <a
                   href={`mailto:${email}`}
                   onClick={closeMobileMenu}
-                  className={cn(styles.mobileNavItem, styles.mobileNavRoute)}
+                  className={cn(styles.mobileNavItem, styles.mobileNavAction)}
                 >
-                  Email
+                  <span>Email</span>
+                  <Mail size={16} aria-hidden="true" focusable="false" />
                 </a>
                 <a
                   href={resumeHref}
                   download
                   onClick={closeMobileMenu}
-                  className={cn(styles.mobileNavItem, styles.mobileNavRoute)}
+                  className={cn(styles.mobileNavItem, styles.mobileNavAction)}
                 >
-                  Résumé
+                  <span>Résumé</span>
+                  <FileText size={16} aria-hidden="true" focusable="false" />
                 </a>
               </nav>
             </m.div>

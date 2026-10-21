@@ -27,6 +27,7 @@ export default function StackStrip({
 }: StackStripProps) {
   return (
     <ul
+      data-stack-strip="true"
       className={cn(
         styles.strip,
         tone === "panel" ? styles.panel : styles.paper,
