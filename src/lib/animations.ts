@@ -2,11 +2,16 @@ import type { Transition, Variants } from "motion/react";
 
 const easeSignature: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
+// The 28px rise is a `transform` string rather than the independent `y`
+// value: motion hands opacity and transform strings to the browser's
+// compositor-driven animations, while `y` is interpolated in JS with an inline
+// style write (style recalc, paint-property update and commit) on every frame
+// of the 0.6 s reveal. Same keyframes, duration and easing.
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, transform: "translateY(28px)" },
   visible: {
     opacity: 1,
-    y: 0,
+    transform: "translateY(0px)",
     transition: { duration: 0.6, ease: easeSignature },
   },
 };

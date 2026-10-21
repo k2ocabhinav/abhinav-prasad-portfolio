@@ -6,6 +6,7 @@ import { useEffect, type ReactNode } from "react";
 import PortalTransitionProvider from "@/components/beyond-terminal/PortalTransitionProvider";
 import { useFinePointer } from "@/hooks/useFinePointer";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useScrollingFlag } from "./useScrollingFlag";
 
 interface ExperienceProvidersProps {
   children: ReactNode;
@@ -39,6 +40,7 @@ export default function ExperienceProviders({ children }: ExperienceProvidersPro
   const prefersReducedMotion = useReducedMotion();
   const hasFinePointer = useFinePointer();
   useSmoothScroll(hasFinePointer && !prefersReducedMotion);
+  useScrollingFlag();
 
   return (
     <MotionConfig reducedMotion="user">

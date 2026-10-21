@@ -894,3 +894,19 @@
     grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
   }
 }
+
+/* While the page scrolls (html[data-scrolling], see useScrollingFlag), cards
+   passing under a still pointer take their hover look without easing: the
+   panel colour/shadow and the grayscale-to-colour image fade would otherwise
+   repaint on every frame of their transitions. */
+:global(html[data-scrolling]) .visualPanel,
+:global(html[data-scrolling]) .dotOverlay,
+:global(html[data-scrolling]) .heroShotImage,
+:global(html[data-scrolling]) .supportShotImage,
+:global(html[data-scrolling]) .posterPrint,
+:global(html[data-scrolling]) .posterPrint svg > g:first-of-type > path:first-child,
+:global(html[data-scrolling]) .deepDiveLink,
+:global(html[data-scrolling]) .projectLink,
+:global(html[data-scrolling]) .caseStudyLink {
+  transition: none;
+}

@@ -269,3 +269,9 @@
     transform: none;
   }
 }
+
+/* Cards sliding under a still pointer mid-scroll take the hover look without
+   easing (html[data-scrolling], see useScrollingFlag). */
+:global(html[data-scrolling]) .card {
+  transition: none;
+}
