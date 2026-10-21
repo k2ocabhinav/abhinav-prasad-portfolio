@@ -105,24 +105,27 @@ function OrchestrationEvidence({
       aria-labelledby="work-method-title"
       data-cursor-theme="dark"
     >
-      <div ref={posterRef} className={styles.posterColumn}>
-        <PrintRunPoster
-          progress={scrollYProgress}
-          reducedMotion={prefersReducedMotion}
-        />
-      </div>
-      <div className={styles.evidenceContent}>
+      <div className={styles.orchestrationLead}>
+        <div ref={posterRef} className={styles.posterColumn}>
+          <PrintRunPoster
+            progress={scrollYProgress}
+            reducedMotion={prefersReducedMotion}
+          />
+        </div>
         <header className={styles.evidenceHeading}>
           <h3 id="work-method-title">How I work</h3>
+          <p>From Velo and this site</p>
         </header>
+      </div>
+      <div className={styles.evidenceContent}>
         <p className={styles.orchestrationIntro}>{content.intro}</p>
         <ol className={styles.processSteps}>
           {content.steps.map((step, index) => (
             <li key={step.title}>
-              <span className={styles.stepNumber} aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
+              <span className={styles.stepLabel} aria-hidden="true">
+                {String(index + 1).padStart(2, "0")} {step.title.toUpperCase()}
               </span>
-              <h4>{step.title}</h4>
+              <h4 className={styles.stepValue}>{step.title}</h4>
               <p>{step.description}</p>
             </li>
           ))}

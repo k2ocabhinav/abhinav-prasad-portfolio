@@ -125,7 +125,7 @@ test.describe("F11 tablet and tall viewport regressions", () => {
       await page.setViewportSize(viewport);
       await page.goto("/");
       await page.locator("#experience").scrollIntoViewIfNeeded();
-      await page.getByRole("button", { name: /Read full experience/ }).click();
+      await page.getByRole("button", { name: /FULL EXPERIENCE/ }).click();
 
       const sections = page.locator("#experience-full [data-workstream]");
       await expect(sections).toHaveCount(4);

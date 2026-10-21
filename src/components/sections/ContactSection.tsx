@@ -104,7 +104,7 @@ export default function ContactSection({
               }}
             >
               <div className={styles.contactMotionRoot}>
-                <h2 className={styles.heading}>Let&apos;s talk.</h2>
+                <h2 className={styles.heading}>Let&apos;s build.</h2>
                 <p className={styles.callout}>Full-time roles, contract work or a scoped project: all welcome.</p>
 
                 <div className={styles.ctaContainer}>

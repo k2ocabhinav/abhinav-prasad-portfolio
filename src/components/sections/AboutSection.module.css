@@ -1,20 +1,27 @@
-.aboutSection {
+.serviceBand {
+  --section-bg: var(--paper-linen, #FCF8F2);
+  border-top: 0;
+}
+
+.specBand {
+  --section-bg: var(--paper-bone, #F0EEE9);
   --plate-ink: var(--color-black-cherry, #351E28);
   --plate-accent: var(--color-burgundy, #6A2135);
   --plate-second: var(--color-cornflower, #94B6EF);
   --plate-paper: var(--paper-linen, #FCF8F2);
 }
 
-.sectionContent {
-  display: grid;
-  gap: clamp(1.75rem, 3.5vw, 2.75rem);
-  max-width: 72rem;
-  margin-inline: auto;
+.tileContent {
+  width: min(81rem, calc(100vw - 2 * var(--content-padding-x)));
+  margin-left: calc(
+    (100% - min(81rem, calc(100vw - 2 * var(--content-padding-x)))) / 2
+  );
 }
 
-/* "What I do" eyebrow over the coloured tiles, as in the original services frame. */
 .sectionLabel {
+  display: block;
   margin: 0;
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
   color: var(--color-sage);
   font-family: var(--font-label);
   font-size: 11px;
@@ -23,10 +30,15 @@
   text-transform: uppercase;
 }
 
+.specContent {
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
 .composition {
   display: grid;
   grid-template-columns: minmax(15rem, 0.38fr) minmax(0, 0.62fr);
-  max-width: 72rem;
+  max-width: 68rem;
   margin-inline: auto;
   overflow: hidden;
   border: 1px solid rgba(11, 16, 17, 0.14);

@@ -814,10 +814,10 @@ test("About statement and services keep a static composition on desktop", async 
   for (const name of ["Backend and APIs", "Full-stack products", "AI-assisted delivery"]) {
     await expect(about.getByRole("heading", { level: 3, name })).toBeVisible();
   }
-  await expect(about.locator(".spec-sheet p")).toHaveText(
+  await expect(page.locator("#about-spec .spec-sheet p")).toHaveText(
     "I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface."
   );
-  await expect(about.locator(".spec-sheet li")).toHaveText([
+  await expect(page.locator("#about-spec .spec-sheet li")).toHaveText([
     "At Ostrum, I work on MySQL-backed API behaviour and versioned database releases.",
     "On my own, I take products from the backend to the interface, with AI coding agents doing scoped work under my review.",
     "Open to full-time roles, contract work and scoped projects.",
@@ -858,7 +858,7 @@ test("About statement and services keep a static composition on mobile", async (
   for (const name of ["Backend and APIs", "Full-stack products", "AI-assisted delivery"]) {
     await expect(about.getByRole("heading", { level: 3, name })).toBeVisible();
   }
-  await expect(about.locator(".spec-sheet p")).toHaveText(
+  await expect(page.locator("#about-spec .spec-sheet p")).toHaveText(
     "I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface."
   );
   await page.evaluate(() => document.fonts.ready);
@@ -887,7 +887,7 @@ test("What I do spec sheet keeps its print composition on desktop", async ({ pag
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
-  const specSheet = page.locator("#about .spec-sheet");
+  const specSheet = page.locator("#about-spec .spec-sheet");
   await specSheet.scrollIntoViewIfNeeded();
   await page.evaluate(() => document.fonts.ready);
   await expect(specSheet).toBeVisible();
@@ -905,7 +905,7 @@ test("What I do spec sheet keeps its print composition on mobile", async ({ page
   await page.goto("/");
   await freezeHeroAmbientForSnapshot(page);
 
-  const specSheet = page.locator("#about .spec-sheet");
+  const specSheet = page.locator("#about-spec .spec-sheet");
   await specSheet.scrollIntoViewIfNeeded();
   await page.evaluate(() => document.fonts.ready);
   await expect(specSheet).toBeVisible();

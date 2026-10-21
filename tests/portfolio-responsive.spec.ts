@@ -201,32 +201,38 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   await expect(experience.getByRole("heading", { level: 3, name: "Ostrum Tech Limited" })).toBeVisible();
   await expect(experience.getByRole("heading", { level: 4, name: "Database Engineer" })).toBeVisible();
   await expect(experience.getByText("May 2024 to present", { exact: true })).toBeVisible();
-  await expect(experience.getByText(
+  const employmentNote = experience.getByText(
     "Started as an intern in May 2024; full-time Database Engineer since September 2024.",
     { exact: true }
-  )).toBeVisible();
-  await expect(experience.getByText(/Develop MySQL-backed business logic for API workflows/)).toBeVisible();
-
-  const summaryPoints = experience.getByRole("list").first().getByRole("listitem");
-  await expect(summaryPoints).toHaveCount(6);
-  await expect(summaryPoints.nth(0)).toContainText("MySQL stored procedures, functions, triggers, views, and schema changes");
-  await expect(summaryPoints.nth(1)).toContainText("Design relational schemas and indexes");
-  await expect(summaryPoints.nth(2)).toContainText("version-controlled Flyway migrations");
-  await expect(summaryPoints.nth(3)).toContainText("Designed and built Database Toolkit, a Python and Qt desktop app");
-  await expect(summaryPoints.nth(4)).toContainText("Trace defects across API requests");
-  await expect(summaryPoints.nth(5)).toContainText("AWS-integrated database delivery");
-
+  );
+  const roleScope = experience.getByText(/Develop MySQL-backed business logic for API workflows/);
   const disclosure = experience.locator("#experience-full-toggle");
   const panel = experience.locator("#experience-full");
+  await expect(panel).toHaveAttribute("aria-hidden", "true");
+  await expect(panel).toHaveAttribute("inert", "");
+  await expect(panel).toHaveCSS("height", "0px");
+  await expect(panel).toHaveCSS("overflow", "hidden");
+
+  const summaryPoints = experience.getByRole("list").first().getByRole("listitem");
+  await expect(summaryPoints).toHaveCount(3);
+  await expect(summaryPoints.nth(0)).toContainText("MySQL stored procedures, functions, triggers, views, and schema changes");
+  await expect(summaryPoints.nth(1)).toContainText("version-controlled Flyway migrations");
+  await expect(summaryPoints.nth(2)).toContainText("Designed and built Database Toolkit, a Python and Qt desktop app");
+
   await expect(disclosure).toHaveAttribute("aria-expanded", "false");
   await expect(disclosure).toHaveAttribute("aria-controls", "experience-full");
   await expect(panel).toHaveAttribute("aria-hidden", "true");
-  await expect(disclosure).toContainText("4 sections · 14 points");
+  await expect(disclosure).toContainText("FULL EXPERIENCE");
   expect(await panel.textContent()).toContain("Work with senior engineers and technical managers");
 
   await disclosure.click();
   await expect(disclosure).toHaveAttribute("aria-expanded", "true");
   await expect(panel).toHaveAttribute("aria-hidden", "false");
+  await expect(employmentNote).toBeVisible();
+  await expect(roleScope).toBeVisible();
+  for (const phrase of ["Design relational schemas and indexes", "Trace defects across API requests", "AWS-integrated database delivery"]) {
+    await expect(panel.getByText(new RegExp(phrase))).toBeVisible();
+  }
   for (const name of workstreamNames) {
     await expect(panel.getByRole("heading", { level: 4, name, exact: true })).toBeVisible();
   }
@@ -267,7 +273,7 @@ test("full experience disclosure supports Enter, Space, and its deep link", asyn
   await page.goto("/#experience-full");
   const deepLinkButton = page.locator("#experience-full-toggle");
   await expect(deepLinkButton).toHaveAttribute("aria-expanded", "true");
-  await expect(deepLinkButton).toContainText("Close full experience");
+  await expect(deepLinkButton).toContainText("FULL EXPERIENCE");
   await expect(page.locator("#experience-full")).toBeVisible();
 });
 
@@ -289,7 +295,7 @@ test("uses the approved marquee and contact copy", async ({ page }) => {
 
   const contact = page.locator("#contact");
   await contact.scrollIntoViewIfNeeded();
-  await expect(contact.getByRole("heading", { name: "Let's talk." })).toBeVisible();
+  await expect(contact.getByRole("heading", { name: "Let's build." })).toBeVisible();
   await expect(contact.getByText("Full-time roles, contract work or a scoped project: all welcome.", { exact: true })).toBeVisible();
   await expect(contact.getByRole("link", { name: "abhinavp0304@gmail.com" })).toBeVisible();
   const email = contact.getByRole("link", { name: "abhinavp0304@gmail.com" });
@@ -305,6 +311,48 @@ test("uses the approved marquee and contact copy", async ({ page }) => {
   await expect(linkedin).toHaveAttribute("target", "_blank");
   await expect(linkedin).toHaveAttribute("rel", "noopener noreferrer");
   await expect(contact.getByRole("link", { name: "GitHub" })).toHaveCount(0);
+});
+
+test("hyphenated service titles wrap only between words", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width title probes");
+
+  for (const width of [320, 390, 768]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openHome(page, true);
+
+    const title = page.locator('#about [data-service-id="developer-tooling"] h3');
+    await expect(title).toHaveText("AI-assisted delivery");
+    const geometry = await title.evaluate((element) => {
+      const hyphenatedWord = element.querySelector<HTMLElement>("span");
+      const deliveryNode = [...element.childNodes].find(
+        (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.includes("delivery")
+      );
+      if (!hyphenatedWord || !(deliveryNode instanceof Text)) {
+        throw new Error("Service title words are missing");
+      }
+      const range = document.createRange();
+      const start = deliveryNode.data.indexOf("delivery");
+      range.setStart(deliveryNode, start);
+      range.setEnd(deliveryNode, start + "delivery".length);
+      const deliveryRect = range.getBoundingClientRect();
+      const wordRect = hyphenatedWord.getBoundingClientRect();
+      const tileRect = element.closest("article")?.getBoundingClientRect();
+      return {
+        wordLines: hyphenatedWord.getClientRects().length,
+        wordRight: wordRect.right,
+        deliveryTop: deliveryRect.top,
+        wordTop: wordRect.top,
+        tileRight: tileRect?.right ?? 0,
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+      };
+    });
+
+    expect(geometry.wordLines).toBe(1);
+    expect(geometry.wordRight).toBeLessThanOrEqual(geometry.tileRight);
+    expect(geometry.documentWidth).toBe(geometry.viewportWidth);
+    if (width <= 390) expect(geometry.deliveryTop).toBeGreaterThan(geometry.wordTop);
+  }
 });
 
 test("LinkedIn is one tap away from the rail, phone menu, and case study", async ({
@@ -363,16 +411,17 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await expect(onMyOwn).toContainText("Forward deployed builds: Velo, this site, AI‑agent workflows");
   const whatIDo = page.locator("#about");
   await expect(whatIDo.getByRole("heading", { name: "What I do" })).toBeVisible();
-  await expect(whatIDo.getByText("I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface.", { exact: true })).toBeVisible();
-  await expect(whatIDo.getByText("At Ostrum, I work on MySQL-backed API behaviour and versioned database releases.", { exact: true })).toBeVisible();
-  await expect(whatIDo.getByText("On my own, I take products from the backend to the interface, with AI coding agents doing scoped work under my review.", { exact: true })).toBeVisible();
-  await expect(whatIDo.getByText("Open to full-time roles, contract work and scoped projects.", { exact: true })).toBeVisible();
   await expect(whatIDo.getByRole("heading", { name: "Backend and APIs" })).toBeVisible();
   await expect(whatIDo.getByRole("heading", { name: "Full-stack products" })).toBeVisible();
   await expect(whatIDo.getByRole("heading", { name: "AI-assisted delivery" })).toBeVisible();
   await expect(whatIDo).toContainText("Java and Spring Boot services, REST APIs, authentication, realtime messaging and the relational models underneath.");
   await expect(whatIDo).toContainText("I scope work for AI coding agents, run independent pieces in parallel and review every change before it ships.");
   await expect(whatIDo.locator("[data-service-id]")).toHaveCount(3);
+  const aboutSpec = page.locator("#about-spec");
+  await expect(aboutSpec.getByText("I design backends first: the services, the APIs and the data behind them, then carry the product through to the interface.", { exact: true })).toBeVisible();
+  await expect(aboutSpec.getByText("At Ostrum, I work on MySQL-backed API behaviour and versioned database releases.", { exact: true })).toBeVisible();
+  await expect(aboutSpec.getByText("On my own, I take products from the backend to the interface, with AI coding agents doing scoped work under my review.", { exact: true })).toBeVisible();
+  await expect(aboutSpec.getByText("Open to full-time roles, contract work and scoped projects.", { exact: true })).toBeVisible();
   expect((await page.locator("body").innerText()).match(/forward deployed/gi)).toHaveLength(1);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
@@ -959,7 +1008,7 @@ test("the contact heading and actions fit the narrowest phones", async ({ page }
     await page.setViewportSize({ width, height: 900 });
     await openHome(page, true);
     const contact = page.locator("#contact");
-    const heading = contact.getByRole("heading", { name: "Let's talk." });
+    const heading = contact.getByRole("heading", { name: "Let's build." });
     await heading.scrollIntoViewIfNeeded();
 
     const headingState = await heading.evaluate((element) => {

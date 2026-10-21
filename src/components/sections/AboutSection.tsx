@@ -29,43 +29,48 @@ export default function AboutSection({
   const [headline, ...points] = intro.proofLines;
 
   return (
-    <SectionWrapper id="about" tone={tone} className={styles.aboutSection}>
-      <div className={styles.sectionContent}>
-        <h2 className={styles.sectionLabel}>{intro.headline}</h2>
+    <>
+      <SectionWrapper id="about" tone={tone} className={styles.serviceBand}>
+        <div className={styles.tileContent}>
+          <h2 className={styles.sectionLabel}>{intro.headline}</h2>
+          <ServiceTiles services={services} />
+        </div>
+      </SectionWrapper>
 
-        <ServiceTiles services={services} />
-
-        <div className={`spec-sheet ${styles.composition}`}>
-          <div className={styles.portraitColumn}>
-            <div className={styles.imageFrame}>
-              <Image
-                src={personal.heroPhoto}
-                alt={`${personal.fullName} editorial monogram`}
-                width={640}
-                height={640}
-                className={styles.heroImage}
-              />
+      <SectionWrapper id="about-spec" tone={tone} className={styles.specBand}>
+        <div className={styles.specContent}>
+          <div className={`spec-sheet ${styles.composition}`}>
+            <div className={styles.portraitColumn}>
+              <div className={styles.imageFrame}>
+                <Image
+                  src={personal.heroPhoto}
+                  alt={`${personal.fullName} editorial monogram`}
+                  width={640}
+                  height={640}
+                  className={styles.heroImage}
+                />
+              </div>
+              <div className={styles.stillLife}>
+                <StillLifePlate />
+              </div>
+              <span className={styles.hintCopy} data-secret-hint="true">
+                {personal.hintCopy.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </span>
             </div>
-            <div className={styles.stillLife}>
-              <StillLifePlate />
-            </div>
-            <span className={styles.hintCopy} data-secret-hint="true">
-              {personal.hintCopy.map((line) => (
-                <span key={line}>{line}</span>
-              ))}
-            </span>
-          </div>
 
-          <div className={`spec-body ${styles.copyColumn}`}>
-            <p className={styles.heading}>{headline}</p>
-            <ul className={styles.proofList}>
-              {points.map((line) => (
-                <li key={line}>{line}</li>
-              ))}
-            </ul>
+            <div className={`spec-body ${styles.copyColumn}`}>
+              <p className={styles.heading}>{headline}</p>
+              <ul className={styles.proofList}>
+                {points.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
-    </SectionWrapper>
+      </SectionWrapper>
+    </>
   );
 }

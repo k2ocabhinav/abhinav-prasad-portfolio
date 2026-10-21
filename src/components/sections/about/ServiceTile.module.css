@@ -5,6 +5,7 @@
 .tile {
   position: relative;
   display: flex;
+  min-width: 0;
   flex-direction: column;
   height: 100%;
   min-height: clamp(16rem, 18vw, 18rem);
@@ -94,6 +95,7 @@
 .title {
   position: relative;
   z-index: 1;
+  min-width: 0;
   font-family: var(--font-display);
   font-weight: 550;
   font-size: clamp(1.25rem, 2vw, 1.75rem);
@@ -102,6 +104,10 @@
   margin-bottom: 0;
   display: inline-block;
   transition: transform var(--motion-duration-short) var(--motion-ease-out);
+}
+
+.titleWord {
+  white-space: nowrap;
 }
 
 .tile:hover .title {
@@ -227,6 +233,14 @@
 
   .tags :global(.tag) {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 359px) {
+  .tile[data-service-id="developer-tooling"] .icon {
+    width: 5.5rem;
+    height: 5.5rem;
+    margin-right: 0.5rem;
   }
 }
 

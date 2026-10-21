@@ -146,9 +146,10 @@ test("keeps each home section readable without JavaScript", async ({ browser, ba
   const about = page.locator("#about");
   await expect(about.getByRole("heading", { name: "What I do", exact: true })).toBeVisible();
   await expect(about.locator("[data-service-id]")).toHaveCount(3);
-  await expect(about.locator(".spec-sheet p")).toContainText("I design backends first");
+  const aboutSpec = page.locator("#about-spec");
+  await expect(aboutSpec.locator(".spec-sheet p")).toContainText("I design backends first");
   await expect(
-    about.getByText("Open to full-time roles, contract work and scoped projects.", { exact: true })
+    aboutSpec.getByText("Open to full-time roles, contract work and scoped projects.", { exact: true })
   ).toBeVisible();
   expect(checkedSections).toBeGreaterThan(0);
   await context.close();

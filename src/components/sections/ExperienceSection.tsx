@@ -20,6 +20,12 @@ interface ExperienceDossierProps {
   experience: ChronicleEntry;
 }
 
+const visibleSummaryLeads = new Set([
+  "Database programs",
+  "Versioned releases",
+  "Designed and built",
+]);
+
 function ExperiencePointText({ point }: { point: ExperiencePoint }) {
   if (point.emphasis) {
     return (
@@ -44,10 +50,11 @@ function ExperienceDossier({ experience }: ExperienceDossierProps) {
     : `${experience.slug}-full-experience`;
   const toggleId = `${panelId}-toggle`;
   const headingId = `${experience.slug}-employer`;
-  const sectionCount = experience.workstreams.length;
-  const pointCount = experience.workstreams.reduce(
-    (count, workstream) => count + workstream.points.length,
-    0
+  const visibleSummaryPoints = experience.summaryPoints.filter((point) =>
+    visibleSummaryLeads.has(point.lead)
+  );
+  const additionalSummaryPoints = experience.summaryPoints.filter(
+    (point) => !visibleSummaryLeads.has(point.lead)
   );
 
   useEffect(() => {
@@ -88,10 +95,8 @@ function ExperienceDossier({ experience }: ExperienceDossierProps) {
 
       <div className={styles.roleSummary}>
         <h4 className={styles.roleTitle}>{experience.roleTitle}</h4>
-        <p className={styles.employmentNote}>{experience.employmentNote}</p>
-        <p className={styles.roleScope}>{experience.roleScope}</p>
         <ul className={styles.pointList}>
-          {experience.summaryPoints.map((point) => (
+          {visibleSummaryPoints.map((point) => (
             <li key={`${point.lead}-${point.detail}`}>
               <ExperiencePointText point={point} />
             </li>
@@ -109,20 +114,8 @@ function ExperienceDossier({ experience }: ExperienceDossierProps) {
           onClick={() => setIsExpanded((expanded) => !expanded)}
         >
           <span className={styles.disclosureLabel}>
-            {isExpanded ? "Close full experience" : "Read full experience"}
+            {isExpanded ? "▾ FULL EXPERIENCE" : "▸ FULL EXPERIENCE"}
           </span>
-          <span className={styles.disclosureMeta}>
-            {sectionCount} sections · {pointCount} points
-          </span>
-          <svg
-            className={styles.disclosureMark}
-            data-expanded={isExpanded}
-            viewBox="0 0 20 20"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path d="M10 3v14M3 10h14" />
-          </svg>
         </button>
 
         <m.div
@@ -137,6 +130,15 @@ function ExperienceDossier({ experience }: ExperienceDossierProps) {
           transition={panelTransition}
         >
           <div className={styles.detailContent}>
+            <p className={styles.employmentNote}>{experience.employmentNote}</p>
+            <p className={styles.roleScope}>{experience.roleScope}</p>
+            <ul className={styles.detailPoints}>
+              {additionalSummaryPoints.map((point) => (
+                <li key={`${point.lead}-${point.detail}`}>
+                  <ExperiencePointText point={point} />
+                </li>
+              ))}
+            </ul>
             <div className={styles.workstreamGrid}>
               {experience.workstreams.map((workstream, index) => {
                 const itemTransition = prefersReducedMotion

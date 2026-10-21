@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import type { ServiceEntry } from "@/types";
 import Tag from "@/components/ui/Tag";
 import ServiceObjects, { type ServiceObjectVariant } from "@/components/art/ServiceObjects";
@@ -38,6 +39,7 @@ export default function ServiceTile({ service, index }: ServiceTileProps) {
     object: preset?.object ?? serviceObjects[index % serviceObjects.length],
     title: service.title,
   };
+  const titleParts = presentation.title.split(/(\s+)/);
 
   return (
     <article
@@ -49,7 +51,17 @@ export default function ServiceTile({ service, index }: ServiceTileProps) {
         <div className={styles.icon}>
           <ServiceObjects variant={presentation.object} />
         </div>
-        <h3 className={styles.title}>{presentation.title}</h3>
+        <h3 className={styles.title}>
+          {titleParts.map((part, partIndex) =>
+            part.includes("-") ? (
+              <span className={styles.titleWord} key={partIndex}>
+                {part}
+              </span>
+            ) : (
+              <Fragment key={partIndex}>{part}</Fragment>
+            )
+          )}
+        </h3>
       </div>
       <p className={styles.description}>{service.description}</p>
       {service.tags?.length ? (
