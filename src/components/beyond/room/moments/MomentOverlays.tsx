@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import type { BeyondAlbumItem } from "@/types";
 import { roomStore, useRoomState } from "../roomStore";
 import { OPEN_MOMENTS_LIST_EVENT } from "./events";
@@ -13,9 +13,17 @@ import TerminalDialog from "./TerminalDialog";
 
 interface BeyondRoomProps {
   items: BeyondAlbumItem[];
+  listRequest?: number;
+  listRef?: RefObject<HTMLElement | null>;
+  showListToggle?: boolean;
 }
 
-export default function MomentOverlays({ items }: BeyondRoomProps) {
+export default function MomentOverlays({
+  items,
+  listRequest = 0,
+  listRef,
+  showListToggle = true,
+}: BeyondRoomProps) {
   const roomState = useRoomState();
   const [listExpanded, setListExpanded] = useState(false);
   const [photoForItemId, setPhotoForItemId] = useState<string | null>(null);
@@ -48,6 +56,15 @@ export default function MomentOverlays({ items }: BeyondRoomProps) {
     window.addEventListener(OPEN_MOMENTS_LIST_EVENT, openList);
     return () => window.removeEventListener(OPEN_MOMENTS_LIST_EVENT, openList);
   }, []);
+
+  useEffect(() => {
+    if (listRequest === 0) return;
+    const frameId = window.requestAnimationFrame(() => {
+      setListExpanded(true);
+      listRef?.current?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [listRef, listRequest]);
 
   useEffect(() => {
     if (terminalOpen && !terminalReturnFocusRef.current) {
@@ -102,6 +119,8 @@ export default function MomentOverlays({ items }: BeyondRoomProps) {
             setListExpanded(false);
           }
         }}
+        listRef={listRef}
+        showToggle={showListToggle}
       />
       {activeItem && typeof document !== "undefined"
         ? createPortal(

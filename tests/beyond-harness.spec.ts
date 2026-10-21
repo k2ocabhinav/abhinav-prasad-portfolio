@@ -88,6 +88,10 @@ async function hasRoomShell(page: Page): Promise<boolean> {
   }
 }
 
+async function waitForHydration(page: Page): Promise<void> {
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "1");
+}
+
 async function roomList(page: Page): Promise<Locator | null> {
   const list = page.locator(ROOM_LIST_SELECTOR).first();
   if ((await list.count()) === 0) {
@@ -236,17 +240,20 @@ test("the postcard opens, traps focus, closes on Escape and restores focus", asy
   page,
 }) => {
   await page.goto("/beyond-terminal");
+  await waitForHydration(page);
 
   test.skip(!(await hasRoomShell(page)), "room shell is not mounted yet");
 
   const list = await roomList(page);
   test.skip(list === null, "the room list is not mounted yet");
 
-  const trigger = list!.getByRole("button").first();
+  const trigger = list!.getByRole("button", { name: /^Open / }).first();
   test.skip((await trigger.count()) === 0, "the room list has no actions yet");
 
   await revealRoomList(page);
+  await expect(trigger).toBeVisible();
   await trigger.focus();
+  await expect(trigger).toBeFocused();
   await trigger.press("Enter");
 
   const dialog = await opensRoomDialog(page);
@@ -268,6 +275,7 @@ test("the postcard opens, traps focus, closes on Escape and restores focus", asy
 
 test("the terminal help lists its commands", async ({ page }) => {
   await page.goto("/beyond-terminal");
+  await waitForHydration(page);
 
   test.skip(!(await hasRoomShell(page)), "room shell is not mounted yet");
 
@@ -289,8 +297,9 @@ test("the terminal help lists its commands", async ({ page }) => {
   await input.fill("help");
   await input.press("Enter");
 
+  const terminal = page.getByRole("dialog", { name: "Laptop terminal" });
   for (const command of [/whoami/, /\bls\b/, /open/, /lights/, /coffee|chai/]) {
-    await expect(page.getByText(command).first()).toBeVisible({ timeout: 5_000 });
+    await expect(terminal.getByText(command).first()).toBeVisible({ timeout: 5_000 });
   }
 
   await page.keyboard.press("Escape");

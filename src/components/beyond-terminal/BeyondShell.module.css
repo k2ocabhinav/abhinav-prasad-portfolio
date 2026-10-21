@@ -8,5 +8,5 @@
 .main {
   width: min(100%, 1560px);
   margin-inline: auto;
-  padding: clamp(1.75rem, 4vw, 3.4rem) clamp(1rem, 4vw, 3.2rem) clamp(3rem, 7vw, 5.5rem);
+  padding: 0.4rem clamp(1rem, 4vw, 3.2rem) 1.2rem;
 }

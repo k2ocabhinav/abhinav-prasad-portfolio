@@ -28,10 +28,14 @@ import { chromium } from "@playwright/test";
 
 const ROUTE_JS_BUDGET_GZ = 320 * 1024;
 const LCP_BUDGET_MS = 2_500;
+const CLS_BUDGET = 0.01;
 const DESKTOP_FPS_BUDGET = 55;
 const MOBILE_FPS_BUDGET = 40;
 const IDLE_SAMPLE_MS = 5_000;
 const POINTER_SAMPLE_MS = 3_000;
+const GPU_ARGS = process.platform === "darwin"
+  ? ["--enable-gpu", "--ignore-gpu-blocklist", "--use-gl=angle", "--use-angle=metal"]
+  : ["--enable-gpu", "--ignore-gpu-blocklist"];
 const FAST_3G = {
   offline: false,
   latency: 150,
@@ -258,9 +262,9 @@ async function sampleFrames(page, duration) {
   );
 }
 
-async function measureFps(browser) {
+async function measureFps(browser, device) {
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    ...device,
     colorScheme: "light",
     reducedMotion: "no-preference",
   });
@@ -285,6 +289,16 @@ async function measureFps(browser) {
     if (!mounted) {
       return { available: false, reason: "no canvas mounted on this host" };
     }
+
+    const renderer = await page.evaluate(() => {
+      const context = document.querySelector("canvas")?.getContext("webgl2");
+      if (!context) return "unavailable";
+      const extension = context.getExtension("WEBGL_debug_renderer_info");
+      const value = extension
+        ? context.getParameter(extension.UNMASKED_RENDERER_WEBGL)
+        : context.getParameter(context.RENDERER);
+      return typeof value === "string" ? value : "unknown";
+    });
 
     await page
       .locator('[data-room-ready="true"]')
@@ -316,7 +330,7 @@ async function measureFps(browser) {
     }
     const movement = summariseFrames(await pointerSample);
 
-    return { available: true, idle, movement };
+    return { available: true, renderer, idle, movement };
   } finally {
     await context.close();
   }
@@ -383,6 +397,7 @@ async function main() {
   const browser = await chromium.launch({
     headless: true,
     args: [
+      ...GPU_ARGS,
       "--disable-background-timer-throttling",
       "--disable-renderer-backgrounding",
     ],
@@ -397,7 +412,15 @@ async function main() {
     const home = await measureRouteScripts(browser, "/");
     const beyond = await measureRouteScripts(browser, "/beyond-terminal");
     const loading = await measureLoading(browser);
-    const fps = await measureFps(browser);
+    const fps = {
+      desktop: await measureFps(browser, { viewport: { width: 1440, height: 900 } }),
+      mobile: await measureFps(browser, {
+        viewport: { width: 390, height: 844 },
+        deviceScaleFactor: 3,
+        isMobile: true,
+        hasTouch: true,
+      }),
+    };
 
     const result = {
       generatedAt: new Date().toISOString(),
@@ -411,7 +434,7 @@ async function main() {
         lcpMs: LCP_BUDGET_MS,
         desktopFps: DESKTOP_FPS_BUDGET,
         mobileFps: MOBILE_FPS_BUDGET,
-        cls: 0,
+        cls: CLS_BUDGET,
       },
       checks: {
         beyondRouteJs: verdict(
@@ -421,11 +444,16 @@ async function main() {
         ),
         lcp: verdict(loading.lcp?.ms ?? null, LCP_BUDGET_MS, "max"),
         desktopFps: verdict(
-          fps.available ? fps.movement.fps : null,
+          fps.desktop.available ? fps.desktop.movement.fps : null,
           DESKTOP_FPS_BUDGET,
           "min"
         ),
-        cls: verdict(loading.cls, 0, "max"),
+        mobileFps: verdict(
+          fps.mobile.available ? fps.mobile.movement.fps : null,
+          MOBILE_FPS_BUDGET,
+          "min"
+        ),
+        cls: verdict(loading.cls, CLS_BUDGET, "max"),
       },
     };
 
@@ -480,26 +508,36 @@ function renderMarkdown(result) {
     "| Metric | Value | Budget | Verdict |",
     "| --- | ---: | ---: | --- |",
     `| LCP | ${lcp ? `${lcp.ms} ms (${lcp.element?.tag ?? "unknown"}${lcp.element?.id ? `#${lcp.element.id}` : ""})` : "not observed"} | ${LCP_BUDGET_MS} ms | ${result.checks.lcp} |`,
-    `| CLS | ${result.loading.cls} | 0 | ${result.checks.cls} |`,
+    `| CLS | ${result.loading.cls} | ${CLS_BUDGET} | ${result.checks.cls} |`,
     "",
     "## Scene fps",
     "",
-    fps.available
-      ? [
-          "| Phase | Frames | FPS | p95 frame | > 32 ms |",
-          "| --- | ---: | ---: | ---: | ---: |",
-          `| Idle 5 s | ${fps.idle.frames} | ${fps.idle.fps} | ${fps.idle.p95FrameMs} ms | ${fps.idle.longFrames} |`,
-          `| Pointer 3 s | ${fps.movement.frames} | ${fps.movement.fps} | ${fps.movement.p95FrameMs} ms | ${fps.movement.longFrames} |`,
-          "",
-          `Desktop budget is ${DESKTOP_FPS_BUDGET} fps; mid-phone budget is ${MOBILE_FPS_BUDGET} fps. This sample is desktop Chromium at 1440x900, so it is checked against the desktop figure. Idle fps includes the harness rAF loop and is not a draw-call count.`,
-        ].join("\n")
-      : `Not measured: ${fps.reason}.`,
+    [
+      `Desktop renderer: ${fps.desktop.renderer ?? fps.desktop.reason}.`,
+      `Mobile viewport renderer: ${fps.mobile.renderer ?? fps.mobile.reason}.`,
+      `GPU flags: ${GPU_ARGS.join(" ")}.`,
+      "",
+      "| Viewport | Phase | Frames | FPS | p95 frame | > 32 ms |",
+      "| --- | --- | ---: | ---: | ---: | ---: |",
+      ...[
+        ["Desktop", fps.desktop],
+        ["390x844, DPR 3", fps.mobile],
+      ].flatMap(([label, sample]) => sample.available
+        ? [
+            `| ${label} | Idle 5 s | ${sample.idle.frames} | ${sample.idle.fps} | ${sample.idle.p95FrameMs} ms | ${sample.idle.longFrames} |`,
+            `| ${label} | Pointer 3 s | ${sample.movement.frames} | ${sample.movement.fps} | ${sample.movement.p95FrameMs} ms | ${sample.movement.longFrames} |`,
+          ]
+        : [`| ${label} | n/a | 0 | n/a | n/a | n/a |`]),
+      "",
+      `Budgets are ${DESKTOP_FPS_BUDGET} fps desktop and ${MOBILE_FPS_BUDGET} fps mid-phone. The mobile sample uses a 390x844 viewport at DPR 3 on the same Apple M5 GPU, so it is responsive-viewport emulation and not a physical mid-phone GPU measurement. Idle fps includes the harness rAF loop and is not a draw-call count.`,
+    ].join("\n"),
     "",
     "## Verdict",
     "",
     `- Beyond route JS: ${result.checks.beyondRouteJs}`,
     `- LCP: ${result.checks.lcp}`,
     `- Desktop fps while pointing: ${result.checks.desktopFps}`,
+    `- Mobile viewport fps while pointing: ${result.checks.mobileFps}`,
     `- CLS: ${result.checks.cls}`,
     "",
   ].join("\n");

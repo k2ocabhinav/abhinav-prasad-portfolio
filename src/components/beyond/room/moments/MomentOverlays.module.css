@@ -61,10 +61,34 @@
 }
 
 .listTitle {
-  margin: 0 0 0.85rem;
+  margin: 0;
   font-family: var(--font-beyond-display, "Bricolage Grotesque", sans-serif);
   font-size: 1.2rem;
   letter-spacing: -0.025em;
+}
+
+.listHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.listClose {
+  min-height: 2.75rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid rgba(22, 19, 26, 0.36);
+  border-radius: 0.4rem;
+  color: #16131a;
+  background: #fff8ec;
+  font: 600 0.76rem var(--font-beyond-body, "Plus Jakarta Sans", sans-serif);
+  cursor: pointer;
+}
+
+.listClose:focus-visible {
+  outline: 3px solid #16131a;
+  outline-offset: 2px;
 }
 
 .listBody ul,

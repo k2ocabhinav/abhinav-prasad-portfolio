@@ -20,12 +20,16 @@ export default function MomentImage({
   const posterSrc = src ?? placeholder;
 
   if (posterSrc) {
+    const hasBlurPlaceholder = Boolean(src && placeholder);
+
     return (
       <Image
         src={posterSrc}
         alt={src ? alt : ""}
         fill
         sizes={width === 1600 ? "min(94vw, 1280px)" : "min(80vw, 720px)"}
+        placeholder={hasBlurPlaceholder ? "blur" : "empty"}
+        blurDataURL={hasBlurPlaceholder ? placeholder : undefined}
         unoptimized={posterSrc.startsWith("data:")}
         className={styles.photo}
       />

@@ -164,6 +164,7 @@ async function isolateRoom(page) {
       .beyond-poster-body [data-beyond-overlays],
       .beyond-poster-body [data-beyond-list],
       .beyond-poster-body [data-beyond-fallback],
+      .beyond-poster-body [data-beyond-terminal-open],
       .beyond-poster-body header,
       .beyond-poster-body nav,
       .beyond-poster-body footer,

@@ -6,17 +6,20 @@
 }
 
 .root[data-portal-skin="beyond-room"] .cover {
-  background: radial-gradient(
-    circle at var(--portal-origin-x) var(--portal-origin-y),
-    var(--color-beyond-lilac) 0 12%,
-    var(--color-beyond-amber) 38%,
-    var(--color-beyond-paper) 72%,
-    var(--color-beyond-lilac) 100%
-  );
+  background: var(--color-beyond-lilac);
 }
 
 .root[data-portal-skin="beyond-room"] .blur {
   opacity: 0 !important;
+}
+
+.root[data-portal-skin="beyond-room"] .frame,
+.root[data-portal-skin="beyond-room"] .grain {
+  display: none;
+}
+
+.root[data-portal-skin="beyond-room"] .content {
+  display: none;
 }
 
 .rootReduced .cover {
@@ -27,6 +30,10 @@
       rgba(var(--color-beyond-coral-rgb), 0.18),
       transparent 42%
     );
+}
+
+.root[data-portal-skin="beyond-room"].rootReduced .cover {
+  background: var(--color-beyond-lilac);
 }
 
 .rootRevealing {

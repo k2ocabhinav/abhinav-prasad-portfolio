@@ -63,7 +63,7 @@ function getHeroPortalTrigger(page: Page) {
   return page.locator('[data-animated-name="hero-trigger"]').first();
 }
 
-async function expectBeyondPhotoWallVisible(page: Page) {
+async function expectBeyondRoomVisible(page: Page) {
   await expect(page.locator("#beyond-hero-title")).toHaveText("Beyond the terminal");
   await expect(
     page.getByText("Photos, notes and people from the other side of the work.")
@@ -99,7 +99,7 @@ test("easter egg entry transitions into the Beyond route", async ({ page }) => {
     "beyond-room"
   );
   await expect(page).toHaveURL(/\/beyond-terminal$/);
-  await expectBeyondPhotoWallVisible(page);
+  await expectBeyondRoomVisible(page);
 });
 
 test("home hero keeps the full name inside the desktop viewport", async ({ page }) => {
@@ -414,11 +414,11 @@ test("legacy journal routes redirect into the Beyond room", async ({ page }) => 
   await page.goto("/beyond-terminal/journal");
 
   await expect(page).toHaveURL(/\/beyond-terminal$/);
-  await expectBeyondPhotoWallVisible(page);
+  await expectBeyondRoomVisible(page);
 
   await page.goto("/beyond-terminal/journal/training-for-quiet-judgment");
   await expect(page).toHaveURL(/\/beyond-terminal$/);
-  await expectBeyondPhotoWallVisible(page);
+  await expectBeyondRoomVisible(page);
 });
 
 test("fallback postcard focuses close, traps Tab, and restores focus on close", async ({
@@ -427,19 +427,28 @@ test("fallback postcard focuses close, traps Tab, and restores focus on close", 
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/beyond-terminal");
+  await expect(page.locator("html")).toHaveAttribute("data-hydrated", "1");
 
   const firstCard = page.locator("[data-fallback-deck] button[aria-label^='Open ']").first();
   await firstCard.scrollIntoViewIfNeeded();
   await firstCard.click();
 
   const dialog = page.getByRole("dialog");
-  const close = dialog.getByRole("button", { name: "Close moment" });
+  const close = dialog.getByRole("button", { name: "Close postcard" });
   await expect(dialog).toBeVisible();
   await expect(close).toBeFocused();
 
   await page.keyboard.press("Tab");
-  await expect(close).toBeFocused();
+  expect(
+    await page.evaluate(
+      () => document.activeElement?.closest('[role="dialog"]') !== null
+    )
+  ).toBe(true);
   await page.keyboard.press("Shift+Tab");
+  await expect(close).toBeFocused();
+
+  await dialog.getByRole("button", { name: "Turn over postcard" }).focus();
+  await page.keyboard.press("Tab");
   await expect(close).toBeFocused();
 
   await page.keyboard.press("Escape");
@@ -452,7 +461,7 @@ test("desktop Beyond room poster and fallback fit the viewport", async ({ page }
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/beyond-terminal");
 
-  await expectBeyondPhotoWallVisible(page);
+  await expectBeyondRoomVisible(page);
   await expect(page.locator("[data-fallback-deck]")).toBeVisible();
   const widths = await page.evaluate(() => ({
     document: document.documentElement.scrollWidth,
@@ -1018,7 +1027,7 @@ test("mobile Beyond room poster and fallback fit the viewport", async ({ page })
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/beyond-terminal");
 
-  await expectBeyondPhotoWallVisible(page);
+  await expectBeyondRoomVisible(page);
   await expect(page.locator("[data-fallback-deck]")).toBeVisible();
   const widths = await page.evaluate(() => ({
     document: document.documentElement.scrollWidth,
@@ -1079,7 +1088,7 @@ test("redirected journal archive renders the Beyond room", async ({ page }) => {
   await page.goto("/beyond-terminal/journal");
 
   await expect(page).toHaveURL(/\/beyond-terminal$/);
-  await expectBeyondPhotoWallVisible(page);
+  await expectBeyondRoomVisible(page);
   await page.screenshot({
     path: artifactPath("beyond-journal-archive.png"),
     fullPage: true,

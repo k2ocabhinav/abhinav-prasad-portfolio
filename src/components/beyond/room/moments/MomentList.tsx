@@ -1,5 +1,6 @@
 "use client";
 
+import type { RefObject } from "react";
 import type { BeyondAlbumItem } from "@/types";
 import { roomStore } from "../roomStore";
 import { requestMomentFocus } from "./events";
@@ -11,33 +12,48 @@ export default function MomentList({
   onToggle,
   onBodyFocus,
   onBodyBlur,
+  listRef,
+  showToggle = true,
 }: {
   items: BeyondAlbumItem[];
   expanded: boolean;
   onToggle: () => void;
   onBodyFocus: () => void;
   onBodyBlur: (relatedTarget: EventTarget | null, currentTarget: HTMLDivElement) => void;
+  listRef?: RefObject<HTMLElement | null>;
+  showToggle?: boolean;
 }) {
   return (
     <section
+      ref={listRef}
+      id="beyond-moments-list"
       className={`${styles.listSection} ${expanded ? styles.listExpanded : ""}`}
       aria-label="Everything in the room"
+      tabIndex={-1}
+      data-moments-list
     >
-      <button
-        className={styles.listToggle}
-        type="button"
-        aria-expanded={expanded}
-        onClick={onToggle}
-      >
-        Everything in the room
-        <span aria-hidden="true">{expanded ? "−" : "+"}</span>
-      </button>
+      {showToggle ? (
+        <button
+          className={styles.listToggle}
+          type="button"
+          aria-expanded={expanded}
+          onClick={onToggle}
+        >
+          Everything in the room
+          <span aria-hidden="true">{expanded ? "−" : "+"}</span>
+        </button>
+      ) : null}
       <div
         className={styles.listBody}
         onFocusCapture={onBodyFocus}
         onBlurCapture={(event) => onBodyBlur(event.relatedTarget, event.currentTarget)}
       >
-        <h2 className={styles.listTitle}>Everything in the room</h2>
+        <div className={styles.listHeading}>
+          <h2 className={styles.listTitle}>Everything in the room</h2>
+          <button className={styles.listClose} type="button" onClick={onToggle}>
+            Close list
+          </button>
+        </div>
         <ul>
           {items.map((item) => (
             <li key={item.id}>

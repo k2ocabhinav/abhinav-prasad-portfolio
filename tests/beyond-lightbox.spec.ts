@@ -7,6 +7,7 @@ test("the postcard close control stays topmost on phones", async ({ page }, test
     await page.setViewportSize({ width, height: 667 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/beyond-terminal");
+    await expect(page.locator("html")).toHaveAttribute("data-hydrated", "1");
     await page.locator("[data-fallback-deck] button[aria-label^='Open ']").first().click();
 
     const dialog = page.getByRole("dialog");
@@ -18,7 +19,7 @@ test("the postcard close control stays topmost on phones", async ({ page }, test
     const topmostIsClose = await page.evaluate(
       ([x, y]) => {
         const hit = document.elementFromPoint(x, y);
-        return Boolean(hit?.closest("dialog button"));
+        return Boolean(hit?.closest('[role="dialog"] button'));
       },
       [box!.x + box!.width / 2, box!.y + box!.height / 2]
     );

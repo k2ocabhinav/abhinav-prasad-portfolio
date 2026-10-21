@@ -15,7 +15,6 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { usePortalTransitionContext } from "@/components/beyond-terminal/PortalTransitionProvider";
 import { roomStore, useRoomState } from "../room/roomStore";
 import FallbackDeck from "./FallbackDeck";
-import FallbackPostcard from "./FallbackPostcard";
 import { OPEN_MOMENTS_EVENT } from "./events";
 import { playRoomSound } from "./audio";
 import styles from "./BeyondRoomExperience.module.css";
@@ -33,6 +32,15 @@ const MomentsLayer = dynamic(
   { ssr: false }
 );
 
+const MomentsOverlay = dynamic(
+  () => import("@/components/beyond/room/moments/MomentOverlays"),
+  { ssr: false }
+);
+
+const RoomFirstFrameSignal = dynamic(() => import("./RoomFirstFrameSignal"), {
+  ssr: false,
+});
+
 interface NavigatorHints extends Navigator {
   deviceMemory?: number;
   connection?: { saveData?: boolean };
@@ -42,6 +50,8 @@ type IdleWindow = Window & {
   requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
   cancelIdleCallback?: (handle: number) => void;
 };
+
+type RoomGate = "pending" | "room" | "fallback";
 
 interface BeyondRoomExperienceProps {
   items: BeyondAlbumItem[];
@@ -90,6 +100,16 @@ function canUseRoom(): boolean {
   return true;
 }
 
+function requestsFallback(): boolean {
+  if (new URLSearchParams(window.location.search).get("lowfx") === "1") return true;
+
+  try {
+    return window.localStorage.getItem("beyondLowFx") === "1";
+  } catch {
+    return false;
+  }
+}
+
 function getFocusLabel(focus: ReturnType<typeof roomStore.get>["focus"]): string | undefined {
   if (!focus) return undefined;
   return focus.type === "laptop" ? "laptop" : `moment:${focus.id}`;
@@ -99,13 +119,17 @@ export default function BeyondRoomExperience({ items, poster }: BeyondRoomExperi
   const reduceMotion = useReducedMotion();
   const room = useRoomState();
   const { intent } = usePortalTransitionContext();
+  const [gate, setGate] = useState<RoomGate>("pending");
   const [canEnter, setCanEnter] = useState(false);
   const [sceneRequested, setSceneRequested] = useState(false);
-  const [momentsOpen, setMomentsOpen] = useState(false);
+  const [listRequest, setListRequest] = useState(0);
   const [cameThroughPortal, setCameThroughPortal] = useState(false);
   const listRef = useRef<HTMLElement | null>(null);
-  const stageRef = useRef<HTMLElement | null>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const requestScene = useCallback(() => {
+    roomStore.set({ arrived: false });
+    setSceneRequested(true);
+  }, []);
 
   useEffect(() => {
     const reachedByWordmark =
@@ -120,55 +144,36 @@ export default function BeyondRoomExperience({ items, poster }: BeyondRoomExperi
   }, [intent]);
 
   useEffect(() => {
-    if (!canUseRoom()) return;
-
     const idleWindow = window as IdleWindow;
-    const enter = () => setSceneRequested(true);
+    let idleId: number | null = null;
+    let enterTimerId: number | null = null;
+    const gateFrameId = window.requestAnimationFrame(() => {
+      if (requestsFallback() || !canUseRoom()) {
+        setGate("fallback");
+        return;
+      }
 
-    const canEnterTimerId = window.setTimeout(() => setCanEnter(true), 0);
-    if (idleWindow.requestIdleCallback) {
-      const idleId = idleWindow.requestIdleCallback(enter, { timeout: 1800 });
-      return () => {
-        window.clearTimeout(canEnterTimerId);
-        idleWindow.cancelIdleCallback?.(idleId);
-      };
-    }
-
-    const enterTimerId = window.setTimeout(enter, 450);
-    return () => {
-      window.clearTimeout(canEnterTimerId);
-      window.clearTimeout(enterTimerId);
-    };
-  }, []);
-
-  useEffect(() => {
-    const stage = stageRef.current;
-    if (!sceneRequested || !stage) return;
-
-    roomStore.set({ arrived: false });
-    const observer = new MutationObserver(() => {
-      if (!stage.querySelector("canvas")) return;
-      observer.disconnect();
-      roomStore.set({ arrived: true });
+      setGate("room");
+      setCanEnter(true);
+      if (idleWindow.requestIdleCallback) {
+        idleId = idleWindow.requestIdleCallback(requestScene, { timeout: 1800 });
+      } else {
+        enterTimerId = window.setTimeout(requestScene, 450);
+      }
     });
-    observer.observe(stage, { childList: true, subtree: true });
-    if (stage.querySelector("canvas")) {
-      observer.disconnect();
-      roomStore.set({ arrived: true });
-    }
 
-    return () => observer.disconnect();
-  }, [sceneRequested]);
+    return () => {
+      window.cancelAnimationFrame(gateFrameId);
+      if (idleId !== null) idleWindow.cancelIdleCallback?.(idleId);
+      if (enterTimerId !== null) window.clearTimeout(enterTimerId);
+    };
+  }, [requestScene]);
 
   useEffect(() => {
-    const openMoments = () => {
-      setMomentsOpen(true);
-      requestAnimationFrame(() => listRef.current?.focus({ preventScroll: true }));
-    };
-
-    window.addEventListener(OPEN_MOMENTS_EVENT, openMoments);
-    return () => window.removeEventListener(OPEN_MOMENTS_EVENT, openMoments);
-  }, [sceneRequested]);
+    const onOpenMoments = () => setListRequest((current) => current + 1);
+    window.addEventListener(OPEN_MOMENTS_EVENT, onOpenMoments);
+    return () => window.removeEventListener(OPEN_MOMENTS_EVENT, onOpenMoments);
+  }, []);
 
   const shouldShowArrival =
     sceneRequested && room.arrived && cameThroughPortal && !reduceMotion;
@@ -178,24 +183,25 @@ export default function BeyondRoomExperience({ items, poster }: BeyondRoomExperi
     roomStore.set({ mode: "night" });
   }, [shouldShowArrival]);
 
-  const selectMoment = useCallback((item: BeyondAlbumItem, trigger: HTMLButtonElement) => {
-    triggerRef.current = trigger;
+  const selectMoment = useCallback((item: BeyondAlbumItem) => {
     roomStore.set({ focus: { type: "moment", id: item.id } });
     if (roomStore.get().soundOn) playRoomSound("paper");
   }, []);
 
   const handleSceneError = useCallback(() => {
     setSceneRequested(false);
+    setGate("fallback");
     setCanEnter(false);
     roomStore.set({ arrived: false, focus: null });
   }, []);
 
-  const toggleMoments = () => setMomentsOpen((open) => !open);
+  const openTerminal = () => roomStore.set({ focus: { type: "laptop" } });
   const focusLabel = getFocusLabel(room.focus);
 
   return (
     <div
       className={styles.experience}
+      data-beyond-room
       data-mode={room.mode}
       data-room-focus={focusLabel}
       data-room-arrived={room.arrived ? "true" : "false"}
@@ -205,22 +211,31 @@ export default function BeyondRoomExperience({ items, poster }: BeyondRoomExperi
       <section
         className={styles.stage}
         aria-label="The after-hours room"
-        ref={(element) => { stageRef.current = element; }}
+        data-beyond-stage
+        data-room-ready={sceneRequested && room.arrived ? "true" : undefined}
       >
-        <div className={styles.posterLayer} aria-hidden={sceneRequested}>
+        <div
+          className={styles.posterLayer}
+          aria-hidden={sceneRequested && room.arrived}
+        >
           {poster}
         </div>
+
         {sceneRequested ? (
           <m.div
             className={styles.sceneLayer}
+            data-room-canvas
             data-room-scene
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: room.arrived ? 1 : 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.48, ease: [0.22, 1, 0.36, 1] }}
           >
             <SceneErrorBoundary onError={handleSceneError}>
               <RoomCanvas>
-                <MomentsLayer items={items} />
+                <>
+                  <MomentsLayer items={items} />
+                  <RoomFirstFrameSignal />
+                </>
               </RoomCanvas>
             </SceneErrorBoundary>
             {shouldShowArrival ? (
@@ -229,7 +244,7 @@ export default function BeyondRoomExperience({ items, poster }: BeyondRoomExperi
                 aria-hidden="true"
                 data-arrival-sticker
                 initial={{ y: -210, rotate: -18, scale: 0.72 }}
-                animate={{ y: [ -210, 20, -17, 0, -6, 0 ], rotate: [ -18, 5, -3, 1, 0 ] }}
+                animate={{ y: [-210, 20, -17, 0, -6, 0], rotate: [-18, 5, -3, 1, 0] }}
                 transition={{
                   y: { type: "spring", stiffness: 220, damping: 11, mass: 0.8 },
                   rotate: { type: "spring", stiffness: 220, damping: 12 },
@@ -240,62 +255,42 @@ export default function BeyondRoomExperience({ items, poster }: BeyondRoomExperi
             ) : null}
           </m.div>
         ) : null}
+
+        {gate === "fallback" ? (
+          <FallbackDeck items={items} onSelect={selectMoment} />
+        ) : null}
+
         {canEnter && !sceneRequested ? (
           <button
             type="button"
             className={styles.enterButton}
-            onClick={() => setSceneRequested(true)}
+            onClick={requestScene}
           >
             Enter the room
           </button>
         ) : null}
+
+        {gate !== "pending" ? (
+          <button
+            type="button"
+            className={styles.terminalButton}
+            onClick={openTerminal}
+            data-beyond-terminal-open
+            aria-label="Open laptop terminal"
+          >
+            Open the terminal
+          </button>
+        ) : null}
       </section>
 
-      {!sceneRequested ? (
-        <FallbackDeck items={items} onSelect={selectMoment} />
-      ) : null}
-
-      <section
-        ref={(element) => { listRef.current = element; }}
-        id="beyond-moments-list"
-        className={`${styles.momentsList} ${sceneRequested && !momentsOpen ? styles.momentsListHidden : ""} ${momentsOpen ? styles.momentsListOpen : ""}`}
-        aria-labelledby="beyond-moments-title"
-        tabIndex={-1}
-        data-moments-list
-      >
-          <div className={styles.listHeading}>
-            <h2 id="beyond-moments-title">Everything in the room</h2>
-            {momentsOpen ? (
-              <button type="button" onClick={toggleMoments}>
-                Close list
-              </button>
-            ) : null}
-          </div>
-          <ul>
-            {items.map((item) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  onClick={(event) => selectMoment(item, event.currentTarget)}
-                >
-                  <span>{item.kind}</span>
-                  <strong>{item.title}</strong>
-                </button>
-              </li>
-            ))}
-          </ul>
-      </section>
-
-      <div className={styles.overlayMount}>
-        <MomentsOverlay items={sceneRequested ? items : []} />
+      <div data-beyond-overlays>
+        <MomentsOverlay
+          items={items}
+          listRequest={listRequest}
+          listRef={listRef}
+          showListToggle={false}
+        />
       </div>
-
-      {!sceneRequested ? <FallbackPostcard items={items} triggerRef={triggerRef} /> : null}
     </div>
   );
 }
-
-const MomentsOverlay = dynamic(
-  () => import("@/components/beyond/room/moments/MomentOverlays"),
-  { ssr: false }
-);

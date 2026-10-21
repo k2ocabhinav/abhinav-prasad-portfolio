@@ -2,7 +2,7 @@
 // in parallel: scene (room, light, camera), moments (objects, postcard,
 // accessible list) and shell (route, loading, arrival, fallback).
 import { createContext, useContext } from "react";
-import type { BeyondAlbumItem, BeyondAlbumKind } from "@/types";
+import type { BeyondAlbumKind } from "@/types";
 
 export type Vec3 = [number, number, number];
 
@@ -17,15 +17,6 @@ export interface RoomAnchor {
   /** Largest width and height (world units) an object may occupy here. */
   maxSize: [number, number];
 }
-
-/** Which object each content kind becomes. */
-export const momentObjectForKind: Record<BeyondAlbumKind, "polaroid" | "sticky-note" | "ticket" | "name-polaroid" | "sticker"> = {
-  photo: "polaroid",
-  quote: "sticky-note",
-  event: "ticket",
-  person: "name-polaroid",
-  project: "sticker",
-};
 
 /** Preferred anchor kinds per object, in order of preference. */
 export const anchorPreference: Record<BeyondAlbumKind, RoomAnchorKind[]> = {
@@ -68,7 +59,3 @@ export const roomPalette = {
   paper: "#FFF8EC",
   night: "#1B1838",
 } as const;
-
-export interface BeyondRoomProps {
-  items: BeyondAlbumItem[];
-}

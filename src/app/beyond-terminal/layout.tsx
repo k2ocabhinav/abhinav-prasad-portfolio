@@ -1,26 +1,26 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import BeyondShell from "@/components/beyond-terminal/BeyondShell";
 import ExperienceProvidersBoundary from "@/components/providers/ExperienceProvidersBoundary";
 import { absoluteUrl } from "@/lib/siteConfig";
 
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
+const display = localFont({
+  src: "./fonts/bricolage-grotesque-latin.woff2",
   variable: "--font-beyond-display",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: "400 800",
   display: "swap",
 });
 
-const body = Plus_Jakarta_Sans({
-  subsets: ["latin"],
+const body = localFont({
+  src: "./fonts/plus-jakarta-sans-latin.woff2",
   variable: "--font-beyond-body",
-  weight: ["400", "500", "600", "700"],
+  weight: "400 700",
   display: "swap",
 });
 
-const mono = Space_Mono({
-  subsets: ["latin"],
+const mono = localFont({
+  src: "./fonts/space-mono-subset.woff",
   variable: "--font-beyond-mono",
   weight: "400",
   display: "swap",

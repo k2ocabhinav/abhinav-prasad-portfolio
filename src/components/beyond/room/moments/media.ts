@@ -23,13 +23,21 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 function sourceFrom(value: unknown): string | undefined {
   if (typeof value === "string") return value;
   const record = asRecord(value);
-  return typeof record?.src === "string" ? record.src : undefined;
+  if (typeof record?.src === "string") return record.src;
+  if (typeof record?.webp === "string") return record.webp;
+  return typeof record?.avif === "string" ? record.avif : undefined;
 }
 
 function renditionFrom(value: unknown, width: number): string | undefined {
   if (Array.isArray(value)) {
-    const match = value.find((entry) => asRecord(entry)?.width === width);
-    return sourceFrom(match);
+    const options = value
+      .map((entry) => ({ entry, width: asRecord(entry)?.w ?? asRecord(entry)?.width }))
+      .filter((option): option is { entry: unknown; width: number } =>
+        typeof option.width === "number"
+      )
+      .sort((left, right) => left.width - right.width);
+    const chosen = options.find((option) => option.width >= width) ?? options.at(-1);
+    return sourceFrom(chosen?.entry);
   }
 
   const record = asRecord(value);
@@ -66,18 +74,20 @@ export function getBeyondImageSrc(
 
 export function getBeyondPlaceholder(item: BeyondAlbumItem): string | undefined {
   const withAssets = item as BeyondItemWithAssets;
-  const record = asRecord(withAssets.placeholder);
-  const value =
-    typeof withAssets.placeholder === "string"
-      ? withAssets.placeholder
-      : typeof record?.src === "string"
-        ? record.src
-        : typeof record?.dataUrl === "string"
-          ? record.dataUrl
-          : undefined;
-  return value && (value.startsWith("/") || value.startsWith("data:image/"))
-    ? value
-    : undefined;
+  const values = [withAssets.placeholder, asRecord(item.image)?.placeholder];
+  for (const candidate of values) {
+    const record = asRecord(candidate);
+    const value =
+      typeof candidate === "string"
+        ? candidate
+        : typeof record?.src === "string"
+          ? record.src
+          : typeof record?.dataUrl === "string"
+            ? record.dataUrl
+            : undefined;
+    if (value && (value.startsWith("/") || value.startsWith("data:image/"))) return value;
+  }
+  return undefined;
 }
 
 export function getMomentColor(item: BeyondAlbumItem): string {

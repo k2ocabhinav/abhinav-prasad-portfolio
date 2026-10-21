@@ -1,13 +1,12 @@
 .experience {
   display: grid;
-  gap: clamp(1.2rem, 3vw, 2rem);
+  min-width: 0;
 }
 
 .stage {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
-  min-height: 25rem;
+  height: clamp(32rem, calc(100svh - 7rem), 66rem);
   overflow: hidden;
   border: 2px solid #16131a;
   border-radius: 0.65rem;
@@ -23,15 +22,17 @@
 }
 
 .posterLayer {
-  transition: filter 400ms ease, opacity 400ms ease;
+  z-index: 0;
+  transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .experience[data-mode="night"] .posterLayer {
-  filter: brightness(0.62) saturate(0.9);
+  filter: brightness(0.68) saturate(0.86);
 }
 
-.experience[data-scene-active="true"] .posterLayer {
-  opacity: 0.12;
+.experience[data-room-arrived="true"] .posterLayer {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .sceneLayer {
@@ -55,26 +56,32 @@
   font-size: 0.84rem;
 }
 
-.enterButton {
+.enterButton,
+.terminalButton {
   position: absolute;
-  z-index: 3;
-  inset: auto auto 1rem 50%;
+  z-index: 4;
+  display: inline-flex;
   min-height: 2.75rem;
-  padding: 0.65rem 1rem;
-  transform: translateX(-50%);
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.9rem;
   border: 2px solid #16131a;
   border-radius: 0.4rem;
   color: #16131a;
   background: #ffe05a;
   box-shadow: 3px 4px 0 #16131a;
   font: 700 0.9rem var(--font-beyond-body);
+  text-decoration: none;
   cursor: pointer;
 }
 
-.enterButton:focus-visible,
-.momentsList button:focus-visible {
-  outline: 3px solid #16131a;
-  outline-offset: 3px;
+.enterButton {
+  inset: auto auto 1.25rem 50%;
+  transform: translateX(-50%);
+}
+
+.terminalButton {
+  inset: 1.25rem 1.25rem auto auto;
 }
 
 .arrivalSticker {
@@ -95,123 +102,30 @@
   pointer-events: none;
 }
 
-.momentsList {
-  display: grid;
-  gap: 0.9rem;
-  padding: 1rem 0 0.5rem;
-}
-
-.listHeading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.7rem;
-}
-
-.listHeading h2 {
-  margin: 0;
-  font: 700 clamp(1.4rem, 2.8vw, 2rem)/1.05 var(--font-beyond-display);
-}
-
-.listHeading button {
-  min-height: 2.75rem;
-  padding: 0.5rem 0.7rem;
-  border: 1px solid #16131a;
-  border-radius: 0.35rem;
-  color: #16131a;
-  background: #fff8ec;
-  cursor: pointer;
-}
-
-.momentsList ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-  gap: 0.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.momentsList li button {
-  display: grid;
-  gap: 0.25rem;
-  width: 100%;
-  min-height: 3.4rem;
-  padding: 0.65rem 0.8rem;
-  border: 1px solid rgba(22, 19, 26, 0.4);
-  border-radius: 0.35rem;
-  color: #16131a;
-  background: #fff8ec;
-  text-align: left;
-  cursor: pointer;
-}
-
-.momentsList li button span {
-  font: 0.65rem var(--font-beyond-mono);
-  text-transform: uppercase;
-}
-
-.momentsList li button strong {
-  font: 600 0.95rem var(--font-beyond-body);
-}
-
-.momentsListOpen {
-  position: static;
-  width: auto;
-  height: auto;
-  overflow: visible;
-  clip-path: none;
-  padding: 1rem;
-  border: 1px solid rgba(22, 19, 26, 0.42);
-  border-radius: 0.55rem;
-  background: #e5dbff;
-}
-
-.momentsListHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.momentsListHidden:focus-within {
-  position: static;
-  width: auto;
-  height: auto;
-  overflow: visible;
-  clip-path: none;
-  white-space: normal;
-}
-
-.overlayMount :global(section[aria-label="Everything in the room"]) {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.overlayMount :global(section[aria-label="Everything in the room"]:focus-within) {
-  position: static;
-  width: auto;
-  height: auto;
-  overflow: visible;
-  clip-path: none;
-  white-space: normal;
+.enterButton:focus-visible,
+.terminalButton:focus-visible {
+  outline: 3px solid #16131a;
+  outline-offset: 4px;
 }
 
 @media (max-width: 700px) {
   .stage {
-    aspect-ratio: 0.96;
-    min-height: 21rem;
+    height: 70svh;
+    min-height: 24rem;
+    max-height: 42rem;
   }
 
   .arrivalSticker {
     top: 49%;
+  }
+
+  .enterButton {
+    bottom: 1.15rem;
+  }
+
+  .terminalButton {
+    top: 1rem;
+    right: 1rem;
   }
 }
 
