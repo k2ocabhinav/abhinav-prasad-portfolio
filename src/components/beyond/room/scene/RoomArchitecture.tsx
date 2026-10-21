@@ -1,8 +1,7 @@
 "use client";
 
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import {
   AdditiveBlending,
   BufferAttribute,
@@ -23,7 +22,7 @@ import {
   TorusGeometry,
 } from "three";
 import type { Vec3 } from "../contracts";
-import { roomPalette } from "../contracts";
+import { RoomExitContext, roomPalette } from "../contracts";
 import { roomStore } from "../roomStore";
 import { useNightBlend } from "./dayNight";
 import { ball, block, box, leafRotation, monsteraLeaf, peg, post, rod, slab } from "./partsKit";
@@ -497,7 +496,7 @@ function FairyLights() {
 // Door
 
 function Door() {
-  const router = useRouter();
+  const exitRoom = useContext(RoomExitContext);
   const setCursor = usePointerCursor();
   const signMaterialRef = useRef<MeshBasicMaterial>(null);
   const signTextureRef = useRef<CanvasTexture | null>(null);
@@ -550,7 +549,7 @@ function Door() {
 
   return (
     <group
-      onClick={(event) => { event.stopPropagation(); router.push("/"); }}
+      onClick={(event) => { event.stopPropagation(); exitRoom(); }}
       onPointerOver={(event) => { event.stopPropagation(); setCursor(true); }}
       onPointerOut={() => setCursor(false)}
     >

@@ -7,20 +7,20 @@ export default function RoomPoster() {
       <source
         media="(max-width: 700px)"
         type="image/avif"
-        srcSet="/beyond-terminal/poster/room-390x844.3e5d846a60.avif"
+        srcSet="/beyond-terminal/poster/room-390x844.fc4f4d5c12.avif"
       />
       <source
         media="(max-width: 700px)"
         type="image/webp"
-        srcSet="/beyond-terminal/poster/room-390x844.42cffce8c7.webp"
+        srcSet="/beyond-terminal/poster/room-390x844.e8b9bd8952.webp"
       />
       <source
         type="image/avif"
-        srcSet="/beyond-terminal/poster/room-1440x900.f3fe8f4b44.avif"
+        srcSet="/beyond-terminal/poster/room-1440x900.3a6e2a1254.avif"
       />
       <Image
         className={styles.poster}
-        src="/beyond-terminal/poster/room-1440x900.4a09c748d4.webp"
+        src="/beyond-terminal/poster/room-1440x900.1d5a52b68b.webp"
         alt="A colourful lilac room with a desk, a laptop and a wide window over green hills."
         fill
         sizes="100vw"

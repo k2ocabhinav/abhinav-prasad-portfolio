@@ -20,7 +20,7 @@ interface CloudSpec {
 }
 
 const CLOUDS: CloudSpec[] = [
-  { x: -0.86, y: 0.7, width: 0.62, speed: 0.05, phase: 0 },
+  { x: -0.9, y: 0.06, width: 0.62, speed: 0.05, phase: 0 },
   { x: 0.9, y: 0.42, width: 0.5, speed: 0.04, phase: 2 },
   { x: -0.92, y: -0.46, width: 0.42, speed: 0.06, phase: 4 },
   { x: 0.62, y: 0.88, width: 0.4, speed: 0.035, phase: 1 },

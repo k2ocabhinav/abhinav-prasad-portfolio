@@ -8,6 +8,7 @@ import { ball, block, box, cord, peg, post } from "./partsKit";
 import { toonRamp } from "./toonRamp";
 import { FLOOR_CENTER_Z, FLOOR_DEPTH, FLOOR_WIDTH, WALL_HEIGHT, WALL_WIDTH, floorTexture, posterTexture, wallTexture } from "./textures";
 import { roomPalette } from "../contracts";
+import { noticeboard, noticeboardPoint } from "./roomAnchors";
 
 const PAPER = roomPalette.paper;
 const LEMON = roomPalette.lemon;
@@ -103,7 +104,6 @@ export function fairyBulbPositions(): [number, number, number][] {
 
 function shellParts(): Part[] {
   const stand = "#E9602B";
-  const frameWood = "#B9703F";
   const parts: Part[] = [
     // Diorama base
     box([8.4, 0.3, FLOOR_DEPTH], [0, -0.15, FLOOR_CENTER_Z], stand, { radius: 0.05 }),
@@ -125,15 +125,10 @@ function shellParts(): Part[] {
     post(0.03, 0.03, 5.0, [-2.8, 4.8, -2.6], roomPalette.ink, { rotation: [0, 0, -Math.PI / 2], segments: 6, outline: false }),
     ball(0.075, [-2.85, 4.8, -2.6], LEMON, { detail: 8 }),
     ball(0.075, [2.2, 4.8, -2.6], LEMON, { detail: 8 }),
-    // Hanging shelf and corkboard frame
+    // Hanging shelf
     box([0.9, 0.14, 2.08], [-3.58, 4.12, -0.25], BLUE, { radius: 0.05 }),
     box([0.14, 0.34, 0.16], [-3.96, 3.88, -1.0], LEMON, { radius: 0.04 }),
     box([0.14, 0.34, 0.16], [-3.96, 3.88, 0.5], LEMON, { radius: 0.04 }),
-    block([1.5, 1.68, 0.1], [-3.3, 3.15, -2.71], "#E8B27B"),
-    box([1.64, 0.13, 0.15], [-3.3, 4.03, -2.58], frameWood, { radius: 0.04 }),
-    box([1.64, 0.13, 0.15], [-3.3, 2.27, -2.58], frameWood, { radius: 0.04 }),
-    box([0.13, 1.9, 0.15], [-4.1, 3.15, -2.58], frameWood, { radius: 0.04 }),
-    box([0.13, 1.9, 0.15], [-2.5, 3.15, -2.58], frameWood, { radius: 0.04 }),
     // Poster frame
     box([0.07, 1.44, 1.14], [-3.99, 3.3, 1.9], LEMON, { radius: 0.03 }),
     box([0.05, 1.28, 0.98], [-3.95, 3.3, 1.9], PAPER, { radius: 0.02, outline: false }),
@@ -151,15 +146,39 @@ function shellParts(): Part[] {
   return parts;
 }
 
-function wallArt(): Part[] {
-  const parts: Part[] = [];
-  // Pins and tape along the free strip at the bottom of the corkboard.
+/**
+ * The standing noticeboard: cork in a wooden frame on two legs, turned to face the
+ * establishing camera. Its twelve slots (see roomAnchors) hold the polaroids.
+ */
+function noticeboardParts(): Part[] {
+  const { center, yaw, width, height, columns, rows, pitchX, pitchY } = noticeboard;
+  const frameWood = "#B9703F";
+  const rotation: [number, number, number] = [0, yaw, 0];
+  const bar = 0.13;
+  const sideU = width / 2 + bar / 2;
+  const bottomY = center[1] - height / 2 - bar;
+  const parts: Part[] = [
+    box([width, height, 0.07], noticeboardPoint(0, 0, 0), "#E8B27B", { radius: 0.02, rotation }),
+    box([width + bar * 2, bar, 0.14], noticeboardPoint(0, height / 2 + bar / 2, 0.03), frameWood, { radius: 0.04, rotation }),
+    box([width + bar * 2, bar, 0.14], noticeboardPoint(0, -height / 2 - bar / 2, 0.03), frameWood, { radius: 0.04, rotation }),
+  ];
+  for (const side of [-1, 1]) {
+    parts.push(box([bar, height + bar * 2, 0.14], noticeboardPoint(side * sideU, 0, 0.03), frameWood, { radius: 0.04, rotation }));
+    // Leg from the frame down to the floor, and a foot that runs front to back.
+    parts.push(box([bar, bottomY, bar], noticeboardPoint(side * sideU, -center[1] + bottomY / 2, -0.02), frameWood, { radius: 0.04, rotation }));
+    parts.push(box([0.15, 0.09, 0.86], noticeboardPoint(side * sideU, -center[1] + 0.045, -0.02), frameWood, { radius: 0.035, rotation }));
+  }
+  parts.push(box([width + bar, 0.09, 0.1], noticeboardPoint(0, -center[1] + bottomY * 0.45, -0.02), frameWood, { radius: 0.03, rotation }));
+
+  // A pin per slot, hidden once a polaroid hangs there.
   const pinColors = [TANGERINE, BLUE, LEMON, MINT, LILAC];
-  pinColors.forEach((color, index) => {
-    parts.push(ball(0.042, [-3.8 + index * 0.33, 2.43, -2.6], color, { detail: 7, outline: false }));
-  });
-  parts.push(box([0.26, 0.012, 0.1], [-3.98, 3.94, -2.6], "#FFF3C4", { rotation: [0, 0, 0.4], radius: 0.005, outline: false }));
-  parts.push(box([0.26, 0.012, 0.1], [-2.62, 3.94, -2.6], "#FFF3C4", { rotation: [0, 0, -0.4], radius: 0.005, outline: false }));
+  for (let row = 0; row < rows; row += 1) {
+    for (let column = 0; column < columns; column += 1) {
+      const u = (column - (columns - 1) / 2) * pitchX;
+      const v = ((rows - 1) / 2 - row) * pitchY + 0.2;
+      parts.push(ball(0.04, noticeboardPoint(u, v, 0.06), pinColors[(row * columns + column) % pinColors.length], { detail: 7, outline: false }));
+    }
+  }
   return parts;
 }
 
@@ -205,7 +224,7 @@ export function RoomShell() {
     () => [
       ...shellParts(),
       { geometry: wallGeometry, color: LILAC },
-      ...wallArt(),
+      ...noticeboardParts(),
       ...bookParts(),
       ...curtainParts(),
       ...fairyStringParts(),

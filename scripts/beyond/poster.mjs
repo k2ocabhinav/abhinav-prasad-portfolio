@@ -176,6 +176,9 @@ async function isolateRoom(page) {
         height: 100vh !important;
         z-index: 2147483000 !important;
         background: #FFF8EC !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
       }
       .beyond-poster-stage canvas {
         display: block !important;

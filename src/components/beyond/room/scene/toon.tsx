@@ -65,14 +65,16 @@ export function getOutlineMaterial(): ShaderMaterial {
   return sharedOutlineMaterial;
 }
 
+/** The point the camera is looking at; the ink weight is measured at this distance. */
+export const outlineFocus = new Vector3(0, 2.2, 0);
+
 /** Keeps the outline a constant number of pixels wide whatever the framing. */
 export function OutlineScaler() {
   const camera = useThree((state) => state.camera);
   const height = useThree((state) => state.size.height);
-  const target = useMemo(() => new Vector3(0, 2.2, 0), []);
   useFrame(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
-    const distance = camera.position.distanceTo(target);
+    const distance = camera.position.distanceTo(outlineFocus);
     const worldPerPixel = (2 * distance * Math.tan((camera.fov * Math.PI) / 360)) / Math.max(height, 1);
     outlineUniforms.uThickness.value = worldPerPixel * OUTLINE_PIXELS;
   });

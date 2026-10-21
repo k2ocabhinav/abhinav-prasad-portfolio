@@ -7,7 +7,7 @@ import type { BeyondAlbumKind } from "@/types";
 export type Vec3 = [number, number, number];
 
 /** Where a moment object can be placed in the room. */
-export type RoomAnchorKind = "corkboard" | "desk" | "shelf" | "laptop-lid";
+export type RoomAnchorKind = "frame" | "corkboard" | "desk" | "shelf" | "laptop-lid" | "shoebox";
 
 export interface RoomAnchor {
   id: string;
@@ -20,7 +20,7 @@ export interface RoomAnchor {
 
 /** Preferred anchor kinds per object, in order of preference. */
 export const anchorPreference: Record<BeyondAlbumKind, RoomAnchorKind[]> = {
-  photo: ["corkboard", "desk", "shelf"],
+  photo: ["frame", "corkboard", "desk", "shelf"],
   person: ["corkboard", "shelf"],
   quote: ["corkboard", "desk"],
   event: ["corkboard", "desk"],
@@ -39,6 +39,8 @@ export interface CameraRig {
 /** Provided by the scene track, consumed by the moments track. */
 export const RoomAnchorsContext = createContext<RoomAnchor[]>([]);
 export const CameraRigContext = createContext<CameraRig | null>(null);
+/** The door sign: leaves the room for the home page. Provided by the canvas wrapper. */
+export const RoomExitContext = createContext<() => void>(() => {});
 
 export function useRoomAnchors(): RoomAnchor[] {
   return useContext(RoomAnchorsContext);

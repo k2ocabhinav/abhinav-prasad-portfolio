@@ -18,6 +18,7 @@ import {
 import { FOCUS_MOMENT_EVENT } from "./events";
 import {
   EventTicket,
+  FramedPrint,
   MomentNameTab,
   MomentPhoto,
   PlateBody,
@@ -68,6 +69,12 @@ function makePlacements(items: BeyondAlbumItem[], anchors: RoomAnchor[]): Placem
 
     if (!anchor) continue;
     unused.delete(anchor);
+
+    if (anchor.kind === "frame") {
+      // The wall frame is hung straight and takes the whole slot.
+      placements.push({ item, anchor, tilt: [0, 0, 0], width: anchor.maxSize[0], height: anchor.maxSize[1] });
+      continue;
+    }
 
     const [baseWidth, baseHeight] = objectSize[item.kind];
     const scale = Math.min(anchor.maxSize[0] / baseWidth, anchor.maxSize[1] / baseHeight, 1);
@@ -162,7 +169,9 @@ function MomentObject({ placement }: { placement: Placement }) {
           invalidate();
         }}
       >
-        {imageKind ? (
+        {anchor.kind === "frame" ? (
+          <FramedPrint item={item} width={width} height={height} outlineThickness={outlineThickness} />
+        ) : imageKind ? (
           <>
             <PlateBody
               width={objectWidth}
@@ -176,7 +185,7 @@ function MomentObject({ placement }: { placement: Placement }) {
               height={objectHeight}
               showCaption={item.kind !== "person"}
             />
-            {item.kind === "person" ? <MomentNameTab item={item} width={objectWidth} /> : null}
+            {item.kind === "person" ? <MomentNameTab item={item} width={objectWidth} height={objectHeight} /> : null}
           </>
         ) : item.kind === "quote" ? (
           <StickyNote item={item} width={width} height={height} outlineThickness={outlineThickness} />
@@ -196,16 +205,10 @@ export default function MomentsLayer({ items }: BeyondRoomProps) {
   const roomState = useRoomState();
   const placements = useMemo(() => makePlacements(items, anchors), [anchors, items]);
   const previouslyFocused = useRef<string | null>(null);
-  const placedAnchorIds = useMemo(
-    () => new Set(placements.map((placement) => placement.anchor.id)),
-    [placements]
-  );
   const overflow = items.filter(
     (item) => !placements.some((placement) => placement.item.id === item.id)
   );
-  const spareShelf = anchors.find(
-    (anchor) => anchor.kind === "shelf" && !placedAnchorIds.has(anchor.id)
-  );
+  const shoeboxAnchor = anchors.find((anchor) => anchor.kind === "shoebox");
 
   useEffect(() => {
     const focusMoment = (event: Event) => {
@@ -234,7 +237,7 @@ export default function MomentsLayer({ items }: BeyondRoomProps) {
           <MomentObject placement={placement} />
         </Suspense>
       ))}
-      {overflow.length ? <Shoebox anchor={spareShelf} count={overflow.length} /> : null}
+      {overflow.length ? <Shoebox anchor={shoeboxAnchor} count={overflow.length} /> : null}
     </>
   );
 }

@@ -12,12 +12,13 @@
   left: clamp(1.25rem, 3vw, 2.5rem);
   display: grid;
   gap: 0.45rem;
-  max-width: min(34rem, calc(100% - 2.5rem));
+  max-width: min(20rem, calc(100% - 2.5rem));
   pointer-events: none;
 }
 
 .intro h1 {
-  max-width: 16ch;
+  /* Two lines on desktop, so the title stays on the clear sky left of the room. */
+  max-width: 9.5ch;
   margin: 0;
   color: #16131a;
   font-family: var(--font-beyond-display);
@@ -32,11 +33,34 @@
 }
 
 .intro p {
-  max-width: 32rem;
+  max-width: 17rem;
   margin: 0;
   color: rgba(22, 19, 26, 0.86);
   font-size: clamp(0.9rem, 1.35vw, 1.05rem);
   line-height: 1.45;
+}
+
+/* On desktop the title sits on the room's sky, which turns navy at night. */
+@media (min-width: 1024px) {
+  .intro h1,
+  .intro p {
+    transition: color 600ms ease;
+  }
+
+  .stack:has([data-beyond-room][data-mode="night"]) .intro h1 {
+    color: #fff8ec;
+  }
+
+  .stack:has([data-beyond-room][data-mode="night"]) .intro p {
+    color: rgba(255, 248, 236, 0.86);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro h1,
+  .intro p {
+    transition: none;
+  }
 }
 
 .footer {
@@ -69,7 +93,7 @@
   outline-offset: 3px;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 1023px) {
   .intro {
     position: static;
     z-index: auto;

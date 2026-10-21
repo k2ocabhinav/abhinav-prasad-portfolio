@@ -1,17 +1,20 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { CAMERA_FOV, CameraRig } from "./cameraRig";
 import { roomAnchors } from "./roomAnchors";
 import { RoomScene } from "./RoomScene";
-import { RoomAnchorsContext } from "../contracts";
+import { RoomAnchorsContext, RoomExitContext } from "../contracts";
+import ThreeCanvas from "./ThreeCanvas";
 
 export default function RoomCanvas({ children }: { children?: ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [running, setRunning] = useState(false);
   const [mobile, setMobile] = useState(false);
+  const router = useRouter();
+  const [exitHome] = useState(() => () => router.push("/"));
 
   useEffect(() => {
     const container = containerRef.current;
@@ -49,20 +52,22 @@ export default function RoomCanvas({ children }: { children?: ReactNode }) {
 
   return (
     <div ref={containerRef} style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-      <Canvas
+      <ThreeCanvas
         dpr={[1, mobile ? 1.5 : 1.75]}
         flat
         camera={{ position: [8.2, 6.4, 10.5], fov: CAMERA_FOV, near: 0.1, far: 80 }}
         frameloop={running ? "always" : "demand"}
         gl={{ antialias: true, alpha: false, stencil: true, powerPreference: "high-performance" }}
       >
-        <RoomAnchorsContext.Provider value={roomAnchors}>
-          <CameraRig>
-            <RoomScene />
-            {children}
-          </CameraRig>
-        </RoomAnchorsContext.Provider>
-      </Canvas>
+        <RoomExitContext.Provider value={exitHome}>
+          <RoomAnchorsContext.Provider value={roomAnchors}>
+            <CameraRig>
+              <RoomScene />
+              {children}
+            </CameraRig>
+          </RoomAnchorsContext.Provider>
+        </RoomExitContext.Provider>
+      </ThreeCanvas>
     </div>
   );
 }

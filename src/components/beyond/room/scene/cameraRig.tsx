@@ -6,9 +6,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Euler, PerspectiveCamera, Vector3 } from "three";
 import type { CameraRig as CameraRigApi } from "../contracts";
 import { CameraRigContext } from "../contracts";
+import { outlineFocus } from "./toon";
 
 export const CAMERA_FOV = 36;
 const HOME_DIRECTION = new Vector3(7.6, 4.5, 10.2).normalize();
+const HOME_FLAT = new Vector3(HOME_DIRECTION.x, 0, HOME_DIRECTION.z).normalize();
 const GLIDE_SECONDS = 0.9;
 
 // Points that bound the room on screen (plinth corners and wall tops).
@@ -16,28 +18,47 @@ const ROOM_POINTS: [number, number, number][] = [
   [-4.5, -0.64, -3.25], [4.5, -0.64, -3.25], [-4.5, -0.64, 2.85], [4.5, -0.64, 2.85],
   [-4.25, 5.5, -3.0], [4.25, 5.5, -3.0], [-4.25, 5.5, 2.6],
 ];
-// Portrait: the window wall and the desk.
-const DESK_POINTS: [number, number, number][] = [
-  [-2.5, 1.1, -3.0], [2.5, 1.1, -3.0], [-2.5, 5.0, -3.0], [2.5, 5.0, -3.0],
-  [-2.5, 1.1, 1.6], [2.5, 1.1, 1.6], [-2.5, 5.0, 1.6], [2.5, 5.0, 1.6],
-];
+
+let desktopQuery: MediaQueryList | null = null;
+
+export type HomeLayout = "wide" | "square" | "portrait";
+
+/**
+ * Wide stages (desktop) leave the left third to the page title and intro, so the
+ * room is framed into the right part of the stage. Portrait stages show the whole
+ * room, width first.
+ */
+export function homeLayout(width: number, height: number): HomeLayout {
+  const aspect = width / Math.max(height, 1);
+  if (aspect < 0.9) return "portrait";
+  // The same breakpoint as the page CSS, which lays the title over the stage from 1024px.
+  desktopQuery ??= window.matchMedia("(min-width: 1024px)");
+  return desktopQuery.matches && aspect >= 1.1 ? "wide" : "square";
+}
+
+const HOME_FRAMING: Record<HomeLayout, { fillX: number; fillY: number; centerX: number; centerY: number }> = {
+  // The room spans about 35% to 95% of the stage width.
+  wide: { fillX: 0.61, fillY: 0.94, centerX: 0.325, centerY: -0.02 },
+  square: { fillX: 0.84, fillY: 0.94, centerX: 0, centerY: 0 },
+  portrait: { fillX: 0.97, fillY: 0.94, centerX: 0, centerY: 0.02 },
+};
 
 /**
  * Finds the camera position along the establishing direction that makes the room
- * fill the frame: about 74% of the width on wide screens, tighter on the desk and
- * window for portrait screens.
+ * fill its share of the frame (see HOME_FRAMING), slid sideways so it sits where
+ * the layout wants it.
  */
-export function fitHome(aspect: number, fov: number): { position: Vector3; target: Vector3 } {
-  const portrait = aspect < 0.9;
-  const points = (portrait ? DESK_POINTS : ROOM_POINTS).map((point) => new Vector3(...point));
-  const fillX = portrait ? 0.97 : 0.76;
-  const fillY = portrait ? 0.9 : 0.95;
+export function fitHome(aspect: number, fov: number, layout: HomeLayout): { position: Vector3; target: Vector3 } {
+  const points = ROOM_POINTS.map((point) => new Vector3(...point));
+  const { fillX, fillY, centerX, centerY } = HOME_FRAMING[layout];
   const camera = new PerspectiveCamera(fov, aspect, 0.1, 100);
-  const target = new Vector3(0, portrait ? 3.1 : 2.2, 0);
+  const target = new Vector3(0, 2.2, 0);
   const projected = new Vector3();
+  const right = new Vector3();
+  const up = new Vector3();
   let distance = 16;
 
-  for (let step = 0; step < 14; step += 1) {
+  for (let step = 0; step < 16; step += 1) {
     camera.position.copy(target).addScaledVector(HOME_DIRECTION, distance);
     camera.lookAt(target);
     camera.updateMatrixWorld(true);
@@ -56,10 +77,10 @@ export function fitHome(aspect: number, fov: number): { position: Vector3; targe
     const need = Math.max((maxX - minX) / (2 * fillX), (maxY - minY) / (2 * fillY));
     distance *= Math.min(1.5, Math.max(0.6, need));
     const halfHeight = distance * Math.tan((fov * Math.PI) / 360);
-    const right = new Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
-    const up = new Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
-    target.addScaledVector(right, ((minX + maxX) / 2) * halfHeight * aspect);
-    target.addScaledVector(up, ((minY + maxY) / 2) * halfHeight);
+    right.setFromMatrixColumn(camera.matrixWorld, 0);
+    up.setFromMatrixColumn(camera.matrixWorld, 1);
+    target.addScaledVector(right, ((minX + maxX) / 2 - centerX) * halfHeight * aspect);
+    target.addScaledVector(up, ((minY + maxY) / 2 - centerY) * halfHeight);
   }
 
   return { position: target.clone().addScaledVector(HOME_DIRECTION, distance), target };
@@ -76,7 +97,7 @@ interface Glide {
 }
 
 export function CameraRig({ children }: { children: ReactNode }) {
-  const { camera, gl, invalidate, clock, size } = useThree();
+  const { camera, gl, invalidate, clock, size, get } = useThree();
   const cameraRef = useRef(camera);
   const glideRef = useRef<Glide | null>(null);
   const reducedMotionRef = useRef(false);
@@ -84,9 +105,12 @@ export function CameraRig({ children }: { children: ReactNode }) {
   const pointerTarget = useRef({ x: 0, y: 0 });
   const pointerSpring = useRef({ x: 0, y: 0, vx: 0, vy: 0 });
   const pointerRect = useRef<DOMRect | null>(null);
-  const [initialHome] = useState(() => fitHome(size.width / Math.max(size.height, 1), CAMERA_FOV));
+  const [initialHome] = useState(() =>
+    fitHome(size.width / Math.max(size.height, 1), CAMERA_FOV, homeLayout(size.width, size.height)),
+  );
   const home = useRef(initialHome);
   const homeAspect = useRef(size.width / Math.max(size.height, 1));
+  const homeKind = useRef(homeLayout(size.width, size.height));
   const currentLookTarget = useMemo(() => initialHome.target.clone(), [initialHome]);
   const desiredPosition = useMemo(() => new Vector3(), []);
   const direction = useMemo(() => new Vector3(), []);
@@ -148,9 +172,18 @@ export function CameraRig({ children }: { children: ReactNode }) {
       const target = new Vector3(...position);
       const face = new Vector3(...normal).normalize();
       const fov = "fov" in camera ? camera.fov : CAMERA_FOV;
-      const distance = Math.max(2.8, Math.min(6, size[1] / (2 * Math.tan((fov * Math.PI) / 360)) * 1.65));
-      const toPosition = target.clone().addScaledVector(face, distance);
-      toPosition.y += distance * 0.45;
+      const halfTan = Math.tan((fov * Math.PI) / 360);
+      const stage = get().size;
+      const aspect = stage.width / Math.max(stage.height, 1);
+      // Fit the object's height and width (the narrower of the two limits the distance)
+      // with some air around it, then stand back along its normal.
+      const fitted = Math.max(size[1] / (2 * halfTan), size[0] / (2 * halfTan * Math.min(aspect, 1.6)));
+      const distance = Math.max(1.7, Math.min(6.5, fitted * 1.55));
+      // Stand off along the normal, turned a little towards the establishing side so a
+      // wall print is seen with the wall behind it, not past the end of the wall.
+      const approach = face.clone().addScaledVector(HOME_FLAT, 0.6).normalize();
+      const toPosition = target.clone().addScaledVector(approach, distance);
+      toPosition.y += distance * 0.16;
 
       if (reducedMotionRef.current) {
         camera.position.copy(toPosition);
@@ -190,14 +223,17 @@ export function CameraRig({ children }: { children: ReactNode }) {
       };
       invalidate();
     },
-  }), [camera, clock, currentLookTarget, invalidate]);
+  }), [camera, clock, currentLookTarget, get, invalidate]);
 
   useFrame((state, delta) => {
     const activeCamera = cameraRef.current;
+    outlineFocus.copy(currentLookTarget);
     const aspect = size.width / Math.max(size.height, 1);
-    if (Math.abs(aspect - homeAspect.current) > 0.001) {
+    const layout = homeLayout(size.width, size.height);
+    if (Math.abs(aspect - homeAspect.current) > 0.001 || layout !== homeKind.current) {
       homeAspect.current = aspect;
-      home.current = fitHome(aspect, CAMERA_FOV);
+      homeKind.current = layout;
+      home.current = fitHome(aspect, CAMERA_FOV, layout);
       if (!isFocused.current && !glideRef.current) {
         activeCamera.position.copy(home.current.position);
         currentLookTarget.copy(home.current.target);
