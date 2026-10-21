@@ -18,6 +18,15 @@ import {
   socialPlatforms as socialPlatformValues,
   stackContextValues as stackContextValueList,
   statusValues as statusValueList,
+  objectField,
+  optionalBooleanField,
+  optionalNullableStringField,
+  optionalNumberField,
+  optionalObjectArrayField,
+  optionalObjectField,
+  optionalStringArrayField,
+  optionalStringField,
+  stringField,
 } from "../src/lib/portfolioSchema.mjs";
 
 const root = process.cwd();
@@ -63,25 +72,15 @@ function mdxFiles(section) {
 }
 
 function stringValue(data, key, filePath) {
-  const value = data[key];
-  if (typeof value !== "string" || value.trim().length === 0) {
-    fail(filePath, `missing string "${key}"`);
-  }
-  return value;
+  return stringField(data, key, rel(filePath));
 }
 
-function optionalString(data, key) {
-  const value = data[key];
-  return typeof value === "string" && value.trim().length > 0 ? value : undefined;
+function optionalString(data, key, filePath, field = key) {
+  return optionalStringField(data, key, rel(filePath), field);
 }
 
 function optionalNullableString(data, key, filePath) {
-  const value = data[key];
-  if (value === undefined || value === null) return value;
-  if (typeof value !== "string" || value.trim().length === 0) {
-    fail(filePath, `optional "${key}" must be a non-empty string or null`);
-  }
-  return value;
+  return optionalNullableStringField(data, key, rel(filePath));
 }
 
 function stringArray(data, key, filePath) {
@@ -97,25 +96,19 @@ function stringArray(data, key, filePath) {
 }
 
 function optionalStringArray(data, key, filePath) {
-  const value = data[key];
-  if (value === undefined) return [];
-  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
-    fail(filePath, `optional "${key}" must be a string array`);
-  }
-  return value;
+  return optionalStringArrayField(data, key, rel(filePath));
+}
+
+function optionalNumber(data, key, filePath, fallback = 999) {
+  return optionalNumberField(data, key, rel(filePath), fallback);
 }
 
 function objectValue(data, key, filePath) {
-  const value = data[key];
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    fail(filePath, `missing object "${key}"`);
-  }
-  return value;
+  return objectField(data, key, rel(filePath));
 }
 
-function optionalObject(data, key) {
-  const value = data[key];
-  return value && typeof value === "object" && !Array.isArray(value) ? value : undefined;
+function optionalObject(data, key, filePath, field = key) {
+  return optionalObjectField(data, key, rel(filePath), field);
 }
 
 function objectArray(data, key, filePath) {
@@ -126,11 +119,8 @@ function objectArray(data, key, filePath) {
   return value;
 }
 
-function optionalObjectArray(data, key) {
-  const value = data[key];
-  return Array.isArray(value) && value.every((item) => item && typeof item === "object" && !Array.isArray(item))
-    ? value
-    : [];
+function optionalObjectArray(data, key, filePath) {
+  return optionalObjectArrayField(data, key, rel(filePath));
 }
 
 function enumValue(data, key, values, filePath) {
@@ -178,7 +168,7 @@ function validatePublicAsset(src, filePath) {
 }
 
 function validateImage(image, filePath, requireSrc = true) {
-  const src = requireSrc ? stringValue(image, "src", filePath) : optionalString(image, "src");
+  const src = requireSrc ? stringValue(image, "src", filePath) : optionalString(image, "src", filePath);
   validatePublicAsset(src, filePath);
   stringValue(image, "alt", filePath);
   if (image.frameAspectRatio !== undefined &&
@@ -232,10 +222,8 @@ function validateStoryboard(storyboard, filePath) {
   const tripIntro = objectValue(storyboard, "tripIntro", filePath);
   stringValue(tripIntro, "eyebrow", filePath);
   stringValue(tripIntro, "title", filePath);
-  optionalString(tripIntro, "summary");
-  if (storyboard.routePlate !== undefined && typeof storyboard.routePlate !== "boolean") {
-    fail(filePath, 'storyboard "routePlate" must be a boolean');
-  }
+  optionalString(tripIntro, "summary", filePath);
+  optionalBooleanField(storyboard, "routePlate", rel(filePath), false, "storyboard.routePlate");
 
   const chapters = objectArray(storyboard, "chapters", filePath);
   if (chapters.length === 0) fail(filePath, 'storyboard "chapters" must contain at least one chapter');
@@ -352,6 +340,11 @@ function validateProfile() {
     stringValue(cta, "href", filePath);
     enumValue(cta, "variant", new Set(["primary", "secondary"]), filePath);
   });
+  objectArray(data, "presenceNodes", filePath).forEach((node) => {
+    ["top", "left", "label"].forEach((key) => stringValue(node, key, filePath));
+    optionalString(node, "sub", filePath);
+    optionalBooleanField(node, "active", rel(filePath), false);
+  });
   // P7: Validate the method content that powers the human-reviewed orchestration section.
   const profileIntro = objectValue(data, "profileIntro", filePath);
   stringValue(profileIntro, "headline", filePath);
@@ -388,14 +381,20 @@ function validateProjects() {
     ["slug", "id", "title", "description"].forEach((key) =>
       stringValue(data, key, filePath)
     );
+    optionalNumber(data, "worksOrder", filePath);
     stringArray(data, "tags", filePath);
-    optionalObjectArray(data, "screenshots").forEach((image) => validateImage(image, filePath));
-    optionalObjectArray(data, "links").forEach((link) => {
+    optionalObjectArray(data, "screenshots", filePath).forEach((image) => validateImage(image, filePath));
+    optionalObjectArray(data, "links", filePath).forEach((link) => {
       stringValue(link, "label", filePath);
       optionalNullableString(link, "href", filePath);
     });
-    const detail = optionalObject(data, "detail");
-    if (detail?.enabled === true) {
+    const detail = optionalObject(data, "detail", filePath);
+    const detailEnabled = detail
+      ? optionalBooleanField(detail, "enabled", rel(filePath), false, "detail.enabled")
+      : false;
+    if (detailEnabled) {
+      optionalString(data, "detailCtaLabel", filePath, "detailCtaLabel");
+      optionalString(data, "detailCtaSubline", filePath, "detailCtaSubline");
       ["slug", "eyebrow", "title", "seoTitle", "seoDescription", "subtitle", "scopeSummary"].forEach((key) =>
         stringValue(detail, key, filePath)
       );
@@ -420,7 +419,7 @@ function validateProjects() {
         stringArray(bucket, "items", filePath);
       });
       optionalStringArray(detail, "qualityHighlights", filePath);
-      optionalObjectArray(detail, "references").forEach((reference) => {
+      optionalObjectArray(detail, "references", filePath).forEach((reference) => {
         stringValue(reference, "label", filePath);
         optionalNullableString(reference, "href", filePath);
       });
@@ -430,7 +429,7 @@ function validateProjects() {
         const intro = objectValue(sectionIntros, key, filePath);
         stringValue(intro, "eyebrow", filePath);
         stringValue(intro, "title", filePath);
-        optionalString(intro, "summary");
+        optionalString(intro, "summary", filePath);
       });
       // P4 section intros field — end
       // P4 storyboard field — begin
@@ -439,15 +438,15 @@ function validateProjects() {
       }
       // P4 storyboard field — end
     }
-    return data;
+    return { data, detail, detailEnabled };
   });
 
-  unique(projects.map((project) => project.slug), "project slug");
-  unique(projects.map((project) => project.id), "project id");
+  unique(projects.map(({ data }) => data.slug), "project slug");
+  unique(projects.map(({ data }) => data.id), "project id");
   unique(
     projects
-      .map((project) => optionalObject(project, "detail"))
-      .filter((detail) => detail?.enabled === true)
+      .filter(({ detailEnabled }) => detailEnabled)
+      .map(({ detail }) => detail)
       .map((detail) => detail.slug),
     "project detail slug"
   );
@@ -460,6 +459,7 @@ function validateChronicle() {
     ["slug", "company", "period", "companyContext", "roleTitle", "roleScope", "employmentNote"].forEach((key) =>
       stringValue(data, key, filePath)
     );
+    optionalNumber(data, "order", filePath);
 
     const summaryPoints = objectArray(data, "summaryPoints", filePath);
     if (summaryPoints.length !== expectedContentCounts.experienceSummaryPoints) {
@@ -488,20 +488,18 @@ function validateChronicle() {
       });
       const tools = stringArray(workstream, "tools", filePath);
       unique(tools, `tool in workstream "${workstream.id}"`);
-      if (workstream.images !== undefined) {
-        const images = objectArray(workstream, "images", filePath);
-        images.forEach((image) => {
-          const src = stringValue(image, "src", filePath);
-          validatePublicAsset(src, filePath);
-          stringValue(image, "alt", filePath);
-          stringValue(image, "caption", filePath);
-          for (const dimension of ["width", "height"]) {
-            if (typeof image[dimension] !== "number" || !Number.isFinite(image[dimension]) || image[dimension] <= 0) {
-              fail(filePath, `experience image "${dimension}" must be a positive number`);
-            }
+      const images = optionalObjectArray(workstream, "images", filePath);
+      images.forEach((image) => {
+        const src = stringValue(image, "src", filePath);
+        validatePublicAsset(src, filePath);
+        stringValue(image, "alt", filePath);
+        stringValue(image, "caption", filePath);
+        for (const dimension of ["width", "height"]) {
+          if (typeof image[dimension] !== "number" || !Number.isFinite(image[dimension]) || image[dimension] <= 0) {
+            fail(filePath, `experience image "${dimension}" must be a positive number`);
           }
-        });
-      }
+        }
+      });
     });
     unique(
       workstreams.map((workstream) => workstream.id),
@@ -518,9 +516,8 @@ function validateStack() {
     enumValue(data, "status", statuses, filePath);
     enumValue(data, "context", stackContextValues, filePath);
     ["id", "label"].forEach((key) => stringValue(data, key, filePath));
-    if (typeof data.highlighted !== "boolean") {
-      fail(filePath, '"highlighted" must be a boolean');
-    }
+    optionalNumber(data, "order", filePath);
+    optionalBooleanField(data, "highlighted", rel(filePath), false);
     return data;
   });
   unique(groups.map((group) => group.id), "stack id");
@@ -531,6 +528,7 @@ function validateServices() {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
     optionalEnum(data, "accent", accents, filePath);
+    optionalNumber(data, "order", filePath);
     ["id", "title", "description", "icon"].forEach((key) => stringValue(data, key, filePath));
     optionalStringArray(data, "tags", filePath);
   });
@@ -543,10 +541,17 @@ function validateBeyond() {
     enumValue(data, "kind", beyondKinds, filePath);
     enumValue(data, "color", beyondColors, filePath);
     enumValue(data, "size", beyondSizes, filePath);
+    optionalNumber(data, "order", filePath);
     ["id", "title", "caption"].forEach((key) => stringValue(data, key, filePath));
     stringArray(data, "tags", filePath);
-    const image = optionalObject(data, "image");
-    if (image) validateImage(image, filePath, false);
+    const image = optionalObject(data, "image", filePath);
+    if (image) {
+      validateImage(image, filePath, false);
+      optionalString(image, "aspectRatio", filePath, "image.aspectRatio");
+      optionalString(image, "dominantColor", filePath, "image.dominantColor");
+    }
+    optionalString(data, "quote", filePath);
+    optionalString(data, "meta", filePath);
     return data;
   });
   unique(items.map((item) => item.id), "beyond item id");

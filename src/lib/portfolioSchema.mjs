@@ -59,3 +59,95 @@ export const expectedHeroFactLinks = Object.freeze([
   Object.freeze({ label: "At work", href: "#experience" }),
   Object.freeze({ label: "On my own", href: "#work" }),
 ]);
+
+/** @returns {never} */
+function invalidField(filePath, field, expected) {
+  throw new Error(`[portfolio-content] ${filePath}: "${field}" must be ${expected}`);
+}
+
+/** @param {unknown} value @returns {value is Record<string, unknown>} */
+function isRecord(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {string} [field] @returns {string} */
+export function stringField(data, key, filePath, field = key) {
+  const value = data[key];
+  if (typeof value !== "string" || value.trim().length === 0) {
+    invalidField(filePath, field, "a non-empty string");
+  }
+  return value;
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {string} [field] @returns {string | undefined} */
+export function optionalStringField(data, key, filePath, field = key) {
+  const value = data[key];
+  if (value === undefined) return undefined;
+  if (typeof value !== "string" || value.trim().length === 0) {
+    invalidField(filePath, field, "a non-empty string");
+  }
+  return value;
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {string} [field] @returns {string | null | undefined} */
+export function optionalNullableStringField(data, key, filePath, field = key) {
+  const value = data[key];
+  if (value === undefined || value === null) return value;
+  if (typeof value !== "string" || value.trim().length === 0) {
+    invalidField(filePath, field, "a non-empty string or null");
+  }
+  return value;
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {string} [field] @returns {Record<string, unknown>} */
+export function objectField(data, key, filePath, field = key) {
+  const value = data[key];
+  if (!isRecord(value)) invalidField(filePath, field, "an object");
+  return value;
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {string} [field] @returns {Record<string, unknown> | undefined} */
+export function optionalObjectField(data, key, filePath, field = key) {
+  const value = data[key];
+  if (value === undefined) return undefined;
+  if (!isRecord(value)) invalidField(filePath, field, "an object");
+  return value;
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {number} fallback @param {string} [field] @returns {number} */
+export function optionalNumberField(data, key, filePath, fallback, field = key) {
+  const value = data[key];
+  if (value === undefined) return fallback;
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    invalidField(filePath, field, "a finite number");
+  }
+  return value;
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {boolean} fallback @param {string} [field] @returns {boolean} */
+export function optionalBooleanField(data, key, filePath, fallback, field = key) {
+  const value = data[key];
+  if (value === undefined) return fallback;
+  if (typeof value !== "boolean") invalidField(filePath, field, "a boolean");
+  return value;
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {string} [field] @returns {string[]} */
+export function optionalStringArrayField(data, key, filePath, field = key) {
+  const value = data[key];
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
+    invalidField(filePath, field, "an array of strings");
+  }
+  return value;
+}
+
+/** @param {Record<string, unknown>} data @param {string} key @param {string} filePath @param {string} [field] @returns {Record<string, unknown>[]} */
+export function optionalObjectArrayField(data, key, filePath, field = key) {
+  const value = data[key];
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.some((item) => !isRecord(item))) {
+    invalidField(filePath, field, "an array of objects");
+  }
+  return value;
+}
