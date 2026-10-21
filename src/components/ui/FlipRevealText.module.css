@@ -34,7 +34,7 @@
   z-index: 0;
   pointer-events: none;
   user-select: none;
-  color: var(--tone-accent, var(--color-lead, #6A2135));
+  color: var(--tone-accent, var(--color-lead, var(--color-burgundy)));
   opacity: 0.4;
   mix-blend-mode: multiply;
   font: inherit;

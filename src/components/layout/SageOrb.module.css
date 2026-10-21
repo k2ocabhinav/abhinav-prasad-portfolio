@@ -8,7 +8,7 @@
   height: 6px;
   border: 1px solid transparent;
   border-radius: 50%;
-  background: #6A2135;
+  background: var(--color-burgundy);
   opacity: 0;
   pointer-events: none;
   transition:
@@ -31,17 +31,17 @@
 .orb[data-active="true"] {
   width: 32px;
   height: 32px;
-  border-color: #6A2135;
-  background: rgba(106, 33, 53, 0.14);
+  border-color: var(--color-burgundy);
+  background: rgba(var(--color-burgundy-rgb), 0.14);
 }
 
 .orb[data-theme="true"] {
-  background: #F4BEBB;
+  background: var(--color-pink);
 }
 
 .orb[data-theme="true"][data-active="true"] {
-  border-color: #F4BEBB;
-  background: rgba(244, 190, 187, 0.14);
+  border-color: var(--color-pink);
+  background: rgba(var(--color-pink-rgb), 0.14);
 }
 
 @media (pointer: fine) {

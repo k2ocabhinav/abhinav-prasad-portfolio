@@ -1,14 +1,14 @@
 .serviceBand {
-  --section-bg: var(--paper-linen, #FCF8F2);
+  --section-bg: var(--paper-linen, var(--paper-linen));
   border-top: 0;
 }
 
 .specBand {
-  --section-bg: var(--paper-bone, #F0EEE9);
-  --plate-ink: var(--color-black-cherry, #351E28);
-  --plate-accent: var(--color-burgundy, #6A2135);
-  --plate-second: var(--color-cornflower, #94B6EF);
-  --plate-paper: var(--paper-linen, #FCF8F2);
+  --section-bg: var(--paper-bone, var(--paper-bone));
+  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
+  --plate-accent: var(--color-burgundy, var(--color-burgundy));
+  --plate-second: var(--color-cornflower, var(--color-cornflower));
+  --plate-paper: var(--paper-linen, var(--paper-linen));
 }
 
 .tileContent {
@@ -39,10 +39,10 @@
   max-width: 68rem;
   margin-inline: auto;
   overflow: hidden;
-  border: 1px solid rgba(11, 16, 17, 0.14);
+  border: 1px solid rgba(var(--color-ink-rgb), 0.14);
   border-radius: 3px;
-  background: var(--color-black-cherry, #351E28);
-  box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
+  background: var(--color-black-cherry, var(--color-black-cherry));
+  box-shadow: var(--print-offset-md, 6px 6px 0 rgba(var(--color-black-cherry-rgb), 0.16));
 }
 
 .portraitColumn {
@@ -51,7 +51,7 @@
   min-width: 0;
   place-items: center;
   padding: clamp(1.1rem, 3vw, 2.4rem);
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .imageFrame {
@@ -61,8 +61,8 @@
   overflow: hidden;
   border: 1px solid var(--color-hairline);
   border-radius: 2px;
-  background: #E9E5DC;
-  box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
+  background: var(--color-graphite);
+  box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(var(--color-black-cherry-rgb), 0.16));
 }
 
 .heroImage {
@@ -88,8 +88,8 @@
   gap: 0.2rem;
   padding: 0.35rem 0.5rem;
   border: 1px solid var(--color-hairline);
-  background: var(--paper-bone, #F0EEE9);
-  color: var(--color-ink, #0B1011);
+  background: var(--paper-bone, var(--paper-bone));
+  color: var(--color-ink, var(--color-ink));
   font-family: var(--font-label);
   font-size: 0.58rem;
   letter-spacing: 0.1em;
@@ -107,13 +107,13 @@
   flex-direction: column;
   justify-content: center;
   padding: clamp(1.5rem, 4vw, 3.5rem);
-  color: var(--color-on-panel, #EDE6DA);
+  color: var(--color-on-panel, var(--color-on-panel));
 }
 
 .heading {
   max-width: 26ch;
   margin: 0;
-  color: var(--color-panel-accent, #F4BEBB);
+  color: var(--color-panel-accent, var(--color-pink));
   font-family: var(--font-display);
   font-size: clamp(1.55rem, 2.5vw, 2.35rem);
   font-weight: 550;
@@ -127,15 +127,15 @@
   gap: 0;
   margin: clamp(1.1rem, 2vw, 1.6rem) 0 0;
   padding: 0;
-  border-top: 1px solid rgba(237, 230, 218, 0.3);
+  border-top: 1px solid rgba(var(--color-on-surface-dark-rgb), 0.3);
   list-style: none;
 }
 
 .proofList li {
   position: relative;
   padding: 0.75rem 0 0.75rem 1.1rem;
-  border-bottom: 1px solid rgba(237, 230, 218, 0.22);
-  color: var(--color-on-panel, #EDE6DA);
+  border-bottom: 1px solid rgba(var(--color-on-surface-dark-rgb), 0.22);
+  color: var(--color-on-panel, var(--color-on-panel));
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.5;
@@ -147,14 +147,14 @@
   left: 0;
   width: 0.38rem;
   height: 0.38rem;
-  background: var(--color-panel-accent, #F4BEBB);
+  background: var(--color-panel-accent, var(--color-pink));
   content: "";
 }
 
 .philosophyText {
   max-width: 65ch;
   margin: 1.1rem 0 0;
-  color: var(--color-on-panel, #EDE6DA);
+  color: var(--color-on-panel, var(--color-on-panel));
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.6;

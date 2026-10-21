@@ -9,12 +9,12 @@
   justify-content: space-between;
   gap: 1rem;
   padding: clamp(1.1rem, 2vw, 1.6rem) 0 0;
-  border-top: 1px solid rgba(21, 21, 27, 0.18);
+  border-top: 1px solid rgba(var(--color-beyond-ink-rgb), 0.18);
   font-family: var(--font-beyond-mono);
   font-size: 0.68rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(21, 21, 27, 0.58);
+  color: rgba(var(--color-beyond-ink-rgb), 0.58);
 }
 
 .homeLink {
@@ -22,11 +22,11 @@
   min-height: 2.75rem;
   align-items: center;
   padding: 0 0.82rem;
-  border: 2px solid #15151B;
+  border: 2px solid var(--color-beyond-ink);
   border-radius: 999px;
-  color: #15151B;
-  background: #FFC24B;
-  box-shadow: 4px 5px 0 rgba(21, 21, 27, 0.86);
+  color: var(--color-beyond-ink);
+  background: var(--color-beyond-amber);
+  box-shadow: 4px 5px 0 rgba(var(--color-beyond-ink-rgb), 0.86);
   transition:
     transform 180ms ease,
     box-shadow 180ms ease;
@@ -34,11 +34,11 @@
 
 .homeLink:hover {
   transform: translateY(-2px);
-  box-shadow: 6px 7px 0 rgba(21, 21, 27, 0.9);
+  box-shadow: 6px 7px 0 rgba(var(--color-beyond-ink-rgb), 0.9);
 }
 
 .homeLink:focus-visible {
-  outline: 3px solid #245DFF;
+  outline: 3px solid var(--color-beyond-blue);
   outline-offset: 3px;
 }
 

@@ -12,8 +12,8 @@
   position: relative;
   overflow: hidden;
   padding: clamp(1.4rem, 4vw, 2.8rem) 0;
-  background: var(--color-lead, #6A2135);
-  color: var(--color-on-lead, #EDE6DA);
+  background: var(--color-lead, var(--color-burgundy));
+  color: var(--color-on-lead, var(--color-on-panel));
 }
 
 /* Print-style transport control. Sits over the faded left edge of the band:
@@ -30,10 +30,10 @@
   place-items: center;
   padding: 0;
   transform: translateY(-50%);
-  border: 1px solid rgba(237, 230, 218, 0.55);
+  border: 1px solid rgba(var(--color-on-surface-dark-rgb), 0.55);
   border-radius: 2px;
-  background: var(--color-lead, #6A2135);
-  color: var(--color-on-lead, #EDE6DA);
+  background: var(--color-lead, var(--color-burgundy));
+  color: var(--color-on-lead, var(--color-on-panel));
   transition:
     background-color 160ms var(--motion-ease-out),
     border-color 160ms var(--motion-ease-out),
@@ -41,19 +41,19 @@
 }
 
 .control:hover {
-  border-color: var(--color-on-lead, #EDE6DA);
-  background: var(--color-on-lead, #EDE6DA);
-  color: var(--color-lead, #6A2135);
+  border-color: var(--color-on-lead, var(--color-on-panel));
+  background: var(--color-on-lead, var(--color-on-panel));
+  color: var(--color-lead, var(--color-burgundy));
 }
 
 .control[aria-pressed="true"] {
-  border-color: var(--color-on-lead, #EDE6DA);
-  background: var(--color-on-lead, #EDE6DA);
-  color: var(--color-lead, #6A2135);
+  border-color: var(--color-on-lead, var(--color-on-panel));
+  background: var(--color-on-lead, var(--color-on-panel));
+  color: var(--color-lead, var(--color-burgundy));
 }
 
 .control:focus-visible {
-  outline: 2px solid var(--color-on-lead, #EDE6DA);
+  outline: 2px solid var(--color-on-lead, var(--color-on-panel));
   outline-offset: 3px;
 }
 
@@ -71,12 +71,12 @@
 
 .marquee::before {
   left: 0;
-  background: linear-gradient(90deg, var(--color-lead, #6A2135), rgba(var(--color-lead-rgb), 0));
+  background: linear-gradient(90deg, var(--color-lead, var(--color-burgundy)), rgba(var(--color-lead-rgb), 0));
 }
 
 .marquee::after {
   right: 0;
-  background: linear-gradient(270deg, var(--color-lead, #6A2135), rgba(var(--color-lead-rgb), 0));
+  background: linear-gradient(270deg, var(--color-lead, var(--color-burgundy)), rgba(var(--color-lead-rgb), 0));
 }
 
 .track {
@@ -88,7 +88,7 @@
    fades after it, so the ribbon text never runs on both sides of the button. */
 .shell:has(.control) .marquee::before {
   width: 9rem;
-  background: linear-gradient(90deg, var(--color-lead, #6A2135) 5rem, rgba(var(--color-lead-rgb), 0));
+  background: linear-gradient(90deg, var(--color-lead, var(--color-burgundy)) 5rem, rgba(var(--color-lead-rgb), 0));
 }
 
 .group {
@@ -105,7 +105,7 @@
   font-weight: 450;
   font-size: clamp(1.5rem, 3.6vw, 2.8rem);
   letter-spacing: 0;
-  color: var(--color-on-lead, #EDE6DA);
+  color: var(--color-on-lead, var(--color-on-panel));
   white-space: nowrap;
   padding-left: 1.4rem;
 }
@@ -116,5 +116,5 @@
   width: 0.26em;
   height: 0.26em;
   margin-left: 1.4rem;
-  background: var(--color-pink, #F4BEBB);
+  background: var(--color-pink, var(--color-pink));
 }

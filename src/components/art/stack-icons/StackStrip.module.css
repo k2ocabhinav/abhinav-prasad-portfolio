@@ -29,7 +29,7 @@
 
 .icon {
   flex: 0 0 auto;
-  color: var(--chip-icon, var(--color-lead, #6A2135));
+  color: var(--chip-icon, var(--color-lead, var(--color-burgundy)));
 }
 
 .label {
@@ -38,15 +38,15 @@
 }
 
 .paper {
-  --chip-ink: var(--color-ink, #0B1011);
-  --chip-icon: var(--color-lead, #6A2135);
+  --chip-ink: var(--color-ink, var(--color-ink));
+  --chip-icon: var(--color-lead, var(--color-burgundy));
   --chip-border: var(--color-hairline);
 }
 
 .panel {
-  --chip-ink: var(--color-on-panel, #EDE6DA);
-  --chip-icon: var(--color-panel-accent, #F4BEBB);
-  --chip-border: rgba(237, 230, 218, 0.24);
+  --chip-ink: var(--color-on-panel, var(--color-on-panel));
+  --chip-icon: var(--color-panel-accent, var(--color-pink));
+  --chip-border: rgba(var(--color-on-surface-dark-rgb), 0.24);
 }
 
 @media (max-width: 767px) {

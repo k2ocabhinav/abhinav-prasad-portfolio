@@ -66,7 +66,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: rgba(11, 16, 17, 0.35);
+  background-color: rgba(var(--color-ink-rgb), 0.35);
   transform: scale(0.5);
   transition:
     transform 0.3s var(--motion-ease-out),
@@ -91,7 +91,7 @@
   padding: 0.72rem 0.88rem;
   border: 1px solid var(--color-hairline);
   border-radius: 999px;
-  background: rgba(240, 238, 233, 0.92);
+  background: rgba(var(--paper-bone-rgb), 0.92);
 }
 
 .railLabelRoute {
@@ -196,7 +196,7 @@
 }
 
 .desktopRail[data-nav-tone="dark"] .railRule {
-  background: rgba(237, 230, 218, 0.4);
+  background: rgba(var(--color-on-surface-dark-rgb), 0.4);
 }
 
 .desktopRail[data-nav-tone="dark"] .railLabelActive {
@@ -204,7 +204,7 @@
 }
 
 .desktopRail[data-nav-tone="dark"] .railDot {
-  background-color: rgba(237, 230, 218, 0.45);
+  background-color: rgba(var(--color-on-surface-dark-rgb), 0.45);
 }
 
 .desktopRail[data-nav-tone="dark"] .railItem:hover .railDot,
@@ -258,9 +258,9 @@
   height: 3rem;
   padding: 0;
   border-radius: 9999px;
-  background: rgba(240, 238, 233, 0.95);
+  background: rgba(var(--paper-bone-rgb), 0.95);
   border: 1px solid var(--color-hairline);
-  color: #0B1011;
+  color: var(--color-ink);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -279,7 +279,7 @@
   right: 0;
   bottom: 0;
   width: min(20rem, 88vw);
-  background: #F0EEE9;
+  background: var(--paper-bone);
   z-index: var(--z-mobile-menu);
   display: flex;
   flex-direction: column;
@@ -296,7 +296,7 @@
 
 @media (max-width: 350px) {
   .mobileMenu {
-    padding-top: max(4rem, calc(env(safe-area-inset-top) + 3rem));
+    padding-top: max(5rem, calc(env(safe-area-inset-top) + 4rem));
     padding-bottom: max(3rem, calc(env(safe-area-inset-bottom) + 2rem));
   }
 }
@@ -304,7 +304,7 @@
 .mobileBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(11, 16, 17, 0.28);
+  background: rgba(var(--color-ink-rgb), 0.28);
   border: 0;
   z-index: calc(var(--z-mobile-menu) - 1);
 }
@@ -323,6 +323,12 @@
   gap: 0.5rem;
   width: 100%;
   margin-block: auto;
+}
+
+@media (max-height: 900px) {
+  .mobileNav {
+    margin-block: 1rem 0;
+  }
 }
 
 .mobileNavItem {
@@ -381,13 +387,13 @@
 }
 
 .hamburgerButtonTransparent {
-  background: rgba(240, 238, 233, 0.95);
+  background: rgba(var(--paper-bone-rgb), 0.95);
   border-color: var(--color-hairline);
-  color: #0B1011;
+  color: var(--color-ink);
 }
 
 @media (max-width: 350px) {
   .mobileNav {
-    gap: 0.25rem;
+    gap: 0;
   }
 }

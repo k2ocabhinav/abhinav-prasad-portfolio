@@ -1,9 +1,9 @@
 .experienceSection {
-  background: var(--paper-linen, #FCF8F2);
-  --cassette-ink: #0B1011;
+  background: var(--paper-linen, var(--paper-linen));
+  --cassette-ink: var(--color-ink);
   --cassette-muted: #4D5659;
-  --cassette-cobalt: var(--color-cornflower, #94B6EF);
-  --cassette-cobalt-deep: var(--color-cornflower-deep, #25447B);
+  --cassette-cobalt: var(--color-cornflower, var(--color-cornflower));
+  --cassette-cobalt-deep: var(--color-cornflower-deep, var(--color-cornflower-deep));
 }
 
 .experienceRoot {
@@ -67,16 +67,16 @@
 
 .dossier {
   overflow: hidden;
-  border: 1px solid rgba(37, 68, 123, 0.3);
+  border: 1px solid rgba(var(--color-cobalt-deep-rgb), 0.3);
   border-radius: 3px;
-  background: var(--paper-linen, #FCF8F2);
-  box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
+  background: var(--paper-linen, var(--paper-linen));
+  box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(var(--color-black-cherry-rgb), 0.16));
 }
 
 .employerLabel {
   padding: clamp(0.9rem, 2.5vw, 1.5rem) clamp(1.2rem, 3vw, 2.4rem);
-  border-bottom: 1px solid rgba(37, 68, 123, 0.25);
-  background: var(--paper-glacier, #D7EFFF);
+  border-bottom: 1px solid rgba(var(--color-cobalt-deep-rgb), 0.25);
+  background: var(--paper-glacier, var(--color-glacier));
 }
 
 .employerLine {
@@ -208,8 +208,8 @@
   min-height: 44px;
   padding: 0.55rem clamp(1.2rem, 3vw, 2.4rem);
   border: 0;
-  background: var(--paper-linen, #FCF8F2);
-  color: var(--color-burgundy, #6A2135);
+  background: var(--paper-linen, var(--paper-linen));
+  color: var(--color-burgundy, var(--color-burgundy));
   cursor: pointer;
   text-align: left;
   transition: background-color 140ms var(--motion-ease-out);
@@ -224,12 +224,12 @@
 }
 
 .disclosureButton:focus-visible {
-  outline: 2px solid var(--color-burgundy, #6A2135);
+  outline: 2px solid var(--color-burgundy, var(--color-burgundy));
   outline-offset: -4px;
 }
 
 .disclosureLabel {
-  color: var(--color-burgundy, #6A2135);
+  color: var(--color-burgundy, var(--color-burgundy));
   font-family: var(--font-label);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
@@ -265,7 +265,7 @@
 .workstream {
   min-width: 0;
   padding-top: 0.85rem;
-  border-top: 1px solid rgba(37, 68, 123, 0.3);
+  border-top: 1px solid rgba(var(--color-cobalt-deep-rgb), 0.3);
 }
 
 .workstream[data-workstream="tooling-analytics"],
@@ -309,7 +309,7 @@
 
 .toolTags li {
   padding: 0.24rem 0.45rem;
-  border: 1px solid rgba(37, 68, 123, 0.27);
+  border: 1px solid rgba(var(--color-cobalt-deep-rgb), 0.27);
   border-radius: 2px;
   color: var(--cassette-cobalt-deep);
   font-family: var(--font-label);
@@ -333,8 +333,8 @@
   display: block;
   width: 100%;
   height: auto;
-  border: 1px solid rgba(11, 16, 17, 0.16);
-  background: #fff;
+  border: 1px solid rgba(var(--color-ink-rgb), 0.16);
+  background: var(--color-elevated);
 }
 
 .toolkitFigure figcaption {

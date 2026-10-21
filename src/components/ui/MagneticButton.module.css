@@ -8,7 +8,7 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   /* Print-press ink: ink on paper, bone inside the dark spec-sheet panels. */
-  --press-ink: color-mix(in srgb, var(--color-on-surface, #0B1011) 16%, transparent);
+  --press-ink: color-mix(in srgb, var(--color-on-surface, var(--color-ink)) 16%, transparent);
   /* `translate` composes with the magnetic motion `transform` (a separate
      property), so the press offset never fights the pointer pull. */
   transition:
@@ -21,7 +21,7 @@
 }
 
 .magneticButton:focus-visible {
-  outline: 2px solid var(--color-on-surface, #0B1011);
+  outline: 2px solid var(--color-on-surface, var(--color-ink));
   outline-offset: 3px;
 }
 
@@ -32,16 +32,16 @@
 /* Outline — hairline button; hover is the classic editorial inversion. */
 .outline {
   padding: 1.25rem 4rem;
-  border: 1px solid var(--color-on-surface, #0B1011);
+  border: 1px solid var(--color-on-surface, var(--color-ink));
   border-radius: 2px;
-  color: var(--color-on-surface, #0B1011);
+  color: var(--color-on-surface, var(--color-ink));
   background: transparent;
   box-shadow: 6px 6px 0 var(--press-ink);
 }
 
 .outline:hover {
-  background-color: var(--color-on-surface, #0B1011);
-  color: var(--color-surface, #F0EEE9);
+  background-color: var(--color-on-surface, var(--color-ink));
+  color: var(--color-surface, var(--paper-bone));
   translate: -1px -1px;
   box-shadow: 7px 7px 0 var(--press-ink);
 }
@@ -55,7 +55,7 @@
 .ghost {
   padding: 0.75rem 0.25rem;
   border: none;
-  color: var(--color-on-surface, #0B1011);
+  color: var(--color-on-surface, var(--color-ink));
   background: transparent;
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -64,17 +64,17 @@
 }
 
 .ghost:hover {
-  color: var(--color-lead-deep, #6A2135);
-  text-decoration-color: var(--color-lead-deep, #6A2135);
+  color: var(--color-lead-deep, var(--color-burgundy));
+  text-decoration-color: var(--color-lead-deep, var(--color-burgundy));
 }
 
 /* Solid fill (legacy "glow" class name kept — values are flat matte). */
 .glow {
   padding: 1.25rem 4rem;
-  border: 1px solid var(--color-on-surface, #0B1011);
+  border: 1px solid var(--color-on-surface, var(--color-ink));
   border-radius: 2px;
-  color: var(--color-surface, #F0EEE9);
-  background: var(--color-on-surface, #0B1011);
+  color: var(--color-surface, var(--paper-bone));
+  background: var(--color-on-surface, var(--color-ink));
   box-shadow: 6px 6px 0 var(--press-ink);
 }
 
