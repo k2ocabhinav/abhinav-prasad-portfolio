@@ -12,6 +12,14 @@
   height: 100%;
 }
 
+/* Motion renders the entrance's hidden state in server markup. Keep that
+   state visible until hydration confirms the reveal can run; this also covers
+   disabled JavaScript and a failed client bundle. */
+:global(html:not([data-hydrated="1"])) .gridItem {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 @media (min-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
