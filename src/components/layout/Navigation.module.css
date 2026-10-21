@@ -62,25 +62,77 @@
   color: var(--color-lead-deep);
 }
 
+/* The dot is a fixed 8px box that scales on the compositor. Its colour is not
+   a background-color transition (that repainted the rail on every frame of
+   every fade, including the tone flip over the dark marquee): four solid
+   sheets are stacked inside it and only their opacity changes, so every
+   state change runs on the compositor.
+     ::before          idle, light tone
+     ::after           active or hovered, light tone
+     .railDotDark      dark-tone wrapper, with the same idle/on pair inside */
 .railDot {
+  position: relative;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: rgba(var(--color-ink-rgb), 0.35);
   transform: scale(0.5);
-  transition:
-    transform 0.3s var(--motion-ease-out),
-    background-color 0.3s ease;
+  transition: transform 0.3s var(--motion-ease-out);
+}
+
+.railDot::before,
+.railDot::after,
+.railDotDark,
+.railDotDark::before,
+.railDotDark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transition: opacity 0.3s ease;
+}
+
+.railDot::before {
+  background-color: rgba(var(--color-ink-rgb), 0.35);
+}
+
+.railDot::after {
+  background-color: var(--color-lead);
+  opacity: 0;
+}
+
+.railDotDark {
+  opacity: 0;
+}
+
+.railDotDark::before {
+  background-color: rgba(var(--color-on-surface-dark-rgb), 0.45);
+}
+
+.railDotDark::after {
+  background-color: var(--color-on-lead);
+  opacity: 0;
 }
 
 .railItem:hover .railDot {
-  background-color: var(--color-lead);
   transform: scale(0.75);
+}
+
+.railItem:hover .railDot::before,
+.railItem:hover .railDotDark::before,
+.railDotActive::before,
+.railDotActive .railDotDark::before {
+  opacity: 0;
+}
+
+.railItem:hover .railDot::after,
+.railItem:hover .railDotDark::after,
+.railDotActive::after,
+.railDotActive .railDotDark::after {
+  opacity: 1;
 }
 
 .railDotActive,
 .railItem:hover .railDotActive {
-  background-color: var(--color-lead);
   transform: scale(1);
 }
 
@@ -105,8 +157,11 @@
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 2px;
-  background: var(--color-lead);
   transform: none;
+}
+
+.railDotRoute::before {
+  background-color: var(--color-lead);
 }
 
 .railItem:hover .railDotRoute {
@@ -203,13 +258,23 @@
   color: var(--color-on-lead);
 }
 
-.desktopRail[data-nav-tone="dark"] .railDot {
-  background-color: rgba(var(--color-on-surface-dark-rgb), 0.45);
+/* Only the visible tone's sheets ease. The dark pair sits at opacity 0 over
+   the light tone, so a state change there is applied without a transition
+   (nothing to see, nothing to tick); it is already in its final state when the
+   wrapper fades in. */
+.desktopRail:not([data-nav-tone="dark"]) .railDotDark::before,
+.desktopRail:not([data-nav-tone="dark"]) .railDotDark::after {
+  transition: none;
 }
 
-.desktopRail[data-nav-tone="dark"] .railItem:hover .railDot,
-.desktopRail[data-nav-tone="dark"] .railDotActive {
-  background-color: var(--color-on-lead);
+/* Dark tone swaps the light sheets for the dark wrapper by opacity. */
+.desktopRail[data-nav-tone="dark"] .railDotDark {
+  opacity: 1;
+}
+
+.desktopRail[data-nav-tone="dark"] .railDot::before,
+.desktopRail[data-nav-tone="dark"] .railDot::after {
+  opacity: 0;
 }
 
 .desktopRail[data-nav-tone="dark"] .railItem:focus-visible {

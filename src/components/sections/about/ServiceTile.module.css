@@ -251,3 +251,12 @@
     transition-duration: 0ms;
   }
 }
+
+/* While the page scrolls (html[data-scrolling], see useScrollingFlag) tiles
+   passing under a still pointer take their hover look at once instead of
+   restyling and repainting through a 200 ms ease on every frame. */
+:global(html[data-scrolling]) .tile,
+:global(html[data-scrolling]) .title,
+:global(html[data-scrolling]) .title::after {
+  transition: none;
+}

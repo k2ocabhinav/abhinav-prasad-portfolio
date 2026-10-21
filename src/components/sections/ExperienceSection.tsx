@@ -1,12 +1,12 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useScroll } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { ChronicleEntry, ExperiencePoint, SectionTone } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import { useGatedScrollProgress } from "@/components/ui/useGatedScrollProgress";
 import RisoMark from "@/components/ui/RisoMark";
 import FlipRevealText from "@/components/ui/FlipRevealText";
 import styles from "./ExperienceSection.module.css";
@@ -237,10 +237,11 @@ export default function ExperienceSection({
 }: ExperienceSectionProps) {
   const prefersReducedMotion = useReducedMotion();
   const headerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: prefersReducedMotion ? undefined : headerRef,
-    offset: ["start 0.86", "start 0.50"],
-  });
+  const scrollYProgress = useGatedScrollProgress(
+    headerRef,
+    ["start 0.86", "start 0.50"],
+    !prefersReducedMotion
+  );
 
   if (experiences.length === 0) {
     return null;
