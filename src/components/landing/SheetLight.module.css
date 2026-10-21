@@ -4,10 +4,28 @@
   initial-value: 1;
 }
 
-@property --mark-d {
+@property --sx {
   syntax: "<number>";
   inherits: true;
-  initial-value: 1;
+  initial-value: 0.7;
+}
+
+@property --sy {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.7;
+}
+
+@property --lx {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --ly {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
 }
 
 .hero {
@@ -30,7 +48,6 @@
   --sx: 0.7;
   --sy: 0.7;
   --d: 1;
-  --mark-d: 1;
   --near: 1;
   --lx: 20vw;
   --ly: 20vh;
@@ -108,36 +125,47 @@
   pointer-events: none;
 }
 
-:global(html[data-js]) .sheet {
-  --d: 0;
-  animation: press-close 760ms cubic-bezier(0.2, 0.9, 0.25, 1.2) 140ms both;
-}
-
-:global(html[data-js]) .content :global([data-hero-maker]) {
-  --mark-d: 0;
-  animation: mark-close 600ms cubic-bezier(0.2, 0.9, 0.25, 1.2) 900ms both;
-}
-
-@supports (animation-timing-function: linear(0, 1)) {
+@media (prefers-reduced-motion: no-preference) {
   :global(html[data-js]) .sheet {
-    animation-timing-function: linear(0, 0.54 42%, 1.15 78%, 1 100%);
+    animation-name: press-close, lamp-swing;
+    animation-duration: 900ms, 1400ms;
+    animation-timing-function:
+      cubic-bezier(0.2, 0.9, 0.25, 1.2),
+      cubic-bezier(0.22, 1, 0.36, 1);
+    animation-delay: 200ms, 120ms;
+    animation-iteration-count: 1, 1;
+    animation-fill-mode: backwards, backwards;
   }
 
-  :global(html[data-js]) .content :global([data-hero-maker]) {
-    animation-timing-function: linear(0, 0.54 42%, 1.15 78%, 1 100%);
+  @supports (animation-timing-function: linear(0, 1)) {
+    :global(html[data-js]) .sheet {
+      animation-timing-function:
+        linear(0, 0.8 24%, 1.04 40%, 0.96 72%, 1),
+        cubic-bezier(0.22, 1, 0.36, 1);
+    }
   }
 }
 
 @keyframes press-close {
   0% { --d: 0; }
-  74% { --d: 1.15; }
+  40% { --d: 2.2; }
+  70% { --d: 0.85; }
   100% { --d: 1; }
 }
 
-@keyframes mark-close {
-  0% { --mark-d: 0; }
-  74% { --mark-d: 1.15; }
-  100% { --mark-d: 1; }
+@keyframes lamp-swing {
+  from {
+    --sx: -0.85;
+    --sy: 0.15;
+    --lx: 80vw;
+    --ly: 78vh;
+  }
+  to {
+    --sx: 0.7;
+    --sy: 0.7;
+    --lx: 20vw;
+    --ly: 20vh;
+  }
 }
 
 @media (min-width: 768px) and (hover: hover) and (pointer: fine) {
@@ -176,7 +204,6 @@
     --sx: 0.7;
     --sy: 0.7;
     --d: 1;
-    --mark-d: 1;
     --near: 1;
     --p: 0;
     --exit-tilt: 0deg;
@@ -189,11 +216,6 @@
 
   :global(html[data-js]) .sheet {
     --d: 1;
-    animation: none;
-  }
-
-  :global(html[data-js]) .content :global([data-hero-maker]) {
-    --mark-d: 1;
     animation: none;
   }
 

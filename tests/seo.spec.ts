@@ -90,7 +90,6 @@ test("keeps each home section readable without JavaScript", async ({ browser, ba
   await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(page.locator('[data-hero-print-layer="ink"]')).toHaveText("Abhinav");
   await expect(page.locator('[data-hero-print-layer="bite"]')).toHaveAttribute("aria-hidden", "true");
-  await expect(page.locator('[data-hero-layer="maker"]')).toHaveAttribute("aria-hidden", "true");
 
   const sections = page.locator("main section");
   const sectionCount = await sections.count();

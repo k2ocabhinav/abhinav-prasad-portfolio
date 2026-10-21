@@ -20,7 +20,7 @@ interface CachedPoint {
   x: number;
   y: number;
   radius: number;
-  previousNear: number;
+  near: number;
 }
 
 interface ScrollValues {
@@ -44,6 +44,10 @@ export default function SheetLight({ children }: SheetLightProps) {
   const lightY = useMotionValue(0);
   const springX = useSpring(lightX, { stiffness: 90, damping: 20 });
   const springY = useSpring(lightY, { stiffness: 90, damping: 20 });
+  const shadowX = useMotionValue(0.7);
+  const shadowY = useMotionValue(0.7);
+  const springShadowX = useSpring(shadowX, { stiffness: 90, damping: 20 });
+  const springShadowY = useSpring(shadowY, { stiffness: 90, damping: 20 });
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
@@ -88,17 +92,13 @@ export default function SheetLight({ children }: SheetLightProps) {
     const letterElements = Array.from(
       hero.querySelectorAll<HTMLElement>("[data-hero-letter]")
     );
-    const maker = hero.querySelector<HTMLElement>("[data-hero-maker]");
     const points: CachedPoint[] = letterElements.map((element) => ({
       element,
       x: 0,
       y: 0,
       radius: 1,
-      previousNear: 1,
+      near: 1,
     }));
-    const makerPoint: CachedPoint | null = maker
-      ? { element: maker, x: 0, y: 0, radius: 1, previousNear: 1 }
-      : null;
     const cachedProperties = new Map<string, string>();
     const sheetBounds = { left: 0, top: 0, width: 0, height: 0 };
     const pointer = { x: 0, y: 0, active: false };
@@ -108,7 +108,10 @@ export default function SheetLight({ children }: SheetLightProps) {
     let layoutReady = false;
     let lastPointerMove = performance.now();
     let heroVisible = false;
+    let lightReady = false;
     let frameId = 0;
+    let loadReadyTimeout = 0;
+    let lastFrameTime = 0;
 
     const setSheetProperty = (name: string, value: string) => {
       if (cachedProperties.get(name) === value) {
@@ -130,13 +133,6 @@ export default function SheetLight({ children }: SheetLightProps) {
         point.x = rect.left - bounds.left + rect.width / 2;
         point.y = rect.top - bounds.top + rect.height / 2;
         point.radius = Math.max(1, parseFloat(getComputedStyle(point.element).fontSize) * 0.6);
-      }
-
-      if (makerPoint) {
-        const rect = makerPoint.element.getBoundingClientRect();
-        makerPoint.x = rect.left - bounds.left + rect.width / 2;
-        makerPoint.y = rect.top - bounds.top + rect.height / 2;
-        makerPoint.radius = Math.max(1, Math.min(rect.width, rect.height) * 0.6);
       }
 
       if (
@@ -165,9 +161,6 @@ export default function SheetLight({ children }: SheetLightProps) {
     for (const point of points) {
       resizeObserver.observe(point.element);
     }
-    if (maker) {
-      resizeObserver.observe(maker);
-    }
     cacheLayout();
 
     const onPointerMove = (event: PointerEvent) => {
@@ -186,6 +179,25 @@ export default function SheetLight({ children }: SheetLightProps) {
     window.addEventListener("scroll", onScrollOrResize, { passive: true });
     window.addEventListener("resize", onScrollOrResize, { passive: true });
 
+    const enableLight = () => {
+      if (lightReady) {
+        return;
+      }
+      lightReady = true;
+      window.clearTimeout(loadReadyTimeout);
+      start();
+    };
+    const onAnimationEnd = (event: AnimationEvent) => {
+      if (event.animationName.includes("lamp-swing")) {
+        enableLight();
+      }
+    };
+    sheet.addEventListener("animationend", onAnimationEnd);
+    loadReadyTimeout = window.setTimeout(
+      enableLight,
+      Math.max(0, 1700 - performance.now())
+    );
+
     const writeLight = (time: number) => {
       if (!heroVisible || document.hidden) {
         frameId = 0;
@@ -195,42 +207,11 @@ export default function SheetLight({ children }: SheetLightProps) {
       const width = sheetBounds.width;
       const height = sheetBounds.height;
       if (width > 0 && height > 0) {
-        const isFineDesktop = finePointer && viewportWidth >= 1024;
-        const isIdle = time - lastPointerMove >= 4000;
-        if (!isFineDesktop || isIdle) {
-          const phase = (time / 14000) * Math.PI * 2;
-          const driftX = width * (0.2 + Math.cos(phase) * 0.18);
-          const driftY = height * (0.2 + Math.sin(phase) * 0.18);
-          const phoneAngle =
-            viewportWidth < 768
-              ? scrollValues.current.progress * (25 * Math.PI / 180)
-              : 0;
-          const centerX = width / 2;
-          const centerY = height / 2;
-          const offsetX = driftX - centerX;
-          const offsetY = driftY - centerY;
-          targetX = centerX + offsetX * Math.cos(phoneAngle) - offsetY * Math.sin(phoneAngle);
-          targetY = centerY + offsetX * Math.sin(phoneAngle) + offsetY * Math.cos(phoneAngle);
-        } else if (pointer.active) {
-          targetX = pointer.x - sheetBounds.left;
-          targetY = pointer.y - sheetBounds.top;
-        }
-
-        lightX.set(targetX);
-        lightY.set(targetY);
-        const x = springX.get();
-        const y = springY.get();
-        const directionX = width / 2 - x;
-        const directionY = height / 2 - y;
-        const magnitude = Math.hypot(directionX, directionY) || 1;
-        const sx = clamp((directionX / magnitude) * 0.6 + 0.7 * 0.4, -0.85, 0.85);
-        const sy = clamp((directionY / magnitude) * 0.6 + 0.7 * 0.4, -0.85, 0.85);
+        const frameDuration = lastFrameTime === 0 ? 16.67 : Math.min(time - lastFrameTime, 64);
+        lastFrameTime = time;
+        const nearSmoothing = 1 - Math.exp(-frameDuration / 90);
         const scroll = scrollValues.current;
 
-        setSheetProperty("--sx", format(sx));
-        setSheetProperty("--sy", format(sy));
-        setSheetProperty("--lx", `${format(x)}px`);
-        setSheetProperty("--ly", `${format(y)}px`);
         setSheetProperty("--p", format(scroll.progress));
         setSheetProperty("--exit-tilt", `${format(scroll.tilt)}deg`);
         setSheetProperty("--exit-lift", `${format(scroll.lift)}%`);
@@ -241,25 +222,60 @@ export default function SheetLight({ children }: SheetLightProps) {
           scroll.progress > 0 && scroll.progress < 1 ? "transform" : "auto"
         );
 
-        const updateNear = (point: CachedPoint) => {
-          const distance = Math.hypot(point.x - x, point.y - y);
-          const near = 1 + 0.6 * Math.max(0, 1 - distance / point.radius);
-          if (Math.abs(near - point.previousNear) < 0.004) {
-            return;
+        if (lightReady) {
+          const isFineDesktop = finePointer && viewportWidth >= 1024;
+          const isIdle = time - lastPointerMove >= 4000;
+          if (!isFineDesktop || isIdle) {
+            const phase = (time / 14000) * Math.PI * 2;
+            const driftX = width * (0.2 + Math.cos(phase) * 0.18);
+            const driftY = height * (0.2 + Math.sin(phase) * 0.18);
+            const phoneAngle =
+              viewportWidth < 768
+                ? scroll.progress * (25 * Math.PI / 180)
+                : 0;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const offsetX = driftX - centerX;
+            const offsetY = driftY - centerY;
+            targetX = centerX + offsetX * Math.cos(phoneAngle) - offsetY * Math.sin(phoneAngle);
+            targetY = centerY + offsetX * Math.sin(phoneAngle) + offsetY * Math.cos(phoneAngle);
+          } else if (pointer.active) {
+            targetX = pointer.x - sheetBounds.left;
+            targetY = pointer.y - sheetBounds.top;
           }
-          point.previousNear = near;
-          point.element.style.setProperty("--near", format(near));
-        };
 
-        for (const point of points) {
-          updateNear(point);
-        }
-        if (makerPoint) {
-          const distance = Math.hypot(makerPoint.x - x, makerPoint.y - y);
-          const near = 1 + 0.8 * Math.max(0, 1 - distance / makerPoint.radius);
-          if (Math.abs(near - makerPoint.previousNear) >= 0.004) {
-            makerPoint.previousNear = near;
-            makerPoint.element.style.setProperty("--near", format(near));
+          lightX.set(targetX);
+          lightY.set(targetY);
+          const lightPositionX = springX.get();
+          const lightPositionY = springY.get();
+          const directionX = width / 2 - lightPositionX;
+          const directionY = height / 2 - lightPositionY;
+          const magnitude = Math.hypot(directionX, directionY) || 1;
+          const sx = clamp((directionX / magnitude) * 0.6 + 0.7 * 0.4, -0.85, 0.85);
+          const sy = clamp((directionY / magnitude) * 0.6 + 0.7 * 0.4, -0.85, 0.85);
+          shadowX.set(sx);
+          shadowY.set(sy);
+          const smoothedShadowX = springShadowX.get();
+          const smoothedShadowY = springShadowY.get();
+
+          setSheetProperty("--sx", format(smoothedShadowX));
+          setSheetProperty("--sy", format(smoothedShadowY));
+          setSheetProperty("--lx", `${format(lightPositionX)}px`);
+          setSheetProperty("--ly", `${format(lightPositionY)}px`);
+
+          const updateNear = (point: CachedPoint) => {
+            const distance = Math.hypot(point.x - lightPositionX, point.y - lightPositionY);
+            const targetNear = 1 + 0.6 * Math.max(0, 1 - distance / point.radius);
+            const near = point.near + (targetNear - point.near) * nearSmoothing;
+            if (Math.abs(near - point.near) < 0.004) {
+              return;
+            }
+            point.near = near;
+            point.element.style.setProperty("--near", format(near));
+          };
+
+          for (const point of points) {
+            updateNear(point);
           }
         }
       }
@@ -277,8 +293,11 @@ export default function SheetLight({ children }: SheetLightProps) {
         cancelAnimationFrame(frameId);
         frameId = 0;
       }
+      lastFrameTime = 0;
       springX.stop();
       springY.stop();
+      springShadowX.stop();
+      springShadowY.stop();
     };
 
     const intersectionObserver = new IntersectionObserver(([entry]) => {
@@ -305,11 +324,23 @@ export default function SheetLight({ children }: SheetLightProps) {
       intersectionObserver.disconnect();
       resizeObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      sheet.removeEventListener("animationend", onAnimationEnd);
+      window.clearTimeout(loadReadyTimeout);
       window.removeEventListener("scroll", onScrollOrResize);
       window.removeEventListener("resize", onScrollOrResize);
       window.removeEventListener("pointermove", onPointerMove);
     };
-  }, [lightX, lightY, reducedMotion, springX, springY]);
+  }, [
+    lightX,
+    lightY,
+    reducedMotion,
+    shadowX,
+    shadowY,
+    springShadowX,
+    springShadowY,
+    springX,
+    springY,
+  ]);
 
   return (
     <>

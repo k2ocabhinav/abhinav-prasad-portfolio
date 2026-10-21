@@ -401,10 +401,6 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await expect(page.locator("[data-hero]")).toHaveCount(1);
   await expect(page.locator("[data-hero-text]")).toHaveCount(1);
   await expect(page.locator("[data-hero-wordmark]")).toHaveCount(1);
-  await expect(page.locator('[data-hero-layer="maker"]')).toHaveAttribute(
-    "aria-hidden",
-    "true"
-  );
   await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(page.getByText("I build products end to end, from the first conversation to release.", { exact: true })).toBeVisible();
   const atWork = page.locator('[data-hero-facts="true"] a').nth(0);

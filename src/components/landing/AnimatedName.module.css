@@ -50,7 +50,7 @@
 .liftLayer {
   z-index: 1;
   color: #FFFDF8;
-  opacity: 0.95;
+  opacity: 0.55;
 }
 
 .inkLayer {
@@ -75,8 +75,8 @@
 
 .liftLetter {
   transform: translate(
-    calc(var(--sx) * var(--d) * var(--exit-depth) * var(--near) * -0.006em),
-    calc(var(--sy) * var(--d) * var(--exit-depth) * var(--near) * -0.006em)
+    calc(var(--sx) * var(--d) * var(--exit-depth) * var(--near) * -0.004em),
+    calc(var(--sy) * var(--d) * var(--exit-depth) * var(--near) * -0.004em)
   );
 }
 
@@ -84,13 +84,15 @@
   position: absolute;
   z-index: 3;
   inset: 0 auto auto 0;
+  display: none;
   color: transparent;
   background-image: none;
-  background-position: 300% 0;
+  background-position: 100% 0;
   background-repeat: no-repeat;
-  background-size: 50% 100%;
+  background-size: 140% 100%;
   background-clip: text;
   -webkit-background-clip: text;
+  opacity: 1;
   font: inherit;
   font-variation-settings: inherit;
   line-height: inherit;
@@ -122,21 +124,32 @@
   outline-offset: 3px;
 }
 
-:global(html[data-js]) .glint {
-  animation: ink-glint 600ms ease-out 760ms both;
+@media (prefers-reduced-motion: no-preference) {
+  :global(html[data-js]) .glint {
+    display: block;
+    background-image: linear-gradient(
+      105deg,
+      transparent 45%,
+      rgba(255, 253, 248, 0.55) 50%,
+      transparent 55%
+    );
+    opacity: 0;
+    animation: ink-glint 700ms ease-out 950ms backwards;
+  }
 }
 
 @keyframes ink-glint {
-  from {
-    background-image: linear-gradient(
-      105deg,
-      transparent 40%,
-      rgba(255, 253, 248, 0.55) 50%,
-      transparent 60%
-    );
-    background-position: 300% 0;
+  0% {
+    background-position: 100% 0;
+    opacity: 0;
   }
-  to { background-position: -100% 0; }
+  24% { opacity: 0; }
+  50% { opacity: 0.8; }
+  76% { opacity: 0.8; }
+  100% {
+    background-position: -100% 0;
+    opacity: 0;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {

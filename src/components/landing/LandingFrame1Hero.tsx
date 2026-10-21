@@ -1,6 +1,5 @@
 import HeroTextColumn from "./HeroTextColumn";
 import AnimatedName from "./AnimatedName";
-import MakersMark from "./MakersMark";
 import type { LandingHeroContent } from "@/types";
 
 interface LandingFrame1HeroProps {
@@ -23,7 +22,6 @@ export default function LandingFrame1Hero({
         fullName={fullName}
         linkedinHref={linkedinHref}
       />
-      <MakersMark />
       <AnimatedName
         name={name}
         portalTrigger={{

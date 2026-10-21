@@ -127,7 +127,6 @@ test.describe("hero harness", () => {
     await expect(ink).toHaveAttribute("aria-hidden", "true");
     await expect(ink).toHaveText("Abhinav");
     await expect(ink).toHaveCSS("transform", "none");
-    await expect(page.locator(LAYER)).toHaveAttribute("aria-hidden", "true");
   });
 
   test("decorative layers never overlap the hero text, wordmark, or rail", async ({
