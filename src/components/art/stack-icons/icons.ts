@@ -57,6 +57,33 @@ export const STACK_ICONS: Record<StackIconName, StackGlyph> = {
     "m8.5 14.5 2.5 2.5 4.5-5",
   ),
   context: outline("M3 5h12M3 10h8M3 15h6", "m14 11.5 7 3-3.2 1.3-1.3 3.2Z"),
+  mcp: outline("M8 3v5M16 3v5M7.5 8h9v4a4.5 4.5 0 0 1-9 0Z", "M12 16.5v1.5a3 3 0 0 0 3 3h1"),
+  rag: outline(
+    "M4.5 2.5h9l4 4v5",
+    "M13.5 2.5v4h4",
+    "M7.5 10h7M7.5 13h4",
+    "M14.5 16a3.5 3.5 0 1 0 7 0 3.5 3.5 0 1 0-7 0",
+    "m17.2 18.7 3.3 3.3",
+  ),
+  evals: outline(
+    "M8 4H5v17h14V4h-3",
+    "M9 3h6v3H9Z",
+    "m8 14 2.5 2.5 5-5",
+  ),
+  "llm-apis": outline(
+    "M8 4 5 6v4l-2 2 2 2v4l3 2",
+    "m16 4 3 2v4l2 2-2 2v4l-3 2",
+    "M12 5v5M9.5 7.5h5",
+    "m12 15 .9 2.1 2.1.9-2.1.9L12 21l-.9-2.1L9 18l2.1-.9Z",
+  ),
+  "agent-frameworks": outline(
+    "M12 6.5 5.2 17M12 6.5 18.8 17M5.2 17h13.6M12 9v9",
+    "M9.5 4.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0",
+    "M2.5 19.5a2 2 0 1 0 4 0 2 2 0 1 0-4 0",
+    "M9.5 19.5a2 2 0 1 0 4 0 2 2 0 1 0-4 0",
+    "M17.5 19.5a2 2 0 1 0 4 0 2 2 0 1 0-4 0",
+  ),
+  guardrails: outline("M12 2.5 20 5.5v6.1c0 5-3.3 8-8 10-4.7-2-8-5-8-10V5.5Z"),
   java: outline(
     "M5 11h11v4.5a4.5 4.5 0 0 1-4.5 4.5h-2A4.5 4.5 0 0 1 5 15.5Z",
     "M16 12.2h1.5a2.5 2.5 0 0 1 0 5H15.6",
@@ -95,6 +122,16 @@ export const STACK_ICONS: Record<StackIconName, StackGlyph> = {
     "m7 22-4-4 4-4",
     "M21 13v1a4 4 0 0 1-4 4H3",
     "M9.5 10.5h5M9.5 13.5h5",
+  ),
+  kafka: outline(
+    "M3 6h17m-4-4 4 4-4 4",
+    "M21 12H4m4-4-4 4 4 4",
+    "M3 18h17m-4-4 4 4-4 4",
+  ),
+  microservices: outline(
+    "M3 3h5v5H3ZM10 3h5v5h-5ZM17 3h5v5h-5Z",
+    "M3 10h5v5H3ZM10 10h5v5h-5ZM17 10h5v5h-5Z",
+    "M3 17h5v5H3ZM10 17h5v5h-5ZM17 17h5v5h-5Z",
   ),
   typescript: {
     parts: [
@@ -158,6 +195,17 @@ export const STACK_ICONS: Record<StackIconName, StackGlyph> = {
     ],
   },
   steps: outline("M3 20.5h5.5V15H14V9.5h5.5V4", "m16.8 6.6 2.7-2.7 2.7 2.7"),
+  kubernetes: outline(
+    "M12 3v5m0 8v5M3 12h5m8 0h5M5.6 5.6l3.5 3.5m5.8 5.8 3.5 3.5m0-12.8-3.5 3.5m-5.8 5.8-3.5 3.5",
+    "M12 8a4 4 0 1 0 0 8 4 4 0 1 0 0-8Z",
+    "M12 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 1 0 0-3ZM12 19a1.5 1.5 0 1 0 0 3 1.5 1.5 0 1 0 0-3ZM2 10.5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0ZM19 10.5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0Z",
+  ),
+  terraform: outline(
+    "M3 4 10 7.5v7L3 11Z",
+    "M11 8 18 4.5v7L11 15Z",
+    "M11 16 18 12.5v7L11 23Z",
+  ),
+  observability: outline("M2 12h4l2.2-5 4.1 10 2.4-5H22"),
   python: {
     parts: [
       {
