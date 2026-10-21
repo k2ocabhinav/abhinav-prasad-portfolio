@@ -3,32 +3,16 @@
 import * as m from "motion/react-m";
 import { AnimatePresence, useReducedMotion } from "motion/react";
 import { FileText, Mail, Menu, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
 import PortalEntryTrigger from "@/components/beyond-terminal/PortalEntryTrigger";
 import LinkedInMark from "@/components/ui/LinkedInMark";
 import { navigationItems } from "@/data/navigation";
 import { panelSpring } from "@/lib/animations";
-import { scrollToSection, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useSectionState } from "@/lib/sectionStore";
+import { useHamburgerVisibility } from "./navigation/useHamburgerVisibility";
+import { useMarqueeRailTracking } from "./navigation/useMarqueeRailTracking";
+import { useMobileNavigationDialog } from "./navigation/useMobileNavigationDialog";
 import styles from "./Navigation.module.css";
-
-const DESKTOP_RAIL_QUERY =
-  "(min-width: 768px) and (hover: hover) and (pointer: fine)";
-const MENU_FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
-// Follow the jump with focus so keyboard and screen-reader users land inside
-// the section they chose. `preventScroll` keeps the smooth scroll single.
-function focusSectionHeading(id: string): void {
-  const section = document.getElementById(id);
-  if (!section) {
-    return;
-  }
-
-  const target = section.querySelector<HTMLElement>("h1, h2, h3") ?? section;
-  target.setAttribute("tabindex", "-1");
-  target.focus({ preventScroll: true });
-}
 
 interface NavigationProps {
   /** Resume PDF path, offered on the first screen from the rail and menu. */
@@ -53,256 +37,18 @@ export default function Navigation({
     navMode,
   } = useSectionState();
   const prefersReducedMotion = useReducedMotion();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isHamburgerHidden, setIsHamburgerHidden] = useState(false);
-  const [isMarqueeUnderRail, setIsMarqueeUnderRail] = useState(false);
-  const hamburgerRef = useRef<HTMLButtonElement>(null);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const restoreBodyScrollRef = useRef<(() => void) | null>(null);
-  const shouldRestoreFocusRef = useRef(false);
-  const pendingSectionFocusRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    const marquee = document.querySelector<HTMLElement>('[data-marquee="true"]');
-    if (!marquee) {
-      return;
-    }
-
-    let observer: IntersectionObserver | undefined;
-    const observeCenterBand = () => {
-      observer?.disconnect();
-      const inset = Math.round(window.innerHeight * 0.45);
-      observer = new IntersectionObserver(
-        (entries) => setIsMarqueeUnderRail(Boolean(entries[0]?.isIntersecting)),
-        { rootMargin: `-${inset}px 0px -${inset}px 0px`, threshold: 0 }
-      );
-      observer.observe(marquee);
-    };
-
-    observeCenterBand();
-    window.addEventListener("resize", observeCenterBand, { passive: true });
-    return () => {
-      observer?.disconnect();
-      window.removeEventListener("resize", observeCenterBand);
-    };
-  }, []);
-
-  const closeMobileMenu = useCallback(() => {
-    shouldRestoreFocusRef.current = true;
-    restoreBodyScrollRef.current?.();
-    restoreBodyScrollRef.current = null;
-    setIsMobileMenuOpen(false);
-  }, []);
-
-  const handleNavClick = useCallback((id: string) => {
-    const wasMenuOpen = isMobileMenuOpen;
-    closeMobileMenu();
-    scrollToSection(id);
-
-    if (wasMenuOpen) {
-      // The menu's exit restores focus to its trigger by default. A chosen
-      // section should own focus instead, once the close commit has cleared
-      // the inert page.
-      shouldRestoreFocusRef.current = false;
-      pendingSectionFocusRef.current = id;
-    } else {
-      window.requestAnimationFrame(() => focusSectionHeading(id));
-    }
-  }, [closeMobileMenu, isMobileMenuOpen]);
-
-  useEffect(() => {
-    if (!isMobileMenuOpen) {
-      return;
-    }
-
-    const body = document.body;
-    const siteContent = document.getElementById("site-content");
-    const siteContentWasInert = siteContent?.inert ?? false;
-    const scrollY = window.scrollY;
-    const originalBodyStyles = {
-      overflow: body.style.overflow,
-      position: body.style.position,
-      top: body.style.top,
-      width: body.style.width,
-      paddingRight: body.style.paddingRight,
-    };
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    let hasRestoredBody = false;
-
-    const restoreBodyScroll = () => {
-      if (hasRestoredBody) {
-        return;
-      }
-
-      hasRestoredBody = true;
-      body.style.overflow = originalBodyStyles.overflow;
-      body.style.position = originalBodyStyles.position;
-      body.style.top = originalBodyStyles.top;
-      body.style.width = originalBodyStyles.width;
-      body.style.paddingRight = originalBodyStyles.paddingRight;
-      window.scrollTo(0, scrollY);
-    };
-
-    restoreBodyScrollRef.current = restoreBodyScroll;
-    body.style.overflow = "hidden";
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.width = "100%";
-    if (siteContent) {
-      siteContent.inert = true;
-    }
-    if (scrollbarWidth > 0) {
-      body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-
-    const getFocusableElements = () => {
-      return mobileMenuRef.current
-        ? Array.from(
-            mobileMenuRef.current.querySelectorAll<HTMLElement>(
-              MENU_FOCUSABLE_SELECTOR
-            )
-          )
-        : [];
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeMobileMenu();
-        return;
-      }
-
-      if (event.key !== "Tab") {
-        return;
-      }
-
-      const focusableElements = getFocusableElements();
-      if (focusableElements.length === 0) {
-        event.preventDefault();
-        return;
-      }
-
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
-      const activeElement = document.activeElement;
-
-      if (
-        event.shiftKey &&
-        (activeElement === firstElement ||
-          !focusableElements.includes(activeElement as HTMLElement))
-      ) {
-        event.preventDefault();
-        lastElement.focus();
-      } else if (!event.shiftKey && activeElement === lastElement) {
-        event.preventDefault();
-        firstElement.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    const focusFrame = window.requestAnimationFrame(() => {
-      const firstMenuControl = mobileMenuRef.current?.querySelector<HTMLElement>(
-        MENU_FOCUSABLE_SELECTOR
-      );
-      firstMenuControl?.focus({ preventScroll: true });
-    });
-
-    return () => {
-      window.cancelAnimationFrame(focusFrame);
-      document.removeEventListener("keydown", handleKeyDown);
-      restoreBodyScroll();
-      if (siteContent) {
-        siteContent.inert = siteContentWasInert;
-      }
-      if (restoreBodyScrollRef.current === restoreBodyScroll) {
-        restoreBodyScrollRef.current = null;
-      }
-    };
-  }, [closeMobileMenu, isMobileMenuOpen]);
-
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      return;
-    }
-
-    const sectionId = pendingSectionFocusRef.current;
-    if (!sectionId) {
-      return;
-    }
-
-    pendingSectionFocusRef.current = null;
-    const frame = window.requestAnimationFrame(() =>
-      focusSectionHeading(sectionId)
-    );
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [isMobileMenuOpen]);
-
-  useEffect(() => {
-    const desktopRailMedia = window.matchMedia(DESKTOP_RAIL_QUERY);
-    const handleDesktopRailChange = (event: MediaQueryListEvent) => {
-      if (event.matches) {
-        closeMobileMenu();
-      }
-    };
-
-    desktopRailMedia.addEventListener("change", handleDesktopRailChange);
-    return () => {
-      desktopRailMedia.removeEventListener("change", handleDesktopRailChange);
-    };
-  }, [closeMobileMenu]);
-
-  // Keep the phone trigger out of the reading column while the visitor is
-  // moving down the page. It returns on an upward gesture, at both ends of the
-  // page, on keyboard focus, and it never hides while the menu is open.
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      return;
-    }
-
-    let frame = 0;
-    let lastY = window.scrollY;
-    let maxScroll = 0;
-
-    // Cache the scroll range; only resize and content-height changes refresh
-    // it. The scroll handler then does no layout reads.
-    const measure = () => {
-      maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    };
-    measure();
-    const resizeObserver = new ResizeObserver(measure);
-    resizeObserver.observe(document.body);
-    window.addEventListener("resize", measure, { passive: true });
-
-    const update = () => {
-      frame = 0;
-      const y = window.scrollY;
-      const delta = y - lastY;
-      if (Math.abs(delta) < 4) {
-        return;
-      }
-      lastY = y;
-
-      const atEdge = y <= 96 || maxScroll - y <= 96;
-      setIsHamburgerHidden(!atEdge && delta > 0);
-    };
-
-    const handleScroll = () => {
-      if (frame === 0) {
-        frame = window.requestAnimationFrame(update);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", measure);
-      resizeObserver.disconnect();
-      if (frame !== 0) {
-        window.cancelAnimationFrame(frame);
-      }
-    };
-  }, [isMobileMenuOpen]);
+  const isMarqueeUnderRail = useMarqueeRailTracking();
+  const {
+    closeMobileMenu,
+    handleExitComplete,
+    handleNavClick,
+    hamburgerRef,
+    isMobileMenuOpen,
+    mobileMenuRef,
+    openMobileMenu,
+  } = useMobileNavigationDialog();
+  const { isHamburgerHidden, revealHamburger } =
+    useHamburgerVisibility(isMobileMenuOpen);
 
   return (
     <>
@@ -431,15 +177,8 @@ export default function Navigation({
         <button
           ref={hamburgerRef}
           type="button"
-          onClick={() => {
-            if (isMobileMenuOpen) {
-              closeMobileMenu();
-            } else {
-              shouldRestoreFocusRef.current = false;
-              setIsMobileMenuOpen(true);
-            }
-          }}
-          onFocus={() => setIsHamburgerHidden(false)}
+          onClick={() => (isMobileMenuOpen ? closeMobileMenu() : openMobileMenu())}
+          onFocus={revealHamburger}
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-navigation-panel"
@@ -458,15 +197,7 @@ export default function Navigation({
         </button>
       </div>
 
-      <AnimatePresence
-        onExitComplete={() => {
-          if (!shouldRestoreFocusRef.current) {
-            return;
-          }
-          shouldRestoreFocusRef.current = false;
-          hamburgerRef.current?.focus();
-        }}
-      >
+      <AnimatePresence onExitComplete={handleExitComplete}>
         {isMobileMenuOpen && (
           <>
             <m.button

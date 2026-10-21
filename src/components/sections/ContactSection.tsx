@@ -30,17 +30,6 @@ interface ContactSectionProps {
   presenceNodes: PresenceNode[];
 }
 
-// Keep the address unbroken while it fits, but give the browser break points
-// only after "@" and "." so it can never split a word.
-function renderBreakableEmail(email: string): React.ReactNode {
-  return Array.from(email).flatMap((character, index) => {
-    const node: React.ReactNode = character;
-    return character === "@" || character === "."
-      ? [node, <wbr key={`break-${index}`} />]
-      : [node];
-  });
-}
-
 export default function ContactSection({
   personal,
   presenceNodes,
@@ -117,7 +106,7 @@ export default function ContactSection({
                         data-contact-email="true"
                         aria-label={personal.email}
                       >
-                        {renderBreakableEmail(personal.email)}
+                        {personal.email}
                       </a>
                     </div>
                   </div>

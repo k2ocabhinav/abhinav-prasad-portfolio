@@ -8,18 +8,18 @@
   overflow: visible;
   background: transparent;
 
-  --color-surface: #F0EEE9;
+  --color-surface: var(--paper-bone);
   --color-surface-rgb: 240, 238, 233;
-  --color-on-surface: #0B1011;
+  --color-on-surface: var(--color-ink);
   --color-on-surface-rgb: 11, 16, 17;
-  --color-secondary-text: #63605A;
+  --color-secondary-text: var(--color-gold);
   --color-primary-brand: var(--color-lead);
   --color-primary-brand-rgb: var(--color-lead-rgb);
   --color-sage: var(--color-lead-deep);
   --color-sage-rgb: var(--color-lead-deep-rgb);
-  --color-accent-brown: #0B1011;
-  --landing-glass-bg: #E9E5DC;
-  --landing-glass-border: rgba(11, 16, 17, 0.14);
+  --color-accent-brown: var(--color-ink);
+  --landing-glass-bg: var(--color-graphite);
+  --landing-glass-border: rgba(var(--color-ink-rgb), 0.14);
   --landing-glass-border-active: rgba(var(--color-lead-deep-rgb), 0.55);
   --landing-glass-shadow: none;
 }

@@ -37,22 +37,22 @@
 .tonePastelPeach,
 .tonePastelMint,
 .tonePastelCream {
-  --tone-text: #0B1011;
-  --tone-muted: #63605A;
-  --tone-heading: #0B1011;
+  --tone-text: var(--color-ink);
+  --tone-muted: var(--color-gold);
+  --tone-heading: var(--color-ink);
   --tone-accent: var(--color-lead);
   --tone-accent-rgb: var(--color-lead-rgb);
   --tone-accent-deep: var(--color-lead-deep);
   --tone-grid-rgb: 11, 16, 17;
-  --tone-wash-strong: rgba(11, 16, 17, 0.02);
+  --tone-wash-strong: rgba(var(--color-ink-rgb), 0.02);
   --tone-wash-soft: transparent;
   --section-panel-bg: var(--color-graphite);
   --section-panel-bg-strong: var(--color-elevated);
-  --section-panel-border: rgba(11, 16, 17, 0.14);
+  --section-panel-border: rgba(var(--color-ink-rgb), 0.14);
   --section-panel-shadow: var(--print-offset-sm);
-  --section-chip-bg: rgba(11, 16, 17, 0.04);
-  --section-chip-border: rgba(11, 16, 17, 0.16);
-  --color-surface: #F0EEE9;
+  --section-chip-bg: rgba(var(--color-ink-rgb), 0.04);
+  --section-chip-border: rgba(var(--color-ink-rgb), 0.16);
+  --color-surface: var(--paper-bone);
   --color-surface-rgb: 240, 238, 233;
   --color-on-surface: var(--tone-text);
   --color-on-surface-rgb: 11, 16, 17;
@@ -61,7 +61,7 @@
   --color-primary-brand-rgb: var(--tone-accent-rgb);
   --color-sage: var(--color-lead-deep);
   --color-sage-rgb: var(--color-lead-deep-rgb);
-  --color-accent-brown: #0B1011;
+  --color-accent-brown: var(--color-ink);
 }
 
 /* ─── Palette v2 per-section accent identity ─────────────────────────

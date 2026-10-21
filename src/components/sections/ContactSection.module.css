@@ -1,13 +1,13 @@
 .contactSection {
   /* SectionWrapper paints from --section-bg, so no background override (and no
      doubled selector) is needed here. */
-  --section-bg: var(--paper-glacier, #D7EFFF);
-  color: var(--color-black-cherry, #351E28);
+  --section-bg: var(--paper-glacier, var(--color-glacier));
+  color: var(--color-black-cherry, var(--color-black-cherry));
   --section-padding-y: clamp(3rem, 5vw, 4.5rem);
-  --plate-ink: var(--color-black-cherry, #351E28);
-  --plate-accent: var(--color-petrol, #1A5D74);
-  --plate-second: var(--color-cornflower, #94B6EF);
-  --plate-paper: var(--paper-linen, #FCF8F2);
+  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
+  --plate-accent: var(--color-petrol, var(--color-petrol));
+  --plate-second: var(--color-cornflower, var(--color-cornflower));
+  --plate-paper: var(--paper-linen, var(--paper-linen));
 }
 
 .contactScene {
@@ -49,24 +49,24 @@
   position: absolute;
   width: 0.68rem;
   aspect-ratio: 1;
-  border: 2px solid var(--paper-glacier, #D7EFFF);
+  border: 2px solid var(--paper-glacier, var(--color-glacier));
   border-radius: 50%;
   transform: translate(-50%, -50%);
 }
 
 .mapNodeActive {
-  background: var(--color-petrol, #1A5D74);
-  outline: 1px solid var(--color-black-cherry, #351E28);
+  background: var(--color-petrol, var(--color-petrol));
+  outline: 1px solid var(--color-black-cherry, var(--color-black-cherry));
 }
 
 .mapNodeInactive {
-  background: var(--paper-linen, #FCF8F2);
-  outline: 1px solid var(--color-petrol, #1A5D74);
+  background: var(--paper-linen, var(--paper-linen));
+  outline: 1px solid var(--color-petrol, var(--color-petrol));
 }
 
 .location {
   margin: 1rem 0 0;
-  color: var(--color-black-cherry, #351E28);
+  color: var(--color-black-cherry, var(--color-black-cherry));
   font-family: var(--font-display);
   font-size: clamp(1.35rem, 2.5vw, 1.8rem);
   font-weight: 570;
@@ -76,7 +76,7 @@
 .presenceDescription {
   max-width: 48ch;
   margin: 0.45rem 0 0;
-  color: var(--color-black-cherry, #351E28);
+  color: var(--color-black-cherry, var(--color-black-cherry));
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -84,20 +84,20 @@
 .contactScene .contactSpecSheet {
   max-width: 42rem;
   margin: 0;
-  background-color: var(--color-panel, #351E28);
-  color: var(--color-on-panel, #EDE6DA);
-  box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
-  --color-surface: var(--color-panel, #351E28);
+  background-color: var(--color-panel, var(--color-black-cherry));
+  color: var(--color-on-panel, var(--color-on-panel));
+  box-shadow: var(--print-offset-md, 6px 6px 0 rgba(var(--color-black-cherry-rgb), 0.16));
+  --color-surface: var(--color-panel, var(--color-black-cherry));
   --color-surface-rgb: var(--color-black-cherry-rgb, 53, 30, 40);
-  --color-on-surface: var(--color-on-panel, #EDE6DA);
+  --color-on-surface: var(--color-on-panel, var(--color-on-panel));
   --color-on-surface-rgb: 237, 230, 218;
   --color-secondary-text: #D6CCBF;
-  --color-primary-brand: var(--color-panel-accent, #F4BEBB);
+  --color-primary-brand: var(--color-panel-accent, var(--color-pink));
   --color-primary-brand-rgb: 244, 190, 187;
-  --color-sage: var(--color-panel-accent, #F4BEBB);
+  --color-sage: var(--color-panel-accent, var(--color-pink));
   --color-sage-rgb: 244, 190, 187;
-  --color-hairline: rgba(237, 230, 218, 0.2);
-  --color-accent-brown: var(--color-on-panel, #EDE6DA);
+  --color-hairline: rgba(var(--color-on-surface-dark-rgb), 0.2);
+  --color-accent-brown: var(--color-on-panel, var(--color-on-panel));
 }
 
 .contactMotionRoot {
@@ -107,7 +107,7 @@
 
 .heading {
   margin: 0;
-  color: var(--color-on-panel, #EDE6DA);
+  color: var(--color-on-panel, var(--color-on-panel));
   font-family: var(--font-display);
   font-size: clamp(2.75rem, 6vw, 4.8rem);
   font-weight: 550;
@@ -117,7 +117,7 @@
 
 .callout {
   margin: 0.55rem 0 1.3rem;
-  color: var(--color-panel-accent, #F4BEBB);
+  color: var(--color-panel-accent, var(--color-pink));
   font-family: var(--font-label);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
@@ -157,7 +157,7 @@
   max-width: 100%;
   min-height: 44px;
   align-items: center;
-  color: var(--color-panel-accent, #F4BEBB);
+  color: var(--color-panel-accent, var(--color-pink));
   font-family: var(--font-display);
   font-size: clamp(1rem, 2vw, 1.35rem);
   font-weight: 550;
@@ -173,7 +173,7 @@
 }
 
 .emailLink:focus-visible {
-  outline: 2px solid var(--color-on-panel, #EDE6DA);
+  outline: 2px solid var(--color-on-panel, var(--color-on-panel));
   outline-offset: 3px;
 }
 
@@ -205,7 +205,7 @@
 
 .footerTagline {
   margin-top: 1.7rem;
-  color: var(--color-on-panel, #EDE6DA);
+  color: var(--color-on-panel, var(--color-on-panel));
   opacity: 0.78;
 }
 
@@ -230,7 +230,7 @@
   position: absolute;
   width: 1rem;
   aspect-ratio: 1;
-  border: 0 solid var(--color-petrol-deep, #174F61);
+  border: 0 solid var(--color-petrol-deep, var(--color-petrol-deep));
   opacity: 0.6;
 }
 
@@ -268,6 +268,12 @@
 @media (min-width: 1024px) and (max-width: 1199px) {
   .contactMotionRoot {
     padding: clamp(1.4rem, 2.4vw, 2rem);
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1100px) {
+  .emailLink {
+    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
   }
 }
 

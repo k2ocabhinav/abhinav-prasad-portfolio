@@ -6,10 +6,10 @@
   padding: 3rem 1.5rem;
   text-align: center;
   border-top: 1px solid var(--color-hairline);
-  --plate-ink: var(--color-black-cherry, #351E28);
-  --plate-accent: var(--color-lead, #6A2135);
-  --plate-second: var(--color-cornflower, #94B6EF);
-  --plate-paper: var(--paper-linen, #FCF8F2);
+  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
+  --plate-accent: var(--color-lead, var(--color-burgundy));
+  --plate-second: var(--color-cornflower, var(--color-cornflower));
+  --plate-paper: var(--paper-linen, var(--paper-linen));
 }
 
 .copyright {
@@ -27,7 +27,7 @@
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #63605A;
+  color: var(--color-gold);
 }
 
 .colophonRow {

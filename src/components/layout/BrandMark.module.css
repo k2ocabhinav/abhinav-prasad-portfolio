@@ -7,8 +7,8 @@
   align-items: center;
   gap: 0.62rem;
   padding: 0.4rem 0.72rem 0.4rem 0.4rem;
-  color: #0B1011;
-  background: rgba(240, 238, 233, 0.92);
+  color: var(--color-ink);
+  background: rgba(var(--paper-bone-rgb), 0.92);
   border: 1px solid var(--color-hairline);
   border-radius: 2px;
 }
@@ -20,7 +20,7 @@
   height: 2rem;
   border: 1px solid var(--color-hairline);
   border-radius: 1px;
-  background: #F0EEE9;
+  background: var(--paper-bone);
   color: var(--color-lead);
   font-family: var(--font-wordmark);
   font-size: 1.5rem;
@@ -34,12 +34,12 @@
   font-weight: 400;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #0B1011;
+  color: var(--color-ink);
 }
 
 /* Phones carry the menu button only: a floating brand chip here would sit on
    top of body copy. The hero wordmark does the branding on the first screen. */
-@media (max-width: 767px) {
+@media (max-width: 1099px) {
   .brandMark {
     display: none;
   }

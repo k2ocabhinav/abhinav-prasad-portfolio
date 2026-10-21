@@ -1,18 +1,18 @@
 .pageShell {
   min-height: 100vh;
-  background: var(--paper-bone, #F0EEE9);
-  color: var(--color-black-cherry, #351E28);
-  --detail-ink: var(--color-black-cherry, #351E28);
-  --detail-on-panel: var(--color-on-panel, #EDE6DA);
+  background: var(--paper-bone, var(--paper-bone));
+  color: var(--color-black-cherry, var(--color-black-cherry));
+  --detail-ink: var(--color-black-cherry, var(--color-black-cherry));
+  --detail-on-panel: var(--color-on-panel, var(--color-on-panel));
   --detail-muted: #595650;
-  --detail-hairline: rgba(11, 16, 17, 0.16);
-  --detail-panel: var(--color-black-cherry, #351E28);
-  --detail-burgundy: var(--color-burgundy, #6A2135);
-  --detail-panel-accent: var(--color-panel-accent, #F4BEBB);
-  --plate-ink: var(--color-black-cherry, #351E28);
-  --plate-accent: var(--color-burgundy, #6A2135);
-  --plate-second: var(--color-cornflower, #94B6EF);
-  --plate-paper: var(--paper-linen, #FCF8F2);
+  --detail-hairline: rgba(var(--color-ink-rgb), 0.16);
+  --detail-panel: var(--color-black-cherry, var(--color-black-cherry));
+  --detail-burgundy: var(--color-burgundy, var(--color-burgundy));
+  --detail-panel-accent: var(--color-panel-accent, var(--color-pink));
+  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
+  --plate-accent: var(--color-burgundy, var(--color-burgundy));
+  --plate-second: var(--color-cornflower, var(--color-cornflower));
+  --plate-paper: var(--paper-linen, var(--paper-linen));
 }
 
 .skipLink {
@@ -23,7 +23,7 @@
   transform: translateY(-180%);
   border: 1px solid var(--detail-burgundy);
   padding: 0.75rem 1rem;
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
   color: var(--detail-burgundy);
   font-family: var(--font-body);
   font-size: 0.95rem;
@@ -40,7 +40,7 @@
   top: 0;
   z-index: var(--z-nav);
   border-bottom: 1px solid var(--detail-hairline);
-  background: var(--paper-bone, #F0EEE9);
+  background: var(--paper-bone, var(--paper-bone));
 }
 
 .chromeInner {
@@ -55,7 +55,7 @@
   min-height: 44px;
   align-items: center;
   padding-bottom: 0.2rem;
-  border-bottom: 1px solid rgba(106, 33, 53, 0.45);
+  border-bottom: 1px solid rgba(var(--color-burgundy-rgb), 0.45);
   color: var(--detail-burgundy);
   font-family: var(--font-label);
   font-size: 0.75rem;
@@ -192,7 +192,7 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border: 1px solid var(--detail-hairline);
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .heroMedia[data-mobile-preview="true"] {
@@ -278,7 +278,7 @@
 .tenantSection {
   padding-block: clamp(1.5rem, 3.4vw, 3rem);
   border-top: 2px solid var(--detail-burgundy);
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .liveryPair {
@@ -301,7 +301,7 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border: 1px solid var(--detail-hairline);
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .liveryImage {
@@ -340,7 +340,7 @@
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border: 1px solid var(--detail-hairline);
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .featureRow {
@@ -355,7 +355,7 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border: 1px solid var(--detail-hairline);
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .featureFrame img {
@@ -373,7 +373,7 @@
   aspect-ratio: 1440 / 352;
   overflow: hidden;
   border: 1px solid var(--detail-hairline);
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .tripSheetFrame img {
@@ -438,8 +438,8 @@
 .systemsBand {
   padding-block: clamp(1.5rem, 4vw, 3.5rem);
   padding-inline: clamp(1rem, 3vw, 2rem);
-  background: var(--paper-glacier, #D7EFFF);
-  color: var(--color-on-glacier, #351E28);
+  background: var(--paper-glacier, var(--color-glacier));
+  color: var(--color-on-glacier, var(--color-black-cherry));
 }
 
 .systemsBand .sectionIntro {
@@ -447,7 +447,7 @@
 }
 
 .systemsBand .eyebrow {
-  color: var(--color-petrol-deep, #174F61);
+  color: var(--color-petrol-deep, var(--color-petrol-deep));
 }
 
 .stackGrid {
@@ -456,8 +456,8 @@
 
 .stackCard {
   padding: 1.2rem;
-  border: 1px solid rgba(53, 30, 40, 0.18);
-  background: var(--paper-linen, #FCF8F2);
+  border: 1px solid rgba(var(--color-black-cherry-rgb), 0.18);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .stackCard .cardTitle {
@@ -600,7 +600,7 @@
   aspect-ratio: var(--gallery-aspect-ratio, 16 / 10);
   overflow: hidden;
   border: 1px solid var(--detail-hairline);
-  background: var(--paper-linen, #FCF8F2);
+  background: var(--paper-linen, var(--paper-linen));
 }
 
 .legacyFrame img {

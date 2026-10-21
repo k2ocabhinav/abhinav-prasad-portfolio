@@ -18,6 +18,16 @@
   --color-lovebird: #C5DE48;        --color-lovebird-deep: #4E5312;   --color-lovebird-rgb: 197, 222, 72;
   --color-pink: #F4BEBB;            --color-pink-rgb: 244, 190, 187;
 
+  /* Beyond Terminal keeps its separate spot palette. */
+  --color-beyond-ink: #15151B;       --color-beyond-ink-rgb: 21, 21, 27;
+  --color-beyond-paper: #FFF7E8;     --color-beyond-paper-rgb: 255, 247, 232;
+  --color-beyond-blue: #245DFF;      --color-beyond-blue-rgb: 36, 93, 255;
+  --color-beyond-amber: #FFC24B;     --color-beyond-amber-rgb: 255, 194, 75;
+  --color-beyond-yellow: #FFE45E;    --color-beyond-yellow-rgb: 255, 228, 94;
+  --color-beyond-coral: #FF5A5F;     --color-beyond-coral-rgb: 255, 90, 95;
+  --color-beyond-pink: #FF7AC8;      --color-beyond-pink-rgb: 255, 122, 200;
+  --color-beyond-lilac: #BDA8FF;     --color-beyond-lilac-rgb: 189, 168, 255;
+
   /* Roles */
   --color-lead: var(--color-burgundy);          --color-lead-rgb: var(--color-burgundy-rgb);
   --color-lead-deep: #6A2135;                   /* text-safe on all papers (>= 9:1) */
@@ -28,7 +38,8 @@
   --color-panel-accent: #F4BEBB;                /* small accent on panels, 9.45:1 */
 
   /* Papers */
-  --paper-bone: #F0EEE9; --paper-linen: #FCF8F2; --paper-pink: var(--paper-linen); /* pink is ink-only: never a page background (owner, 2026-10-16) */ --paper-glacier: #D7EFFF;
+  --paper-bone: #F0EEE9; --paper-bone-rgb: 240, 238, 233;
+  --paper-linen: #FCF8F2; --paper-pink: var(--paper-linen); /* pink is ink-only: never a page background (owner, 2026-10-16) */ --paper-glacier: #D7EFFF;
 
   /* Illustration plate inks (art components read ONLY these; sections override per section) */
   --plate-ink: var(--color-black-cherry);
@@ -49,8 +60,10 @@
 
   /* Neutral and legacy role aliases. */
   --color-ink: #0B1011;            /* text ink (was dark bg — meaning flipped) */
+  --color-ink-rgb: 11, 16, 17;
   --color-graphite: #E9E5DC;       /* paper-alt: raised card surface */
   --color-elevated: #FFFFFF;       /* brightest surface (rare) */
+  --color-elevated-rgb: 255, 255, 255;
   --color-paper: var(--paper-bone);
   --color-hairline: rgba(11, 16, 17, 0.14);
   --color-surface: var(--paper-bone);

@@ -30,6 +30,7 @@
 
 .hero {
   position: relative;
+  overflow-x: clip;
   scroll-snap-align: start;
 }
 
@@ -69,7 +70,7 @@
   z-index: 0;
   inset: 0;
   overflow: hidden;
-  background-color: #F0EEE9;
+  background-color: var(--paper-bone);
   pointer-events: none;
 }
 
@@ -131,7 +132,7 @@
   position: absolute;
   z-index: 1;
   inset: 0;
-  background: #351E28;
+  background: var(--color-black-cherry);
   opacity: var(--shade);
   pointer-events: none;
 }

@@ -7,10 +7,10 @@
 
 .rootReduced .cover {
   background:
-    linear-gradient(180deg, rgba(255, 247, 232, 0.98), rgba(255, 228, 94, 0.94)),
+    linear-gradient(180deg, rgba(var(--color-beyond-paper-rgb), 0.98), rgba(var(--color-beyond-yellow-rgb), 0.94)),
     radial-gradient(
       circle at var(--portal-origin-x) var(--portal-origin-y),
-      rgba(255, 90, 95, 0.18),
+      rgba(var(--color-beyond-coral-rgb), 0.18),
       transparent 42%
     );
 }
@@ -40,12 +40,12 @@
   background:
     radial-gradient(
       circle at var(--portal-origin-x) var(--portal-origin-y),
-      rgba(255, 228, 94, 0.74),
-      rgba(255, 194, 75, 0.36) 18%,
-      rgba(255, 247, 232, 0.94) 42%,
-      rgba(21, 21, 27, 0.98) 82%
+      rgba(var(--color-beyond-yellow-rgb), 0.74),
+      rgba(var(--color-beyond-amber-rgb), 0.36) 18%,
+      rgba(var(--color-beyond-paper-rgb), 0.94) 42%,
+      rgba(var(--color-beyond-ink-rgb), 0.98) 82%
     ),
-    linear-gradient(135deg, rgba(36, 93, 255, 0.9), rgba(255, 90, 95, 0.82));
+    linear-gradient(135deg, rgba(var(--color-beyond-blue-rgb), 0.9), rgba(var(--color-beyond-coral-rgb), 0.82));
 }
 
 .blur {
@@ -53,8 +53,8 @@
   background:
     radial-gradient(
       circle at var(--portal-origin-x) var(--portal-origin-y),
-      rgba(255, 228, 94, 0.36),
-      rgba(255, 122, 200, 0.22) 18%,
+      rgba(var(--color-beyond-yellow-rgb), 0.36),
+      rgba(var(--color-beyond-pink-rgb), 0.22) 18%,
       transparent 42%
     );
   filter: blur(24px);
@@ -62,10 +62,10 @@
 
 .frame {
   inset: clamp(14px, 2vw, 24px);
-  border: 1px solid rgba(255, 247, 232, 0.38);
+  border: 1px solid rgba(var(--color-beyond-paper-rgb), 0.38);
   box-shadow:
-    inset 0 0 0 1px rgba(21, 21, 27, 0.08),
-    0 0 0 1px rgba(255, 90, 95, 0.18);
+    inset 0 0 0 1px rgba(var(--color-beyond-ink-rgb), 0.08),
+    0 0 0 1px rgba(var(--color-beyond-coral-rgb), 0.18);
 }
 
 .frame::before,
@@ -73,22 +73,22 @@
   content: "";
   position: absolute;
   inset: clamp(16px, 2.5vw, 32px);
-  border-top: 1px solid rgba(255, 247, 232, 0.28);
-  border-bottom: 1px solid rgba(255, 247, 232, 0.28);
+  border-top: 1px solid rgba(var(--color-beyond-paper-rgb), 0.28);
+  border-bottom: 1px solid rgba(var(--color-beyond-paper-rgb), 0.28);
 }
 
 .frame::after {
   inset: clamp(44px, 7vw, 84px) clamp(24px, 4vw, 56px);
-  border-top-color: rgba(21, 21, 27, 0.1);
-  border-bottom-color: rgba(21, 21, 27, 0.1);
+  border-top-color: rgba(var(--color-beyond-ink-rgb), 0.1);
+  border-bottom-color: rgba(var(--color-beyond-ink-rgb), 0.1);
 }
 
 .grain {
   background-image:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    radial-gradient(circle at 20% 24%, rgba(255, 255, 255, 0.12) 0.5px, transparent 0.6px),
-    radial-gradient(circle at 72% 62%, rgba(255, 255, 255, 0.08) 0.5px, transparent 0.6px);
+    linear-gradient(90deg, rgba(var(--color-elevated-rgb), 0.04) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(var(--color-elevated-rgb), 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 20% 24%, rgba(var(--color-elevated-rgb), 0.12) 0.5px, transparent 0.6px),
+    radial-gradient(circle at 72% 62%, rgba(var(--color-elevated-rgb), 0.08) 0.5px, transparent 0.6px);
   background-size: 12px 12px, 12px 12px, 160px 160px, 220px 220px;
   mix-blend-mode: soft-light;
 }
@@ -106,7 +106,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.36em;
   text-transform: uppercase;
-  color: rgba(255, 247, 232, 0.78);
+  color: rgba(var(--color-beyond-paper-rgb), 0.78);
 }
 
 .title {
@@ -117,8 +117,8 @@
   font-weight: 700;
   letter-spacing: -0.07em;
   line-height: 0.9;
-  color: #fff7e8;
-  text-shadow: 0 10px 34px rgba(21, 21, 27, 0.28);
+  color: var(--color-beyond-paper);
+  text-shadow: 0 10px 34px rgba(var(--color-beyond-ink-rgb), 0.28);
 }
 
 .description {
@@ -127,7 +127,7 @@
   font-family: var(--font-beyond-body, var(--font-body));
   font-size: clamp(0.95rem, 1.4vw, 1.08rem);
   line-height: 1.75;
-  color: rgba(255, 247, 232, 0.74);
+  color: rgba(var(--color-beyond-paper-rgb), 0.74);
 }
 
 @media (max-width: 767px) {

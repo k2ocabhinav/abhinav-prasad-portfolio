@@ -1,22 +1,22 @@
 .shell {
-  --beyond-paper: #FFF7E8;
-  --beyond-ink: #15151B;
-  --beyond-cobalt: #245DFF;
-  --beyond-coral: #FF5A5F;
-  --beyond-lemon: #FFE45E;
-  --beyond-amber: #FFC24B;
-  --beyond-lilac: #BDA8FF;
-  --beyond-pink: #FF7AC8;
-  --beyond-border: rgba(21, 21, 27, 0.18);
+  --beyond-paper: var(--color-beyond-paper);
+  --beyond-ink: var(--color-beyond-ink);
+  --beyond-cobalt: var(--color-beyond-blue);
+  --beyond-coral: var(--color-beyond-coral);
+  --beyond-lemon: var(--color-beyond-yellow);
+  --beyond-amber: var(--color-beyond-amber);
+  --beyond-lilac: var(--color-beyond-lilac);
+  --beyond-pink: var(--color-beyond-pink);
+  --beyond-border: rgba(var(--color-beyond-ink-rgb), 0.18);
   min-height: 100vh;
   color: var(--beyond-ink);
   overflow-x: clip;
   isolation: isolate;
   background:
-    radial-gradient(circle at 8% 12%, rgba(255, 90, 95, 0.26), transparent 24%),
-    radial-gradient(circle at 92% 8%, rgba(36, 93, 255, 0.24), transparent 25%),
-    radial-gradient(circle at 76% 84%, rgba(255, 194, 75, 0.32), transparent 28%),
-    linear-gradient(180deg, #FFF7E8 0%, #FFF0D9 48%, #FFF7E8 100%);
+    radial-gradient(circle at 8% 12%, rgba(var(--color-beyond-coral-rgb), 0.26), transparent 24%),
+    radial-gradient(circle at 92% 8%, rgba(var(--color-beyond-blue-rgb), 0.24), transparent 25%),
+    radial-gradient(circle at 76% 84%, rgba(var(--color-beyond-amber-rgb), 0.32), transparent 28%),
+    linear-gradient(180deg, var(--color-beyond-paper) 0%, #FFF0D9 48%, var(--color-beyond-paper) 100%);
 }
 
 .backdrop,
@@ -29,17 +29,17 @@
 .backdrop {
   z-index: 0;
   background:
-    radial-gradient(circle at 22% 24%, rgba(255, 228, 94, 0.72) 0 0.42rem, transparent 0.48rem),
-    radial-gradient(circle at 74% 22%, rgba(255, 122, 200, 0.48) 0 0.34rem, transparent 0.4rem),
-    radial-gradient(circle at 46% 78%, rgba(189, 168, 255, 0.42) 0 0.44rem, transparent 0.5rem);
+    radial-gradient(circle at 22% 24%, rgba(var(--color-beyond-yellow-rgb), 0.72) 0 0.42rem, transparent 0.48rem),
+    radial-gradient(circle at 74% 22%, rgba(var(--color-beyond-pink-rgb), 0.48) 0 0.34rem, transparent 0.4rem),
+    radial-gradient(circle at 46% 78%, rgba(var(--color-beyond-lilac-rgb), 0.42) 0 0.44rem, transparent 0.5rem);
   opacity: 0.8;
 }
 
 .grid {
   z-index: 0;
   background:
-    linear-gradient(90deg, rgba(21, 21, 27, 0.055) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(21, 21, 27, 0.045) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(var(--color-beyond-ink-rgb), 0.055) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(var(--color-beyond-ink-rgb), 0.045) 1px, transparent 1px);
   background-size: clamp(3.8rem, 7vw, 6rem) clamp(3.8rem, 7vw, 6rem);
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 88%);
 }
