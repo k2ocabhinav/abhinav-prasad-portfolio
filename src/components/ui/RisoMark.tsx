@@ -1,11 +1,12 @@
 "use client";
 
 import * as m from "motion/react-m";
-import { useMotionValue, useScroll, useTransform } from "motion/react";
+import { useMotionValue, useTransform } from "motion/react";
 import type { MotionValue } from "motion/react";
 import { useRef, type RefObject } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
+import { useGatedScrollProgress } from "./useGatedScrollProgress";
 import styles from "./RisoMark.module.css";
 
 // =============================================================================
@@ -167,12 +168,11 @@ function LocalRisoMark(props: RisoMarkProps) {
   );
 }
 
+const MARK_TRANSIT: ["start end", "end start"] = ["start end", "end start"];
+
 function ScrollingRisoMark(props: RisoMarkProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
+  const scrollYProgress = useGatedScrollProgress(ref, MARK_TRANSIT);
 
   return (
     <RisoMarkVisual
