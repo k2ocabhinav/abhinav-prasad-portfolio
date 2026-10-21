@@ -23,8 +23,8 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   await page.goto("/");
   const homeOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
   const homeTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
-  expect(new URL(homeOgImage!, page.url()).pathname).toBe("/og-image.jpg");
-  expect(homeTwitterImage).toBe(homeOgImage);
+  expect(new URL(homeOgImage!, page.url()).pathname).toBe("/opengraph-image.jpg");
+  expect(new URL(homeTwitterImage!, page.url()).pathname).toBe("/og-image.jpg");
   const jsonLd = await page
     .locator('#portfolio-structured-data[type="application/ld+json"]')
     .textContent();

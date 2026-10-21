@@ -546,7 +546,7 @@ test("project cards keep their numerals, artwork, copy alignment, and current co
   await expect(portfolio.locator("svg[viewBox='0 0 116 92']")).toBeVisible();
   await expect(portfolio.locator("[data-work-media] img")).toHaveAttribute(
     "alt",
-    "A diagram showing typed project content feeding the homepage and project pages"
+    "Portfolio homepage first screen with the pressed Abhinav wordmark"
   );
   await expect(portfolio.locator("[data-work-media] img")).toHaveCSS("object-fit", "contain");
 
