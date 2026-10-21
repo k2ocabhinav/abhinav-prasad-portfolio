@@ -1,58 +1,156 @@
-# Abhinav — Engineering Portfolio
+# Abhinav Prasad | Engineering portfolio
 
-A matte editorial portfolio for a backend-leaning full-stack software engineer. The site pairs a warm-paper/riso visual system with real experience, project case studies, and a typed content publishing layer.
+A personal engineering portfolio for Abhinav Prasad, built around his software work and independent products.
 
-## Stack
+[View the live site](https://abhinav-prasad-portfolio.vercel.app)
 
-- Next.js 16 App Router, React 19, and strict TypeScript
-- CSS Modules with shared design tokens
-- MDX frontmatter parsed on the server
-- Motion and Lenis with reduced-motion fallbacks
-- Playwright, Axe, and Lighthouse release coverage
-- Vercel Speed Insights instrumentation for hosted production builds
+![Desktop capture of the portfolio homepage](public/projects/portfolio-platform/home-first-desktop.5fc038c2.webp)
 
-## Commands
+## Highlights
 
-```bash
-npm run dev                # Start the development server
-npm run check:content      # Validate portfolio frontmatter and local assets
-npm run typecheck          # Run strict TypeScript checks
-npm run lint               # Run ESLint
-npm run check:dead         # Find unused files and dependencies with Knip
-npm run check:security     # Audit production and full dependency trees
-npm run build              # Validate content and create a production build
-npm run test:e2e           # Run the Playwright suite
-npm run test:lighthouse    # Run three mobile Performance and SEO audits
-npm run verify             # Run the complete release gate
-npm run capture:portfolio  # Regenerate case-study and social-preview captures
-```
+- App Router pages render local content at build time, with client components
+  for interactive features.
+- Typed MDX frontmatter is checked by a content preflight and the runtime
+  schema.
+- The first screen is a single letterpress sheet with a pointer-driven light
+  and a press-close on entry.
+- Beyond the Terminal puts a React Three Fiber room behind a capability check,
+  with a poster and album-list fallback.
+- Production responses include a Content Security Policy and security headers.
+- Scroll work shares section state, pauses when its target is off screen, and
+  uses compositor-friendly transitions. Lenis is enabled for fine pointers
+  only.
+- Playwright and Lighthouse CI cover the site, case studies, responsive
+  layouts, and reduced-motion paths.
 
-## Content system
+## Tech stack
 
-Public portfolio content lives in `src/content/portfolio/`:
+- Next.js 16 App Router and React 19
+- TypeScript and CSS Modules
+- MDX frontmatter parsed with `gray-matter`
+- Motion and Lenis for interaction and scroll behavior
+- React Three Fiber and Three.js for Beyond the Terminal
+- Playwright and Lighthouse CI for release checks
+- Vercel hosting
+
+## Pages
+
+- `/` is the portfolio homepage, with experience, project, stack, and contact
+  content loaded from local MDX collections.
+- `/work/[slug]` contains published project case studies. Paths are generated
+  from published project entries at build time.
+- `/beyond-terminal` contains the illustrated room, album, and static fallbacks.
+- `/llms.txt` provides a short text overview of the public site.
+
+## Content flow
+
+The content layer keeps editing and presentation separate:
 
 ```text
-src/content/portfolio/
-├── profile.mdx       # Identity, presence, social links, and metadata
-├── chronicle/        # Experience timeline entries
-├── projects/         # Work cards and full case-study routes
-├── services/         # "What I do" cards
-├── stack/            # Evidence-scoped technology groups
-└── beyond/           # Beyond the Terminal album content
+MDX frontmatter
+      ↓
+server-only loaders and runtime schemas
+      ↓
+App Router pages
+      ↓
+rendered content with focused client interactions
 ```
 
-Every collection item has a `draft` or `published` status. The server-only loader in `src/lib/portfolioContent.ts` filters drafts, orders collections, and exposes typed content to the App Router. `scripts/check-portfolio-content.mjs` rejects malformed fields, duplicate identifiers, invalid enums, and missing local assets before a production build.
+The build preflight checks the MDX collections before Next.js creates the site.
+It reports invalid fields, duplicate identifiers, unknown values, and missing
+local assets. Published project details also create static routes.
 
-Published project details are statically generated at `/work/[slug]`. Gallery assets live under `public/projects/`.
+## Performance
 
-## Visual and interaction system
+- Local content and published project routes are generated at build time, with
+  no request-time content service.
+- Next Image serves responsive AVIF or WebP renditions where supported. Image
+  sizes are chosen for the rendered layout.
+- Generated capture and share-image URLs include a content digest. Immutable
+  caching is applied to assets whose URL changes when their content changes.
+- A shared section observer feeds navigation and page chrome. Scroll trackers
+  stop when their sections leave view, and layout measurements are cached
+  outside scroll callbacks.
+- Backdrop and section transitions use opacity or transform where possible.
+  Lenis stays off touch-first and reduced-motion paths.
+- The 3D room loads only after the browser passes a capability check. A static
+  poster and accessible album list cover fallback paths.
+- Lighthouse CI budgets are defined in [`lighthouserc.json`](lighthouserc.json).
 
-The interface uses warm paper, ink, espresso panels, section-specific risograph accents, and Fraunces/Newsreader/Hanken Grotesk/Fragment Mono typography. Motion is concentrated in the opening sequence, scroll-linked section reveals, sheet-rise panels, work-card interactions, and the cross-route Beyond transition. Keyboard focus and reduced-motion paths are part of the interaction model.
+## Testing and quality gates
 
-## Notes
+Run a gate on its own, or run the full release sequence with `npm run verify`.
+The full sequence checks content, types, lint, dead code, assets, dependencies,
+the production build, Playwright, and Lighthouse CI.
 
-- Use Node 24 LTS, as pinned by `.nvmrc` and `package.json`.
-- The approved resume is published at `/resume/abhinav-prasad-resume.pdf`.
-- The profile uses a neutral Abhinav monogram until an original portrait is approved.
-- Production metadata resolves from the hosting environment or `SITE_URL`; local and preview builds remain `noindex`.
-- Speed Insights loads only on Vercel, so local tests do not emit analytics requests.
+```bash
+npm run check:content
+npm run typecheck
+npm run lint
+npm run check:dead
+npm run check:assets
+npm run check:security
+npm run build
+npm run test:e2e
+npm run test:e2e:prod
+npm run test:e2e:responsive
+npm run test:lighthouse
+npm run verify
+```
+
+## Project structure
+
+```text
+src/app/                            App Router routes and metadata
+src/components/                     Landing, sections, and shared UI
+src/content/portfolio/              MDX profile and collections
+src/lib/                            Server-only content loaders and schemas
+scripts/check-portfolio-content.mjs Build-time content validation
+public/projects/                    Project and portfolio images
+docs/ARCHITECTURE.md                Route, rendering, and content overview
+```
+
+See [the architecture overview](docs/ARCHITECTURE.md) for how these parts fit
+together.
+
+## Run locally
+
+Use Node 24 from [`.nvmrc`](.nvmrc) and npm 11, as declared in `package.json`.
+
+```bash
+nvm use
+npm install
+npm run dev
+```
+
+The WhatsApp action is optional. Copy [`.env.example`](.env.example) to
+`.env.local` and set `WHATSAPP_E164` in E.164 format to show it. Leave it empty
+to hide the action.
+
+## Edit content
+
+Portfolio copy lives in [`src/content/portfolio/`](src/content/portfolio/):
+
+- `profile.mdx` owns identity, hero text, links, contact details, and metadata.
+- `chronicle/` holds experience entries.
+- `projects/` holds project cards and case-study details.
+- `services/` holds service descriptions and evidence tags.
+- `stack/` holds technology groups and their evidence context.
+- `beyond/` holds the Beyond album entries.
+
+Collection entries use `status: draft` or `status: published`. Draft entries
+are kept out of the public collections and generated project routes.
+
+Run `npm run check:content` after editing. It checks frontmatter, identifiers,
+fields, and local asset references. `npm run build` runs the same preflight
+before generating the site. Keep the loader schema and matching validator
+aligned when a content field changes.
+
+## Deployment
+
+The portfolio is deployed on Vercel from the public GitHub repository.
+
+## License
+
+All rights reserved for the portfolio content and original assets. No separate
+software license is provided.
