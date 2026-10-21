@@ -61,10 +61,9 @@ function WorksSectionContent({
     >
       <div className={styles.sectionHeader}>
         <RisoMark variant="discs" />
-        <h2 className={styles.heading}>
+        <h2 className={styles.heading} data-overprint="Selected projects">
           <FlipRevealText
             static
-            overprint
             text="Selected projects"
             mode="word"
             className={styles.headingFlip}
@@ -123,7 +122,7 @@ function OrchestrationEvidence({
           {content.steps.map((step, index) => (
             <li key={step.title}>
               <span className={styles.stepLabel} aria-hidden="true">
-                {String(index + 1).padStart(2, "0")} {step.title.toUpperCase()}
+                {String(index + 1).padStart(2, "0")}
               </span>
               <h4 className={styles.stepValue}>{step.title}</h4>
               <p>{step.description}</p>
@@ -159,6 +158,7 @@ function WorkCard({ project }: { project: Project }) {
   const showProjectLinks = hasProjectLinks && !hasDeepDive;
   const deepDiveLabel = project.detailCtaLabel ?? "Open deep dive";
   const isVeloProject = project.detailSlug === "velo";
+  const isPlatformProject = project.detailSlug === "portfolio-platform";
 
   return (
     <div className={styles.workCard} data-work-card="true">
@@ -177,20 +177,25 @@ function WorkCard({ project }: { project: Project }) {
         className={cn(
           styles.visualPanel,
           hasScreenshots && styles.visualPanelRich,
-          isVeloProject && styles.visualPanelVelo
+          isVeloProject && styles.visualPanelVelo,
+          isPlatformProject && styles.visualPanelPlatform
         )}
       >
         {hasScreenshots && heroScreenshot ? (
           <div className={styles.visualMediaStack}>
-            <div className={styles.heroShot}>
-              <Image
-                src={heroScreenshot.src}
-                alt={heroScreenshot.alt}
-                fill
-                className={styles.heroShotImage}
-                sizes="(max-width: 768px) 100vw, 56vw"
-              />
-              <div className={styles.mediaCaption}>{heroScreenshot.caption}</div>
+            <div className={styles.heroShot} data-work-shot="true">
+              <div className={styles.heroFrame} data-work-frame="true">
+                <Image
+                  src={heroScreenshot.src}
+                  alt={heroScreenshot.alt}
+                  fill
+                  className={styles.heroShotImage}
+                  sizes="(max-width: 768px) 100vw, 56vw"
+                />
+              </div>
+              <div className={styles.mediaCaption} data-media-caption="true">
+                {heroScreenshot.caption}
+              </div>
             </div>
 
             {isVeloProject && (

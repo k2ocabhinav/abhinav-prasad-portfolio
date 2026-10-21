@@ -23,8 +23,8 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   await page.goto("/");
   const homeOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
   const homeTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
-  expect(new URL(homeOgImage!, page.url()).pathname).toBe("/og-image.jpg");
-  expect(homeTwitterImage).toBe(homeOgImage);
+  expect(new URL(homeOgImage!, page.url()).pathname).toBe("/opengraph-image.jpg");
+  expect(new URL(homeTwitterImage!, page.url()).pathname).toBe("/og-image.jpg");
   const jsonLd = await page
     .locator('#portfolio-structured-data[type="application/ld+json"]')
     .textContent();
@@ -88,11 +88,8 @@ test("keeps each home section readable without JavaScript", async ({ browser, ba
 
   await expect(page.locator('[data-home-hero-heading="true"]')).toHaveAttribute("aria-label", "Abhinav");
   await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
-  const stack = page.locator("[data-product-stack]");
-  await expect(stack).toBeVisible();
-  await expect(stack.locator("svg[role='img']")).toBeVisible();
-  await expect(stack.getByRole("link")).toHaveCount(0);
-  await expect(stack.locator("[data-stack-layer='backend']")).toBeVisible();
+  await expect(page.locator('[data-hero-print-layer="ink"]')).toHaveText("Abhinav");
+  await expect(page.locator('[data-hero-print-layer="bite"]')).toHaveAttribute("aria-hidden", "true");
 
   const sections = page.locator("main section");
   const sectionCount = await sections.count();

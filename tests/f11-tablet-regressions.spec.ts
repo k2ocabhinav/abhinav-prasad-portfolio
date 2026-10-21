@@ -36,16 +36,12 @@ test.describe("F11 tablet and tall viewport regressions", () => {
         const textRect = text.getBoundingClientRect();
         const cue = document.querySelector<HTMLElement>("[data-hero-scroll-cue='true']");
         if (!cue) throw new Error("Hero cue is missing");
-        const overhang = Number.parseFloat(getComputedStyle(heading).fontSize) * 0.22;
-        const visibleContentBottom = window.innerWidth < 768
-          ? cue.getBoundingClientRect().bottom
-          : textRect.bottom;
         return {
           frameTop: frameRect.top,
           frameBottom: frameRect.bottom,
-          paintedTop: headingRect.top - overhang,
-          paintedBottom: headingRect.bottom + overhang,
-          textBottom: visibleContentBottom,
+          paintedTop: headingRect.top,
+          paintedBottom: headingRect.bottom,
+          textBottom: textRect.bottom,
           maskOverflow: getComputedStyle(mask).overflow,
         };
       });

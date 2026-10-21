@@ -485,6 +485,7 @@
   width: 100%;
   max-width: none;
   padding-block: clamp(1.5rem, 4vw, 3rem);
+  padding-inline: clamp(1.1rem, 2vw, 1.6rem);
   background: var(--detail-panel);
   color: var(--detail-on-panel);
 }
@@ -632,9 +633,9 @@
   }
 }
 
-@media (min-width: 1024px) and (max-width: 1199px) {
+@media (min-width: 768px) and (max-width: 1099px) {
   .main {
-    padding-right: calc(clamp(1rem, 3vw, 2rem) + 3rem);
+    padding-right: max(9.25rem, 10vw);
   }
 }
 

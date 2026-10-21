@@ -12,10 +12,8 @@
 }
 
 .tileContent {
-  width: min(81rem, calc(100vw - 2 * var(--content-padding-x)));
-  margin-left: calc(
-    (100% - min(81rem, calc(100vw - 2 * var(--content-padding-x)))) / 2
-  );
+  width: 100%;
+  margin-left: 0;
 }
 
 .sectionLabel {

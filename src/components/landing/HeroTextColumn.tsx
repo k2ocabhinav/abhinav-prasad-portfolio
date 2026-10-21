@@ -1,6 +1,5 @@
 import MagneticButton from "@/components/ui/MagneticButton";
 import type { LandingHeroContent } from "@/types";
-import PressRunController from "./PressRunController";
 import styles from "./HeroTextColumn.module.css";
 
 // =============================================================================
@@ -22,7 +21,11 @@ export default function HeroTextColumn({
   linkedinHref,
 }: HeroTextColumnProps) {
   return (
-    <div className={styles.textColumn} data-home-hero-text="true">
+    <div
+      className={styles.textColumn}
+      data-home-hero-text="true"
+      data-hero-text="true"
+    >
       <div className={styles.stack}>
         <p className={styles.identity} data-hero-identity="true">{hero.identity}</p>
         <p className={styles.value}>{hero.summary}</p>
@@ -82,7 +85,6 @@ export default function HeroTextColumn({
             ) : null}
           </div>
         </div>
-        <PressRunController />
       </div>
     </div>
   );

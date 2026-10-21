@@ -201,6 +201,7 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   await expect(experience.getByRole("heading", { level: 3, name: "Ostrum Tech Limited" })).toBeVisible();
   await expect(experience.getByRole("heading", { level: 4, name: "Database Engineer" })).toBeVisible();
   await expect(experience.getByText("May 2024 to present", { exact: true })).toBeVisible();
+  await expect(experience.getByText("September 2024 to present", { exact: true })).toBeVisible();
   const employmentNote = experience.getByText(
     "Started as an intern in May 2024; full-time Database Engineer since September 2024.",
     { exact: true }
@@ -384,6 +385,10 @@ test("LinkedIn is one tap away from the rail, phone menu, and case study", async
   const mobileBox = await mobileLink.boundingBox();
   expect(mobileBox).not.toBeNull();
   expect(mobileBox!.height).toBeGreaterThanOrEqual(44);
+  for (const name of [accessibleName, "Email", "Résumé"]) {
+    await expect(mobileNav.getByRole("link", { name })).toHaveCount(1);
+    await expect(mobileNav.getByRole("link", { name }).locator("svg")).toHaveCount(1);
+  }
 
   await page.setViewportSize({ width: 1440, height: 1024 });
   await page.goto("/work/velo");
@@ -398,7 +403,10 @@ test("LinkedIn is one tap away from the rail, phone menu, and case study", async
 test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await openHome(page, true);
 
-  await expect(page.getByText("Full-stack engineer", { exact: true })).toBeVisible();
+  await expect(page.locator("[data-hero]")).toHaveCount(1);
+  await expect(page.locator("[data-hero-text]")).toHaveCount(1);
+  await expect(page.locator("[data-hero-wordmark]")).toHaveCount(1);
+  await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(page.getByText("I build products end to end, from the first conversation to release.", { exact: true })).toBeVisible();
   const atWork = page.locator('[data-hero-facts="true"] a').nth(0);
   const onMyOwn = page.locator('[data-hero-facts="true"] a').nth(1);
@@ -440,12 +448,83 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
     "Read every change against the task and the existing code.",
     "Run the checks and walk the real flow in a browser.",
   ]);
+  await expect(method.locator("ol > li span")).toHaveText(["01", "02", "03", "04"]);
   await expect(method.locator("svg[viewBox='0 0 420 500']")).toBeVisible();
   await expect(method).toHaveCSS("background-color", "rgb(53, 30, 40)");
   const stepColumns = await method.locator("ol").evaluate(
     (list) => getComputedStyle(list).gridTemplateColumns.trim().split(/\s+/).length
   );
   expect(stepColumns).toBe(page.viewportSize()!.width <= 900 ? 2 : 4);
+  await expect(page.locator("#stack p")).toHaveText("Tools I use across work and projects");
+});
+
+test("home content shares the rail-safe inset and hides rail labels under 1100px", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fine-pointer layout contract");
+
+  for (const width of [768, 1024, 1099]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openHome(page, true);
+    const about = page.locator("#about");
+    await about.scrollIntoViewIfNeeded();
+    const tiles = page.locator("#about [data-service-id]");
+    await expect(tiles).toHaveCount(3);
+    await settleFrame(page);
+    const rail = page.getByRole("navigation", { name: "Section navigation" });
+    const labels = rail.locator("a > span");
+    const boxes = await tiles.evaluateAll((elements) => elements.map((element) => {
+      const rect = element.getBoundingClientRect();
+      return { left: rect.left, right: rect.right };
+    }));
+    const expectedLeft = Math.max(20, Math.min(78, width * 0.054));
+    const rightInset = Math.max(148, width * 0.1);
+    expect(boxes[0]?.left).toBeGreaterThanOrEqual(expectedLeft - 1);
+    for (const box of boxes) expect(box.right).toBeLessThanOrEqual(width - rightInset + 1);
+    await expect.poll(() => labels.evaluateAll((elements) => elements.every(
+      (element) => getComputedStyle(element).opacity === "0"
+    ))).toBe(true);
+    await expect(rail.locator("a[aria-label='Experience']")).toHaveCount(1);
+  }
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openHome(page, true);
+  const rail = page.getByRole("navigation", { name: "Section navigation" });
+  const marquee = page.locator('[data-marquee="true"]');
+  await marquee.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    window.scrollTo({ top: rect.top + window.scrollY + rect.height / 2 - window.innerHeight / 2, behavior: "instant" });
+  });
+  await expect(rail).toHaveAttribute("data-marquee-under-rail", "true");
+  await expect.poll(() => rail.locator("a > span").evaluateAll((elements) => elements.every(
+    (element) => getComputedStyle(element).opacity === "0"
+  ))).toBe(true);
+  await expect(rail.locator('a[href="#contact"] [data-rail-dot]')).toBeVisible();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await expect(rail).not.toHaveAttribute("data-marquee-under-rail", "true");
+});
+
+test("Stack chips wrap beneath the heading and How I work keeps a clear tablet gutter", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width layout contract");
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await openHome(page, true);
+
+  const stack = page.locator("#stack");
+  await stack.scrollIntoViewIfNeeded();
+  const stackGeometry = await stack.evaluate((section) => {
+    const heading = section.querySelector("h2")!.getBoundingClientRect();
+    const chips = Array.from(section.querySelectorAll("[data-stack-strip] li"), (item) => item.getBoundingClientRect());
+    return {
+      headingBottom: heading.bottom,
+      firstChipTop: chips[0]?.top ?? 0,
+      chipRows: new Set(chips.map((rect) => Math.round(rect.top))).size,
+    };
+  });
+  expect(stackGeometry.firstChipTop).toBeGreaterThan(stackGeometry.headingBottom);
+  expect(stackGeometry.chipRows).toBeGreaterThan(1);
+
+  const method = page.locator("#work aside[aria-labelledby='work-method-title']");
+  await method.scrollIntoViewIfNeeded();
+  const columnGap = await method.locator("ol").evaluate((list) => Number.parseFloat(getComputedStyle(list).columnGap));
+  expect(columnGap).toBeGreaterThanOrEqual(24);
 });
 
 test("project cards keep their numerals, artwork, copy alignment, and current copy", async ({ page }) => {
@@ -467,8 +546,9 @@ test("project cards keep their numerals, artwork, copy alignment, and current co
   await expect(portfolio.locator("svg[viewBox='0 0 116 92']")).toBeVisible();
   await expect(portfolio.locator("[data-work-media] img")).toHaveAttribute(
     "alt",
-    "A diagram showing typed project content feeding the homepage and project pages"
+    "Portfolio homepage first screen with the pressed Abhinav wordmark"
   );
+  await expect(portfolio.locator("[data-work-media] img")).toHaveCSS("object-fit", "contain");
 
   const alignment = await velo.evaluate((card) => {
     const copy = card.querySelector<HTMLElement>("[data-work-copy='true']");
@@ -477,6 +557,95 @@ test("project cards keep their numerals, artwork, copy alignment, and current co
     return Math.abs(copy.getBoundingClientRect().left - title.getBoundingClientRect().left);
   });
   expect(alignment).toBeLessThanOrEqual(1);
+});
+
+test("work cards stack artwork first and keep their labels on one line below 900px", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width card geometry");
+
+  for (const width of [320, 390, 768, 900]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openHome(page, true);
+    const cards = page.locator("#work [data-work-card]");
+
+    for (let index = 0; index < await cards.count(); index += 1) {
+      const card = cards.nth(index);
+      const art = card.locator("[data-work-media]");
+      const copy = card.locator("[data-work-copy]");
+      await art.scrollIntoViewIfNeeded();
+      const [artBox, copyBox] = await Promise.all([art.boundingBox(), copy.boundingBox()]);
+      expect(artBox).not.toBeNull();
+      expect(copyBox).not.toBeNull();
+      expect(artBox!.y + artBox!.height).toBeLessThanOrEqual(copyBox!.y + 1);
+      const caseNumber = card.getByText(new RegExp(`^Case 0${index + 1}$`));
+      await expect(caseNumber).toHaveCSS("white-space", "nowrap");
+    }
+
+    const cta = page.locator("#work [data-work-card] [data-work-copy] a[href^='/work/']").first();
+    const ctaState = await cta.evaluate((element) => ({
+      whiteSpace: getComputedStyle(element).whiteSpace,
+      overflow: element.scrollWidth - element.clientWidth,
+      right: element.getBoundingClientRect().right,
+    }));
+    if (width >= 768) {
+      expect(ctaState.whiteSpace).toBe("nowrap");
+    } else {
+      expect(ctaState.right).toBeLessThanOrEqual(width + 1);
+    }
+    expect(ctaState.overflow).toBeLessThanOrEqual(1);
+  }
+});
+
+test("case captions sit below their frames on narrow phones", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width caption geometry");
+
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await openHome(page, true);
+    for (const card of await page.locator("#work [data-work-card]").all()) {
+      const frame = card.locator("[data-work-frame]");
+      const caption = card.locator("[data-media-caption]");
+      const [frameBox, captionBox] = await Promise.all([frame.boundingBox(), caption.boundingBox()]);
+      expect(frameBox).not.toBeNull();
+      expect(captionBox).not.toBeNull();
+      expect(captionBox!.y).toBeGreaterThanOrEqual(frameBox!.y + frameBox!.height - 1);
+    }
+  }
+});
+
+test("selected projects overprint follows the heading wrap", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width heading geometry");
+
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await openHome(page, true);
+    const heading = page.locator("#work h2[data-overprint]");
+    await heading.scrollIntoViewIfNeeded();
+    const geometry = await heading.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const text = element.querySelector<HTMLElement>("[role='img']");
+      const textRect = text?.getBoundingClientRect();
+      const overprint = getComputedStyle(element, "::after");
+      const transform = new DOMMatrixReadOnly(overprint.transform);
+      return {
+        rectWidth: rect.width,
+        textWidth: textRect?.width ?? 0,
+        content: overprint.content,
+        offsetX: transform.m41,
+        offsetY: transform.m42,
+        textWrap: overprint.textWrap,
+      };
+    });
+    expect(geometry.content).toBe('"Selected projects"');
+    expect(geometry.textWidth).toBeGreaterThan(0);
+    expect(geometry.textWidth).toBeLessThanOrEqual(geometry.rectWidth + 1);
+    expect(geometry.offsetX).toBeGreaterThanOrEqual(1);
+    expect(geometry.offsetX).toBeLessThanOrEqual(3);
+    expect(geometry.offsetY).toBeGreaterThanOrEqual(1);
+    expect(geometry.offsetY).toBeLessThanOrEqual(3);
+    expect(geometry.textWrap).toBe("balance");
+    await expect(page.getByText("Dispatch prototype, publishing platform, and the method behind both.", { exact: true }))
+      .toHaveCSS("text-wrap", "balance");
+  }
 });
 
 test("project cards tilt on fine pointers without hiding the native cursor", async ({
@@ -970,7 +1139,7 @@ test("the contact email keeps one line at phone, tablet, and small desktop width
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
 
-  for (const width of [375, 768, 1024]) {
+  for (const width of [320, 360]) {
     await page.setViewportSize({ width, height: 900 });
     await openHome(page, true);
     const link = page.locator("#contact [data-contact-email]");
@@ -1001,10 +1170,10 @@ test("the contact email keeps one line at phone, tablet, and small desktop width
   }
 });
 
-test("the contact heading and actions fit the narrowest phones", async ({ page }, testInfo) => {
+test("contact actions stay equal width and their labels do not wrap", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width probes");
 
-  for (const width of [320, 375]) {
+  for (const width of [320, 375, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await openHome(page, true);
     const contact = page.locator("#contact");
@@ -1028,16 +1197,36 @@ test("the contact heading and actions fit the narrowest phones", async ({ page }
       width + 1
     );
 
-    const linkedin = contact.getByRole("link", { name: "Connect on LinkedIn" });
-    const actionState = await linkedin.evaluate((element) => ({
+    const actions = contact.locator("[data-contact-actions] a");
+    await expect(actions).toHaveCount(2);
+    const actionStates = await actions.evaluateAll((elements) => elements.map((element) => ({
+      width: element.getBoundingClientRect().width,
       overflow: element.scrollWidth - element.clientWidth,
       height: element.getBoundingClientRect().height,
       whiteSpace: getComputedStyle(element).whiteSpace,
-    }));
-    expect(actionState.whiteSpace).toBe("normal");
-    expect(actionState.overflow, `LinkedIn overflow at ${width}px`).toBeLessThanOrEqual(1);
-    expect(actionState.height, `LinkedIn height at ${width}px`).toBeGreaterThanOrEqual(44);
-    expect(actionState.height, `LinkedIn height at ${width}px`).toBeLessThan(96);
+    })));
+    expect(actionStates[0]?.width).toBeCloseTo(actionStates[1]?.width ?? 0, 1);
+    for (const action of actionStates) {
+      expect(action.whiteSpace).toBe("nowrap");
+      expect(action.overflow, `button text overflow at ${width}px`).toBeLessThanOrEqual(1);
+      expect(action.height, `button height at ${width}px`).toBeGreaterThanOrEqual(44);
+      expect(action.height, `button height at ${width}px`).toBeLessThan(96);
+    }
+    await expect(contact.locator("[data-contact-tagline]")).toHaveCSS("text-wrap", "balance");
+  }
+});
+
+test("Contact actions use the same inversion on the dark panel", async ({ page }, testInfo) => {
+  test.skip(isTouchProject(testInfo), "Hover state requires a fine pointer");
+  await openHome(page, true);
+  const contact = page.locator("#contact");
+  await contact.scrollIntoViewIfNeeded();
+  const actions = contact.locator("[data-contact-actions] a");
+
+  for (const action of await actions.all()) {
+    await action.hover();
+    await expect(action).toHaveCSS("background-color", "rgb(237, 230, 218)");
+    await expect(action).toHaveCSS("color", "rgb(53, 30, 40)");
   }
 });
 

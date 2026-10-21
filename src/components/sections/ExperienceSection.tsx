@@ -94,7 +94,10 @@ function ExperienceDossier({ experience }: ExperienceDossierProps) {
       </header>
 
       <div className={styles.roleSummary}>
-        <h4 className={styles.roleTitle}>{experience.roleTitle}</h4>
+        <div className={styles.roleHeading}>
+          <h4 className={styles.roleTitle}>{experience.roleTitle}</h4>
+          <p className={styles.roleDate}>September 2024 to present</p>
+        </div>
         <ul className={styles.pointList}>
           {visibleSummaryPoints.map((point) => (
             <li key={`${point.lead}-${point.detail}`}>

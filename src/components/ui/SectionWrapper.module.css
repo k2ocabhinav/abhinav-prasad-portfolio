@@ -16,6 +16,18 @@
   width: 100%;
 }
 
+:global(.site-home) :global(.content-container).inner {
+  width: 100%;
+  max-width: none;
+  padding-inline: clamp(1.25rem, 5.4vw, 4.875rem);
+}
+
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+  :global(.site-home) :global(.content-container).inner {
+    padding-right: max(9.25rem, 10vw);
+  }
+}
+
 /* ─── Matte paper tones ──────────────────────────────────────────────
    Sections share paper and ink roles; each tone supplies its print inks. */
 

@@ -110,7 +110,7 @@ test("home hero keeps the full name inside the mobile viewport", async ({ page }
   await expectHeroNameToFit(page);
 });
 
-test("hero keeps its order and reserves the stack for wide screens", async ({ page }) => {
+test("hero keeps the text, wordmark, and cue in order across widths", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
 
@@ -125,7 +125,7 @@ test("hero keeps its order and reserves the stack for wide screens", async ({ pa
     const wordmark = page.locator('[data-home-hero-wordmark="true"]');
     const identity = page.locator('[data-hero-identity="true"]');
     const actions = page.locator("[data-hero-ctas]");
-    const stack = page.locator("[data-product-stack]");
+    const cue = page.locator("[data-hero-scroll-cue]");
     const [wordmarkBox, identityBox, actionsBox] = await Promise.all([
       wordmark.boundingBox(),
       identity.boundingBox(),
@@ -135,48 +135,12 @@ test("hero keeps its order and reserves the stack for wide screens", async ({ pa
     expect(identityBox).not.toBeNull();
     expect(actionsBox).not.toBeNull();
 
-    if (width <= 767) {
-      await expect(page.locator('[data-home-hero-frame] header')).toContainText("Abhinav Prasad");
-      expect(wordmarkBox!.y).toBeGreaterThan(identityBox!.y);
-      const wordmarkBottom = wordmarkBox!.y + wordmarkBox!.height;
-      expect(wordmarkBottom).toBeLessThanOrEqual(900);
-      await expect(stack).toBeHidden();
-    } else {
-      expect(wordmarkBox!.y).toBeGreaterThan(actionsBox!.y);
-      if (width < 1200) {
-        await expect(stack).toBeHidden();
-      } else {
-        const stackBox = await stack.boundingBox();
-        expect(stackBox).not.toBeNull();
-        const separateColumns =
-          identityBox!.x + identityBox!.width <= stackBox!.x ||
-          stackBox!.x + stackBox!.width <= identityBox!.x;
-        expect(separateColumns).toBe(true);
-      }
-    }
+    const cueBox = await cue.boundingBox();
+    expect(cueBox).not.toBeNull();
+    expect(wordmarkBox!.y).toBeGreaterThan(actionsBox!.y + actionsBox!.height);
+    expect(wordmarkBox!.y).toBeGreaterThan(identityBox!.y);
+    expect(cueBox!.y).toBeGreaterThan(wordmarkBox!.y + wordmarkBox!.height);
   }
-});
-
-test("desktop stack is an annotated figure with three distinct planes", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 1024 });
-  await page.goto("/");
-
-  const figure = page.locator("[data-product-stack]");
-  const stage = page.locator("[data-stack-stage]");
-  await expect(figure).toBeVisible();
-  await expect(figure).toHaveAttribute("aria-labelledby", "product-stack-caption");
-  await expect(figure.getByRole("link")).toHaveCount(0);
-  await expect(figure.locator("[data-stack-layer='interface']")).toBeVisible();
-  await expect(figure.locator("[data-stack-layer='backend']")).toBeVisible();
-  await expect(figure.locator("[data-stack-layer='data']")).toBeVisible();
-  await expect.poll(() => stage.getAttribute("data-stack-motion")).toBe("settling");
-  await expect(figure.locator("svg[role='img']")).toHaveAttribute(
-    "aria-labelledby",
-    "stack-drawing-title stack-drawing-description"
-  );
-  await expect(figure.locator('[data-stack-annotation="interface"]')).toBeVisible();
-  await expect(figure.locator('[data-stack-annotation="backend"]')).toBeVisible();
-  await expect(figure.locator('[data-stack-annotation="data"]')).toBeVisible();
 });
 
 test("wordmark and email action keep phone gutters from 320 to 430 pixels", async ({ page }) => {
@@ -212,7 +176,7 @@ test("wordmark and email action keep phone gutters from 320 to 430 pixels", asyn
   }
 });
 
-test("server-rendered hero paints both ink layers before hydration", async ({ page }) => {
+test("server-rendered hero paints the letterpress layers before hydration", async ({ page }) => {
   await page.route("**/_next/static/chunks/**", (route) => route.abort());
   await page.goto("/", { waitUntil: "load" });
   await page.evaluate(async () => {
@@ -220,12 +184,14 @@ test("server-rendered hero paints both ink layers before hydration", async ({ pa
   });
 
   const heading = page.locator('[data-home-hero-heading="true"]');
-  const plate = heading.locator('[data-ink-plate-drift="true"]');
+  const ink = heading.locator('[data-hero-print-layer="ink"]');
 
-  await expect(page.locator('[data-home-hero-wordmark="true"]')).toBeVisible();
-  await expect(plate).toBeVisible();
-  await expect(plate).toHaveCSS("clip-path", "none");
-  await expect(plate).toHaveCSS("opacity", "1");
+  await expect(heading.locator('[data-hero-print-layer="bite"]')).toHaveAttribute("aria-hidden", "true");
+  await expect(heading.locator('[data-hero-print-layer="lift"]')).toHaveAttribute("aria-hidden", "true");
+  await expect(ink).toHaveAttribute("aria-hidden", "true");
+  await expect(ink).toHaveText("Abhinav");
+  await expect(ink).toBeVisible();
+  await expect(ink).toHaveCSS("transform", "none");
   await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(
     page.getByText(
@@ -308,7 +274,7 @@ test("home page does not expose an obvious Beyond CTA", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Open Beyond", exact: true })).toHaveCount(0);
 });
 
-test("home hero exposes one wordmark over a clean aria-hidden ink plate", async ({
+test("home hero exposes one accessible wordmark with aria-hidden print layers", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -316,14 +282,18 @@ test("home hero exposes one wordmark over a clean aria-hidden ink plate", async 
 
   const wordmark = page.locator('[data-home-hero-wordmark="true"]');
   const heading = page.locator('[data-home-hero-heading="true"]');
-  const plate = heading.locator('[data-ink-plate-drift="true"]');
+  const bite = heading.locator('[data-hero-print-layer="bite"]');
+  const lift = heading.locator('[data-hero-print-layer="lift"]');
+  const ink = heading.locator('[data-hero-print-layer="ink"]');
 
   await expect(wordmark).toBeVisible();
   await expect(wordmark).toHaveText("Abhinav");
-  await expect(plate).toHaveAttribute("aria-hidden", "true");
-  await expect(plate).toHaveText("Abhinav");
+  await expect(bite).toHaveAttribute("aria-hidden", "true");
+  await expect(lift).toHaveAttribute("aria-hidden", "true");
+  await expect(ink).toHaveAttribute("aria-hidden", "true");
+  await expect(ink).toHaveText("Abhinav");
   await expect(heading).toHaveAttribute("aria-label", "Abhinav");
-  await expect(wordmark).toHaveCSS("animation-name", "none");
+  await expect(ink).toHaveCSS("transform", "none");
   await expect(wordmark).toHaveCSS("font-weight", "600");
   await page.evaluate(async () => {
     await document.fonts.ready;
@@ -347,7 +317,6 @@ test("hero keeps its identity and work links without the board or proof band", a
   await expect(hero.getByRole("heading", { name: "Abhinav" })).toBeVisible();
   await expect(hero.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
   await expect(hero.getByText("Full-stack engineer", { exact: true })).toHaveCount(1);
-  await expect(hero.locator("header")).not.toContainText("Full-stack engineer");
   await expect(
     hero.getByText("I build products end to end, from the first conversation to release.", { exact: true })
   ).toBeVisible();
@@ -365,7 +334,7 @@ test("hero keeps its identity and work links without the board or proof band", a
   );
 });
 
-test("reduced motion falls back to the accessible fade variant", async ({ page }) => {
+test("reduced motion keeps the hero sheet static", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await page.waitForTimeout(150);
@@ -396,22 +365,21 @@ test("reduced motion falls back to the accessible fade variant", async ({ page }
   await firstMedia.hover();
   await expect(firstMedia).toHaveCSS("transform", staticTransform);
 
-  const plateState = await page.locator('[data-home-hero-heading="true"] [data-ink-plate-drift="true"]').evaluate((element) => ({
-    clipPath: getComputedStyle(element).clipPath,
-    animationName: getComputedStyle(element).animationName,
-    transform: getComputedStyle(element).transform,
-  }));
-  expect(plateState.clipPath).toBe("none");
-  expect(plateState.animationName).toBe("none");
-  expect(plateState.transform).toBe("matrix(1, 0, 0, 1, 1, 1)");
-
-  const heroStack = page.locator("[data-product-stack]");
-  await expect(heroStack).toBeVisible();
-  await expect(heroStack.getByRole("link")).toHaveCount(0);
-  await expect(page.locator("[data-stack-stage]")).toHaveAttribute("data-stack-motion", "ready");
-  await expect(heroStack.locator("[data-stack-layer='interface']")).toBeVisible();
-  await expect(heroStack.locator("[data-stack-layer='backend']")).toBeVisible();
-  await expect(heroStack.locator("[data-stack-layer='data']")).toBeVisible();
+  const staticHeroState = await page.locator("[data-hero]").evaluate((hero) => {
+    const sheet = hero.querySelector<HTMLElement>("[data-hero-sheet]");
+    if (!sheet) throw new Error("Hero sheet is missing");
+    const sheetStyle = getComputedStyle(sheet);
+    return {
+      depth: sheetStyle.getPropertyValue("--d").trim(),
+      transform: sheetStyle.transform,
+      glintCount: hero.querySelectorAll("[data-ink-glint]").length,
+      shade: sheetStyle.getPropertyValue("--shade").trim(),
+    };
+  });
+  expect(staticHeroState.depth).toBe("1");
+  expect(staticHeroState.transform).toBe("none");
+  expect(staticHeroState.glintCount).toBe(0);
+  expect(staticHeroState.shade).toBe("0");
 
   await page.locator("#about").scrollIntoViewIfNeeded();
   await expect(
@@ -685,8 +653,8 @@ test("the phone hero fits the shortest target viewports without crowding its cue
       };
     });
     expect(geometry.wordmark.top).toBeGreaterThan(geometry.identity.bottom);
-    expect(geometry.wordmark.top).toBeGreaterThan(geometry.cue.bottom);
-    expect(geometry.frameHeight).toBeLessThanOrEqual(geometry.viewportHeight + 1);
+    expect(geometry.cue.top).toBeGreaterThan(geometry.wordmark.bottom);
+    expect(geometry.cue.bottom).toBeLessThanOrEqual(geometry.frameHeight + 1);
   }
 });
 

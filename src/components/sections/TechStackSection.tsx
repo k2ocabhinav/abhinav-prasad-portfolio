@@ -44,7 +44,7 @@ export default function TechStackSection({
       <div className={styles.header}>
         <div className={styles.headingBlock}>
           <h2 className={styles.heading}>Stack</h2>
-          <p className={styles.callout}>Tools grouped by where I use them.</p>
+          <p className={styles.callout}>Tools I use across work and projects</p>
         </div>
         <StackStrip items={iconItems} className={styles.iconStrip} />
       </div>

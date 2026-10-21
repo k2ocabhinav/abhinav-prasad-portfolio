@@ -298,7 +298,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
           <SectionIntro intro={detail.sectionIntros.architecture} headingId="architecture-title" />
           <div className={styles.architectureGrid}>
             {detail.architectureSections.map((section, index) => (
-              <article className={styles.architectureCard} key={section.title}>
+              <article className={styles.architectureCard} data-architecture-card="true" key={section.title}>
                 <p className={styles.cardIndex}>0{index + 1}</p>
                 <h3 className={styles.cardTitle}>{section.title}</h3>
                 <p className={styles.cardDescription}>{section.description}</p>
@@ -326,7 +326,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
 
         {detail.qualityHighlights.length > 0 ? (
           <section className={`${styles.section} ${styles.qualitySection}`} aria-labelledby="quality-title">
-            <div className={styles.qualityPanel}>
+            <div className={styles.qualityPanel} data-quality-panel="true">
               <SectionIntro intro={detail.sectionIntros.quality} headingId="quality-title" />
               <ul className={styles.qualityList}>
                 {detail.qualityHighlights.map((item) => <li key={item}>{item}</li>)}
@@ -355,7 +355,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
         ) : null}
 
         <section className={`${styles.section} ${styles.contactBand}`} aria-labelledby="detail-contact-title">
-          <h2 id="detail-contact-title" className={styles.sectionTitle}>Let&apos;s talk.</h2>
+          <h2 id="detail-contact-title" className={styles.sectionTitle}>Let&apos;s build.</h2>
           <p className={styles.sectionSummary}>
             Full-time roles, contract work or a scoped project: all welcome.
           </p>

@@ -4,6 +4,7 @@
     "src/app/**/{page,layout,route,loading,error,not-found,template,default}.{ts,tsx}",
     "src/content/portfolio/**/*.mdx",
     "scripts/*.mjs",
+    "scripts/hero/*.mjs",
     "tests/**/*.ts"
   ],
   "project": [
