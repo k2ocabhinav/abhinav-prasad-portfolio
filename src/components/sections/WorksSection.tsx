@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 import type { OrchestrationContent, Project, SectionTone } from "@/types";
 import { useCardTilt } from "@/hooks/useCardTilt";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { tiltSpring } from "@/lib/animations";
+import { landingStagger, staggerItem, tiltSpring } from "@/lib/animations";
 import { renderIcon, cn } from "@/lib/utils";
 import Tag from "@/components/ui/Tag";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -98,38 +98,54 @@ function OrchestrationEvidence({
     offset: ["start end", "end start"],
   });
 
+  const steps = content.steps.map((step, index) => (
+    <m.li
+      key={step.title}
+      className={styles.processStep}
+      variants={prefersReducedMotion ? undefined : staggerItem}
+    >
+      <span className={styles.stepNumeral}>
+        <CaseNumeral number={String(index + 1).padStart(2, "0")} />
+      </span>
+      <div className={styles.stepBody}>
+        <h4 className={styles.stepValue}>{step.title}</h4>
+        <p>{step.description}</p>
+      </div>
+    </m.li>
+  ));
+
   return (
     <aside
       className={styles.orchestrationStrip}
       aria-labelledby="work-method-title"
       data-cursor-theme="dark"
     >
-      <div className={styles.orchestrationLead}>
-        <div ref={posterRef} className={styles.posterColumn}>
+      <div ref={posterRef} className={styles.posterColumn}>
+        <div className={styles.posterPrint}>
           <PrintRunPoster
             progress={scrollYProgress}
             reducedMotion={prefersReducedMotion}
           />
         </div>
-        <header className={styles.evidenceHeading}>
-          <h3 id="work-method-title">How I work</h3>
-          <p>From Velo and this site</p>
-        </header>
       </div>
-      <div className={styles.evidenceContent}>
+      <header className={styles.evidenceHeading}>
+        <p className={styles.eyebrow}>From Velo and this site</p>
+        <h3 id="work-method-title">How I work</h3>
         <p className={styles.orchestrationIntro}>{content.intro}</p>
-        <ol className={styles.processSteps}>
-          {content.steps.map((step, index) => (
-            <li key={step.title}>
-              <span className={styles.stepLabel} aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h4 className={styles.stepValue}>{step.title}</h4>
-              <p>{step.description}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
+      </header>
+      {prefersReducedMotion ? (
+        <ol className={styles.processSteps}>{steps}</ol>
+      ) : (
+        <m.ol
+          className={styles.processSteps}
+          variants={landingStagger(0.08)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {steps}
+        </m.ol>
+      )}
     </aside>
   );
 }

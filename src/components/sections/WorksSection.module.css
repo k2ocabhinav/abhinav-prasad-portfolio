@@ -69,14 +69,16 @@
   gap: clamp(2rem, 4vw, 3.5rem);
 }
 
+/* ─── Method panel ("How I work") ─────────────────────────
+   Phone: one column (art, heading, steps as rows). Tablet: art beside the
+   heading, steps full width below. Desktop: art column beside heading + steps. */
+
 .orchestrationStrip {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
-  gap: clamp(1rem, 3vw, 2.5rem);
-  min-height: clamp(35rem, 40vw, 36.125rem);
+  gap: 2rem;
   margin-top: clamp(2.5rem, 5vw, 4rem);
-  padding: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1.25rem, 6vw, 1.75rem);
   border: 1px solid rgba(var(--color-black-cherry-rgb), 0.22);
   border-radius: 3px;
   background: var(--color-black-cherry);
@@ -88,107 +90,226 @@
   --plate-glacier: var(--paper-linen);
 }
 
-.orchestrationLead {
-  display: grid;
-  grid-template-columns: minmax(8rem, 0.2fr) minmax(0, 0.8fr);
-  align-items: center;
-  gap: clamp(1rem, 3vw, 2.5rem);
-}
-
 .posterColumn {
-  width: min(100%, 11rem);
+  width: min(100%, 12.5rem);
   margin-inline: auto;
 }
 
-.posterColumn svg {
+/* The poster is presented as a pulled print: tilted, with a hard offset
+   shadow. The artwork already draws its own offset plate as the first path of
+   the paper layer; here it is inked darker so it reads as the hard shadow. */
+.posterPrint {
+  transform: rotate(-2deg);
+  transform-origin: center;
+}
+
+.posterPrint svg {
   display: block;
   width: 100%;
   height: auto;
 }
 
+.posterPrint svg > g:first-of-type > path:first-child {
+  fill: rgba(12, 5, 9, 0.6);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .posterPrint,
+  .posterPrint svg > g:first-of-type > path:first-child {
+    transition: transform 300ms var(--motion-ease-out, ease-out);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .posterColumn:hover .posterPrint {
+    transform: rotate(-2deg) translateY(-3px);
+  }
+
+  .posterColumn:hover .posterPrint svg > g:first-of-type > path:first-child {
+    transform: translate(4px, 4px);
+  }
+}
+
 .evidenceHeading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.3rem 1rem;
-}
-
-.evidenceHeading h3 {
-  margin: 0;
-  color: var(--color-panel-accent, var(--color-pink));
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.5vw, 2rem);
-  font-weight: 560;
-  line-height: 1.15;
-}
-
-.evidenceHeading p {
-  margin: 0;
-  color: var(--color-on-panel);
-  font-family: var(--font-label);
-  font-size: 0.65rem;
-  letter-spacing: 0.07em;
-  line-height: 1.45;
-}
-
-.evidenceContent {
   display: flex;
   min-width: 0;
   flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-panel-accent, var(--color-pink));
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.evidenceHeading h3 {
+  margin: 0.55rem 0 0;
+  color: var(--color-panel-accent, var(--color-pink));
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 3.4vw, 3.25rem);
+  font-weight: 560;
+  line-height: 1.05;
 }
 
 .orchestrationIntro {
-  margin: 0.7rem 0 0;
+  max-width: 46ch;
+  margin: 1.1rem 0 0;
   color: var(--color-on-panel);
-  font-size: 0.94rem;
-  line-height: 1.5;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  text-wrap: pretty;
 }
 
 .processSteps {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: 2.75rem 0 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+  margin: 0;
   padding: 0;
   list-style: none;
-  text-align: center;
+  text-align: left;
 }
 
-.processSteps li {
+/* Motion renders the reveal's hidden state in server markup. Keep the steps
+   visible until hydration confirms the reveal can run; this also covers
+   disabled JavaScript and a failed client bundle. */
+:global(html:not([data-hydrated="1"])) .processStep {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.processStep {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  column-gap: 0.9rem;
+  align-items: start;
   min-width: 0;
+  --plate-accent: var(--color-panel-accent, var(--color-pink));
+  --plate-second: var(--color-cornflower);
 }
 
-.stepLabel {
+.stepNumeral {
+  position: relative;
   display: block;
-  padding-bottom: 0.7rem;
-  border-bottom: 1px solid rgba(var(--color-on-surface-dark-rgb), 0.3);
-  color: var(--color-panel-accent, var(--color-pink));
-  font-family: var(--font-label);
-  font-size: 0.68rem;
-  letter-spacing: 0.05em;
+  margin: -0.35rem 0 0 -0.2rem;
+}
+
+.stepNumeral svg {
+  width: 4.5rem;
+}
+
+/* Dashed route linking the numerals, echoing the dashed path on the poster. */
+.processStep:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 3.7rem;
+  bottom: -1.5rem;
+  left: 1.6rem;
+  border-left: 1px dashed rgba(var(--color-pink-rgb), 0.38);
+}
+
+.stepBody {
+  min-width: 0;
 }
 
 .stepValue {
   margin: 0;
-  margin-top: 0.7rem;
   color: var(--color-panel-accent, var(--color-pink));
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-size: 1.625rem;
   font-weight: 600;
   line-height: 1.15;
 }
 
 .processSteps p {
-  margin: 0.3rem 0 0;
-  color: rgba(var(--color-on-surface-dark-rgb), 0.84);
-  font-size: 0.75rem;
-  line-height: 1.35;
+  max-width: 30ch;
+  margin: 0.4rem 0 0;
+  color: rgba(var(--color-on-surface-dark-rgb), 0.86);
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
 
-@media (max-width: 900px) {
+@media (min-width: 768px) {
+  .orchestrationStrip {
+    grid-template-columns: 13.75rem minmax(0, 1fr);
+    grid-template-areas:
+      "art head"
+      "steps steps";
+    column-gap: 2rem;
+    row-gap: 2.5rem;
+    align-items: center;
+    padding: 2.5rem;
+  }
+
+  .posterColumn {
+    grid-area: art;
+    width: 100%;
+    margin-left: -0.75rem;
+  }
+
+  .evidenceHeading {
+    grid-area: head;
+  }
+
   .processSteps {
+    grid-area: steps;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 1.2rem;
+    gap: 2.5rem 2rem;
+  }
+
+  .processStep {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .stepNumeral svg {
+    width: 6.5rem;
+  }
+
+  .processStep:not(:last-child)::before {
+    display: none;
+  }
+
+  .processStep:nth-child(odd)::after {
+    content: "";
+    position: absolute;
+    top: 2.2rem;
+    left: 6.6rem;
+    width: calc(100% - 5.2rem);
+    border-top: 1px dashed rgba(var(--color-pink-rgb), 0.38);
+  }
+}
+
+@media (min-width: 1024px) {
+  .orchestrationStrip {
+    grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
+    grid-template-areas:
+      "art head"
+      "art steps";
+    column-gap: clamp(2rem, 4vw, 4rem);
+    padding: clamp(40px, 5vw, 72px);
+  }
+
+  .posterColumn {
+    align-self: center;
+    width: min(100%, clamp(15rem, 28vw, 25rem));
+    margin-left: -5.5%;
+  }
+
+  .evidenceHeading {
+    align-self: end;
+  }
+
+  .processSteps {
+    align-self: start;
   }
 }
 
@@ -676,52 +797,6 @@
   .projectsList {
     gap: 2rem;
   }
-
-  .orchestrationStrip {
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .orchestrationLead {
-    grid-template-columns: minmax(5rem, 0.2fr) minmax(0, 0.8fr);
-    align-items: start;
-    gap: 0.75rem;
-  }
-
-  .posterColumn {
-    width: min(100%, 6rem);
-  }
-
-  .evidenceHeading {
-    display: block;
-  }
-
-  .evidenceHeading h3 {
-    font-size: 1.25rem;
-  }
-
-  .evidenceHeading p {
-    margin-top: 0.35rem;
-    font-size: 12px;
-  }
-
-  .orchestrationIntro {
-    font-size: 0.86rem;
-  }
-
-  .processSteps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem 1.15rem;
-    margin-top: 2.75rem;
-  }
-
-  .stepValue {
-    font-size: 1.08rem;
-  }
-
-  .processSteps p {
-    font-size: 12px;
-  }
 }
 
 @media (max-width: 900px) {
@@ -747,10 +822,6 @@
   .visualReversed,
   .contentReversed {
     order: 0;
-  }
-
-  .processSteps {
-    column-gap: 1.5rem;
   }
 }
 
@@ -815,5 +886,11 @@
     position: static;
     width: 100%;
     margin: 0;
+  }
+}
+
+@media (min-width: 1280px) {
+  .orchestrationStrip {
+    grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
   }
 }
