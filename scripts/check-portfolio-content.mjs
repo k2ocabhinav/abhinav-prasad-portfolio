@@ -21,6 +21,8 @@ import {
   projectTripRoles as projectTripRoleValues,
   socialPlatforms as socialPlatformValues,
   stackContextValues as stackContextValueList,
+  stackIconNames as stackIconNameList,
+  stackToneValues as stackToneValueList,
   statusValues as statusValueList,
   objectField,
   optionalBooleanField,
@@ -39,6 +41,8 @@ const publicRoot = path.join(root, "public");
 const statuses = new Set(statusValueList);
 const projectIcons = new Set(projectIconValues);
 const stackContextValues = new Set(stackContextValueList);
+const stackIconNames = new Set(stackIconNameList);
+const stackTones = new Set(stackToneValueList);
 const accents = new Set(accentValues);
 const beyondKinds = new Set(beyondKindValues);
 const beyondColors = new Set(beyondColorValues);
@@ -366,7 +370,6 @@ function validateProfile() {
   if (stringArray(profileIntro, "proofLines", filePath).length !== expectedContentCounts.profileProofLines) {
     fail(filePath, `"profileIntro.proofLines" must contain ${expectedContentCounts.profileProofLines} proof lines`);
   }
-  unique(stringArray(profileIntro, "stackItems", filePath), "profile intro stack item");
   const orchestration = objectValue(data, "orchestration", filePath);
   stringValue(orchestration, "intro", filePath);
   const steps = objectArray(orchestration, "steps", filePath);
@@ -536,12 +539,31 @@ function validateStack() {
     const data = read(filePath);
     enumValue(data, "status", statuses, filePath);
     enumValue(data, "context", stackContextValues, filePath);
+    enumValue(data, "tone", stackTones, filePath);
     ["id", "label"].forEach((key) => stringValue(data, key, filePath));
+    optionalString(data, "summary", filePath);
     optionalNumber(data, "order", filePath);
-    optionalBooleanField(data, "highlighted", rel(filePath), false);
+    optionalBooleanField(data, "featured", rel(filePath), false);
+    const skills = objectArray(data, "skills", filePath);
+    if (skills.length === 0) {
+      fail(filePath, '"skills" must list at least one skill');
+    }
+    skills.forEach((skill) => {
+      stringValue(skill, "label", filePath);
+      // A chip names its glyph explicitly: an unknown name fails the build
+      // here instead of rendering a stand-in icon.
+      enumValue(skill, "icon", stackIconNames, filePath);
+    });
+    unique(skills.map((skill) => skill.label), `stack skill in ${rel(filePath)}`);
     return data;
   });
   unique(groups.map((group) => group.id), "stack id");
+  const published = groups.filter((group) => group.status === "published");
+  unique(published.flatMap((group) => group.skills.map((skill) => skill.label)), "stack skill");
+  unique(published.map((group) => group.tone), "stack tone");
+  if (published.filter((group) => group.featured === true).length !== 1) {
+    throw new Error("[portfolio-content] stack: exactly one published group must be featured");
+  }
 }
 
 function validateServices() {

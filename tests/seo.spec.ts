@@ -229,7 +229,7 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   // The LLM summary keeps its independent profile source; this package changes hero identity and seo.title.
   expect(llms).toContain("At work: Database Engineer, Ostrum Tech Limited.");
   expect(llms).toContain("On my own: Velo, this portfolio, and AI-agent workflows.");
-  expect(llms).toContain("Hero, What I do, Experience, Work, Stack, and Contact.");
+  expect(llms).toContain("Hero, What I do, Stack, Experience, Work, and Contact.");
   expect(llms).toContain("How I work appears below the projects in Work.");
   expect(llms).not.toMatch(/Forward deployed/i);
   expect(llms).toContain("## Professional experience");

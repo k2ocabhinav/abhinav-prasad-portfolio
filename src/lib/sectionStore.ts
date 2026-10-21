@@ -47,7 +47,7 @@ const PAPER_STOCK_BY_SECTION: Record<string, PaperStock> = {
   about: "bone",
   experience: "linen",
   work: "linen",
-  stack: "bone",
+  stack: "linen",
   contact: "bone",
 };
 

@@ -72,6 +72,10 @@ export default function HomePage({ content }: HomePageProps) {
           services={content.services}
           tone="pastel-cream"
         />
+        <TechStackSection
+          techCategories={content.stackGroups}
+          tone="pastel-peach"
+        />
         <ExperienceSection experiences={content.chronicleEntries} tone="pastel-blue" />
         <WorksSection
           projects={content.projects}
@@ -79,11 +83,6 @@ export default function HomePage({ content }: HomePageProps) {
           tone="pastel-blush"
         />
         <Marquee items={profile.marqueeItems} />
-        <TechStackSection
-          techCategories={content.stackGroups}
-          stackItems={profile.profileIntro.stackItems}
-          tone="pastel-peach"
-        />
         <ContactSection
           personal={profile.personal}
           whatsappHref={content.whatsappHref}

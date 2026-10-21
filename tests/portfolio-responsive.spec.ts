@@ -11,8 +11,10 @@ const workstreamNames = [
 
 const stackGroups = [
   ["AI-assisted engineering", "Part of my workflow"],
-  ["Backend systems and APIs", "Built in projects"],
-  ["Cloud delivery and reporting", "Used at work"],
+  ["Backend and APIs", "Built in projects"],
+  ["Product engineering", "Built in projects"],
+  ["Cloud and delivery", "Used at work"],
+  ["Data", "Used at work"],
 ] as const;
 
 const screenshotProjects = new Set([
@@ -65,9 +67,9 @@ async function sweepWholePage(page: Page) {
 async function revealAndSettleHomepage(page: Page) {
   for (const selector of [
     "#about",
+    "#stack",
     "#experience",
     "#work",
-    "#stack",
     "#contact",
   ]) {
     await page.locator(selector).scrollIntoViewIfNeeded();
@@ -253,7 +255,9 @@ test("shows the Ostrum summary and opens the full technical experience", async (
   const stack = page.locator("#stack");
   await stack.scrollIntoViewIfNeeded();
   for (const [label, context] of stackGroups) {
-    const group = stack.locator("li").filter({ hasText: label });
+    const group = stack.locator("article").filter({
+      has: page.getByRole("heading", { name: label, exact: true }),
+    });
     await expect(group).toHaveCount(1);
     await expect(group).toContainText(context);
   }
@@ -457,7 +461,9 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
     (list) => getComputedStyle(list).gridTemplateColumns.trim().split(/\s+/).length
   );
   expect(stepColumns).toBe(page.viewportSize()!.width < 768 ? 1 : 2);
-  await expect(page.locator("#stack p")).toHaveText("Tools I use across work and projects");
+  await expect(page.locator("#stack [data-stack-intro]")).toHaveText(
+    "Tools I use across work, my own builds and my AI-agent workflow."
+  );
 });
 
 test("home content shares the rail-safe inset and hides rail labels under 1100px", async ({ page }, testInfo) => {
@@ -504,24 +510,69 @@ test("home content shares the rail-safe inset and hides rail labels under 1100px
   await expect(rail).not.toHaveAttribute("data-marquee-under-rail", "true");
 });
 
-test("Stack chips wrap beneath the heading and How I work keeps a clear tablet gutter", async ({ page }, testInfo) => {
+test("Stack groups sit in a two-column tablet grid with readable chips and the page keeps its section order", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Fixed-width layout contract");
   await page.setViewportSize({ width: 768, height: 1024 });
   await openHome(page, true);
 
+  const order = await page.evaluate(() =>
+    Array.from(document.querySelectorAll("#site-content > section[id], #site-content [data-marquee]"), (element) =>
+      element.hasAttribute("data-marquee") ? "marquee" : element.id
+    )
+  );
+  expect(order).toEqual(["about", "about-spec", "stack", "experience", "work", "marquee", "contact"]);
+
   const stack = page.locator("#stack");
   await stack.scrollIntoViewIfNeeded();
-  const stackGeometry = await stack.evaluate((section) => {
+  const geometry = await stack.evaluate((section) => {
     const heading = section.querySelector("h2")!.getBoundingClientRect();
-    const chips = Array.from(section.querySelectorAll("[data-stack-strip] li"), (item) => item.getBoundingClientRect());
+    const cards = Array.from(section.querySelectorAll<HTMLElement>("article"), (card) => card.getBoundingClientRect());
+    const chips = Array.from(section.querySelectorAll<HTMLElement>("[data-stack-chips] li"));
+    const sample = chips.map((chip) => {
+      const style = getComputedStyle(chip);
+      const icon = chip.querySelector("svg")!.getBoundingClientRect();
+      return {
+        fontSize: Number.parseFloat(style.fontSize),
+        weight: Number.parseInt(style.fontWeight, 10),
+        icon: icon.width,
+        paths: chip.querySelectorAll("svg path").length,
+      };
+    });
     return {
       headingBottom: heading.bottom,
-      firstChipTop: chips[0]?.top ?? 0,
-      chipRows: new Set(chips.map((rect) => Math.round(rect.top))).size,
+      cardTops: cards.map((rect) => Math.round(rect.top)),
+      cardWidths: cards.map((rect) => Math.round(rect.width)),
+      firstCardTop: cards[0].top,
+      sample,
     };
   });
-  expect(stackGeometry.firstChipTop).toBeGreaterThan(stackGeometry.headingBottom);
-  expect(stackGeometry.chipRows).toBeGreaterThan(1);
+  expect(geometry.firstCardTop).toBeGreaterThan(geometry.headingBottom);
+  // The featured AI card spans the row; the other four share two columns.
+  expect(geometry.cardWidths[0]).toBeGreaterThan(geometry.cardWidths[1] * 1.8);
+  expect(geometry.cardTops[1]).toBe(geometry.cardTops[2]);
+  expect(geometry.cardTops[3]).toBe(geometry.cardTops[4]);
+  expect(geometry.sample).toHaveLength(32);
+  for (const chip of geometry.sample) {
+    expect(chip.fontSize).toBeGreaterThanOrEqual(14);
+    expect(chip.weight).toBeGreaterThanOrEqual(500);
+    expect(chip.icon).toBeGreaterThanOrEqual(18);
+    expect(chip.paths, "every chip draws a real icon").toBeGreaterThan(0);
+  }
+
+  await page.setViewportSize({ width: 320, height: 900 });
+  await settleFrame(page);
+  const overflow = await stack.evaluate((section) => {
+    const cards = Array.from(section.querySelectorAll<HTMLElement>("article"));
+    return {
+      page: document.documentElement.scrollWidth - window.innerWidth,
+      chips: cards.flatMap((card) => {
+        const edge = card.getBoundingClientRect().right;
+        return Array.from(card.querySelectorAll("[data-stack-chips] li"), (chip) => chip.getBoundingClientRect().right - edge);
+      }),
+    };
+  });
+  expect(overflow.page).toBeLessThanOrEqual(0);
+  expect(Math.max(...overflow.chips)).toBeLessThanOrEqual(0);
 
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await method.scrollIntoViewIfNeeded();
@@ -868,9 +919,9 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expect(mobileNav.getByRole("link")).toHaveText([
     "Hero",
     "What I do",
+    "Stack",
     "Experience",
     "Work",
-    "Stack",
     "Contact",
     "LinkedIn",
     "Email",

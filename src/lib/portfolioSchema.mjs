@@ -7,6 +7,50 @@ export const projectIcons = ["terminal", "cloud", "database", "sparkles", "cpu"]
 /** @type {readonly ["Used at work", "Part of my workflow", "Built in projects"]} */
 export const stackContextValues = ["Used at work", "Part of my workflow", "Built in projects"];
 
+/** @type {readonly ["lovebird", "petrol", "burgundy", "cornflower", "glacier"]} */
+export const stackToneValues = ["lovebird", "petrol", "burgundy", "cornflower", "glacier"];
+
+/**
+ * Every glyph a stack chip may name. src/components/art/stack-icons/icons.ts
+ * must draw exactly these (its record is typed from this list), and both the
+ * loader and the content check reject any other name, so a chip can never fall
+ * back to a stand-in icon silently.
+ * @type {readonly ["claude-code", "codex", "agents", "checklist", "review", "browser-check", "context", "java", "spring", "key", "api", "websocket", "bolt", "repeat-equals", "typescript", "react", "nextjs", "motion", "cube", "mdx", "cloud", "pipeline", "github-actions", "docker", "steps", "python", "database", "postgresql", "table", "gauge", "chart"]}
+ */
+export const stackIconNames = [
+  "claude-code",
+  "codex",
+  "agents",
+  "checklist",
+  "review",
+  "browser-check",
+  "context",
+  "java",
+  "spring",
+  "key",
+  "api",
+  "websocket",
+  "bolt",
+  "repeat-equals",
+  "typescript",
+  "react",
+  "nextjs",
+  "motion",
+  "cube",
+  "mdx",
+  "cloud",
+  "pipeline",
+  "github-actions",
+  "docker",
+  "steps",
+  "python",
+  "database",
+  "postgresql",
+  "table",
+  "gauge",
+  "chart",
+];
+
 /** @type {readonly ["sage", "peach", "sky", "sand"]} */
 export const accents = ["sage", "peach", "sky", "sand"];
 
