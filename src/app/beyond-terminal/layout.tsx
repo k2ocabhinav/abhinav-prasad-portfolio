@@ -26,14 +26,14 @@ const mono = Space_Mono({
   display: "swap",
 });
 
-const beyondTitle = "Beyond The Terminal";
+const beyondTitle = "Beyond the terminal";
 const beyondDescription =
-  "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.";
+  "A small room for photos, notes and moments outside the work.";
 const beyondImage = {
   url: absoluteUrl("/og-image.82ccc069.jpg"),
   width: 1200,
   height: 630,
-  alt: "Abhinav Prasad, Beyond The Terminal photo wall",
+  alt: "Abhinav Prasad, Beyond the terminal",
 };
 
 export const metadata: Metadata = {

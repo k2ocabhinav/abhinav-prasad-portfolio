@@ -1,56 +1,69 @@
 .stack {
-  position: relative;
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.75rem);
+}
+
+.intro {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 60rem;
+}
+
+.intro h1 {
+  max-width: 10ch;
+  margin: 0;
+  color: #16131a;
+  font-family: var(--font-beyond-display);
+  font-size: clamp(2.9rem, 8vw, 6.4rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+}
+
+.intro h1:focus {
+  outline: none;
+}
+
+.intro p {
+  max-width: 44rem;
+  margin: 0;
+  color: rgba(22, 19, 26, 0.78);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.5;
 }
 
 .footer {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: clamp(1.1rem, 2vw, 1.6rem) 0 0;
-  border-top: 1px solid rgba(var(--color-beyond-ink-rgb), 0.18);
-  font-family: var(--font-beyond-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(var(--color-beyond-ink-rgb), 0.58);
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(22, 19, 26, 0.28);
 }
 
 .homeLink {
   display: inline-flex;
-  min-height: 2.75rem;
   align-items: center;
-  padding: 0 0.82rem;
-  border: 2px solid var(--color-beyond-ink);
-  border-radius: 999px;
-  color: var(--color-beyond-ink);
-  background: var(--color-beyond-amber);
-  box-shadow: 4px 5px 0 rgba(var(--color-beyond-ink-rgb), 0.86);
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid #16131a;
+  border-radius: 0.4rem;
+  color: #16131a;
+  background: #ffe05a;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .homeLink:hover {
-  transform: translateY(-2px);
-  box-shadow: 6px 7px 0 rgba(var(--color-beyond-ink-rgb), 0.9);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .homeLink:focus-visible {
-  outline: 3px solid var(--color-beyond-blue);
+  outline: 3px solid #16131a;
   outline-offset: 3px;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 480px) {
   .footer {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 560px) {
-  .footer {
-    align-items: flex-start;
-    flex-direction: column;
+    justify-content: flex-start;
   }
 }

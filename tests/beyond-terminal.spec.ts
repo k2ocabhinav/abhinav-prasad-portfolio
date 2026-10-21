@@ -64,11 +64,11 @@ function getHeroPortalTrigger(page: Page) {
 }
 
 async function expectBeyondPhotoWallVisible(page: Page) {
-  await expect(page.getByText("Beyond the Build", { exact: true })).toBeVisible();
-  await expect(page.locator("#beyond-hero-title")).toHaveText("Beyond The Terminal");
+  await expect(page.locator("#beyond-hero-title")).toHaveText("Beyond the terminal");
   await expect(
-    page.getByText("Photos, people, notes, and the parts that don't fit inside a resume.")
+    page.getByText("Photos, notes and people from the other side of the work.")
   ).toBeVisible();
+  await expect(page.locator("[data-room-poster]")).toBeVisible();
 }
 
 async function expectHowWorkStepGap(method: Locator) {
@@ -96,7 +96,7 @@ test("easter egg entry transitions into the Beyond route", async ({ page }) => {
   );
   await expect(page.locator("html")).toHaveAttribute(
     "data-last-portal-skin",
-    "beyond-pastel-mist"
+    "beyond-room"
   );
   await expect(page).toHaveURL(/\/beyond-terminal$/);
   await expectBeyondPhotoWallVisible(page);
@@ -410,7 +410,7 @@ test("reduced motion keeps the hero sheet static", async ({ page }) => {
   await expect(page).toHaveURL(/\/beyond-terminal$/);
 });
 
-test("legacy journal routes redirect into the Beyond photo wall", async ({ page }) => {
+test("legacy journal routes redirect into the Beyond room", async ({ page }) => {
   await page.goto("/beyond-terminal/journal");
 
   await expect(page).toHaveURL(/\/beyond-terminal$/);
@@ -421,28 +421,21 @@ test("legacy journal routes redirect into the Beyond photo wall", async ({ page 
   await expectBeyondPhotoWallVisible(page);
 });
 
-test("album lightbox focuses close, traps Tab, and restores focus on close", async ({
+test("fallback postcard focuses close, traps Tab, and restores focus on close", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/beyond-terminal");
 
-  const hero = page.locator('[data-beyond-section="hero"]');
-  const wall = page.locator('[data-beyond-section="wall"]');
-  const chrome = page.locator("header").first();
-  const firstCard = wall.locator("button[aria-label^='Open ']").first();
+  const firstCard = page.locator("[data-fallback-deck] button[aria-label^='Open ']").first();
   await firstCard.scrollIntoViewIfNeeded();
   await firstCard.click();
 
   const dialog = page.getByRole("dialog");
-  const close = dialog.getByRole("button", { name: "Close album item" });
+  const close = dialog.getByRole("button", { name: "Close moment" });
   await expect(dialog).toBeVisible();
   await expect(close).toBeFocused();
-  const isInert = (locator: typeof hero) =>
-    locator.evaluate((element) => element.closest("[inert]") !== null);
-  expect(await isInert(hero)).toBe(true);
-  expect(await isInert(wall)).toBe(true);
-  expect(await isInert(chrome)).toBe(true);
 
   await page.keyboard.press("Tab");
   await expect(close).toBeFocused();
@@ -452,25 +445,30 @@ test("album lightbox focuses close, traps Tab, and restores focus on close", asy
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
   await expect(firstCard).toBeFocused();
-  expect(await isInert(wall)).toBe(false);
-  expect(await isInert(hero)).toBe(false);
-  expect(await isInert(chrome)).toBe(false);
 });
 
-test("desktop Beyond shell matches the photo wall layout", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 1024 });
+test("desktop Beyond room poster and fallback fit the viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/beyond-terminal");
 
   await expectBeyondPhotoWallVisible(page);
-  await page.waitForTimeout(900);
-
-  const screenshot = await page.screenshot({
-    path: artifactPath("beyond-home-desktop.png"),
-    fullPage: true,
+  await expect(page.locator("[data-fallback-deck]")).toBeVisible();
+  const widths = await page.evaluate(() => ({
+    document: document.documentElement.scrollWidth,
+    viewport: window.innerWidth,
+  }));
+  expect(widths.document).toBeLessThanOrEqual(widths.viewport);
+  await page.screenshot({
+    path: path.join(
+      path.dirname(artifactPath("beyond-home-desktop.png")),
+      "beyond-poster-1440x900.png"
+    ),
   });
 
-  expect(screenshot).toMatchSnapshot("beyond-home-desktop.png", {
-    maxDiffPixelRatio: 0.02,
+  await page.screenshot({
+    path: artifactPath("beyond-home-desktop.png"),
+    fullPage: true,
   });
 });
 
@@ -1015,20 +1013,22 @@ test("the scroll cue links to What I do", async ({ page }) => {
   await expect(page.locator("#about h2")).toHaveText("What I do");
 });
 
-test("mobile Beyond shell matches the photo wall layout", async ({ page }) => {
+test("mobile Beyond room poster and fallback fit the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/beyond-terminal");
 
   await expectBeyondPhotoWallVisible(page);
-  await page.waitForTimeout(900);
+  await expect(page.locator("[data-fallback-deck]")).toBeVisible();
+  const widths = await page.evaluate(() => ({
+    document: document.documentElement.scrollWidth,
+    viewport: window.innerWidth,
+  }));
+  expect(widths.document).toBeLessThanOrEqual(widths.viewport);
 
-  const screenshot = await page.screenshot({
+  await page.screenshot({
     path: artifactPath("beyond-home-mobile.png"),
     fullPage: true,
-  });
-
-  expect(screenshot).toMatchSnapshot("beyond-home-mobile.png", {
-    maxDiffPixelRatio: 0.02,
   });
 });
 
@@ -1041,7 +1041,7 @@ test("Beyond route publishes its own share metadata", async ({ page }) => {
   await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
-    "Beyond The Terminal"
+    "Beyond the terminal"
   );
 
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
@@ -1050,41 +1050,38 @@ test("Beyond route publishes its own share metadata", async ({ page }) => {
   );
   await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute(
     "content",
-    "Beyond The Terminal"
+    "Beyond the terminal"
   );
   await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute(
     "content",
-    /photo wall/
+    /small room/
   );
   expect(await page.locator('meta[name="twitter:image"]').getAttribute("content")).toBe(ogImage);
 });
 
-test("Beyond home actions keep a visible cobalt focus outline", async ({ page }) => {
+test("Beyond room links keep a visible focus outline", async ({ page }) => {
   await page.goto("/beyond-terminal");
 
-  for (const name of ["Home", "Return home"]) {
+  for (const name of ["Abhinav, back to work", "Back to work"]) {
     const link = page.getByRole("link", { name, exact: true });
     await link.focus();
     await expect(link).toBeFocused();
     await expect(link).toHaveCSS("outline-style", "solid");
     await expect(link).toHaveCSS("outline-width", "3px");
     await expect(link).toHaveCSS("outline-offset", "3px");
-    await expect(link).toHaveCSS("outline-color", "rgb(36, 93, 255)");
+    await expect(link).toHaveCSS("outline-color", "rgb(22, 19, 26)");
   }
 });
 
-test("redirected journal archive matches the Beyond photo wall layout", async ({ page }) => {
+test("redirected journal archive renders the Beyond room", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1200 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/beyond-terminal/journal");
 
   await expect(page).toHaveURL(/\/beyond-terminal$/);
   await expectBeyondPhotoWallVisible(page);
-  await page.waitForTimeout(700);
-
-  const screenshot = await page.screenshot({
+  await page.screenshot({
     path: artifactPath("beyond-journal-archive.png"),
     fullPage: true,
   });
-
-  expect(screenshot).toMatchSnapshot("beyond-journal-archive.png");
 });

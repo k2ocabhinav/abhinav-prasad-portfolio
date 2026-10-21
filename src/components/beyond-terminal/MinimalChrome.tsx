@@ -1,25 +1,59 @@
+"use client";
+
 import Link from "next/link";
+import { useRoomState, roomStore } from "@/components/beyond/room/roomStore";
+import { OPEN_MOMENTS_EVENT } from "@/components/beyond/shell/events";
+import { playRoomSound } from "@/components/beyond/shell/audio";
 import styles from "./MinimalChrome.module.css";
 
 export default function MinimalChrome() {
+  const room = useRoomState();
+
+  const toggleSound = () => {
+    const soundOn = !room.soundOn;
+    roomStore.set({ soundOn });
+    playRoomSound(soundOn ? "paper" : "thud");
+  };
+
+  const toggleMode = () => {
+    const mode = room.mode === "day" ? "night" : "day";
+    roomStore.set({ mode });
+    if (room.soundOn) playRoomSound("thud");
+  };
+
+  const openMoments = () => {
+    window.dispatchEvent(new CustomEvent(OPEN_MOMENTS_EVENT));
+  };
+
   return (
-    <header className={styles.chrome}>
+    <header className={styles.chrome} data-beyond-chrome>
       <div className={styles.inner}>
-        <Link href="/beyond-terminal" className={styles.brand} aria-label="Beyond The Terminal home">
-          <span className={styles.markWrap} aria-hidden="true">
-            <span className={styles.markDot} />
-          </span>
-          <span className={styles.brandCopy}>
-            <span className={styles.brandEyebrow}>Beyond The Terminal</span>
-            <span className={styles.brandTitle}>Photo wall</span>
-          </span>
+        <Link href="/" className={styles.brand} aria-label="Abhinav, back to work">
+          Abhinav
         </Link>
-
-        <span className={styles.routeLabel}>Hidden album</span>
-
-        <Link href="/" className={styles.actionPrimary}>
-          Home
-        </Link>
+        <nav className={styles.actions} aria-label="Room controls">
+          <button
+            type="button"
+            aria-pressed={room.soundOn}
+            onClick={toggleSound}
+          >
+            Sound {room.soundOn ? "on" : "off"}
+          </button>
+          <button
+            type="button"
+            aria-pressed={room.mode === "night"}
+            onClick={toggleMode}
+          >
+            {room.mode === "night" ? "Day mode" : "Night mode"}
+          </button>
+          <button
+            type="button"
+            aria-controls="beyond-moments-list"
+            onClick={openMoments}
+          >
+            Everything in the room
+          </button>
+        </nav>
       </div>
     </header>
   );

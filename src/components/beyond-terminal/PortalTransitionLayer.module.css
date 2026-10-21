@@ -5,6 +5,20 @@
   pointer-events: auto;
 }
 
+.root[data-portal-skin="beyond-room"] .cover {
+  background: radial-gradient(
+    circle at var(--portal-origin-x) var(--portal-origin-y),
+    var(--color-beyond-lilac) 0 12%,
+    var(--color-beyond-amber) 38%,
+    var(--color-beyond-paper) 72%,
+    var(--color-beyond-lilac) 100%
+  );
+}
+
+.root[data-portal-skin="beyond-room"] .blur {
+  opacity: 0 !important;
+}
+
 .rootReduced .cover {
   background:
     linear-gradient(180deg, rgba(var(--color-beyond-paper-rgb), 0.98), rgba(var(--color-beyond-yellow-rgb), 0.94)),
