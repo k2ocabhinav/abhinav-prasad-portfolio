@@ -1,173 +1,329 @@
 "use client";
 
 import { useFrame } from "@react-three/fiber";
-import { useLayoutEffect, useMemo, useRef } from "react";
-import { Color, Group, InstancedMesh, MeshBasicMaterial, Object3D, PlaneGeometry, Shape, ShapeGeometry } from "three";
-import { roomPalette } from "../contracts";
-import type { BoxInstance } from "./primitives";
+import { useMemo, useRef } from "react";
+import {
+  AdditiveBlending,
+  BufferAttribute,
+  BufferGeometry,
+  AlwaysStencilFunc,
+  Color,
+  EqualStencilFunc,
+  MeshBasicMaterial,
+  PointsMaterial,
+  ReplaceStencilOp,
+  Shape,
+  ShapeGeometry,
+  SRGBColorSpace,
+} from "three";
 import { useNightBlend } from "./dayNight";
-import { InstancedBoxes, InkBox } from "./primitives";
+import { fogTexture, glassTexture, glowTexture, moonTexture, useGradientTexture } from "./textures";
 
-const WINDOW_WIDTH = 4.4;
-const WINDOW_HEIGHT = 2.35;
-const WINDOW_Z = -2.56;
+// The view through the window: sky, hills, drifting Shillong mist, and at night
+// stars, a moon and a few warm house lights. Everything sits behind the wall's
+// window opening (x -2.35..2.05, y 2.15..4.45, wall back face z = -2.97).
 
-function hillGeometry(width: number, height: number, peak: number): ShapeGeometry {
+const SKY_Z = -5.4;
+
+// The view only shows through the wall's window opening: a mask drawn after the wall
+// writes stencil 1 inside the hole, and every layer of the view tests against it.
+const viewStencil = { stencilWrite: true, stencilRef: 1, stencilFunc: EqualStencilFunc } as const;
+
+interface HillSpec {
+  z: number;
+  base: number;
+  day: string;
+  night: string;
+  seed: number;
+  trees: boolean;
+}
+
+const HILLS: HillSpec[] = [
+  { z: -4.7, base: 3.4, day: "#B6D7F4", night: "#3E3B88", seed: 1, trees: false },
+  { z: -4.35, base: 3.13, day: "#93CDD9", night: "#34317C", seed: 2, trees: false },
+  { z: -3.95, base: 2.88, day: "#6DBF93", night: "#2A276C", seed: 3, trees: true },
+  { z: -3.55, base: 2.62, day: "#4BAA77", night: "#211E5C", seed: 4, trees: true },
+  { z: -3.2, base: 2.36, day: "#379063", night: "#181548", seed: 5, trees: true },
+];
+
+interface FogSpec {
+  z: number;
+  y: number;
+  height: number;
+  speed: number;
+  opacity: number;
+  seed: number;
+}
+
+const FOG: FogSpec[] = [
+  { z: -4.55, y: 3.2, height: 1.7, speed: 0.0045, opacity: 0.85, seed: 1 },
+  { z: -4.1, y: 2.95, height: 1.6, speed: -0.007, opacity: 0.9, seed: 2 },
+  { z: -3.62, y: 2.7, height: 1.5, speed: 0.011, opacity: 0.95, seed: 3 },
+  { z: -3.1, y: 2.42, height: 1.4, speed: -0.016, opacity: 1, seed: 4 },
+];
+
+function seeded(seed: number) {
+  let value = seed * 9301 + 49297;
+  return () => {
+    value = (value * 9301 + 49297) % 233280;
+    return value / 233280;
+  };
+}
+
+function ridge(x: number, spec: HillSpec): number {
+  const s = spec.seed;
+  return spec.base
+    + Math.sin(x * 0.62 + s * 1.9) * 0.27
+    + Math.sin(x * 1.37 + s * 0.7) * 0.12
+    + Math.sin(x * 2.9 + s * 2.3) * 0.045;
+}
+
+function hillGeometry(spec: HillSpec): ShapeGeometry {
+  const x0 = -6;
+  const x1 = 5;
+  const random = seeded(spec.seed * 31);
   const shape = new Shape();
-  shape.moveTo(-width / 2, -height / 2);
-  shape.lineTo(-width / 2, -height * 0.05);
-  shape.quadraticCurveTo(-width * 0.3, height * 0.18, -width * 0.08, height * 0.05);
-  shape.quadraticCurveTo(width * 0.12, -height * 0.06, peak, height * 0.32);
-  shape.quadraticCurveTo(width * 0.31, height * 0.12, width / 2, height * 0.04);
-  shape.lineTo(width / 2, -height / 2);
+  shape.moveTo(x0, 1.0);
+  shape.lineTo(x0, ridge(x0, spec));
+  let nextTree = x0 + 0.4;
+  for (let x = x0 + 0.1; x <= x1; x += 0.1) {
+    const y = ridge(x, spec);
+    if (spec.trees && x >= nextTree) {
+      const size = 0.14 + random() * 0.13;
+      shape.lineTo(x - size * 0.34, y);
+      shape.lineTo(x, y + size * 1.9);
+      shape.lineTo(x + size * 0.34, y);
+      nextTree = x + 0.22 + random() * 0.4;
+      x += size * 0.34;
+    } else {
+      shape.lineTo(x, y);
+    }
+  }
+  shape.lineTo(x1, 1.0);
   shape.closePath();
   return new ShapeGeometry(shape, 1);
 }
 
-function cloudGeometry(width: number, height: number): ShapeGeometry {
-  const shape = new Shape();
-  shape.moveTo(-width / 2, -height * 0.12);
-  shape.quadraticCurveTo(-width * 0.42, height * 0.22, -width * 0.28, height * 0.24);
-  shape.quadraticCurveTo(-width * 0.18, height * 0.53, width * 0.02, height * 0.28);
-  shape.quadraticCurveTo(width * 0.23, height * 0.43, width * 0.31, height * 0.14);
-  shape.quadraticCurveTo(width * 0.53, height * 0.12, width / 2, -height * 0.12);
-  shape.lineTo(-width / 2, -height * 0.12);
-  shape.closePath();
-  return new ShapeGeometry(shape, 1);
-}
+const SKY_DAY = ["#7FC4FA", "#B5DDFB", "#FFE4C4"];
+const SKY_NIGHT = ["#0B0930", "#1C1646", "#43297E"];
 
-function WindowSky() {
+function Sky() {
   const blend = useNightBlend();
-  const materialRef = useRef<MeshBasicMaterial>(null);
-  const dayColor = useMemo(() => new Color("#9AD8E8"), []);
-  const nightColor = useMemo(() => new Color(roomPalette.night), []);
-  const materialColor = useMemo(() => new Color(), []);
+  const painted = useRef(-1);
+  const { texture, paint } = useGradientTexture(128);
+  const dayColors = useMemo(() => SKY_DAY.map((hex) => new Color(hex)), []);
+  const nightColors = useMemo(() => SKY_NIGHT.map((hex) => new Color(hex)), []);
+  const scratch = useMemo(() => new Color(), []);
 
   useFrame(() => {
+    const night = blend.get();
+    if (Math.abs(night - painted.current) < 0.002) return;
+    painted.current = night;
+    paint([0, 0.5, 1].map((stop, index) => {
+      scratch.copy(dayColors[index]).lerp(nightColors[index], night);
+      return [stop, `#${scratch.getHexString(SRGBColorSpace)}`] as [number, string];
+    }));
+  });
+
+  return (
+    <mesh position={[-0.6, 3.3, SKY_Z]} renderOrder={2}>
+      <planeGeometry args={[26, 8.2]} />
+      <meshBasicMaterial map={texture} toneMapped={false} {...viewStencil} />
+    </mesh>
+  );
+}
+
+function SunAndMoon() {
+  const blend = useNightBlend();
+  const glow = useMemo(() => glowTexture(), []);
+  const moon = useMemo(() => moonTexture(), []);
+  const sunRef = useRef<MeshBasicMaterial>(null);
+  const moonRef = useRef<MeshBasicMaterial>(null);
+
+  useFrame(() => {
+    const night = blend.get();
+    if (sunRef.current) sunRef.current.opacity = (1 - night) * 0.55;
+    if (moonRef.current) moonRef.current.opacity = night;
+  });
+
+  return (
+    <group>
+      <mesh position={[-1.5, 3.9, SKY_Z + 0.1]} renderOrder={2}>
+        <planeGeometry args={[4.2, 4.2]} />
+        <meshBasicMaterial ref={sunRef} map={glow} color="#FFE9A8" transparent depthWrite={false} blending={AdditiveBlending} toneMapped={false} {...viewStencil} />
+      </mesh>
+      <mesh position={[-0.4, 3.85, SKY_Z + 0.1]} renderOrder={2}>
+        <planeGeometry args={[1.5, 1.5]} />
+        <meshBasicMaterial ref={moonRef} map={moon} transparent opacity={0} depthWrite={false} toneMapped={false} {...viewStencil} />
+      </mesh>
+    </group>
+  );
+}
+
+function Stars() {
+  const blend = useNightBlend();
+  const glow = useMemo(() => glowTexture(), []);
+  const materialRef = useRef<PointsMaterial>(null);
+  const geometry = useMemo(() => {
+    const random = seeded(7);
+    const count = 90;
+    const positions = new Float32Array(count * 3);
+    for (let index = 0; index < count; index += 1) {
+      positions[index * 3] = -6 + random() * 11;
+      positions[index * 3 + 1] = 2.9 + random() * 2.8;
+      positions[index * 3 + 2] = SKY_Z + 0.3;
+    }
+    const result = new BufferGeometry();
+    result.setAttribute("position", new BufferAttribute(positions, 3));
+    return result;
+  }, []);
+
+  useFrame(({ clock }) => {
     if (materialRef.current) {
-      materialRef.current.color.copy(materialColor.lerpColors(dayColor, nightColor, blend.get()));
+      materialRef.current.opacity = blend.get() * (0.78 + 0.22 * Math.sin(clock.elapsedTime * 1.6));
     }
   });
 
   return (
-    <mesh position={[-0.15, 3.3, WINDOW_Z]}>
-      <planeGeometry args={[WINDOW_WIDTH, WINDOW_HEIGHT]} />
-      <meshBasicMaterial ref={materialRef} color="#9AD8E8" toneMapped={false} />
-    </mesh>
+    <points geometry={geometry} frustumCulled={false}>
+      <pointsMaterial ref={materialRef} map={glow} color="#FFF6D8" size={3.2} sizeAttenuation={false} transparent opacity={0} depthWrite={false} toneMapped={false} {...viewStencil} />
+    </points>
   );
 }
 
 function Hills() {
   const blend = useNightBlend();
-  const frontRef = useRef<MeshBasicMaterial>(null);
-  const rearRef = useRef<MeshBasicMaterial>(null);
-  const frontDay = useMemo(() => new Color("#557C78"), []);
-  const rearDay = useMemo(() => new Color("#73978A"), []);
-  const night = useMemo(() => new Color("#292744"), []);
-  const scratch = useMemo(() => new Color(), []);
-  const frontGeometry = useMemo(() => hillGeometry(4.4, 1.7, -0.35), []);
-  const rearGeometry = useMemo(() => hillGeometry(4.4, 1.15, 0.62), []);
+  const materials = useRef<(MeshBasicMaterial | null)[]>([]);
+  const geometries = useMemo(() => HILLS.map((spec) => hillGeometry(spec)), []);
+  const dayColors = useMemo(() => HILLS.map((spec) => new Color(spec.day)), []);
+  const nightColors = useMemo(() => HILLS.map((spec) => new Color(spec.night)), []);
 
   useFrame(() => {
-    if (frontRef.current) frontRef.current.color.copy(scratch.lerpColors(frontDay, night, blend.get()));
-    if (rearRef.current) rearRef.current.color.copy(scratch.lerpColors(rearDay, night, blend.get()));
+    const night = blend.get();
+    materials.current.forEach((material, index) => {
+      material?.color.copy(dayColors[index]).lerp(nightColors[index], night);
+    });
   });
 
   return (
-    <group position={[-0.15, 3.12, WINDOW_Z + 0.018]}>
-      <mesh position={[0, 0.08, -0.008]} geometry={rearGeometry}>
-        <meshBasicMaterial ref={rearRef} color="#73978A" toneMapped={false} />
-      </mesh>
-      <mesh position={[0, -0.14, 0.002]} geometry={frontGeometry}>
-        <meshBasicMaterial ref={frontRef} color="#557C78" toneMapped={false} />
-      </mesh>
+    <group>
+      {HILLS.map((spec, index) => (
+        <mesh key={spec.seed} geometry={geometries[index]} position={[0, 0, spec.z]} renderOrder={2}>
+          <meshBasicMaterial ref={(node) => { materials.current[index] = node; }} color={spec.day} toneMapped={false} {...viewStencil} />
+        </mesh>
+      ))}
     </group>
   );
 }
 
-function FogLayer({
-  position,
-  width,
-  height,
-  speed,
-  offset,
-}: {
-  position: [number, number, number];
-  width: number;
-  height: number;
-  speed: number;
-  offset: number;
-}) {
-  const groupRef = useRef<Group>(null);
-  const geometry = useMemo(() => cloudGeometry(width, height), [height, width]);
+function HouseLights() {
+  const blend = useNightBlend();
+  const glow = useMemo(() => glowTexture(), []);
+  const materialRef = useRef<PointsMaterial>(null);
+  const geometry = useMemo(() => {
+    const random = seeded(23);
+    const list: number[] = [];
+    const place = (spec: HillSpec, xs: number[]) => {
+      for (const x of xs) list.push(x, ridge(x, spec) - 0.08 - random() * 0.2, spec.z + 0.04);
+    };
+    place(HILLS[2], [-2.4, -1.6, -0.5, 0.3, 1.3, 2.3]);
+    place(HILLS[3], [-1.9, -1.1, 0.0, 0.9, 1.7]);
+    place(HILLS[4], [-2.1, -0.8, 0.6, 1.4]);
+    const result = new BufferGeometry();
+    result.setAttribute("position", new BufferAttribute(new Float32Array(list), 3));
+    return result;
+  }, []);
 
   useFrame(({ clock }) => {
-    if (!groupRef.current) return;
-    const travel = (clock.elapsedTime * speed + offset) % 1;
-    groupRef.current.position.x = position[0] - width * 0.34 + travel * width * 0.68;
+    if (materialRef.current) materialRef.current.opacity = blend.get() * (0.88 + 0.12 * Math.sin(clock.elapsedTime * 0.9));
   });
 
   return (
-    <group ref={groupRef} position={position}>
-      <mesh geometry={geometry}>
-        <meshBasicMaterial color={roomPalette.paper} transparent opacity={0.34} depthWrite={false} toneMapped={false} />
-      </mesh>
+    <points geometry={geometry} frustumCulled={false} renderOrder={2}>
+      <pointsMaterial ref={materialRef} map={glow} color="#FFC96B" size={9} sizeAttenuation={false} transparent opacity={0} depthWrite={false} blending={AdditiveBlending} toneMapped={false} {...viewStencil} />
+    </points>
+  );
+}
+
+function FogBands() {
+  const blend = useNightBlend();
+  const materials = useRef<(MeshBasicMaterial | null)[]>([]);
+  const textures = useMemo(() => FOG.map((spec) => {
+    const texture = fogTexture(spec.seed).clone();
+    texture.needsUpdate = true;
+    texture.repeat.set(3, 1);
+    return texture;
+  }), []);
+  const dayColor = useMemo(() => new Color("#FFF5E8"), []);
+  const nightColor = useMemo(() => new Color("#8A86D8"), []);
+
+  useFrame(({ clock }) => {
+    const night = blend.get();
+    FOG.forEach((spec, index) => {
+      textures[index].offset.x = (clock.elapsedTime * spec.speed + spec.seed * 0.23) % 1;
+      const material = materials.current[index];
+      if (material) {
+        material.color.copy(dayColor).lerp(nightColor, night);
+        material.opacity = spec.opacity * (1 - night * 0.45);
+      }
+    });
+  });
+
+  return (
+    <group>
+      {FOG.map((spec, index) => (
+        <mesh key={spec.seed} position={[-0.6, spec.y, spec.z]} renderOrder={1}>
+          <planeGeometry args={[14, spec.height]} />
+          <meshBasicMaterial
+            ref={(node) => { materials.current[index] = node; }}
+            map={textures[index]}
+            transparent
+            opacity={spec.opacity}
+            depthWrite={false}
+            toneMapped={false}
+            {...viewStencil}
+          />
+        </mesh>
+      ))}
     </group>
   );
 }
 
-function NightWindows() {
+function Glass() {
   const blend = useNightBlend();
-  const meshRef = useRef<InstancedMesh>(null);
+  const texture = useMemo(() => glassTexture(), []);
   const materialRef = useRef<MeshBasicMaterial>(null);
-  const geometry = useMemo(() => new PlaneGeometry(0.11, 0.08), []);
-  const object = useMemo(() => new Object3D(), []);
-  const lights = useMemo(() => [
-    [-1.82, 2.7, 0], [-1.36, 2.52, 0], [-0.44, 2.68, 0], [0.65, 2.49, 0],
-    [1.21, 2.77, 0], [1.82, 2.58, 0], [-0.91, 2.82, 0], [0.16, 2.86, 0],
-  ] as const, []);
-
-  useLayoutEffect(() => {
-    const mesh = meshRef.current;
-    if (!mesh) return;
-    lights.forEach((position, index) => {
-      object.position.set(position[0], position[1], position[2]);
-      object.updateMatrix();
-      mesh.setMatrixAt(index, object.matrix);
-    });
-    mesh.instanceMatrix.needsUpdate = true;
-    mesh.computeBoundingSphere();
-  }, [lights, object]);
-
   useFrame(() => {
-    if (materialRef.current) materialRef.current.opacity = blend.get() * 0.94;
+    if (materialRef.current) materialRef.current.opacity = 0.85 - blend.get() * 0.45;
   });
-
   return (
-    <instancedMesh ref={meshRef} args={[geometry, undefined, lights.length]} position={[-0.15, 0, WINDOW_Z + 0.035]}>
-      <meshBasicMaterial ref={materialRef} color={roomPalette.lemon} transparent opacity={0} toneMapped={false} />
-    </instancedMesh>
+    <mesh position={[-0.15, 3.3, -2.8]} renderOrder={5}>
+      <planeGeometry args={[4.4, 2.3]} />
+      <meshBasicMaterial ref={materialRef} map={texture} transparent opacity={0.85} depthWrite={false} toneMapped={false} />
+    </mesh>
+  );
+}
+
+function WindowMask() {
+  return (
+    <mesh position={[-0.15, 3.3, -2.9]} renderOrder={1}>
+      <planeGeometry args={[4.8, 2.7]} />
+      <meshBasicMaterial colorWrite={false} depthWrite={false} stencilWrite stencilRef={1} stencilFunc={AlwaysStencilFunc} stencilZPass={ReplaceStencilOp} />
+    </mesh>
   );
 }
 
 export function WindowView() {
-  const frame = useMemo<BoxInstance[]>(() => [
-    { position: [-0.15, 4.48, -2.5], size: [4.66, 0.12, 0.14] },
-    { position: [-0.15, 2.12, -2.5], size: [4.66, 0.16, 0.18] },
-    { position: [-2.44, 3.3, -2.5], size: [0.13, 2.5, 0.14] },
-    { position: [2.14, 3.3, -2.5], size: [0.13, 2.5, 0.14] },
-    { position: [-0.15, 3.3, -2.48], size: [0.09, 2.34, 0.13] },
-  ], []);
-
   return (
     <group>
-      <WindowSky />
+      <WindowMask />
+      <Sky />
+      <SunAndMoon />
+      <Stars />
       <Hills />
-      <FogLayer position={[-0.35, 3.4, WINDOW_Z + 0.025]} width={3.2} height={0.58} speed={0.023} offset={0.1} />
-      <FogLayer position={[0.55, 2.95, WINDOW_Z + 0.03]} width={3.8} height={0.44} speed={0.017} offset={0.62} />
-      <NightWindows />
-      <InstancedBoxes instances={[...frame]} color={roomPalette.poolBlue} outlined />
-      <InkBox position={[-0.15, 2.06, -2.43]} size={[4.9, 0.16, 0.32]} color={roomPalette.poolBlue} outlined />
+      <HouseLights />
+      <FogBands />
+      <Glass />
     </group>
   );
 }

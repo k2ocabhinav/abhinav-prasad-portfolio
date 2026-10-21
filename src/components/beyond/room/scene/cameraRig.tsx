@@ -2,14 +2,68 @@
 
 import { useFrame, useThree } from "@react-three/fiber";
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Euler, PerspectiveCamera, Vector3 } from "three";
 import type { CameraRig as CameraRigApi } from "../contracts";
 import { CameraRigContext } from "../contracts";
 
-const HOME_POSITION = new Vector3(8.2, 6.4, 10.5);
-const HOME_TARGET = new Vector3(0, 2.15, 0);
+export const CAMERA_FOV = 36;
+const HOME_DIRECTION = new Vector3(7.6, 4.5, 10.2).normalize();
 const GLIDE_SECONDS = 0.9;
+
+// Points that bound the room on screen (plinth corners and wall tops).
+const ROOM_POINTS: [number, number, number][] = [
+  [-4.5, -0.64, -3.25], [4.5, -0.64, -3.25], [-4.5, -0.64, 2.85], [4.5, -0.64, 2.85],
+  [-4.25, 5.5, -3.0], [4.25, 5.5, -3.0], [-4.25, 5.5, 2.6],
+];
+// Portrait: the window wall and the desk.
+const DESK_POINTS: [number, number, number][] = [
+  [-2.5, 1.1, -3.0], [2.5, 1.1, -3.0], [-2.5, 5.0, -3.0], [2.5, 5.0, -3.0],
+  [-2.5, 1.1, 1.6], [2.5, 1.1, 1.6], [-2.5, 5.0, 1.6], [2.5, 5.0, 1.6],
+];
+
+/**
+ * Finds the camera position along the establishing direction that makes the room
+ * fill the frame: about 74% of the width on wide screens, tighter on the desk and
+ * window for portrait screens.
+ */
+export function fitHome(aspect: number, fov: number): { position: Vector3; target: Vector3 } {
+  const portrait = aspect < 0.9;
+  const points = (portrait ? DESK_POINTS : ROOM_POINTS).map((point) => new Vector3(...point));
+  const fillX = portrait ? 0.97 : 0.76;
+  const fillY = portrait ? 0.9 : 0.95;
+  const camera = new PerspectiveCamera(fov, aspect, 0.1, 100);
+  const target = new Vector3(0, portrait ? 3.1 : 2.2, 0);
+  const projected = new Vector3();
+  let distance = 16;
+
+  for (let step = 0; step < 14; step += 1) {
+    camera.position.copy(target).addScaledVector(HOME_DIRECTION, distance);
+    camera.lookAt(target);
+    camera.updateMatrixWorld(true);
+    camera.updateProjectionMatrix();
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    for (const point of points) {
+      projected.copy(point).project(camera);
+      minX = Math.min(minX, projected.x);
+      maxX = Math.max(maxX, projected.x);
+      minY = Math.min(minY, projected.y);
+      maxY = Math.max(maxY, projected.y);
+    }
+    const need = Math.max((maxX - minX) / (2 * fillX), (maxY - minY) / (2 * fillY));
+    distance *= Math.min(1.5, Math.max(0.6, need));
+    const halfHeight = distance * Math.tan((fov * Math.PI) / 360);
+    const right = new Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+    const up = new Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+    target.addScaledVector(right, ((minX + maxX) / 2) * halfHeight * aspect);
+    target.addScaledVector(up, ((minY + maxY) / 2) * halfHeight);
+  }
+
+  return { position: target.clone().addScaledVector(HOME_DIRECTION, distance), target };
+}
 const POINTER_LIMIT_YAW = (4 * Math.PI) / 180;
 const POINTER_LIMIT_PITCH = (2 * Math.PI) / 180;
 
@@ -30,7 +84,10 @@ export function CameraRig({ children }: { children: ReactNode }) {
   const pointerTarget = useRef({ x: 0, y: 0 });
   const pointerSpring = useRef({ x: 0, y: 0, vx: 0, vy: 0 });
   const pointerRect = useRef<DOMRect | null>(null);
-  const currentLookTarget = useMemo(() => HOME_TARGET.clone(), []);
+  const [initialHome] = useState(() => fitHome(size.width / Math.max(size.height, 1), CAMERA_FOV));
+  const home = useRef(initialHome);
+  const homeAspect = useRef(size.width / Math.max(size.height, 1));
+  const currentLookTarget = useMemo(() => initialHome.target.clone(), [initialHome]);
   const desiredPosition = useMemo(() => new Vector3(), []);
   const direction = useMemo(() => new Vector3(), []);
   const pointerRotation = useMemo(() => new Euler(), []);
@@ -79,18 +136,18 @@ export function CameraRig({ children }: { children: ReactNode }) {
   }, [gl]);
 
   useEffect(() => {
-    camera.position.copy(HOME_POSITION);
-    camera.lookAt(HOME_TARGET);
-    currentLookTarget.copy(HOME_TARGET);
-    camera.updateProjectionMatrix();
-  }, [camera, currentLookTarget]);
+    camera.position.copy(home.current.position);
+    camera.lookAt(home.current.target);
+    currentLookTarget.copy(home.current.target);
+    invalidate();
+  }, [camera, currentLookTarget, invalidate]);
 
   const api = useMemo<CameraRigApi>(() => ({
     focus({ position, normal, size }) {
       isFocused.current = true;
       const target = new Vector3(...position);
       const face = new Vector3(...normal).normalize();
-      const fov = "fov" in camera ? camera.fov : 38;
+      const fov = "fov" in camera ? camera.fov : CAMERA_FOV;
       const distance = Math.max(2.8, Math.min(6, size[1] / (2 * Math.tan((fov * Math.PI) / 360)) * 1.65));
       const toPosition = target.clone().addScaledVector(face, distance);
       toPosition.y += distance * 0.45;
@@ -116,9 +173,9 @@ export function CameraRig({ children }: { children: ReactNode }) {
     reset() {
       isFocused.current = false;
       if (reducedMotionRef.current) {
-        camera.position.copy(HOME_POSITION);
-        camera.lookAt(HOME_TARGET);
-        currentLookTarget.copy(HOME_TARGET);
+        camera.position.copy(home.current.position);
+        camera.lookAt(home.current.target);
+        currentLookTarget.copy(home.current.target);
         glideRef.current = null;
         invalidate();
         return;
@@ -127,9 +184,9 @@ export function CameraRig({ children }: { children: ReactNode }) {
       glideRef.current = {
         startedAt: clock.elapsedTime,
         fromPosition: camera.position.clone(),
-        toPosition: HOME_POSITION.clone(),
+        toPosition: home.current.position.clone(),
         fromTarget: currentLookTarget.clone(),
-        toTarget: HOME_TARGET.clone(),
+        toTarget: home.current.target.clone(),
       };
       invalidate();
     },
@@ -137,11 +194,14 @@ export function CameraRig({ children }: { children: ReactNode }) {
 
   useFrame((state, delta) => {
     const activeCamera = cameraRef.current;
-    if (activeCamera instanceof PerspectiveCamera) {
-      const responsiveFov = size.width / Math.max(size.height, 1) < 0.8 ? 80 : 40;
-      if (activeCamera.fov !== responsiveFov) {
-        activeCamera.fov = responsiveFov;
-        activeCamera.updateProjectionMatrix();
+    const aspect = size.width / Math.max(size.height, 1);
+    if (Math.abs(aspect - homeAspect.current) > 0.001) {
+      homeAspect.current = aspect;
+      home.current = fitHome(aspect, CAMERA_FOV);
+      if (!isFocused.current && !glideRef.current) {
+        activeCamera.position.copy(home.current.position);
+        currentLookTarget.copy(home.current.target);
+        activeCamera.lookAt(currentLookTarget);
       }
     }
 
@@ -153,10 +213,16 @@ export function CameraRig({ children }: { children: ReactNode }) {
       currentLookTarget.lerpVectors(glide.fromTarget, glide.toTarget, eased);
       activeCamera.lookAt(currentLookTarget);
       if (progress === 1) glideRef.current = null;
+      else invalidate();
       return;
     }
 
-    if (reducedMotionRef.current || isFocused.current) return;
+    if (isFocused.current) return;
+    if (reducedMotionRef.current) {
+      activeCamera.position.copy(home.current.position);
+      activeCamera.lookAt(home.current.target);
+      return;
+    }
 
     const spring = pointerSpring.current;
     const targetX = pointerTarget.current.x * POINTER_LIMIT_YAW;
@@ -169,11 +235,11 @@ export function CameraRig({ children }: { children: ReactNode }) {
     spring.x += spring.vx * step;
     spring.y += spring.vy * step;
 
-    direction.copy(HOME_POSITION).sub(HOME_TARGET);
+    direction.copy(home.current.position).sub(home.current.target);
     pointerRotation.set(spring.y, spring.x, 0);
-    desiredPosition.copy(direction).applyEuler(pointerRotation).add(HOME_TARGET);
+    desiredPosition.copy(direction).applyEuler(pointerRotation).add(home.current.target);
     activeCamera.position.lerp(desiredPosition, 1 - Math.exp(-delta * 11));
-    currentLookTarget.copy(HOME_TARGET);
+    currentLookTarget.copy(home.current.target);
     activeCamera.lookAt(currentLookTarget);
   });
 
