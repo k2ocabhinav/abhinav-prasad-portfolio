@@ -393,7 +393,7 @@ test("keeps hero facts separate and What I do specific", async ({ page }) => {
   await expect(evidenceTable.getByRole("columnheader")).toHaveText([
     "Area",
     "Where it shows",
-    "Proof tags",
+    "Evidence",
   ]);
   await expect(evidenceTable.locator("tbody > tr")).toHaveCount(3);
   await expect(whatIDo.locator("[data-service-number], [data-service-glyph]")).toHaveCount(0);

@@ -26,6 +26,8 @@ export interface SectionSnapshot {
   activeId: string;
   /** True when that target paints a dark ink field behind the chrome. */
   dark: boolean;
+  /** True when a dark ink field intersects the fixed section rail. */
+  railDark: boolean;
   /** Paper stock of the current section; sections may paint over it. */
   stock: PaperStock;
   /** "glass" once the page has scrolled past the hero threshold. */
@@ -35,6 +37,7 @@ export interface SectionSnapshot {
 const INITIAL_SNAPSHOT: SectionSnapshot = {
   activeId: navSpyTargets[0]?.id ?? "",
   dark: false,
+  railDark: false,
   stock: "bone",
   navMode: "transparent",
 };
@@ -70,6 +73,7 @@ function publish(patch: Partial<SectionSnapshot>) {
   if (
     next.activeId === snapshot.activeId &&
     next.dark === snapshot.dark &&
+    next.railDark === snapshot.railDark &&
     next.stock === snapshot.stock &&
     next.navMode === snapshot.navMode
   ) {
@@ -100,12 +104,27 @@ function startEngine(): () => void {
   }
 
   const visible = new Set<Element>();
+  let marqueeOverlapsRail = false;
   const bodyScrollIsLocked = () => document.body.style.position === "fixed";
   const atPageBottom = () =>
     !bodyScrollIsLocked() &&
     window.innerHeight + window.scrollY >=
     document.documentElement.scrollHeight - 2;
   const last = resolved[resolved.length - 1];
+  const marquee = document.querySelector("[data-marquee]");
+  const railToneObserver = marquee
+    ? new IntersectionObserver(
+        ([entry]) => {
+          marqueeOverlapsRail = Boolean(entry?.isIntersecting);
+          publish({ railDark: snapshot.dark || marqueeOverlapsRail });
+        },
+        { rootMargin: "-20% 0px -20% 0px" }
+      )
+    : null;
+  if (marquee && railToneObserver) {
+    railToneObserver.observe(marquee);
+  }
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -132,6 +151,7 @@ function startEngine(): () => void {
         publish({
           activeId: current.id,
           dark: current.dark,
+          railDark: current.dark || marqueeOverlapsRail,
           stock: current.stock,
         });
       }
@@ -148,12 +168,18 @@ function startEngine(): () => void {
     frame = 0;
     publish({
       navMode: window.scrollY > NAV_MODE_THRESHOLD ? "glass" : "transparent",
+      railDark: snapshot.dark || marqueeOverlapsRail,
     });
 
     // At the very bottom the last section owns the highlight, even when it is
     // too short to reach the reading band.
     if (atPageBottom()) {
-      publish({ activeId: last.id, dark: last.dark, stock: last.stock });
+      publish({
+        activeId: last.id,
+        dark: last.dark,
+        railDark: last.dark || marqueeOverlapsRail,
+        stock: last.stock,
+      });
     }
   };
   const handleScroll = () => {
@@ -167,6 +193,7 @@ function startEngine(): () => void {
 
   return () => {
     observer.disconnect();
+    railToneObserver?.disconnect();
     if (frame !== 0) {
       window.cancelAnimationFrame(frame);
     }

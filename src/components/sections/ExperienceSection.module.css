@@ -359,7 +359,7 @@
   line-height: 1.4;
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 768px) and (max-width: 1023px) and (hover: hover) and (pointer: fine) {
   .experienceSection > :global(.content-container) {
     padding-left: var(--content-padding-x);
     padding-right: calc(var(--content-padding-x) + 6.5rem);
@@ -458,6 +458,12 @@
 
   .workstreamGrid,
   .toolkitFigureGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .workstreamGrid {
     grid-template-columns: minmax(0, 1fr);
   }
 }

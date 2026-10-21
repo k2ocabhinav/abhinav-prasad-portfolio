@@ -48,13 +48,15 @@
 }
 
 @media (min-width: 768px) {
-  .frame {
-    padding-right: max(9.25rem, 10vw);
-  }
-
   .content {
     min-height: calc(100vh - var(--hero-top-inset));
     min-height: calc(100svh - var(--hero-top-inset));
+  }
+}
+
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+  .frame {
+    padding-right: max(9.25rem, 10vw);
   }
 }
 
@@ -73,10 +75,6 @@
 }
 
 @media (min-width: 1200px) {
-  .frame {
-    padding-right: max(9.25rem, 10vw);
-  }
-
   .heroGrid {
     gap: clamp(2.5rem, 4.2vw, 4rem);
     padding-bottom: clamp(10rem, 22cqw, 18rem);

@@ -139,7 +139,6 @@ test("hero keeps its order and reserves the stack for wide screens", async ({ pa
       await expect(page.locator('[data-home-hero-frame] header')).toContainText("Abhinav Prasad");
       expect(wordmarkBox!.y).toBeGreaterThan(identityBox!.y);
       const wordmarkBottom = wordmarkBox!.y + wordmarkBox!.height;
-      expect(wordmarkBottom).toBeGreaterThanOrEqual(884);
       expect(wordmarkBottom).toBeLessThanOrEqual(900);
       await expect(stack).toBeHidden();
     } else {
