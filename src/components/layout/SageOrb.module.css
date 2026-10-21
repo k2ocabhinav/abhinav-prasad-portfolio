@@ -1,0 +1,59 @@
+.orb {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: calc(var(--z-overlay, 200) - 1);
+  display: none;
+  width: 6px;
+  height: 6px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: #6A2135;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    width 180ms var(--motion-ease-out),
+    height 180ms var(--motion-ease-out),
+    background-color 180ms var(--motion-ease-out),
+    border-color 180ms var(--motion-ease-out),
+    opacity 100ms linear;
+}
+
+.orb[data-visible="true"] {
+  opacity: 1;
+}
+
+/* Compositor hint only while the follower is catching up to the pointer. */
+.orb[data-moving="true"] {
+  will-change: transform;
+}
+
+.orb[data-active="true"] {
+  width: 32px;
+  height: 32px;
+  border-color: #6A2135;
+  background: rgba(106, 33, 53, 0.14);
+}
+
+.orb[data-theme="true"] {
+  background: #F4BEBB;
+}
+
+.orb[data-theme="true"][data-active="true"] {
+  border-color: #F4BEBB;
+  background: rgba(244, 190, 187, 0.14);
+}
+
+@media (pointer: fine) {
+  .orb {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .orb[data-moving="true"] {
+    transition: none;
+    will-change: auto;
+  }
+}

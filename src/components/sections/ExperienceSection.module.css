@@ -1,21 +1,28 @@
 .experienceSection {
+  background: var(--paper-linen, #FCF8F2);
   --cassette-ink: #0B1011;
   --cassette-muted: #4D5659;
   --cassette-cobalt: var(--color-cornflower, #94B6EF);
   --cassette-cobalt-deep: var(--color-cornflower-deep, #25447B);
-  background: var(--paper-linen, #FCF8F2);
 }
 
 .experienceRoot {
   position: relative;
-  max-width: 78rem;
-  margin-inline: auto;
 }
 
 .sectionHeader {
-  margin-bottom: clamp(2rem, 4vw, 3rem);
-  padding-bottom: clamp(0.85rem, 1.8vw, 1.25rem);
-  border-bottom: 1px solid rgba(37, 68, 123, 0.24);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.titleCluster {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
 }
 
 .heading {
@@ -28,137 +35,106 @@
   line-height: 0.95;
 }
 
-.headingReveal {
+.headingFlip,
+.headingFlipToken {
   display: inline-block;
 }
 
-.experienceList {
-  display: grid;
-  gap: 3rem;
+.headingFlip {
+  white-space: nowrap;
 }
 
-.experienceEntry {
-  display: grid;
-  grid-template-columns: minmax(11.5rem, 0.3fr) minmax(0, 0.7fr);
-  align-items: start;
-  gap: clamp(1.5rem, 4vw, 3.5rem);
+.experienceArc {
+  flex: 0 0 auto;
+  color: var(--cassette-cobalt);
 }
 
-.experienceSidebar {
-  position: sticky;
-  top: 5.5rem;
-  align-self: start;
-  min-width: 0;
-  padding-top: 0.35rem;
-}
-
-.atWork {
-  margin: 0 0 1rem;
+.callout {
+  max-width: 31rem;
+  margin: 0;
+  padding-bottom: 0.25rem;
   color: var(--cassette-cobalt-deep);
-  font-family: var(--font-label);
-  font-size: 0.68rem;
-  letter-spacing: 0.055em;
-  line-height: 1.5;
-  text-transform: uppercase;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.dossierList {
+  display: grid;
+}
+
+.dossier {
+  overflow: hidden;
+  border: 1px solid rgba(37, 68, 123, 0.3);
+  border-radius: 3px;
+  background: var(--paper-linen, #FCF8F2);
+  box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
+}
+
+.employerLabel {
+  padding: clamp(1.15rem, 2.5vw, 1.8rem) clamp(1.2rem, 3vw, 2.4rem);
+  border-bottom: 1px solid rgba(37, 68, 123, 0.25);
+  background: var(--paper-glacier, #D7EFFF);
+}
+
+.employerLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
 }
 
 .employerName {
-  max-width: 16ch;
   margin: 0;
   color: var(--cassette-ink);
   font-family: var(--font-display);
-  font-size: clamp(1.7rem, 2.8vw, 2.5rem);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
   font-weight: 550;
-  letter-spacing: -0.035em;
-  line-height: 1.04;
-  text-wrap: balance;
-}
-
-.roleTitle {
-  margin: 0.7rem 0 0;
-  color: var(--cassette-ink);
-  font-family: var(--font-headline);
-  font-size: clamp(1.4rem, 2vw, 1.8rem);
-  font-style: italic;
-  line-height: 1.2;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .period {
-  margin: 0.7rem 0 0;
   color: var(--cassette-cobalt-deep);
   font-family: var(--font-label);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   line-height: 1.5;
 }
 
-.workstreamNav {
-  margin-top: 1.8rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid rgba(37, 68, 123, 0.24);
-}
-
-.workstreamNavLabel {
-  margin: 0 0 0.35rem;
+.companyContext {
+  max-width: 65ch;
+  margin: 0.65rem 0 0;
   color: var(--cassette-muted);
-  font-family: var(--font-label);
-  font-size: 0.63rem;
-  letter-spacing: 0.025em;
-  line-height: 1.4;
+  font-size: 0.96rem;
+  line-height: 1.5;
 }
 
-.workstreamNavList {
-  display: grid;
-  gap: 0.1rem;
+.roleSummary {
+  padding: clamp(1.2rem, 2.5vw, 1.8rem) clamp(1.2rem, 3vw, 2.4rem);
+}
+
+.roleTitle {
   margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.workstreamNavList a {
-  display: flex;
-  min-height: 2.75rem;
-  align-items: center;
-  padding: 0.4rem 0.55rem;
-  border-left: 1px solid rgba(37, 68, 123, 0.18);
-  color: var(--cassette-muted);
-  font-size: 0.86rem;
-  line-height: 1.35;
-  text-decoration: none;
-  transition: color 180ms ease, border-color 180ms ease;
-}
-
-.workstreamNavList a:hover,
-.workstreamNavList a[data-active="true"] {
-  border-left-color: var(--cassette-cobalt-deep);
-  color: var(--cassette-cobalt-deep);
-}
-
-.workstreamNavList a[data-active="true"] {
-  font-weight: 650;
-}
-
-.workstreamNavList a:focus-visible {
-  outline: 2px solid var(--cassette-cobalt-deep);
-  outline-offset: 3px;
-}
-
-.experienceContent {
-  min-width: 0;
+  color: var(--cassette-ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 2.5vw, 1.9rem);
+  font-weight: 570;
+  line-height: 1.2;
 }
 
 .employmentNote {
-  margin: 0;
-  color: var(--cassette-muted);
-  font-size: 0.95rem;
-  line-height: 1.55;
+  margin: 0.35rem 0 0;
+  color: var(--cassette-cobalt-deep);
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .roleScope {
-  margin: 0.75rem 0 clamp(1.4rem, 2.5vw, 2rem);
+  max-width: 74ch;
+  margin: 1rem 0 0.7rem;
   color: var(--cassette-ink);
-  font-family: var(--font-headline);
-  font-size: clamp(1.25rem, 1.8vw, 1.55rem);
-  line-height: 1.4;
+  font-size: 1.05rem;
+  line-height: 1.55;
 }
 
 .pointList,
@@ -170,27 +146,23 @@
   list-style: none;
 }
 
-.summaryPoint {
-  padding: 0.95rem 0 1rem;
-  border-top: 1px solid rgba(37, 68, 123, 0.2);
-}
-
-.summarySentence {
-  margin: 0;
+.pointList li,
+.workstreamPoints li {
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--color-hairline);
   color: var(--cassette-ink);
-  font-size: 0.97rem;
-  line-height: 1.55;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
-.summarySentence strong {
+.pointList strong,
+.workstreamPoints strong {
   color: var(--cassette-cobalt-deep);
   font-weight: 650;
 }
 
 .detailDisclosure {
-  margin-top: 1.5rem;
-  border-top: 1px solid rgba(37, 68, 123, 0.27);
-  border-bottom: 1px solid rgba(37, 68, 123, 0.27);
+  border-top: 1px solid var(--color-hairline);
 }
 
 .disclosureButton {
@@ -199,18 +171,19 @@
   min-height: 4rem;
   grid-template-columns: minmax(0, 1fr) auto 1.25rem;
   align-items: center;
-  gap: 0.6rem 1rem;
-  padding: 0.8rem 0;
+  gap: 0.6rem 1.5rem;
+  padding: 0.8rem clamp(1.2rem, 3vw, 2.4rem);
   border: 0;
-  background: transparent;
+  border-top: 1px solid rgba(106, 33, 53, 0.32);
+  background: var(--paper-linen, #FCF8F2);
   color: var(--color-burgundy, #6A2135);
   cursor: pointer;
   text-align: left;
-  transition: color 160ms ease;
+  transition: background-color 140ms ease, transform 140ms ease;
 }
 
 .disclosureButton:hover {
-  color: var(--cassette-cobalt-deep);
+  background: #F3F0EA;
 }
 
 .disclosureButton:active {
@@ -219,20 +192,22 @@
 
 .disclosureButton:focus-visible {
   outline: 2px solid var(--color-burgundy, #6A2135);
-  outline-offset: 3px;
+  outline-offset: -4px;
 }
 
 .disclosureLabel {
+  color: var(--color-burgundy, #6A2135);
   font-family: var(--font-display);
-  font-size: 1.14rem;
+  font-size: 1.18rem;
   font-weight: 560;
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
 .disclosureMeta {
   color: var(--cassette-muted);
   font-family: var(--font-label);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
   line-height: 1.4;
 }
 
@@ -257,8 +232,8 @@
 }
 
 .detailContent {
-  padding: 1.35rem 0 1.7rem;
-  border-top: 1px solid rgba(37, 68, 123, 0.2);
+  padding: clamp(1.1rem, 2.7vw, 1.8rem) clamp(1.2rem, 3vw, 2.4rem) 1.7rem;
+  border-top: 1px solid var(--color-hairline);
 }
 
 .workstreamGrid {
@@ -271,7 +246,6 @@
 .workstream {
   min-width: 0;
   padding-top: 0.85rem;
-  scroll-margin-top: 2rem;
   border-top: 1px solid rgba(37, 68, 123, 0.3);
 }
 
@@ -302,15 +276,7 @@
 
 .workstreamPoints li {
   padding: 0.58rem 0;
-  border-top: 1px solid rgba(37, 68, 123, 0.14);
-  color: var(--cassette-ink);
   font-size: 0.94rem;
-  line-height: 1.5;
-}
-
-.workstreamPoints strong {
-  color: var(--cassette-cobalt-deep);
-  font-weight: 650;
 }
 
 .toolTags {
@@ -359,72 +325,31 @@
   line-height: 1.4;
 }
 
-@media (min-width: 768px) and (max-width: 1023px) and (hover: hover) and (pointer: fine) {
-  .experienceSection > :global(.content-container) {
-    padding-left: var(--content-padding-x);
-    padding-right: calc(var(--content-padding-x) + 6.5rem);
-  }
-
-  .experienceEntry {
-    grid-template-columns: minmax(10.75rem, 30%) minmax(0, 1fr);
-    gap: 1.5rem;
-  }
-
-  .experienceSidebar {
-    top: 4.5rem;
-  }
-
-  .employerName {
-    font-size: clamp(1.5rem, 3vw, 1.9rem);
-  }
-
-  .disclosureButton {
-    grid-template-columns: minmax(0, 1fr) 1.25rem;
-  }
-
-  .disclosureLabel {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .disclosureMeta {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .disclosureMark {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-  }
-}
-
 @media (max-width: 767px) {
-  .experienceEntry {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
+  .sectionHeader {
+    align-items: flex-start;
   }
 
-  .experienceSidebar {
-    position: relative;
-    top: auto;
+  .titleCluster {
+    gap: 0.5rem;
   }
 
-  .atWork {
-    margin-bottom: 0.75rem;
-  }
-
-  .employerName {
+  .callout {
     max-width: none;
-    font-size: clamp(1.65rem, 7vw, 2.15rem);
+    flex-basis: 100%;
+    padding: 0;
   }
 
-  .roleTitle,
+  .companyContext {
+    font-size: 0.92rem;
+  }
+
   .period {
-    margin-top: 0.45rem;
+    font-size: 0.7rem;
   }
 
-  .workstreamNav {
-    margin-top: 1.25rem;
+  .pointList li {
+    font-size: 0.96rem;
   }
 
   .disclosureButton {
@@ -448,28 +373,14 @@
     grid-row: 1 / span 2;
   }
 
-  .employmentNote {
-    font-size: 0.91rem;
-  }
-
-  .roleScope {
-    font-size: 1.2rem;
-  }
-
   .workstreamGrid,
   .toolkitFigureGrid {
     grid-template-columns: minmax(0, 1fr);
   }
-}
 
-@media (min-width: 768px) and (max-width: 1199px) {
-  .workstreamGrid {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .workstreamNavList a,
   .disclosureButton,
   .disclosureMark {
     transition: none;

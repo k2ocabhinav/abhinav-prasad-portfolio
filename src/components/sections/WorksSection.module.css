@@ -1,876 +1,636 @@
 .worksSection {
   --section-bg: var(--paper-linen, #FCF8F2);
-  --ink: var(--color-on-surface, #0B1011);
-  --muted: var(--color-secondary-text, #63605A);
-  --lead: var(--color-lead, #6A2135);
-  --hairline: var(--color-hairline, rgba(11, 16, 17, 0.14));
-  --work-rail-clearance: 0px;
+  --plate-ink: var(--color-black-cherry, #351E28);
+  --plate-accent: var(--color-lead, #6A2135);
+  --plate-second: var(--color-cornflower, #94B6EF);
+  --plate-paper: var(--paper-linen, #FCF8F2);
+  --tone-accent: var(--color-lead, #6A2135);
+  --tone-accent-rgb: var(--color-lead-rgb, 106, 33, 53);
+  --tone-accent-deep: var(--color-lead-deep, #6A2135);
 }
 
 .sectionHeader {
-  max-width: 52rem;
-  margin-bottom: clamp(2.5rem, 5vw, 5rem);
-  padding-right: var(--work-rail-clearance);
+  position: relative;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  padding-right: clamp(3.5rem, 8vw, 7rem);
 }
 
 .heading {
-  color: var(--ink);
   font-family: var(--font-headline);
-  font-size: clamp(2.75rem, 6vw, 5.25rem);
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 0.98;
+  font-style: normal;
+  font-weight: 550;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--color-on-surface);
+}
+
+.headingFlip {
+  display: inline-block;
+}
+
+.headingFlipToken {
+  display: inline-block;
 }
 
 .callout {
-  max-width: 42ch;
-  margin-top: 1rem;
-  color: var(--muted);
-  font-family: var(--font-body);
-  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
-  line-height: 1.55;
+  margin-top: 0.95rem;
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-secondary-text);
 }
 
 .projectsList {
   display: flex;
   flex-direction: column;
+  gap: clamp(2rem, 4vw, 3.5rem);
 }
 
-.projectGroup {
-  min-width: 0;
-}
-
-.projectRuleReveal {
+.orchestrationStrip {
   display: block;
-  width: calc(100vw - var(--work-rail-clearance));
-  height: clamp(4rem, 9vw, 7rem);
-  margin-left: calc(50% - 50vw);
-  align-content: center;
-  padding-inline: clamp(1.25rem, 4vw, 4rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
-.projectRule {
-  width: 100%;
-  height: 1px;
-  margin: 0;
-  border: 0;
-  background: rgba(11, 16, 17, 0.72);
-}
-
-.projectTrack {
-  position: relative;
-  min-width: 0;
-  background: var(--section-bg);
-}
-
-.veloTrack {
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
-}
-
-.projectStage,
-.portfolioCard {
-  position: relative;
-  min-width: 0;
-}
-
-.projectStage {
-  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 4vw, 4rem);
-}
-
-.projectHeading {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(0.75rem, 1.5vw, 1.5rem);
-  min-width: 0;
-}
-
-.projectTitle {
+.methodHeader {
   max-width: 72rem;
-  margin: 0;
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: clamp(3.25rem, 6.5vw, 6rem);
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 0.9;
 }
 
-.projectTitleLong {
-  max-width: 60rem;
-  font-size: clamp(2.6rem, 5.1vw, 4.75rem);
-  letter-spacing: -0.035em;
-  overflow-wrap: anywhere;
+.methodHeader h3 {
+  color: var(--color-on-surface, #0B1011);
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 2.8vw, 2.2rem);
+  font-weight: 550;
+  line-height: 1.15;
+}
+
+.methodHeader p {
+  margin-top: 0.6rem;
+  color: var(--color-secondary-text, #63605A);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.processSteps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.processSteps::before {
+  position: absolute;
+  top: 0.62rem;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--color-hairline, rgba(11, 16, 17, 0.14));
+  content: "";
+}
+
+.processSteps li {
+  position: relative;
+  min-width: 0;
+  padding-top: 1.8rem;
+}
+
+.stepNumber {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-inline: 0.25rem;
+  background: var(--paper-linen, #FCF8F2);
+  color: var(--color-lead, #6A2135);
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+}
+
+.processSteps h4 {
+  color: var(--color-on-surface, #0B1011);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 550;
+  line-height: 1.2;
+}
+
+.processSteps p {
+  margin-top: 0.35rem;
+  color: var(--color-secondary-text, #63605A);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* ─── Work Card Grid ─────────────────────────────────── */
+
+.workCard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .workCard {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+/* ─── Visual Panel ───────────────────────────────────── */
+
+.visualPanel {
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+  grid-column: span 1;
+  border: 1px solid var(--color-hairline);
+}
+
+.visualPanelRich {
+  display: block;
+  aspect-ratio: auto;
+  padding: 0.7rem;
+}
+
+.visualPanelVelo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-content: start;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 0.35rem;
+  aspect-ratio: auto;
+  padding: 0.7rem;
+  background: var(--paper-linen, #FCF8F2);
+}
+
+@media (min-width: 768px) {
+  .visualPanel {
+    grid-column: span 7;
+  }
+}
+
+.visualPanel:hover {
+  background: var(--section-panel-bg);
+  border-color: rgba(11, 16, 17, 0.4);
+}
+
+/* The print offset belongs to the photograph, not the whole panel: an offset
+   on the panel paints a hard vertical edge outside the media frame, which
+   reads as a stray rule beside the card copy. */
+.visualPanel:hover .heroShot {
+  box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
+}
+
+.visualReversed {
+  order: 1;
+}
+
+@media (min-width: 768px) {
+  .visualReversed {
+    order: 2;
+  }
+}
+
+.dotOverlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  transition: opacity 0.7s ease;
+}
+
+.visualPanel:hover .dotOverlay {
+  opacity: 0.2;
+}
+
+.iconWrapper {
+  position: relative;
+  z-index: 10;
+}
+
+.visualMediaStack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+  height: auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.visualPanelVelo .visualMediaStack {
+  height: auto;
+}
+
+.routePlateWrap {
+  display: flex;
+  align-items: center;
+  padding: 0 0.3rem;
+  border-top: 1px solid var(--color-hairline);
+}
+
+@media (min-width: 768px) {
+  .visualMediaStack {
+    gap: 1rem;
+  }
+}
+
+.heroShot {
+  position: relative;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--section-panel-border);
+  box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(53, 30, 40, 0.16));
+}
+
+.visualPanelVelo .heroShot {
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+}
+
+@media (min-width: 768px) {
+  .heroShot {
+    min-height: clamp(300px, 31vw, 410px);
+  }
+
+  .visualPanelVelo .heroShot {
+    min-height: 0;
+  }
+}
+
+/* Grayscale at rest → colour on hover (matte image treatment). */
+.heroShotImage {
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.4s var(--motion-ease-out);
+}
+
+.visualPanel:hover .heroShotImage {
+  filter: none;
+}
+
+.mediaCaption {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  background: rgba(240, 238, 233, 0.92);
+  border: 1px solid var(--color-hairline);
+  border-radius: 2px;
+  padding: 0.45rem 0.6rem;
+  color: #0B1011;
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+}
+
+.supportShots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.supportShot {
+  position: relative;
+  min-height: 90px;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--section-panel-border);
+}
+
+@media (min-width: 768px) {
+  .supportShot {
+    min-height: 105px;
+  }
+}
+
+.supportShotImage {
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.4s var(--motion-ease-out);
+}
+
+.visualPanel:hover .supportShotImage {
+  filter: none;
+}
+
+.supportCaption {
+  position: absolute;
+  left: 0.45rem;
+  right: 0.45rem;
+  bottom: 0.4rem;
+  font-family: var(--font-label);
+  font-size: 0.6rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: #0B1011;
+  background: rgba(240, 238, 233, 0.92);
+  border-radius: 2px;
+  padding: 0.15rem 0.3rem;
+  width: fit-content;
+}
+
+/* ─── Content Panel ──────────────────────────────────── */
+
+.contentPanel {
+  position: relative;
+  z-index: 1;
+  grid-column: span 1;
+  background: var(--paper-linen, #FCF8F2);
+}
+
+@media (min-width: 768px) {
+  .contentPanel {
+    grid-column: span 5;
+  }
+}
+
+.contentReversed {
+  order: 2;
+}
+
+@media (min-width: 768px) {
+  .contentReversed {
+    order: 1;
+  }
 }
 
 .caseNumber {
-  flex: 0 0 auto;
-  margin-top: 0.85rem;
-  color: var(--lead);
+  display: inline-block;
+  color: var(--tone-accent-deep, #6A2135);
   font-family: var(--font-label);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
-.featureLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(15rem, 0.78fr);
-  align-items: stretch;
-  gap: clamp(1rem, 2.4vw, 2.5rem);
-  min-width: 0;
-  margin-top: clamp(1.5rem, 3.2vw, 3rem);
-}
-
-.projectImageReveal {
-  display: block;
-  min-width: 0;
-  align-self: center;
-  overflow: visible;
-}
-
-.projectFrame {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid rgba(11, 16, 17, 0.5);
-  border-radius: 2px;
-  background: var(--paper-linen, #FCF8F2);
-  transform-origin: center;
-}
-
-.projectImage {
-  object-fit: cover;
-  object-position: center;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  :global(html[data-js]) .portfolioTrack .projectImage {
-    transform: scale(1.06);
-    transition: transform 1000ms var(--ease-out-expo);
-  }
-
-  :global(html[data-js]) .portfolioTrack .projectImageReveal[data-in="true"] .projectImage {
-    transform: scale(1);
-  }
-}
-
-.projectFallback {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  color: var(--lead);
-}
-
-.detailsBand {
+.caseMarker {
   display: flex;
-  min-width: 0;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: clamp(1rem, 2.2vh, 1.5rem);
-  padding: clamp(1.25rem, 2.4vw, 2.25rem);
-  border-left: 1px solid var(--lead);
-  background: var(--paper-linen, #FCF8F2);
-  color: var(--ink);
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.5rem;
 }
 
-.projectSummary {
-  min-width: 0;
+.projectTitle {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 550;
+  font-size: 2.25rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.5rem;
 }
 
-.projectEyebrow {
-  margin: 0 0 0.65rem;
-  color: var(--muted);
-  font-family: var(--font-label);
-  font-size: 0.64rem;
-  letter-spacing: 0.06em;
-  line-height: 1.4;
-}
-
-.projectDescription {
-  max-width: 42ch;
-  margin: 0;
+.projectDesc {
+  max-width: 65ch;
   font-family: var(--font-body);
-  font-size: clamp(0.9rem, 1.05vw, 1rem);
-  line-height: 1.55;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-secondary-text) 88%, var(--color-on-surface) 12%);
+  font-size: 1.0625rem;
+  line-height: 1.65;
 }
 
 .projectTags {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem 0.75rem;
-  min-width: 0;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.infoBlock {
+  margin-top: 1.3rem;
+}
+
+.infoTitle {
   margin: 0;
-  padding: 0;
-  color: var(--muted);
   font-family: var(--font-label);
-  font-size: 0.62rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(var(--color-on-surface-rgb), 0.74);
+}
+
+.infoList {
+  margin: 0.65rem 0 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.45rem;
+  max-width: 65ch;
+  color: var(--color-secondary-text);
   line-height: 1.55;
-  list-style: none;
+  font-size: 1.0625rem;
 }
 
-.projectTags li {
-  border-bottom: 1px solid rgba(11, 16, 17, 0.2);
+.techBuckets {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.8rem;
 }
 
-.projectActions {
+.techBucket {
+  border: 1px solid var(--section-panel-border);
+  border-radius: 0.55rem;
+  padding: 0.6rem;
+  background: var(--section-panel-bg);
+}
+
+.techBucketLabel {
+  display: block;
+  font-size: 0.72rem;
+  font-family: var(--font-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(var(--color-on-surface-rgb), 0.76);
+  margin-bottom: 0.55rem;
+}
+
+.techBucketItems {
   display: flex;
-  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+.techChip {
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  background: var(--section-chip-bg);
+  border: 1px solid var(--section-chip-border);
+  color: rgba(var(--color-on-surface-rgb), 0.9);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+}
+
+.projectLinks {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.deepDiveCta {
+  margin-top: 1.35rem;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.2rem;
+  gap: 0.35rem;
 }
 
-.caseStudyButton,
-.sourceLink {
+.deepDiveLink {
   display: inline-flex;
-  min-height: 44px;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 2px;
+  padding: 0.5rem 1.04rem;
+  background: #0B1011;
+  border: 1px solid #0B1011;
+  color: #F0EEE9;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  font-family: var(--font-label);
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.deepDiveLink:hover {
+  transform: translateY(-2px);
+  background: var(--color-lead-deep, #6A2135);
+  border-color: var(--color-lead-deep, #6A2135);
+}
+
+.deepDiveSubline {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: rgba(var(--color-on-surface-rgb), 0.68);
+  letter-spacing: 0.02em;
+}
+
+.projectLink {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 2px;
-  color: var(--ink);
-  font-family: var(--font-label);
-  font-size: 0.68rem;
+  border-radius: 999px;
+  padding: 0.34rem 0.78rem;
+  border: 1px solid var(--section-panel-border);
+  background: var(--section-panel-bg-strong);
+  color: rgba(var(--color-on-surface-rgb), 0.84);
+  font-size: 0.76rem;
   text-decoration: none;
-  transition:
-    color 180ms var(--ease-out-expo),
-    background-color 180ms var(--ease-out-expo),
-    transform 180ms var(--ease-out-expo),
-    box-shadow 180ms var(--ease-out-expo);
+  letter-spacing: 0.04em;
+  transition: all 0.25s ease;
 }
 
-.caseStudyButton {
-  padding-inline: 1rem;
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  box-shadow: 3px 3px 0 var(--lead);
-  color: var(--paper-linen, #FCF8F2);
-  white-space: nowrap;
+.projectLink:hover {
+  background: var(--section-chip-bg);
+  border-color: var(--section-chip-border);
 }
 
-.caseStudyButton:hover {
-  transform: translate(2px, 2px);
-  background: var(--lead);
-  box-shadow: 1px 1px 0 var(--lead);
+.projectLinkDisabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
-.sourceLink {
-  padding-inline: 0.15rem;
-  text-decoration: underline;
-  text-decoration-color: rgba(11, 16, 17, 0.35);
-  text-underline-offset: 0.2em;
-}
-
-.sourceLink:hover {
-  color: var(--lead);
-  text-decoration-color: currentColor;
-}
-
-.caseStudyButton:focus-visible,
-.sourceLink:focus-visible {
-  outline: 2px solid var(--lead);
-  outline-offset: 4px;
-}
-
-.portfolioTrack {
-  padding-block: clamp(2rem, 5vw, 4rem);
-}
-
-.portfolioCard {
-  padding-inline: 0;
-}
-
-.portfolioCard .featureLayout {
-  grid-template-columns: minmax(0, 1.6fr) minmax(15rem, 0.8fr);
-}
-
-.portfolioDetails {
-  border-left-color: var(--hairline);
-}
-
-.methodSequence {
-  position: relative;
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
-  border-top: 1px solid var(--hairline);
-  background: var(--section-bg);
-}
-
-.methodStage {
-  position: relative;
-  min-height: 0;
-  padding: clamp(3.5rem, 8vh, 6rem) clamp(1.25rem, 4vw, 4rem) 4rem;
-  background: var(--section-bg);
-}
-
-.methodHeader,
-.methodCanvas,
-.methodCaption {
-  width: min(100%, 80rem);
-  margin-inline: auto;
-}
-
-.methodHeader h3 {
-  margin: 0;
-  color: var(--ink);
+.caseStudyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding-bottom: 0.25rem;
+  color: var(--color-primary-brand);
   font-family: var(--font-display);
-  font-size: clamp(2.7rem, 6vw, 5.25rem);
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 0.98;
-}
-
-.methodCanvas {
-  position: relative;
-  margin-top: clamp(2.5rem, 6vh, 4.5rem);
-  padding-top: clamp(6rem, 15vh, 9rem);
-}
-
-.desktopRoute {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  width: 100%;
-  height: clamp(6rem, 15vh, 9rem);
-  overflow: visible;
-  pointer-events: none;
-}
-
-.routeAccentReveal {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: clamp(6rem, 15vh, 9rem);
-  pointer-events: none;
-}
-
-.mobileRouteReveal {
-  display: none;
-}
-
-.routeBase,
-.routeScope,
-.routeTop,
-.routeMiddle,
-.routeBottom,
-.routeVerify,
-.routeMobileScope,
-.routeMobileLane,
-.routeMobileVerify {
-  fill: none;
-  stroke-width: 1.5px;
-  vector-effect: non-scaling-stroke;
-}
-
-.routeBase {
-  stroke: rgba(11, 16, 17, 0.72);
-}
-
-.routeScope,
-.routeVerify {
-  stroke: var(--lead);
-}
-
-.routeTop {
-  stroke: var(--lead);
-}
-
-.routeMiddle {
-  stroke: var(--color-petrol, #1A5D74);
-}
-
-.routeBottom {
-  stroke: var(--color-cornflower-deep, #25447B);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .routeAccentReveal {
-    clip-path: none !important;
-  }
-}
-
-.stationAnchor {
-  fill: var(--paper-linen, #FCF8F2);
-  stroke: var(--lead);
-  stroke-width: 1.5px;
-  vector-effect: non-scaling-stroke;
-}
-
-.processSteps {
-  display: grid;
-  grid-template-columns: 22fr 40fr 19fr 16fr;
-  align-items: start;
-  gap: 0;
-  width: 97%;
-  margin: 0 0 0 3%;
-  padding: 0;
-  list-style: none;
-}
-
-.processSteps li {
-  min-width: 0;
-  padding-right: clamp(0.5rem, 1.5vw, 1.5rem);
-}
-
-.stationRule {
-  display: block;
-  width: 1.5rem;
-  height: 1px;
-  margin-bottom: 0.75rem;
-  background: var(--lead);
-}
-
-.processSteps h4 {
-  display: flex;
-  align-items: baseline;
-  gap: 0.45rem;
-  color: var(--ink);
-  font-family: var(--font-headline);
-  font-size: clamp(1.3rem, 2.1vw, 1.9rem);
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
-}
-
-.stationNumber {
-  color: var(--lead);
-  font-family: var(--font-label);
-  font-size: 0.64em;
+  font-style: normal;
+  font-weight: 550;
+  font-size: 1.5rem;
   letter-spacing: 0;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
 }
 
-.processSteps p {
-  max-width: 34ch;
-  margin-top: 0.7rem;
-  color: rgba(11, 16, 17, 0.82);
-  font-family: var(--font-body);
-  font-size: clamp(0.78rem, 0.95vw, 0.92rem);
-  line-height: 1.55;
-}
-
-.methodCaption {
-  margin-top: clamp(2rem, 6vh, 4rem);
-  color: var(--muted);
-  font-family: var(--font-label);
-  font-size: 0.62rem;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
-}
-
-@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
-  .worksSection {
-    --work-rail-clearance: clamp(6rem, 9vw, 9rem);
-  }
-
-  .methodStage {
-    padding-right: var(--work-rail-clearance);
-  }
-
-  .portfolioCard {
-    padding-right: var(--work-rail-clearance);
-  }
-}
-
-@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-  :global(html[data-js]) .veloTrack {
-    height: 160svh;
-  }
-
-  :global(html[data-js]) .veloTrack .projectStage {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    min-height: 680px;
-    overflow: clip;
-  }
-
-  :global(html[data-js]) .veloTrack .projectHeading {
-    position: absolute;
-    top: clamp(4rem, 8vh, 5rem);
-    right: calc(var(--work-rail-clearance) + 4vw);
-    left: 4vw;
-  }
-
-  :global(html[data-js]) .veloTrack .featureLayout {
-    position: absolute;
-    top: clamp(13rem, 23vh, 15rem);
-    right: var(--work-rail-clearance);
-    bottom: clamp(2rem, 5vh, 4rem);
-    left: 4vw;
-    grid-template-columns: minmax(0, 2.3fr) minmax(15rem, 0.72fr);
-    margin-top: 0;
-  }
-
-  :global(html[data-js]) .veloTrack .projectImageReveal {
-    width: 100%;
-    max-width: min(92vw, 149.33svh, calc(100vw - var(--work-rail-clearance) - 4vw - 15rem - 2.5rem));
-    clip-path: none !important;
-    animation: none !important;
-    transition: none !important;
-  }
-
-  :global(html[data-js]) .veloTrack .detailsBand {
-    border-left-width: 1px;
-  }
-
-  :global(html[data-js]) .methodSequence {
-    height: 120svh;
-  }
-
-  :global(html[data-js]) .methodStage {
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100svh;
-    min-height: 680px;
-    overflow: clip;
-  }
-
-  :global(html[data-js]) .methodCaption {
-    position: absolute;
-    right: var(--work-rail-clearance);
-    bottom: 5vh;
-    left: 4vw;
-    width: min(calc(100% - 4vw - var(--work-rail-clearance)), 80rem);
-  }
-}
-
-@media (min-width: 1024px) and (max-aspect-ratio: 4 / 5) and (prefers-reduced-motion: no-preference) {
-  :global(html[data-js]) .veloTrack {
-    height: auto;
-  }
-
-  :global(html[data-js]) .veloTrack .projectStage {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 0;
-    overflow: visible;
-  }
-
-  :global(html[data-js]) .veloTrack .projectHeading,
-  :global(html[data-js]) .veloTrack .featureLayout {
-    position: static;
-    inset: auto;
-  }
-
-  :global(html[data-js]) .veloTrack .featureLayout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    margin-top: clamp(1.5rem, 3.2vw, 3rem);
-  }
-
-  :global(html[data-js]) .veloTrack .projectFrame {
-    scale: 1 !important;
-  }
-
-  :global(html[data-js]) .veloTrack .detailsBand {
-    border-top: 1px solid var(--lead);
-    border-left: 0;
-  }
-
-  :global(html[data-js]) .methodSequence {
-    height: auto;
-  }
-
-  :global(html[data-js]) .methodStage {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 0;
-    overflow: visible;
-    padding-block: clamp(3rem, 7vh, 5rem);
-  }
-
-  :global(html[data-js]) .methodCaption {
-    position: static;
-    width: min(100%, 80rem);
-    margin-top: clamp(2rem, 5vh, 3rem);
-  }
-}
-
-@media (max-width: 1023px) {
-  .projectStage {
-    padding-left: var(--content-padding-x, 1.25rem);
-    padding-right: var(--work-rail-clearance);
-  }
-
-  .projectTitle {
-    font-size: clamp(3rem, 9vw, 5.75rem);
-  }
-
-  .projectTitleLong {
-    font-size: clamp(2.55rem, 7vw, 4.25rem);
-  }
-
-  .featureLayout,
-  .portfolioCard .featureLayout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-
-  .projectImageReveal {
-    width: 100%;
-    overflow: hidden;
-  }
-
-  .projectFrame {
-    transform: none !important;
-  }
-
-  :global(html[data-js]) .projectImage {
-    transform: scale(1.06);
-    transition: transform 1000ms var(--ease-out-expo);
-  }
-
-  :global(html[data-js]) .projectImageReveal[data-in="true"] .projectImage {
-    transform: scale(1);
-  }
-
-  .detailsBand {
-    gap: 1rem;
-    margin-top: 0;
-    padding: clamp(1.25rem, 3vw, 2rem);
-    border-top: 1px solid var(--lead);
-    border-left: 0;
-  }
-
-  .projectDescription {
-    max-width: 58ch;
-  }
-
-  .projectTags {
-    gap: 0.35rem 0.75rem;
-    font-size: 0.66rem;
-  }
-
-  .projectActions {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 1rem;
-  }
-
-  .portfolioTrack {
-    padding-right: var(--work-rail-clearance);
-  }
-
-  .methodSequence {
-    width: auto;
-    margin-inline: 0;
-  }
-
-  .methodStage {
-    padding: clamp(3.5rem, 9vw, 5.5rem) var(--work-rail-clearance) 3.5rem
-      var(--content-padding-x, 1.25rem);
-  }
-
-  .methodCanvas {
-    margin-top: 2.25rem;
-    padding-top: 0;
-  }
-
-  .desktopRoute {
-    display: none;
-  }
-
-  .mobileRouteReveal {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    display: block;
-    width: 5rem;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .mobileRoute {
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
-  .routeMobileScope,
-  .routeMobileVerify {
-    stroke: var(--lead);
-  }
-
-  .routeMobileLane {
-    stroke: rgba(11, 16, 17, 0.78);
-  }
-
-  .processSteps {
-    width: auto;
-    margin: 0;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.4rem, 4vw, 2rem);
-    padding-left: 5.2rem;
-  }
-
-  .processSteps li {
-    position: relative;
-    padding: 0 0 0.5rem;
-  }
-
-  .processSteps li::before {
-    position: absolute;
-    top: 0.15rem;
-    left: -3rem;
-    width: 0.55rem;
-    height: 0.55rem;
-    border: 1px solid var(--lead);
-    border-radius: 50%;
-    background: var(--section-bg);
-    content: "";
-  }
-
-  .processSteps h4 {
-    font-size: 1.65rem;
-  }
-
-  .processSteps p {
-    max-width: 44ch;
-    margin-top: 0.45rem;
-    font-size: 0.94rem;
-  }
-
-  .methodCaption {
-    margin-top: 2.2rem;
-    padding-left: 3.8rem;
-  }
+.caseStudyLink:hover {
+  opacity: 1;
 }
 
 @media (max-width: 767px) {
-  .sectionHeader {
-    margin-bottom: 2rem;
+  .projectDesc,
+  .infoList {
+    font-size: 1rem;
   }
 
-  .heading {
-    font-size: clamp(2.6rem, 12vw, 4rem);
+  .caseNumber,
+  .callout,
+  .infoTitle,
+  .techBucketLabel,
+  .techChip,
+  .deepDiveSubline {
+    font-size: 12px;
   }
 
-  .callout {
-    margin-top: 0.75rem;
-    font-size: 0.94rem;
+  .deepDiveLink {
+    min-height: 44px;
+    padding-inline: 0.72rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
-  .projectStage {
-    padding-inline: 1.15rem;
+  .mediaCaption {
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.3rem 0.45rem;
+    font-size: 12px;
   }
 
-  .projectTitle {
-    font-size: clamp(2.7rem, 12vw, 4.5rem);
-    overflow-wrap: anywhere;
+  .projectsList {
+    gap: 2rem;
   }
 
-  .projectTitleLong {
-    font-size: clamp(2.4rem, 10vw, 3.7rem);
-  }
-
-  .caseNumber {
-    margin-top: 0.6rem;
-    font-size: 0.64rem;
-  }
-
-  .portfolioCard .projectHeading {
-    padding-left: 1.15rem;
-  }
-
-  .portfolioCard .featureLayout {
-    padding-inline: 1.15rem;
-  }
-
-  .detailsBand {
-    padding: 1rem;
-  }
-
-  .projectEyebrow {
-    font-size: 0.61rem;
-  }
-
-  .projectDescription {
-    font-size: 0.94rem;
-  }
-
-  .projectActions {
-    align-items: flex-start;
-  }
-
-  .caseStudyButton,
-  .sourceLink {
-    font-size: 0.72rem;
-  }
-
-  .projectRuleReveal {
-    height: 4rem;
-    padding-inline: 1.15rem;
-  }
-
-  .methodStage {
-    padding-inline: 1.15rem;
-  }
-
-  .methodHeader h3 {
-    font-size: clamp(2.6rem, 12vw, 4rem);
-  }
-
-  .methodCanvas {
+  .orchestrationStrip {
     margin-top: 2rem;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .veloTrack,
-  .methodSequence {
-    height: auto !important;
-    min-height: 0;
+  .processSteps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.6rem;
+    padding-left: 2.25rem;
   }
 
-  .projectStage,
-  .methodStage {
-    position: relative !important;
-    top: auto !important;
-    height: auto !important;
-    min-height: 0 !important;
+  .processSteps::before {
+    top: 0;
+    bottom: 0;
+    left: 0.5rem;
+    width: 1px;
+    height: auto;
   }
 
-  .projectFrame,
-  .projectImage {
-    transform: none !important;
-    transition: none !important;
+  .processSteps li {
+    padding-top: 0;
   }
 
-  .methodStage {
-    overflow: visible !important;
+  .stepNumber {
+    top: 0;
+    left: -2.25rem;
+    width: 1rem;
+    padding: 0;
+    text-align: center;
   }
 
-  .methodCaption {
-    position: static;
-    width: min(100%, 80rem);
-    margin-top: 2rem;
-    padding-left: 0;
+  .processSteps h4 {
+    font-size: 1.25rem;
   }
 
-  .mobileRouteReveal,
-  .projectImageReveal {
-    clip-path: none !important;
-    animation: none !important;
-    transition: none !important;
-  }
-
-  .routeAccent {
-    clip-path: none !important;
+  .processSteps p {
+    margin-top: 0.25rem;
+    font-size: 1rem;
   }
 }
