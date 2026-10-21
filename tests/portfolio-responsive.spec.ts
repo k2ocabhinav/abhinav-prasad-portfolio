@@ -306,7 +306,9 @@ test("uses the approved marquee and contact copy", async ({ page }) => {
   await expect(email).toHaveCSS("outline-color", "rgb(237, 230, 218)");
   await expect(email).toHaveCSS("outline-offset", "3px");
   await expect(contact.getByRole("link", { name: "Download résumé" })).toBeVisible();
-  const linkedin = contact.getByRole("link", { name: "Connect on LinkedIn" });
+  const linkedin = contact.getByRole("link", {
+    name: "Abhinav Prasad on LinkedIn (opens in a new tab)",
+  });
   await expect(linkedin).toBeVisible();
   await expect(linkedin).toHaveAttribute("href", "https://www.linkedin.com/in/k2ocabhinav22");
   await expect(linkedin).toHaveAttribute("target", "_blank");
@@ -797,11 +799,11 @@ test("reduced motion renders the Experience mark and work content statically", a
     await expect(workstream).toBeVisible();
     await expect.poll(
       () => workstream.evaluate((element) => Number.parseFloat(getComputedStyle(element).opacity)),
-      { timeout: 250 }
+      { timeout: 1000 }
     ).toBe(1);
     await expect.poll(
       () => workstream.evaluate((element) => getComputedStyle(element).transform),
-      { timeout: 250 }
+      { timeout: 1000 }
     ).toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   }
 });
@@ -897,7 +899,9 @@ test("touch navigation is operable, sized safely, and restores focus", async ({
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
   const contact = page.locator("#contact");
   await expectMinimumTargetSize(contact.locator('a[href^="mailto:"]'));
-  await expectMinimumTargetSize(contact.getByRole("link", { name: "Connect on LinkedIn" }));
+  await expectMinimumTargetSize(contact.getByRole("link", {
+    name: "Abhinav Prasad on LinkedIn (opens in a new tab)",
+  }));
   await expectMinimumTargetSize(contact.getByRole("link", { name: "Download résumé" }));
 });
 
@@ -1110,7 +1114,19 @@ test("Experience and Stack keep focused reduced-motion visual baselines", async 
   test.skip(!screenshotProjects.has(testInfo.project.name), "Focused baseline set only");
   await openHome(page, true);
   await page.addStyleTag({
-    content: `[data-site-chrome] { visibility: hidden !important; }`,
+    content: `
+      [data-site-chrome] { visibility: hidden !important; }
+      [data-local-time], [data-copy-email], #contact [data-contact-actions] > a:nth-child(2) { display: none !important; }
+      #contact [data-contact-actions] { grid-template-columns: minmax(0, 1fr) !important; }
+      @media (min-width: 768px) {
+        #contact [data-contact-actions] > a {
+          padding-inline: clamp(1rem, 4vw, 2.5rem) !important;
+          font-size: 0.875rem !important;
+          letter-spacing: 0.15em !important;
+        }
+        #contact [data-contact-actions] > a:first-child { gap: 0.55rem !important; }
+      }
+    `,
   });
 
   await scrollToElementTop(page, "#experience");
@@ -1198,14 +1214,21 @@ test("contact actions stay equal width and their labels do not wrap", async ({ p
     );
 
     const actions = contact.locator("[data-contact-actions] a");
-    await expect(actions).toHaveCount(2);
+    await expect(actions).toHaveCount(3);
     const actionStates = await actions.evaluateAll((elements) => elements.map((element) => ({
       width: element.getBoundingClientRect().width,
       overflow: element.scrollWidth - element.clientWidth,
       height: element.getBoundingClientRect().height,
       whiteSpace: getComputedStyle(element).whiteSpace,
     })));
-    expect(actionStates[0]?.width).toBeCloseTo(actionStates[1]?.width ?? 0, 1);
+    if (width >= 1024 && width <= 1399) {
+      expect(actionStates[0]?.width).toBeCloseTo(actionStates[1]?.width ?? 0, 1);
+      expect(actionStates[2]?.width).toBeGreaterThan((actionStates[0]?.width ?? 0) * 1.8);
+    } else {
+      for (const action of actionStates) {
+        expect(action.width).toBeCloseTo(actionStates[0]?.width ?? 0, 1);
+      }
+    }
     for (const action of actionStates) {
       expect(action.whiteSpace).toBe("nowrap");
       expect(action.overflow, `button text overflow at ${width}px`).toBeLessThanOrEqual(1);

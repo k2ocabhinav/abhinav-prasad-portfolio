@@ -1,13 +1,16 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { chromium } from "@playwright/test";
 
 const root = process.cwd();
 const baseUrl = process.env.PORTFOLIO_CAPTURE_URL ?? "http://127.0.0.1:3000";
-const projectOutput = path.join(root, "public/projects/portfolio-platform");
-const projectOgOutput = path.join(projectOutput, "og.jpg");
-const publicOgOutput = path.join(root, "public/og-image.jpg");
-const appOgOutput = path.join(root, "src/app/opengraph-image.jpg");
+const publicRoot = path.join(root, "public");
+const projectOutput = path.join(publicRoot, "projects/portfolio-platform");
+const projectPublicPrefix = "/projects/portfolio-platform";
+const publicOgFile = "og-image.jpg";
+const projectOgFile = "og.jpg";
+const legacyAppOgOutput = path.join(root, "src/app/opengraph-image.jpg");
 
 const captures = [
   {
@@ -35,9 +38,87 @@ const captures = [
   },
 ];
 
-fs.mkdirSync(projectOutput, { recursive: true });
+const textExtensions = new Set([".css", ".js", ".jsx", ".md", ".mdx", ".mjs", ".ts", ".tsx"]);
 
-const browser = await chromium.launch({ headless: true });
+function walkFiles(directory) {
+  if (!fs.existsSync(directory)) return [];
+
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const absolutePath = path.join(directory, entry.name);
+    return entry.isDirectory() ? walkFiles(absolutePath) : [absolutePath];
+  });
+}
+
+function textFiles(directories) {
+  return directories
+    .flatMap((directory) => walkFiles(path.join(root, directory)))
+    .filter((file) => textExtensions.has(path.extname(file)));
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function referencePattern(publicUrl) {
+  const extension = path.posix.extname(publicUrl);
+  const stem = publicUrl.slice(0, -extension.length);
+  return new RegExp(
+    `${escapeRegExp(stem)}(?:\\.[a-f0-9]{8})?${escapeRegExp(extension)}(?=[?#\\"'\x60\\s)]|$)`,
+    "g",
+  );
+}
+
+function rewriteReferences(replacements) {
+  for (const file of textFiles(["src"])) {
+    const original = fs.readFileSync(file, "utf8");
+    let contents = original;
+
+    for (const replacement of replacements) {
+      contents = contents.replace(
+        referencePattern(replacement.from),
+        replacement.to,
+      );
+    }
+
+    if (contents !== original) fs.writeFileSync(file, contents);
+  }
+}
+
+function isReferenced(publicUrl) {
+  const captureScript = path.join(root, "scripts/capture-portfolio-assets.mjs");
+  return textFiles(["src", "scripts", "tests"])
+    .filter((file) => file !== captureScript)
+    .some((file) =>
+    fs.readFileSync(file, "utf8").includes(publicUrl),
+  );
+}
+
+function pruneCaptureFiles(directory, publicPrefix, originalFile) {
+  const extension = path.extname(originalFile);
+  const stem = path.basename(originalFile, extension);
+  const candidatePattern = new RegExp(
+    `^${escapeRegExp(stem)}(?:\\.[a-f0-9]{8})?${escapeRegExp(extension)}$`,
+    "i",
+  );
+
+  if (!fs.existsSync(directory)) return;
+
+  for (const filename of fs.readdirSync(directory)) {
+    if (!candidatePattern.test(filename)) continue;
+    const publicUrl = `${publicPrefix}/${filename}`;
+    if (!isReferenced(publicUrl)) fs.rmSync(path.join(directory, filename));
+  }
+}
+
+function saveHashedCapture(directory, originalFile, bytes) {
+  const extension = path.extname(originalFile);
+  const stem = path.basename(originalFile, extension);
+  const digest = createHash("sha256").update(bytes).digest("hex").slice(0, 8);
+  const filename = `${stem}.${digest}${extension}`;
+  fs.mkdirSync(directory, { recursive: true });
+  fs.writeFileSync(path.join(directory, filename), bytes);
+  return filename;
+}
 
 async function settlePage(page, target) {
   await page.waitForLoadState("load");
@@ -92,7 +173,7 @@ async function settlePage(page, target) {
   await page.waitForTimeout(180);
 }
 
-async function encodeWebp(page, png, outputPath) {
+async function encodeWebp(page, png) {
   const webpDataUrl = await page.evaluate(async (pngBase64) => {
     const image = new Image();
     image.src = `data:image/png;base64,${pngBase64}`;
@@ -110,12 +191,12 @@ async function encodeWebp(page, png, outputPath) {
 
   const [mime, encoded] = webpDataUrl.split(",", 2);
   if (!mime?.startsWith("data:image/webp") || !encoded) {
-    throw new Error(`WebP capture failed for ${outputPath}`);
+    throw new Error("WebP capture failed");
   }
-  fs.writeFileSync(outputPath, Buffer.from(encoded, "base64"));
+  return Buffer.from(encoded, "base64");
 }
 
-async function captureOne(capture) {
+async function captureOne(browser, capture) {
   console.log(`[capture:portfolio] capturing ${capture.file}`);
   const context = await browser.newContext({
     viewport: capture.viewport,
@@ -151,7 +232,6 @@ async function captureOne(capture) {
       }
     }
 
-    const outputPath = path.join(projectOutput, capture.file);
     const screenshot = capture.captureElement
       ? await page.locator(capture.target).screenshot({
           animations: "disabled",
@@ -159,47 +239,84 @@ async function captureOne(capture) {
           timeout: 30000,
         })
       : await page.screenshot({ animations: "disabled", scale: "device" });
-    await encodeWebp(page, screenshot, outputPath);
-    console.log(`[capture:portfolio] saved ${capture.file}`);
+    const bytes = await encodeWebp(page, screenshot);
+    const filename = saveHashedCapture(projectOutput, capture.file, bytes);
+    console.log(`[capture:portfolio] saved ${filename}`);
+    return {
+      from: `${projectPublicPrefix}/${capture.file}`,
+      to: `${projectPublicPrefix}/${filename}`,
+    };
   } finally {
     await context.close();
   }
 }
 
-for (const capture of captures) {
-  await captureOne(capture);
+async function captureOpenGraph(browser) {
+  const ogContext = await browser.newContext({
+    viewport: { width: 1200, height: 630 },
+    deviceScaleFactor: 1,
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "Asia/Kolkata",
+    reducedMotion: "reduce",
+  });
+
+  try {
+    await ogContext.addInitScript(() => {
+      document.documentElement.dataset.e2eFreezeArtifacts = "true";
+      document.documentElement.dataset.e2eStaticHero = "true";
+    });
+    const ogPage = await ogContext.newPage();
+    await ogPage.clock.setFixedTime(new Date("2026-07-10T06:00:00.000Z"));
+    await ogPage.goto(new URL("/", baseUrl).toString(), { waitUntil: "domcontentloaded" });
+    await settlePage(ogPage);
+    const bytes = await ogPage.screenshot({
+      animations: "disabled",
+      scale: "css",
+      type: "jpeg",
+      quality: 85,
+    });
+    const publicFilename = saveHashedCapture(publicRoot, publicOgFile, bytes);
+    const projectFilename = saveHashedCapture(projectOutput, projectOgFile, bytes);
+    console.log(`[capture:portfolio] saved ${publicFilename} and ${projectFilename}`);
+    return [
+      { from: `/${publicOgFile}`, to: `/${publicFilename}` },
+      {
+        from: `${projectPublicPrefix}/${projectOgFile}`,
+        to: `${projectPublicPrefix}/${projectFilename}`,
+      },
+    ];
+  } finally {
+    await ogContext.close();
+  }
 }
 
-const ogContext = await browser.newContext({
-  viewport: { width: 1200, height: 630 },
-  deviceScaleFactor: 1,
-  colorScheme: "light",
-  locale: "en-US",
-  timezoneId: "Asia/Kolkata",
-  reducedMotion: "reduce",
-});
+fs.mkdirSync(projectOutput, { recursive: true });
 
+const browser = await chromium.launch({ headless: true });
 try {
-  await ogContext.addInitScript(() => {
-    document.documentElement.dataset.e2eFreezeArtifacts = "true";
-    document.documentElement.dataset.e2eStaticHero = "true";
-  });
-  const ogPage = await ogContext.newPage();
-  await ogPage.clock.setFixedTime(new Date("2026-07-10T06:00:00.000Z"));
-  await ogPage.goto(new URL("/", baseUrl).toString(), { waitUntil: "domcontentloaded" });
-  await settlePage(ogPage);
-  const ogImage = await ogPage.screenshot({
-    animations: "disabled",
-    scale: "css",
-    type: "jpeg",
-    quality: 85,
-  });
-  for (const output of [publicOgOutput, appOgOutput, projectOgOutput]) {
-    fs.writeFileSync(output, ogImage);
+  const replacements = [];
+  for (const capture of captures) {
+    replacements.push(await captureOne(browser, capture));
   }
+  replacements.push(...await captureOpenGraph(browser));
+  rewriteReferences(replacements);
+
+  for (const capture of captures) {
+    pruneCaptureFiles(
+      projectOutput,
+      "/projects/portfolio-platform",
+      capture.file,
+    );
+  }
+  pruneCaptureFiles(projectOutput, projectPublicPrefix, projectOgFile);
+  pruneCaptureFiles(publicRoot, "", publicOgFile);
+
+  // The app metadata file convention keeps a stable URL. Explicit metadata now
+  // points at the content-hashed public image, so remove the stale convention.
+  fs.rmSync(legacyAppOgOutput, { force: true });
 } finally {
-  await ogContext.close();
   await browser.close();
 }
 
-console.log("[capture:portfolio] wrote 3 gallery images and 3 OG images");
+console.log("[capture:portfolio] wrote 3 gallery images and 2 content-hashed share images");

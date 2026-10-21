@@ -16,6 +16,7 @@ interface MagneticButtonProps {
   download?: boolean;
   className?: string;
   variant?: "outline" | "ghost" | "glow";
+  ariaLabel?: string;
   /** Set for external destinations so the link opens in a new tab. */
   target?: "_blank";
   rel?: string;
@@ -27,6 +28,7 @@ export default function MagneticButton({
   download,
   className = "",
   variant = "outline",
+  ariaLabel,
   target,
   rel,
 }: MagneticButtonProps) {
@@ -40,6 +42,7 @@ export default function MagneticButton({
       download={download}
       target={target}
       rel={rel}
+      aria-label={ariaLabel}
       style={prefersReducedMotion ? undefined : { x, y }}
       className={`${styles.magneticButton} ${styles[variant]} ${className}`}
     >

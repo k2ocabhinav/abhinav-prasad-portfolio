@@ -80,5 +80,8 @@ export default defineConfig({
     url: `http://127.0.0.1:${port}`,
     reuseExistingServer: !prod,
     timeout: prod ? 300_000 : 120_000,
+    ...(prod
+      ? { env: { WHATSAPP_E164: process.env.WHATSAPP_E164 ?? "" } }
+      : {}),
   },
 });

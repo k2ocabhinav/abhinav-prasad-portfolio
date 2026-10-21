@@ -18,6 +18,7 @@ import styles from "./ProjectDetailPage.module.css";
 interface ProjectDetailPageProps {
   detail: ProjectDetail;
   personal: PersonalData;
+  nextCaseStudy?: { slug: string; title: string };
 }
 
 interface SectionIntroContent {
@@ -95,7 +96,7 @@ function LegacyGallery({ detail }: { detail: ProjectDetail }) {
   );
 }
 
-export default function ProjectDetailPage({ detail, personal }: ProjectDetailPageProps) {
+export default function ProjectDetailPage({ detail, personal, nextCaseStudy }: ProjectDetailPageProps) {
   const storyboard = detail.storyboard;
   const visuals = storyboard?.visuals ?? [];
   const getVisual = (id: string) => visuals.find((visual) => visual.id === id);
@@ -121,7 +122,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
   }
 
   return (
-    <div className={styles.pageShell}>
+    <div className={styles.pageShell} id="page-top">
       <a className={styles.skipLink} href="#project-content">Skip to project content</a>
       <header className={styles.chrome}>
         <div className={`content-container ${styles.chromeInner}`}>
@@ -344,7 +345,7 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
                   key={reference.label}
                   href={reference.href}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className={styles.referenceLink}
                 >
                   {reference.label}
@@ -381,9 +382,22 @@ export default function ProjectDetailPage({ detail, personal }: ProjectDetailPag
               ))}
           </div>
         </section>
+
+        {nextCaseStudy ? (
+          <section className={styles.nextCaseStudy} aria-label="Next case study">
+            <Link
+              className={styles.nextCaseStudyLink}
+              href={`/work/${nextCaseStudy.slug}`}
+              aria-label={`Next case study: ${nextCaseStudy.title}`}
+            >
+              <span className={styles.nextCaseStudyLabel}>Next case study</span>
+              <span className={styles.nextCaseStudyTitle}>{nextCaseStudy.title}</span>
+            </Link>
+          </section>
+        ) : null}
       </main>
 
-      <Footer personal={personal} />
+      <Footer personal={personal} topTargetId="page-top" />
     </div>
   );
 }

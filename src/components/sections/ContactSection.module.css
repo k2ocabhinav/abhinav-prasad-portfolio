@@ -2,12 +2,12 @@
   /* SectionWrapper paints from --section-bg, so no background override (and no
      doubled selector) is needed here. */
   --section-bg: var(--paper-glacier, var(--color-glacier));
-  color: var(--color-black-cherry, var(--color-black-cherry));
+  color: var(--color-black-cherry);
   --section-padding-y: clamp(3rem, 5vw, 4.5rem);
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
-  --plate-accent: var(--color-petrol, var(--color-petrol));
-  --plate-second: var(--color-cornflower, var(--color-cornflower));
-  --plate-paper: var(--paper-linen, var(--paper-linen));
+  --plate-ink: var(--color-black-cherry);
+  --plate-accent: var(--color-petrol);
+  --plate-second: var(--color-cornflower);
+  --plate-paper: var(--paper-linen);
 }
 
 .contactScene {
@@ -55,28 +55,40 @@
 }
 
 .mapNodeActive {
-  background: var(--color-petrol, var(--color-petrol));
-  outline: 1px solid var(--color-black-cherry, var(--color-black-cherry));
+  background: var(--color-petrol);
+  outline: 1px solid var(--color-black-cherry);
 }
 
 .mapNodeInactive {
-  background: var(--paper-linen, var(--paper-linen));
-  outline: 1px solid var(--color-petrol, var(--color-petrol));
+  background: var(--paper-linen);
+  outline: 1px solid var(--color-petrol);
 }
 
 .location {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem;
   margin: 1rem 0 0;
-  color: var(--color-black-cherry, var(--color-black-cherry));
+  color: var(--color-black-cherry);
   font-family: var(--font-display);
   font-size: clamp(1.35rem, 2.5vw, 1.8rem);
   font-weight: 570;
   line-height: 1.2;
 }
 
+.location [data-local-time] {
+  color: var(--color-petrol-deep, var(--color-black-cherry));
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 450;
+  line-height: 1.45;
+}
+
 .presenceDescription {
   max-width: 48ch;
   margin: 0.45rem 0 0;
-  color: var(--color-black-cherry, var(--color-black-cherry));
+  color: var(--color-black-cherry);
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -85,11 +97,11 @@
   max-width: 42rem;
   margin: 0;
   background-color: var(--color-panel, var(--color-black-cherry));
-  color: var(--color-on-panel, var(--color-on-panel));
+  color: var(--color-on-panel);
   box-shadow: var(--print-offset-md, 6px 6px 0 rgba(var(--color-black-cherry-rgb), 0.16));
   --color-surface: var(--color-panel, var(--color-black-cherry));
   --color-surface-rgb: var(--color-black-cherry-rgb, 53, 30, 40);
-  --color-on-surface: var(--color-on-panel, var(--color-on-panel));
+  --color-on-surface: var(--color-on-panel);
   --color-on-surface-rgb: 237, 230, 218;
   --color-secondary-text: #D6CCBF;
   --color-primary-brand: var(--color-panel-accent, var(--color-pink));
@@ -97,7 +109,7 @@
   --color-sage: var(--color-panel-accent, var(--color-pink));
   --color-sage-rgb: 244, 190, 187;
   --color-hairline: rgba(var(--color-on-surface-dark-rgb), 0.2);
-  --color-accent-brown: var(--color-on-panel, var(--color-on-panel));
+  --color-accent-brown: var(--color-on-panel);
 }
 
 .contactMotionRoot {
@@ -107,7 +119,7 @@
 
 .heading {
   margin: 0;
-  color: var(--color-on-panel, var(--color-on-panel));
+  color: var(--color-on-panel);
   font-family: var(--font-display);
   font-size: clamp(2.75rem, 6vw, 4.8rem);
   font-weight: 550;
@@ -173,17 +185,16 @@
 }
 
 .emailLink:focus-visible {
-  outline: 2px solid var(--color-on-panel, var(--color-on-panel));
+  outline: 2px solid var(--color-on-panel);
   outline-offset: 3px;
 }
 
-/* Two print-press actions sit directly below the address: LinkedIn leads,
-   the résumé follows. Both share the panel's button tokens. */
+/* Three print-press actions share the row while their labels have room. */
 .contactActions {
   display: grid;
   width: 100%;
   max-width: 100%;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.7rem;
 }
 
@@ -191,21 +202,20 @@
   width: 100%;
   min-height: 44px;
   justify-content: center;
-  padding-inline: clamp(1rem, 4vw, 2.5rem);
+  gap: 0.5rem;
+  padding-inline: 0.875rem;
+  font-size: clamp(0.64rem, 0.8vw, 0.72rem);
+  letter-spacing: 0.045em;
   white-space: nowrap;
 }
 
-.linkedinAction {
-  gap: 0.55rem;
-}
-
-.linkedinAction svg {
-  flex: none;
+.contactActions .contactAction svg {
+  flex: 0 0 auto;
 }
 
 .footerTagline {
   margin-top: 1.7rem;
-  color: var(--color-on-panel, var(--color-on-panel));
+  color: var(--color-on-panel);
   opacity: 0.78;
 }
 
@@ -230,7 +240,7 @@
   position: absolute;
   width: 1rem;
   aspect-ratio: 1;
-  border: 0 solid var(--color-petrol-deep, var(--color-petrol-deep));
+  border: 0 solid var(--color-petrol-deep);
   opacity: 0.6;
 }
 
@@ -328,8 +338,8 @@
     grid-template-columns: auto minmax(0, 1fr);
   }
 
-  .emailLink {
-    font-size: 1rem;
+  .contactActions {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .taglineText,
@@ -338,16 +348,20 @@
   }
 }
 
-@media (max-width: 520px) {
-  .contactActions .contactAction {
-    font-size: clamp(0.75rem, 3.8vw, 0.9rem);
-    padding-inline: 0.85rem;
-    letter-spacing: 0.08em;
+@media (min-width: 1024px) and (max-width: 1399px) {
+  .contactActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contactActions .resumeAction {
+    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 360px) {
-  .emailLink {
-    font-size: 0.82rem;
+@media (max-width: 520px) {
+  .contactActions .contactAction {
+    font-size: clamp(0.75rem, 3.8vw, 0.9rem);
+    padding-inline: 0.9rem;
+    letter-spacing: 0.08em;
   }
 }

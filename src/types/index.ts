@@ -161,6 +161,7 @@ export interface ProjectCard extends Project {
 
 export interface HomeContent {
   profile: HomeProfile;
+  whatsappHref: string | null;
   projects: ProjectCard[];
   chronicleEntries: ChronicleEntry[];
   stackGroups: StackGroup[];
@@ -396,11 +397,31 @@ export type BeyondAlbumColor =
   | "lilac"
   | "pink";
 
+/**
+ * Consent state for an album entry. A published entry may never carry
+ * "needs-consent"; the content validator rejects that combination.
+ */
+export type BeyondAlbumPrivacy = "needs-consent" | "cleared";
+
+/** One generated width of an album photo, content-hashed for cache busting. */
+export interface BeyondAlbumRendition {
+  /** Rendered width in CSS pixels. */
+  w: 480 | 960 | 1600;
+  avif: string;
+  webp: string;
+  /** Combined bytes of the AVIF and WebP files at this width. */
+  bytes: number;
+}
+
 export interface BeyondAlbumImage {
   src?: string;
   alt: string;
   aspectRatio?: string;
   dominantColor?: string;
+  /** Generated width ladder; `src` points at the 960 WebP. */
+  renditions?: BeyondAlbumRendition[];
+  /** 16px-wide blurred WebP as a data URI, shown before the full image loads. */
+  placeholder?: string;
 }
 
 export interface BeyondAlbumItem {
@@ -414,6 +435,8 @@ export interface BeyondAlbumItem {
   meta?: string;
   color: BeyondAlbumColor;
   size: BeyondAlbumSize;
+  /** Set to "needs-consent" while someone in the frame has not agreed to appear. */
+  privacy?: BeyondAlbumPrivacy;
 }
 
 export interface PortalTransitionIntent {

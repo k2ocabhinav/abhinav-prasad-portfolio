@@ -280,7 +280,7 @@ function WorkCard({ project }: { project: Project }) {
                   key={link.label}
                   href={link.href}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className={styles.projectLink}
                 >
                   {link.label}

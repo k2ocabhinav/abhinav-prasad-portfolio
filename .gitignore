@@ -35,6 +35,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -49,4 +50,3 @@ docs/handoff/
 docs/workflow/
 CONTENT_GUIDE.md
 /resume/
-public/resume/abhinav-resume.pdf

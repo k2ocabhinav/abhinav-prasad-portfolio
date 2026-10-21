@@ -86,11 +86,12 @@ export default function HomePage({ content }: HomePageProps) {
         />
         <ContactSection
           personal={profile.personal}
+          whatsappHref={content.whatsappHref}
           presenceNodes={profile.presenceNodes}
         />
       </main>
 
-      <Footer personal={profile.personal} />
+      <Footer personal={profile.personal} topTargetId="hero" />
 
       <ScrollProgress />
 

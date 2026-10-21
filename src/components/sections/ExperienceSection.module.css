@@ -1,9 +1,9 @@
 .experienceSection {
-  background: var(--paper-linen, var(--paper-linen));
+  background: var(--paper-linen);
   --cassette-ink: var(--color-ink);
   --cassette-muted: #4D5659;
-  --cassette-cobalt: var(--color-cornflower, var(--color-cornflower));
-  --cassette-cobalt-deep: var(--color-cornflower-deep, var(--color-cornflower-deep));
+  --cassette-cobalt: var(--color-cornflower);
+  --cassette-cobalt-deep: var(--color-cornflower-deep);
 }
 
 .experienceRoot {
@@ -69,7 +69,7 @@
   overflow: hidden;
   border: 1px solid rgba(var(--color-cobalt-deep-rgb), 0.3);
   border-radius: 3px;
-  background: var(--paper-linen, var(--paper-linen));
+  background: var(--paper-linen);
   box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(var(--color-black-cherry-rgb), 0.16));
 }
 
@@ -208,8 +208,8 @@
   min-height: 44px;
   padding: 0.55rem clamp(1.2rem, 3vw, 2.4rem);
   border: 0;
-  background: var(--paper-linen, var(--paper-linen));
-  color: var(--color-burgundy, var(--color-burgundy));
+  background: var(--paper-linen);
+  color: var(--color-burgundy);
   cursor: pointer;
   text-align: left;
   transition: background-color 140ms var(--motion-ease-out);
@@ -224,12 +224,12 @@
 }
 
 .disclosureButton:focus-visible {
-  outline: 2px solid var(--color-burgundy, var(--color-burgundy));
+  outline: 2px solid var(--color-burgundy);
   outline-offset: -4px;
 }
 
 .disclosureLabel {
-  color: var(--color-burgundy, var(--color-burgundy));
+  color: var(--color-burgundy);
   font-family: var(--font-label);
   font-size: 0.72rem;
   letter-spacing: 0.12em;

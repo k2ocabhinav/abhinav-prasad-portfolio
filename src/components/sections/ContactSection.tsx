@@ -7,10 +7,14 @@ import type { PersonalData, PresenceNode } from "@/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import LinkedInMark from "@/components/ui/LinkedInMark";
+import WhatsAppMark from "@/components/ui/WhatsAppMark";
+import DownloadMark from "@/components/ui/DownloadMark";
 import MagneticButton from "@/components/ui/MagneticButton";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import EnvelopeStamp from "@/components/art/EnvelopeStamp";
 import TimezoneMap from "@/components/art/TimezoneMap";
+import ContactEmail from "@/components/sections/contact/ContactEmail";
+import LocalTime from "@/components/sections/contact/LocalTime";
 import styles from "./ContactSection.module.css";
 
 function subscribeToHydration() {
@@ -27,11 +31,13 @@ function getServerHydratedSnapshot() {
 
 interface ContactSectionProps {
   personal: PersonalData;
+  whatsappHref: string | null;
   presenceNodes: PresenceNode[];
 }
 
 export default function ContactSection({
   personal,
+  whatsappHref,
   presenceNodes,
 }: ContactSectionProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -78,6 +84,7 @@ export default function ContactSection({
             </div>
             <p className={styles.location}>
               {personal.location.city}, {personal.location.country}
+              <LocalTime city={personal.location.city} />
             </p>
             <p className={styles.presenceDescription}>
               {personal.presenceDescription}
@@ -100,14 +107,7 @@ export default function ContactSection({
                   <div className={styles.contactLinks}>
                     <EnvelopeStamp />
                     <div className={styles.contactInfo}>
-                      <a
-                        href={`mailto:${personal.email}`}
-                        className={styles.emailLink}
-                        data-contact-email="true"
-                        aria-label={personal.email}
-                      >
-                        {personal.email}
-                      </a>
+                      <ContactEmail email={personal.email} />
                     </div>
                   </div>
 
@@ -117,21 +117,33 @@ export default function ContactSection({
                         href={linkedinHref}
                         target="_blank"
                         rel="noopener noreferrer"
+                        ariaLabel="Abhinav Prasad on LinkedIn (opens in a new tab)"
                         variant="outline"
-                        className={cn(
-                          styles.contactAction,
-                          styles.linkedinAction
-                        )}
+                        className={styles.contactAction}
                       >
                         <LinkedInMark size={16} />
-                        Connect on LinkedIn
+                        LinkedIn
+                      </MagneticButton>
+                    ) : null}
+                    {whatsappHref ? (
+                      <MagneticButton
+                        href={whatsappHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        ariaLabel="Message Abhinav on WhatsApp (opens in a new tab)"
+                        variant="outline"
+                        className={styles.contactAction}
+                      >
+                        <WhatsAppMark size={16} />
+                        WhatsApp
                       </MagneticButton>
                     ) : null}
                     <MagneticButton
                       href={personal.resumeHref}
                       download
-                      className={styles.contactAction}
+                      className={cn(styles.contactAction, styles.resumeAction)}
                     >
+                      <DownloadMark size={16} />
                       Download résumé
                     </MagneticButton>
                   </div>

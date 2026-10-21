@@ -38,13 +38,13 @@
 }
 
 .paper {
-  --chip-ink: var(--color-ink, var(--color-ink));
+  --chip-ink: var(--color-ink);
   --chip-icon: var(--color-lead, var(--color-burgundy));
   --chip-border: var(--color-hairline);
 }
 
 .panel {
-  --chip-ink: var(--color-on-panel, var(--color-on-panel));
+  --chip-ink: var(--color-on-panel);
   --chip-icon: var(--color-panel-accent, var(--color-pink));
   --chip-border: rgba(var(--color-on-surface-dark-rgb), 0.24);
 }

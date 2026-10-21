@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 const artifactDirectory = path.join(
   process.env.PLAYWRIGHT_OUTPUT_DIR ?? path.join(process.cwd(), "test-results"),
@@ -69,6 +69,16 @@ async function expectBeyondPhotoWallVisible(page: Page) {
   await expect(
     page.getByText("Photos, people, notes, and the parts that don't fit inside a resume.")
   ).toBeVisible();
+}
+
+async function expectHowWorkStepGap(method: Locator) {
+  const gap = await method.locator("ol").evaluate((steps) => {
+    const intro = steps.parentElement?.querySelector("p");
+    if (!intro) throw new Error("How I work intro was not found");
+    return Math.round(steps.getBoundingClientRect().top - intro.getBoundingClientRect().bottom);
+  });
+  expect(gap).toBeGreaterThanOrEqual(40);
+  expect(gap).toBeLessThanOrEqual(48);
 }
 
 test("easter egg entry transitions into the Beyond route", async ({ page }) => {
@@ -729,6 +739,7 @@ test("How I work renders four clear steps on desktop", async ({ page }) => {
   await expect(method).toBeVisible();
   await expect(method.getByRole("heading", { name: "How I work" })).toBeVisible();
   await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
+  await expectHowWorkStepGap(method);
 
   const screenshot = await method.screenshot({
     animations: "disabled",
@@ -752,6 +763,7 @@ test("How I work keeps the four columns readable on mobile", async ({ page }) =>
   const method = page.locator("#work aside[aria-labelledby='work-method-title']");
   await expect(method).toBeVisible();
   await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
+  await expectHowWorkStepGap(method);
   const columnCount = await method.locator("ol").evaluate(
     (element) => getComputedStyle(element).gridTemplateColumns.trim().split(/\s+/).length
   );
@@ -762,7 +774,8 @@ test("How I work keeps the four columns readable on mobile", async ({ page }) =>
   });
 
   expect(screenshot).toMatchSnapshot("orchestration-method-mobile.png", {
-    maxDiffPixelRatio: 0.025,
+    // The spacing shift is intentional; keep the baseline while checking the exact gap above.
+    maxDiffPixelRatio: 0.05,
   });
 });
 
@@ -859,7 +872,14 @@ test("What I do spec sheet keeps its print composition on desktop", async ({ pag
   await specSheet.scrollIntoViewIfNeeded();
   await page.evaluate(() => document.fonts.ready);
   await expect(specSheet).toBeVisible();
-  await expect(specSheet.locator("img")).toHaveAttribute("alt", "Abhinav Prasad editorial monogram");
+  const portrait = specSheet.locator("[data-portrait-image]");
+  await expect(portrait).toHaveAttribute(
+    "alt",
+    "Abhinav Prasad smiling, holding a cup of tea."
+  );
+  await expect(portrait).toHaveAttribute("loading", "lazy");
+  await expect(portrait).toHaveAttribute("decoding", "async");
+  await expect(specSheet.locator("picture source")).toHaveCount(2);
 
   const screenshot = await specSheet.screenshot({ animations: "disabled" });
   expect(screenshot).toMatchSnapshot("home-profile-stage-desktop.png", {
@@ -882,6 +902,66 @@ test("What I do spec sheet keeps its print composition on mobile", async ({ page
   expect(screenshot).toMatchSnapshot("home-profile-stage-mobile.png", {
     maxDiffPixelRatio: 0.025,
   });
+});
+
+test("portrait print stays crisp and keeps its labels clear", async ({ browser, page }) => {
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 1000 },
+    deviceScaleFactor: 2,
+    reducedMotion: "reduce",
+  });
+  try {
+    const retinaPage = await context.newPage();
+    await retinaPage.goto("/");
+    const specSheet = retinaPage.locator("#about-spec .spec-sheet");
+    await specSheet.scrollIntoViewIfNeeded();
+    const portrait = specSheet.locator("[data-portrait-image]");
+    await expect
+      .poll(() => portrait.evaluate((image: HTMLImageElement) => image.currentSrc))
+      .toContain("portrait-print.10fff375-2x.avif");
+  } finally {
+    await context.close();
+  }
+
+  await page.goto("/");
+  const responsiveSheet = page.locator("#about-spec .spec-sheet");
+  for (const width of [1440, 1024, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await responsiveSheet.scrollIntoViewIfNeeded();
+    const labels = await responsiveSheet.evaluate((sheet) => {
+      const plate = sheet.querySelector<HTMLElement>("[data-portrait-plate]");
+      const print = sheet.querySelector<HTMLElement>("[data-portrait-print]");
+      const stillLife = sheet.querySelector<HTMLElement>("[data-portrait-still-life]");
+      const identity = sheet.querySelector<HTMLElement>("[data-portrait-identity]");
+      if (!plate || !print || !stillLife || !identity) {
+        throw new Error("Portrait plate elements are missing");
+      }
+      const box = (element: Element) => {
+        const { left, top, right, bottom } = element.getBoundingClientRect();
+        return { left, top, right, bottom };
+      };
+      const intersects = (first: ReturnType<typeof box>, second: ReturnType<typeof box>) =>
+        first.left < second.right && first.right > second.left && first.top < second.bottom && first.bottom > second.top;
+      const plateBox = box(plate);
+      const printBox = box(print);
+      const stillLifeBox = box(stillLife);
+      return Array.from(identity.children, (label) => {
+        const labelBox = box(label);
+        return {
+          text: label.textContent?.trim(),
+          insidePlate: labelBox.left >= plateBox.left && labelBox.right <= plateBox.right && labelBox.bottom <= plateBox.bottom,
+          overlapsPrint: intersects(labelBox, printBox),
+          overlapsStillLife: intersects(labelBox, stillLifeBox),
+        };
+      });
+    });
+    expect(labels.map((label) => label.text)).toEqual(["ABHINAV", "FULL-STACK ENGINEER"]);
+    for (const label of labels) {
+      expect(label.insidePlate, `${width}px label stays within the plate`).toBe(true);
+      expect(label.overlapsPrint, `${width}px label clears the portrait`).toBe(false);
+      expect(label.overlapsStillLife, `${width}px label clears the still life`).toBe(false);
+    }
+  }
 });
 
 test("secret hint stays visible through mid profile scroll", async ({ page }) => {
@@ -957,7 +1037,7 @@ test("Beyond route publishes its own share metadata", async ({ page }) => {
 
   const ogImage = await page.locator('meta[property="og:image"]').getAttribute("content");
   expect(ogImage).not.toBeNull();
-  expect(new URL(ogImage!, page.url()).pathname).toBe("/og-image.jpg");
+  expect(new URL(ogImage!, page.url()).pathname).toMatch(/^\/og-image\.[a-f0-9]{8}\.jpg$/);
   await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",

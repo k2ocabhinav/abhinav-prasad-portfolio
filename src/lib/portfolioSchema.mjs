@@ -19,6 +19,20 @@ export const beyondColors = ["cobalt", "coral", "lemon", "amber", "lilac", "pink
 /** @type {readonly ["hero", "wide", "tall", "square"]} */
 export const beyondSizes = ["hero", "wide", "tall", "square"];
 
+/** @type {readonly ["needs-consent", "cleared"]} */
+export const beyondPrivacyValues = ["needs-consent", "cleared"];
+
+/** @type {readonly [480, 960, 1600]} */
+export const beyondRenditionWidths = [480, 960, 1600];
+
+/** Per-file byte caps by rendition width. */
+/** @type {Readonly<Record<number, number>>} */
+export const beyondRenditionCaps = Object.freeze({
+  480: 60 * 1024,
+  960: 140 * 1024,
+  1600: 280 * 1024,
+});
+
 /** @type {readonly ["github", "linkedin", "email"]} */
 export const socialPlatforms = ["github", "linkedin", "email"];
 

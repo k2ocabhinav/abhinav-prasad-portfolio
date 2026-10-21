@@ -1,9 +1,9 @@
 .worksSection {
-  --section-bg: var(--paper-linen, var(--paper-linen));
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
+  --section-bg: var(--paper-linen);
+  --plate-ink: var(--color-black-cherry);
   --plate-accent: var(--color-lead, var(--color-burgundy));
-  --plate-second: var(--color-cornflower, var(--color-cornflower));
-  --plate-paper: var(--paper-linen, var(--paper-linen));
+  --plate-second: var(--color-cornflower);
+  --plate-paper: var(--paper-linen);
   --tone-accent: var(--color-lead, var(--color-burgundy));
   --tone-accent-rgb: var(--color-lead-rgb, 106, 33, 53);
   --tone-accent-deep: var(--color-lead-deep, var(--color-burgundy));
@@ -79,13 +79,13 @@
   padding: clamp(1rem, 3vw, 2rem);
   border: 1px solid rgba(var(--color-black-cherry-rgb), 0.22);
   border-radius: 3px;
-  background: var(--color-black-cherry, var(--color-black-cherry));
-  color: var(--color-on-panel, var(--color-on-panel));
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
+  background: var(--color-black-cherry);
+  color: var(--color-on-panel);
+  --plate-ink: var(--color-black-cherry);
   --plate-accent: var(--color-lead, var(--color-burgundy));
-  --plate-second: var(--color-cornflower, var(--color-cornflower));
-  --plate-paper: var(--paper-linen, var(--paper-linen));
-  --plate-glacier: var(--paper-linen, var(--paper-linen));
+  --plate-second: var(--color-cornflower);
+  --plate-paper: var(--paper-linen);
+  --plate-glacier: var(--paper-linen);
 }
 
 .orchestrationLead {
@@ -125,7 +125,7 @@
 
 .evidenceHeading p {
   margin: 0;
-  color: var(--color-on-panel, var(--color-on-panel));
+  color: var(--color-on-panel);
   font-family: var(--font-label);
   font-size: 0.65rem;
   letter-spacing: 0.07em;
@@ -140,7 +140,7 @@
 
 .orchestrationIntro {
   margin: 0.7rem 0 0;
-  color: var(--color-on-panel, var(--color-on-panel));
+  color: var(--color-on-panel);
   font-size: 0.94rem;
   line-height: 1.5;
 }
@@ -148,7 +148,7 @@
 .processSteps {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: auto 0 0;
+  margin: 2.75rem 0 0;
   padding: 0;
   list-style: none;
   text-align: center;
@@ -242,7 +242,7 @@
   gap: 0.35rem;
   aspect-ratio: auto;
   padding: 0.7rem;
-  background: var(--paper-linen, var(--paper-linen));
+  background: var(--paper-linen);
 }
 
 @media (min-width: 768px) {
@@ -354,7 +354,7 @@
 
 .visualPanelPlatform .heroShotImage {
   object-fit: contain;
-  background: var(--paper-linen, var(--paper-linen));
+  background: var(--paper-linen);
 }
 
 .visualPanel:hover .heroShotImage {
@@ -429,7 +429,7 @@
   position: relative;
   z-index: 1;
   grid-column: span 1;
-  background: var(--paper-linen, var(--paper-linen));
+  background: var(--paper-linen);
 }
 
 @media (min-width: 768px) {
@@ -712,7 +712,7 @@
   .processSteps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.8rem 1.15rem;
-    margin-top: auto;
+    margin-top: 2.75rem;
   }
 
   .stepValue {
@@ -786,5 +786,34 @@
     position: static;
     width: 100%;
     padding: 0.35rem 0.5rem;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1100px) {
+  .visualPanelPlatform .heroShot {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.45rem;
+    min-height: 0;
+    aspect-ratio: auto;
+    overflow: visible;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .visualPanelPlatform .heroFrame {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--section-panel-border);
+    border-radius: 2px;
+    box-shadow: var(--print-offset-sm, 3px 3px 0 rgba(var(--color-black-cherry-rgb), 0.16));
+  }
+
+  .visualPanelPlatform .mediaCaption {
+    position: static;
+    width: 100%;
+    margin: 0;
   }
 }

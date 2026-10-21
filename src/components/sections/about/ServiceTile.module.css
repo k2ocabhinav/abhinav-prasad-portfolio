@@ -16,51 +16,51 @@
   padding: clamp(1.25rem, 2.1vw, 1.7rem);
   overflow: visible;
   isolation: isolate;
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
-  --plate-accent: var(--color-burgundy, var(--color-burgundy));
-  --plate-second: var(--color-cornflower, var(--color-cornflower));
-  --plate-paper: var(--paper-linen, var(--paper-linen));
+  --plate-ink: var(--color-black-cherry);
+  --plate-accent: var(--color-burgundy);
+  --plate-second: var(--color-cornflower);
+  --plate-paper: var(--paper-linen);
   transition:
     transform var(--motion-duration-short) var(--motion-ease-out),
     border-color var(--motion-duration-short) var(--motion-ease-out);
 }
 
 .tile[data-tone="burgundy"] {
-  --tile-bg: var(--color-burgundy, var(--color-burgundy));
+  --tile-bg: var(--color-burgundy);
   --tile-fg: var(--color-on-lead, var(--color-on-panel));
   --tile-border: rgba(var(--color-black-cherry-rgb), 0.64);
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
-  --plate-accent: var(--color-pink, var(--color-pink));
-  --plate-second: var(--color-cornflower, var(--color-cornflower));
+  --plate-ink: var(--color-black-cherry);
+  --plate-accent: var(--color-pink);
+  --plate-second: var(--color-cornflower);
 }
 
 .tile[data-tone="petrol"] {
-  --tile-bg: var(--color-petrol, var(--color-petrol));
+  --tile-bg: var(--color-petrol);
   --tile-fg: var(--color-on-lead, var(--color-on-panel));
   --tile-border: rgba(var(--color-ink-rgb), 0.42);
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
-  --plate-accent: var(--color-lovebird, var(--color-lovebird));
-  --plate-second: var(--color-cornflower, var(--color-cornflower));
+  --plate-ink: var(--color-black-cherry);
+  --plate-accent: var(--color-lovebird);
+  --plate-second: var(--color-cornflower);
 }
 
 .tile[data-tone="cornflower"] {
-  --tile-bg: var(--color-cornflower, var(--color-cornflower));
-  --tile-fg: var(--color-black-cherry, var(--color-black-cherry));
+  --tile-bg: var(--color-cornflower);
+  --tile-fg: var(--color-black-cherry);
   --tile-border: rgba(var(--color-black-cherry-rgb), 0.42);
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
-  --plate-accent: var(--color-petrol, var(--color-petrol));
-  --plate-second: var(--color-lovebird, var(--color-lovebird));
-  --plate-paper: var(--paper-bone, var(--paper-bone));
+  --plate-ink: var(--color-black-cherry);
+  --plate-accent: var(--color-petrol);
+  --plate-second: var(--color-lovebird);
+  --plate-paper: var(--paper-bone);
 }
 
 .tile[data-tone="lovebird"] {
-  --tile-bg: var(--color-lovebird, var(--color-lovebird));
-  --tile-fg: var(--color-black-cherry, var(--color-black-cherry));
+  --tile-bg: var(--color-lovebird);
+  --tile-fg: var(--color-black-cherry);
   --tile-border: rgba(var(--color-black-cherry-rgb), 0.42);
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
-  --plate-accent: var(--color-petrol, var(--color-petrol));
-  --plate-second: var(--color-burgundy, var(--color-burgundy));
-  --plate-paper: var(--paper-linen, var(--paper-linen));
+  --plate-ink: var(--color-black-cherry);
+  --plate-accent: var(--color-petrol);
+  --plate-second: var(--color-burgundy);
+  --plate-paper: var(--paper-linen);
 }
 
 .tile:hover {
@@ -145,8 +145,8 @@
 
 .tile[data-service-id="developer-tooling"] {
   padding: clamp(1.5rem, 3vw, 2.5rem);
-  --plate-accent: var(--color-petrol, var(--color-petrol));
-  --plate-second: var(--color-lovebird, var(--color-lovebird));
+  --plate-accent: var(--color-petrol);
+  --plate-second: var(--color-lovebird);
 }
 
 .tile[data-service-id="developer-tooling"] .headingRow {

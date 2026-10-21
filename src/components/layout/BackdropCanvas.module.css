@@ -4,13 +4,13 @@
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background: var(--paper-bone, var(--paper-bone));
+  background: var(--paper-bone);
   transition: background-color 0.8s ease;
 }
 
 /* Palette v2 paper rooms. Glacier and burgundy are section-painted fields. */
 .canvas[data-stock="linen"] {
-  background: var(--paper-linen, var(--paper-linen));
+  background: var(--paper-linen);
 }
 
 

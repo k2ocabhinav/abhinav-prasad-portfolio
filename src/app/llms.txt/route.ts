@@ -24,25 +24,26 @@ export function GET() {
     "",
     `> ${profile.seo.description}`,
     "",
-    "## Positioning",
-    "",
     profile.personal.title,
     profile.personal.subtitle,
     `At work: ${currentRole}, ${experience?.company ?? "the current employer"}.`,
     ...profile.llms.positioningLines,
     profile.personal.presenceDescription,
-    "",
-    "## Homepage sections",
-    "",
     ...profile.llms.homepageLines,
+    experienceSummary,
+    "",
+    "## Homepage",
+    "",
+    `- [Homepage](${absoluteUrl("/")}): ${profile.seo.description}`,
+    `- [Selected work](${absoluteUrl("/#work")}): Project cards and the method behind them.`,
     "",
     "## Professional experience",
     "",
-    experienceSummary,
+    `- [Experience](${absoluteUrl("/#experience")}): ${experienceSummary}`,
     "",
     "## Selected work",
     "",
-    ...projects.map(({ project, detail }) => {
+    ...projects.flatMap(({ project, detail }) => {
       const linkedSource = project.links?.find((link) =>
         link.href?.startsWith("https://github.com/")
       )?.href;
@@ -51,7 +52,12 @@ export function GET() {
       )?.href;
       const source = linkedSource ?? detailSource;
       const sourceNote = source ? ` Source: [GitHub](${source}).` : "";
-      return `- [${projectSeoTitle(detail)}](${absoluteUrl(`/work/${detail.slug}`)}): ${project.description} Stack: ${project.tags.join(", ")}.${sourceNote}`;
+      const projectUrl = absoluteUrl(`/work/${detail.slug}`);
+      const markdownUrl = absoluteUrl(`/work/${detail.slug}.md`);
+      return [
+        `- [${projectSeoTitle(detail)}](${projectUrl}): ${project.description} Stack: ${project.tags.join(", ")}.${sourceNote}`,
+        `- [${projectSeoTitle(detail)} as Markdown](${markdownUrl}): Full case-study text generated from the same project content.`,
+      ];
     }),
     "",
     "## Contact",
@@ -59,12 +65,12 @@ export function GET() {
     `- [Email](mailto:${profile.personal.email})`,
     ...profile.personal.socials
       .filter((social) => social.href.startsWith("https://"))
-      .map((social) => `- [${social.label}](${social.href})`),
+      .map((social) => `- [${social.label}](${social.href}): ${social.label} profile.`),
     "",
     "## Optional",
     "",
-    `- [Resume](${absoluteUrl(profile.personal.resumeHref)})`,
-    `- [Portfolio homepage](${absoluteUrl("/")})`,
+    `- [Résumé](${absoluteUrl(profile.personal.resumeHref)}): Download the résumé.`,
+    `- [Portfolio homepage](${absoluteUrl("/")}): Return to the homepage.`,
     "",
   ];
 

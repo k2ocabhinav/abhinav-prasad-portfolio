@@ -1,3 +1,4 @@
+import "server-only";
 import { cache } from "react";
 import type { HomeContent, HomeProfile, PortfolioProfile, PortfolioProject, ProjectCard } from "@/types";
 import { getChronicleEntries } from "./experience";
@@ -39,8 +40,18 @@ export const getPublishedProjectCards = cache((): ProjectCard[] => {
 
 export const getHomeContent = cache((): HomeContent => {
   const profile = getProfileContent();
+  const whatsappNumber = process.env.WHATSAPP_E164?.trim();
+  if (whatsappNumber && !/^\+\d{10,15}$/.test(whatsappNumber)) {
+    throw new Error("WHATSAPP_E164 must be an E.164 number");
+  }
+
   return {
     profile: homeProfileProjection(profile),
+    whatsappHref: whatsappNumber
+      ? `https://wa.me/${whatsappNumber.slice(1)}?text=${encodeURIComponent(
+          "Hi Abhinav, I found your portfolio and would like to talk."
+        )}`
+      : null,
     projects: getPublishedProjectCards(),
     chronicleEntries: getChronicleEntries(),
     stackGroups: getStackGroups(),

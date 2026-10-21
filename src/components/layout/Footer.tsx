@@ -8,14 +8,18 @@ import styles from "./Footer.module.css";
 
 interface FooterProps {
   personal: Pick<PersonalData, "name">;
+  topTargetId: string;
 }
 
-export default function Footer({ personal }: FooterProps) {
+export default function Footer({ personal, topTargetId }: FooterProps) {
   return (
     <footer className={styles.footer}>
       <p className={styles.copyright}>
         © {new Date().getFullYear()} {personal.name}. All rights reserved.
       </p>
+      <a href={`#${topTargetId}`} className={styles.backToTop}>
+        Back to top
+      </a>
       <div className={styles.colophonRow}>
         <PrinterSlug />
         <p className={styles.colophon}>

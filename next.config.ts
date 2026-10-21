@@ -4,10 +4,29 @@ import path from "path";
 // One-year immutable caching for content-hashed assets only. HTML must never
 // receive this (it is not hashed and changes on every deploy).
 const IMMUTABLE_CACHE = "public, max-age=31536000, immutable";
+const isProd = process.env.NODE_ENV === "production";
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "media-src 'self'",
+  "manifest-src 'self'",
+  // Keep wasm-unsafe-eval out unless the Beyond route proves its renderer needs it.
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  ...(process.env.VERCEL === "1" ? ["upgrade-insecure-requests"] : []),
+].join("; ");
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   devIndicators: false,
+  poweredByHeader: false,
   experimental: {
     // Keep inlineCss on: on throttled mobile it removes a render-blocking CSS
     // round trip. Measured (Lighthouse mobile ×3 medians, Fast-3G-ish):
@@ -22,15 +41,30 @@ const nextConfig: NextConfig = {
     // default 2048/3840 entries only widened every srcset for nothing.
     deviceSizes: [360, 640, 750, 828, 1080, 1200, 1440, 1920],
     imageSizes: [64, 96, 128, 256, 384],
-    // Optimized variants are keyed by (url, width, quality), but the URL carries
-    // no hash of the source bytes: replacing a project image under the same
-    // filename would keep serving the old variant for the whole TTL. A day of
-    // CDN caching still removes the repeat re-fetches the four-hour default
-    // caused, while a replaced image is corrected within a day.
+    // Portfolio captures carry an eight-character source hash in their URL,
+    // which gives each changed image a fresh optimizer cache key. Other project
+    // images keep their existing names, so this bounded TTL limits stale variants.
     minimumCacheTTL: 86400,
   },
   async headers() {
     return [
+      {
+        source: "/:path*",
+        headers: [
+          ...(isProd
+            ? [{ key: "Content-Security-Policy", value: CSP }]
+            : []),
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value:
+              "accelerometer=(), autoplay=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), browsing-topics=()",
+          },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "X-Frame-Options", value: "DENY" },
+        ],
+      },
       {
         // Content-hashed build output: chunks, inline CSS bundles and the
         // self-hosted woff2 fonts. Next already sends this; it is declared
@@ -48,17 +82,15 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: IMMUTABLE_CACHE }],
       },
       {
-        // Social card: a stable, unhashed public file. Next served it
-        // `max-age=0`, so every crawler and link preview re-fetched ~53 KB. It
-        // only changes on redeploy, so a day of browser caching with a
-        // revalidating ETag is safe.
-        source: "/og-image.jpg",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=86400, must-revalidate",
-          },
-        ],
+        // Every file in this directory is emitted by the content-hashed
+        // portfolio capture script.
+        source: "/projects/portfolio-platform/:asset",
+        headers: [{ key: "Cache-Control", value: IMMUTABLE_CACHE }],
+      },
+      {
+        // Home and Beyond share cards also use content-hashed public files.
+        source: "/og-image\\.:digest([a-f0-9]{8})\\.jpg",
+        headers: [{ key: "Cache-Control", value: IMMUTABLE_CACHE }],
       },
       {
         // Prerendered HTML. Next emits `s-maxage=31536000` with no browser
@@ -67,7 +99,7 @@ const nextConfig: NextConfig = {
         // ETag still revalidates promptly after a deploy; the long CDN
         // `s-maxage` is preserved. The negative lookahead keeps hashed assets,
         // images and dotted files off this rule.
-        source: "/((?!_next/|favicon.ico|og-image.jpg|.*\\..*).*)",
+        source: "/((?!_next/|favicon.ico|.*\\..*).*)",
         headers: [
           {
             key: "Cache-Control",

@@ -23,8 +23,10 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   await page.goto("/");
   const homeOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
   const homeTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
-  expect(new URL(homeOgImage!, page.url()).pathname).toBe("/opengraph-image.jpg");
-  expect(new URL(homeTwitterImage!, page.url()).pathname).toBe("/og-image.jpg");
+  const homeOgPath = new URL(homeOgImage!, page.url()).pathname;
+  expect(homeOgPath).toMatch(/^\/og-image\.[a-f0-9]{8}\.jpg$/);
+  expect(new URL(homeTwitterImage!, page.url()).pathname).toBe(homeOgPath);
+  expect((await request.get(homeOgPath)).ok()).toBeTruthy();
   const jsonLd = await page
     .locator('#portfolio-structured-data[type="application/ld+json"]')
     .textContent();
@@ -35,7 +37,7 @@ test("serves recruiter-readable content and structured data in the initial HTML"
   };
   const person = graph["@graph"].find((node) => node["@type"] === "Person");
   expect(person).toMatchObject({
-    jobTitle: "Database Engineer",
+    jobTitle: "Full-stack engineer",
     worksFor: { name: "Ostrum Tech Limited" },
     hasOccupation: { name: "Database Engineer" },
   });
@@ -268,8 +270,8 @@ test("publishes sitemap, llms summary, canonical work metadata, and the resume",
   await page.goto("/work/portfolio-platform");
   const platformOgImage = await page.locator('meta[property="og:image"]').getAttribute("content");
   const platformTwitterImage = await page.locator('meta[name="twitter:image"]').getAttribute("content");
-  expect(new URL(platformOgImage!, page.url()).pathname).toBe(
-    "/projects/portfolio-platform/og.jpg"
+  expect(new URL(platformOgImage!, page.url()).pathname).toMatch(
+    /^\/projects\/portfolio-platform\/og\.[a-f0-9]{8}\.jpg$/
   );
   expect(platformTwitterImage).toBe(platformOgImage);
   await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");

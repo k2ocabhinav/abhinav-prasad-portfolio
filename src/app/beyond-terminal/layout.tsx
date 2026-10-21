@@ -30,7 +30,7 @@ const beyondTitle = "Beyond The Terminal";
 const beyondDescription =
   "A colorful photo wall for people, events, notes, and the parts that do not fit inside a resume.";
 const beyondImage = {
-  url: absoluteUrl("/og-image.jpg"),
+  url: absoluteUrl("/og-image.82ccc069.jpg"),
   width: 1200,
   height: 630,
   alt: "Abhinav Prasad, Beyond The Terminal photo wall",

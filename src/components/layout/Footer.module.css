@@ -6,10 +6,10 @@
   padding: 3rem 1.5rem;
   text-align: center;
   border-top: 1px solid var(--color-hairline);
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
+  --plate-ink: var(--color-black-cherry);
   --plate-accent: var(--color-lead, var(--color-burgundy));
-  --plate-second: var(--color-cornflower, var(--color-cornflower));
-  --plate-paper: var(--paper-linen, var(--paper-linen));
+  --plate-second: var(--color-cornflower);
+  --plate-paper: var(--paper-linen);
 }
 
 .copyright {
@@ -18,6 +18,31 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-secondary-text);
+}
+
+.backToTop {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.7rem;
+  padding-inline: 0.6rem;
+  color: var(--color-lead, var(--color-burgundy));
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25rem;
+}
+
+.backToTop:hover {
+  opacity: 0.72;
+}
+
+.backToTop:focus-visible {
+  outline: 2px solid var(--color-lead, var(--color-burgundy));
+  outline-offset: 3px;
 }
 
 /* Colophon — the print-journal sign-off. */

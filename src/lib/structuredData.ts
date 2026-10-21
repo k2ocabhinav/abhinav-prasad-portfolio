@@ -29,7 +29,7 @@ function buildPersonNode(
     name: personal.fullName,
     url: absoluteUrl("/"),
     description: personal.subtitle,
-    jobTitle: currentRole ?? personal.title,
+    jobTitle: personal.title,
     homeLocation: {
       "@type": "Place",
       name: `${personal.location.city}, ${personal.location.country}`,
@@ -110,6 +110,7 @@ export function buildProjectJsonLd(
   const personId = `${homeUrl}#person`;
   const pageUrl = absoluteUrl(`/work/${detail.slug}`);
   const pageId = `${pageUrl}#webpage`;
+  const breadcrumbId = `${pageUrl}#breadcrumb`;
   const projectId = `${pageUrl}#project`;
   const referencedRepository = detail.references?.find(
     (reference) =>
@@ -148,7 +149,26 @@ export function buildProjectJsonLd(
         name: projectSeoTitle(detail),
         description: detail.subtitle,
         isPartOf: { "@id": websiteId },
+        breadcrumb: { "@id": breadcrumbId },
         mainEntity: { "@id": projectId },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": breadcrumbId,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: homeUrl,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: detail.title,
+            item: pageUrl,
+          },
+        ],
       },
       project,
     ],

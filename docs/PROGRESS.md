@@ -11,3 +11,4 @@ One line per item. `[x]` done (with short commit hash), `[ ]` open. Edit in plac
 - [x] Velo case study "Dispatch Atlas" with new captures; Java 21 and positioning fixes (feat/velo-atlas)
 - [x] Performance: AVIF/WebP, fonts −26%, Lighthouse on `/work/velo`, production-build e2e (chore/perf-infra)
 - [x] QA sweep at 375/768/1440 with reduced motion (verdict READY, 88/0 e2e)
+- [x] Accepted risk: remaining npm advisories are development-only and limited to lint and Lighthouse chains, with no production runtime reach.

@@ -4,6 +4,7 @@
     "src/app/**/{page,layout,route,loading,error,not-found,template,default}.{ts,tsx}",
     "src/content/portfolio/**/*.mdx",
     "scripts/*.mjs",
+    "scripts/beyond/*.mjs",
     "scripts/hero/*.mjs",
     "tests/**/*.ts"
   ],
@@ -12,5 +13,7 @@
     "scripts/**/*.mjs",
     "tests/**/*.ts"
   ],
-  "ignoreExportsUsedInFile": true
+  "ignoreExportsUsedInFile": true,
+  "ignoreDependencies": ["sharp"],
+  "ignoreBinaries": ["sips", "swift"]
 }

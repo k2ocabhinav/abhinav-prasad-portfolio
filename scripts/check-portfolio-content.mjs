@@ -5,6 +5,9 @@ import {
   accents as accentValues,
   beyondColors as beyondColorValues,
   beyondKinds as beyondKindValues,
+  beyondPrivacyValues as beyondPrivacyValueList,
+  beyondRenditionCaps,
+  beyondRenditionWidths,
   beyondSizes as beyondSizeValues,
   expectedContentCounts,
   expectedHeroFactLinks,
@@ -38,6 +41,7 @@ const stackContextValues = new Set(stackContextValueList);
 const accents = new Set(accentValues);
 const beyondKinds = new Set(beyondKindValues);
 const beyondColors = new Set(beyondColorValues);
+const beyondPrivacyValues = new Set(beyondPrivacyValueList);
 const beyondSizes = new Set(beyondSizeValues);
 const projectStoryViewports = new Set(projectStoryViewportValues);
 const projectStoryThemes = new Set(projectStoryThemeValues);
@@ -305,6 +309,16 @@ function validateProfile() {
   ["name", "fullName", "title", "subtitle", "email", "presenceDescription", "footerTagline"].forEach((key) =>
     stringValue(personal, key, filePath)
   );
+  const whatsappNumber = process.env.WHATSAPP_E164?.trim();
+  if (!whatsappNumber) {
+    const message = "WHATSAPP_E164 is unset; the WhatsApp contact button will be hidden";
+    if (process.env.VERCEL_ENV === "production") {
+      fail(filePath, message);
+    }
+    console.warn(`[portfolio-content] ${message}`);
+  } else if (!/^\+\d{10,15}$/.test(whatsappNumber)) {
+    fail(filePath, "WHATSAPP_E164 must be an E.164 number");
+  }
   if (stringArray(personal, "hintCopy", filePath).length !== expectedContentCounts.hintCopyLines) {
     fail(filePath, `"personal.hintCopy" must contain ${expectedContentCounts.hintCopyLines} lines`);
   }
@@ -534,21 +548,62 @@ function validateServices() {
   });
 }
 
+function validateBeyondRenditions(image, filePath) {
+  const seenWidths = new Set();
+  optionalObjectArray(image, "renditions", filePath).forEach((rendition) => {
+    const width = rendition.w;
+    if (!beyondRenditionWidths.includes(width)) {
+      fail(filePath, `"image.renditions[].w" must be one of: ${beyondRenditionWidths.join(", ")}`);
+    }
+    if (seenWidths.has(width)) {
+      fail(filePath, `duplicate "image.renditions[].w" value: ${width}`);
+    }
+    seenWidths.add(width);
+
+    const cap = beyondRenditionCaps[width];
+    for (const format of ["avif", "webp"]) {
+      const src = stringValue(rendition, format, filePath);
+      validatePublicAsset(src, filePath);
+      const bytes = fs.statSync(path.resolve(publicRoot, src.slice(1))).size;
+      if (bytes > cap) {
+        fail(filePath, `"image.renditions" ${format} at ${width}px is ${bytes} bytes; cap is ${cap}`);
+      }
+    }
+
+    const declaredBytes = rendition.bytes;
+    if (typeof declaredBytes !== "number" || !Number.isSafeInteger(declaredBytes) || declaredBytes <= 0) {
+      fail(filePath, '"image.renditions[].bytes" must be a positive integer');
+    }
+  });
+}
+
 function validateBeyond() {
   const items = mdxFiles("beyond").map((filePath) => {
     const data = read(filePath);
-    enumValue(data, "status", statuses, filePath);
+    const status = enumValue(data, "status", statuses, filePath);
     enumValue(data, "kind", beyondKinds, filePath);
     enumValue(data, "color", beyondColors, filePath);
     enumValue(data, "size", beyondSizes, filePath);
     optionalNumber(data, "order", filePath);
     ["id", "title", "caption"].forEach((key) => stringValue(data, key, filePath));
-    stringArray(data, "tags", filePath);
+    // Draft entries start with no tags; the array stays required, its contents need not.
+    if (!Array.isArray(data.tags) || data.tags.some((tag) => typeof tag !== "string")) {
+      fail(filePath, '"tags" must be an array of strings');
+    }
     const image = optionalObject(data, "image", filePath);
     if (image) {
       validateImage(image, filePath, false);
       optionalString(image, "aspectRatio", filePath, "image.aspectRatio");
       optionalString(image, "dominantColor", filePath, "image.dominantColor");
+      validateBeyondRenditions(image, filePath);
+      const placeholder = optionalString(image, "placeholder", filePath, "image.placeholder");
+      if (placeholder !== undefined && !placeholder.startsWith("data:image/webp;base64,")) {
+        fail(filePath, '"image.placeholder" must be a WebP data URI');
+      }
+    }
+    const privacy = optionalEnum(data, "privacy", beyondPrivacyValues, filePath);
+    if (privacy === "needs-consent" && status === "published") {
+      fail(filePath, 'a published entry cannot keep "privacy: needs-consent"');
     }
     optionalString(data, "quote", filePath);
     optionalString(data, "meta", filePath);

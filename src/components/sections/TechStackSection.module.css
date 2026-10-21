@@ -1,12 +1,12 @@
 .stackSection {
-  background: var(--paper-bone, var(--paper-bone));
-  --plate-ink: var(--color-black-cherry, var(--color-black-cherry));
-  --plate-accent: var(--color-lovebird, var(--color-lovebird));
-  --plate-second: var(--color-cornflower, var(--color-cornflower));
-  --plate-paper: var(--paper-linen, var(--paper-linen));
-  --tone-accent: var(--color-lovebird, var(--color-lovebird));
+  background: var(--paper-bone);
+  --plate-ink: var(--color-black-cherry);
+  --plate-accent: var(--color-lovebird);
+  --plate-second: var(--color-cornflower);
+  --plate-paper: var(--paper-linen);
+  --tone-accent: var(--color-lovebird);
   --tone-accent-rgb: var(--color-lovebird-rgb, 197, 222, 72);
-  --tone-accent-deep: var(--color-lovebird-deep, var(--color-lovebird-deep));
+  --tone-accent-deep: var(--color-lovebird-deep);
 }
 
 .header {
@@ -30,7 +30,7 @@
 .callout {
   max-width: 22rem;
   margin: 0.8rem 0 0;
-  color: var(--color-lovebird-deep, var(--color-lovebird-deep));
+  color: var(--color-lovebird-deep);
   font-family: var(--font-label);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
@@ -67,7 +67,7 @@
 }
 
 .groupLabel {
-  color: var(--color-black-cherry, var(--color-black-cherry));
+  color: var(--color-black-cherry);
   font-family: var(--font-display);
   font-size: clamp(1rem, 1.6vw, 1.3rem);
   font-weight: 570;
@@ -75,7 +75,7 @@
 }
 
 .context {
-  color: var(--color-lovebird-deep, var(--color-lovebird-deep));
+  color: var(--color-lovebird-deep);
   font-family: var(--font-label);
   font-size: 0.62rem;
   letter-spacing: 0.1em;
