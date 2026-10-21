@@ -4,8 +4,8 @@
 
 .landing {
   position: relative;
-  z-index: 6;
-  overflow: clip;
+  z-index: 1;
+  overflow: visible;
   background: transparent;
 
   --color-surface: #F0EEE9;
@@ -22,9 +22,4 @@
   --landing-glass-border: rgba(11, 16, 17, 0.14);
   --landing-glass-border-active: rgba(var(--color-lead-deep-rgb), 0.55);
   --landing-glass-shadow: none;
-}
-
-.heroFrame {
-  position: relative;
-  scroll-snap-align: start;
 }

@@ -22,7 +22,11 @@ export default function HeroTextColumn({
   linkedinHref,
 }: HeroTextColumnProps) {
   return (
-    <div className={styles.textColumn} data-home-hero-text="true">
+    <div
+      className={styles.textColumn}
+      data-home-hero-text="true"
+      data-hero-text="true"
+    >
       <div className={styles.stack}>
         <p className={styles.identity} data-hero-identity="true">{hero.identity}</p>
         <p className={styles.value}>{hero.summary}</p>

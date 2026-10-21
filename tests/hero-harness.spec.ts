@@ -112,6 +112,24 @@ test.describe("hero harness", () => {
     );
   });
 
+  test("letterpress copies are hidden from assistive technology and ink stays still", async ({
+    page,
+  }) => {
+    await openHero(page);
+
+    const heading = page.locator(WORDMARK);
+    const bite = heading.locator('[data-hero-print-layer="bite"]');
+    const lift = heading.locator('[data-hero-print-layer="lift"]');
+    const ink = heading.locator('[data-hero-print-layer="ink"]');
+
+    await expect(bite).toHaveAttribute("aria-hidden", "true");
+    await expect(lift).toHaveAttribute("aria-hidden", "true");
+    await expect(ink).toHaveAttribute("aria-hidden", "true");
+    await expect(ink).toHaveText("Abhinav");
+    await expect(ink).toHaveCSS("transform", "none");
+    await expect(page.locator(LAYER)).toHaveAttribute("aria-hidden", "true");
+  });
+
   test("decorative layers never overlap the hero text, wordmark, or rail", async ({
     page,
   }) => {
@@ -384,6 +402,20 @@ test.describe("hero harness", () => {
       const hero = page.locator(HERO).first();
       await expect(hero).toBeVisible();
 
+      const staticState = await hero.locator("[data-hero-sheet]").evaluate((sheet) => {
+        const style = getComputedStyle(sheet);
+        return {
+          depth: style.getPropertyValue("--d").trim(),
+          transform: style.transform,
+          shade: style.getPropertyValue("--shade").trim(),
+          glint: getComputedStyle(sheet.querySelector("[data-ink-glint]")!).display,
+        };
+      });
+      expect(staticState.depth).toBe("1");
+      expect(staticState.transform).toBe("none");
+      expect(staticState.shade).toBe("0");
+      expect(staticState.glint).toBe("none");
+
       const first = await hero.screenshot({ caret: "hide" });
       await page.waitForTimeout(600);
       const second = await hero.screenshot({ caret: "hide" });
@@ -476,5 +508,30 @@ test.describe("hero harness", () => {
       `LCP was ${description}${entry.selector ? ` at ${entry.selector}` : ""}, not the hero wordmark`
     ).toBe(true);
     expect(entry.startTime).toBeGreaterThan(0);
+  });
+
+  test("the shared light reverses its shadow direction across the sheet", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await openHero(page);
+    const sheet = page.locator("[data-hero-sheet]");
+
+    await page.mouse.move(8, 450);
+    await expect
+      .poll(() => sheet.evaluate((element) => Number(getComputedStyle(element).getPropertyValue("--sx"))))
+      .toBeGreaterThan(0.2);
+
+    await page.mouse.move(1432, 450);
+    await expect
+      .poll(() => sheet.evaluate((element) => Number(getComputedStyle(element).getPropertyValue("--sx"))))
+      .toBeLessThan(0);
+  });
+
+  test("the final v portal opens Beyond", async ({ page }) => {
+    await page.goto("/");
+    await page.locator('[data-animated-name="hero-trigger"]').click();
+    await expect(page).toHaveURL(/\/beyond-terminal$/);
+    await expect(page.locator("#beyond-hero-title")).toBeVisible();
   });
 });

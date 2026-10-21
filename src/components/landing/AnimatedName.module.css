@@ -1,6 +1,5 @@
 .nameShell {
-  /* Letters sit at their natural spacing; the container-relative size fills
-     the width on tall screens, and a height-capped size never opens gaps. */
+  --wordmark-size: min(27.9cqw, 40svh);
   position: absolute;
   z-index: 5;
   right: 0;
@@ -10,7 +9,7 @@
   margin: 0;
   color: #0B1011;
   font-family: var(--font-wordmark);
-  font-size: clamp(9rem, min(27.5cqw, 36svh), 28rem);
+  font-size: var(--wordmark-size);
   font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -20,48 +19,88 @@
 
 .wordmark {
   position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: flex-start;
-  width: calc(100% - 0.12em);
-  margin-inline: 0.06em;
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  margin-left: 0.06em;
   font: inherit;
   font-variation-settings: inherit;
   line-height: inherit;
 }
 
-.plate {
-  position: absolute;
-  z-index: 0;
-  inset: 0 0.06em;
+.lettersLayer {
   display: flex;
-  justify-content: flex-start;
-  width: auto;
-  color: #6A2135;
+  width: max-content;
+  gap: 0.06em;
+  white-space: nowrap;
+}
+
+.biteLayer,
+.liftLayer {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
-  transform: translate(1px, 1px);
 }
 
-.letterMask {
-  display: block;
-  margin-inline: 0;
-  padding-inline: 0.03em;
-  overflow: visible;
+.biteLayer {
+  z-index: 0;
+  color: #6A2135;
 }
 
-.letter,
-.plateLetter {
-  display: block;
+.liftLayer {
+  z-index: 1;
+  color: #FFFDF8;
+  opacity: 0.95;
+}
+
+.inkLayer {
+  position: relative;
+  z-index: 2;
+  color: #0B1011;
 }
 
 .letter {
   position: relative;
-  z-index: 1;
+  display: block;
+  flex: 0 0 auto;
+  --near: 1;
+}
+
+.biteLetter {
+  transform: translate(
+    calc(var(--sx) * var(--d) * var(--exit-depth) * var(--near) * 0.009em),
+    calc(var(--sy) * var(--d) * var(--exit-depth) * var(--near) * 0.009em)
+  );
+}
+
+.liftLetter {
+  transform: translate(
+    calc(var(--sx) * var(--d) * var(--exit-depth) * var(--near) * -0.006em),
+    calc(var(--sy) * var(--d) * var(--exit-depth) * var(--near) * -0.006em)
+  );
+}
+
+.glint {
+  position: absolute;
+  z-index: 3;
+  inset: 0 auto auto 0;
+  color: transparent;
+  background-image: none;
+  background-position: 300% 0;
+  background-repeat: no-repeat;
+  background-size: 50% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  font: inherit;
+  font-variation-settings: inherit;
+  line-height: inherit;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .portalButton {
   position: absolute;
-  z-index: 2;
+  z-index: 10;
   top: -0.22em;
   right: 0.06em;
   width: max(14%, 44px);
@@ -83,48 +122,43 @@
   outline-offset: 3px;
 }
 
+:global(html[data-js]) .glint {
+  animation: ink-glint 600ms ease-out 760ms both;
+}
+
+@keyframes ink-glint {
+  from {
+    background-image: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 253, 248, 0.55) 50%,
+      transparent 60%
+    );
+    background-position: 300% 0;
+  }
+  to { background-position: -100% 0; }
+}
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .nameShell {
-    font-size: clamp(9rem, 27cqw, 15rem);
-  }
-}
-
-@media (min-width: 768px) and (max-height: 1100px) {
-  .nameShell {
-    font-size: clamp(9rem, min(27.5cqw, 30svh), 28rem);
-  }
-}
-
-@media (min-width: 768px) and (max-height: 800px) {
-  .nameShell {
-    font-size: clamp(7.5rem, min(27.5cqw, 26svh), 17rem);
+    --wordmark-size: min(27.9cqw, 40svh);
   }
 }
 
 @media (max-width: 767px) {
   .nameShell {
-    position: absolute;
-    right: 0;
-    bottom: 0.22em;
-    left: 0;
+    --wordmark-size: min(27.9cqw, 11svh);
+    position: relative;
+    right: auto;
+    bottom: auto;
+    left: auto;
     width: 100%;
-    margin: 0;
-    font-size: clamp(4.25rem, min(26cqw, 9.5svh), 7.5rem);
+    margin-top: 1.5rem;
     line-height: 0.86;
   }
 
-  .wordmark,
-  .plate {
-    width: auto;
-  }
-
   .wordmark {
-    width: calc(100% - 0.12em);
-    margin-inline: 0.06em;
-  }
-
-  .plate {
-    inset-inline: 0.06em;
+    margin-left: 0.06em;
   }
 
   .portalButton {
@@ -133,8 +167,20 @@
   }
 }
 
+@media (min-width: 768px) and (max-height: 800px) {
+  .nameShell {
+    --wordmark-size: min(27.9cqw, 28svh);
+    position: relative;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    margin-top: 5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .plate {
-    transform: translate(1px, 1px);
+  :global(html[data-js]) .glint {
+    display: none;
+    animation: none;
   }
 }

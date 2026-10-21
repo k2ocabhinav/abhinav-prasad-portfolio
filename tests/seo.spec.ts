@@ -87,11 +87,9 @@ test("keeps each home section readable without JavaScript", async ({ page }) => 
 
   await expect(page.locator('[data-home-hero-heading="true"]')).toHaveAttribute("aria-label", "Abhinav");
   await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
-  const stack = page.locator("[data-product-stack]");
-  await expect(stack).toBeVisible();
-  await expect(stack.locator("svg[role='img']")).toBeVisible();
-  await expect(stack.getByRole("link")).toHaveCount(0);
-  await expect(stack.locator("[data-stack-layer='backend']")).toBeVisible();
+  await expect(page.locator('[data-hero-print-layer="ink"]')).toHaveText("Abhinav");
+  await expect(page.locator('[data-hero-print-layer="bite"]')).toHaveAttribute("aria-hidden", "true");
+  await expect(page.locator('[data-hero-layer="maker"]')).toHaveAttribute("aria-hidden", "true");
 
   const sections = page.locator("main section");
   const sectionCount = await sections.count();

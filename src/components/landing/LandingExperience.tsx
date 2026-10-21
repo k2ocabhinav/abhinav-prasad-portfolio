@@ -1,4 +1,5 @@
 import LandingFrame1Hero from "./LandingFrame1Hero";
+import SheetLight from "./SheetLight";
 import styles from "./LandingExperience.module.css";
 import type { LandingHeroContent } from "@/types";
 
@@ -15,14 +16,14 @@ export default function LandingExperience({
 }: LandingExperienceProps) {
   return (
     <div className={styles.landing}>
-      <section id="hero" className={styles.heroFrame} aria-label="Hero">
+      <SheetLight>
         <LandingFrame1Hero
           hero={hero}
           name={hero.displayTitle}
           fullName={fullName}
           linkedinHref={linkedinHref}
         />
-      </section>
+      </SheetLight>
     </div>
   );
 }
