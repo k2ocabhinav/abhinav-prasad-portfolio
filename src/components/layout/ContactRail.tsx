@@ -41,6 +41,7 @@ export default function ContactRail({
       ) : null}
       <a
         href={`mailto:${email}`}
+        aria-label={`Email ${fullName}`}
         className={cn(styles.railItem, styles.railAction)}
       >
         <span className={cn(styles.railLabel, styles.railLabelRoute)}>
@@ -56,6 +57,7 @@ export default function ContactRail({
       <a
         href={resumeHref}
         download
+        aria-label={`Download ${fullName}'s résumé`}
         className={cn(styles.railItem, styles.railAction)}
       >
         <span className={cn(styles.railLabel, styles.railLabelRoute)}>

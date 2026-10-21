@@ -164,6 +164,7 @@
   line-height: 1.3;
   overflow-wrap: normal;
   word-break: normal;
+  white-space: nowrap;
   transition: opacity 0.3s ease;
 }
 
@@ -179,15 +180,19 @@
 /* Two print-press actions sit directly below the address: LinkedIn leads,
    the résumé follows. Both share the panel's button tokens. */
 .contactActions {
-  display: flex;
+  display: grid;
+  width: 100%;
   max-width: 100%;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.9rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.7rem;
 }
 
 .contactActions .contactAction {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
   padding-inline: clamp(1rem, 4vw, 2.5rem);
+  white-space: nowrap;
 }
 
 .linkedinAction {
@@ -211,6 +216,7 @@
   letter-spacing: 0.2em;
   line-height: 1.55;
   text-transform: uppercase;
+  text-wrap: balance;
 }
 
 .trimMarks {
@@ -285,14 +291,6 @@
     gap: 1rem;
   }
 
-  .contactActions {
-    width: 100%;
-  }
-
-  .contactActions .contactAction {
-    width: 100%;
-  }
-
   .mapContainer {
     width: min(100%, 23rem);
     aspect-ratio: 2.7 / 1;
@@ -336,7 +334,14 @@
 
 @media (max-width: 520px) {
   .contactActions .contactAction {
+    font-size: clamp(0.75rem, 3.8vw, 0.9rem);
     padding-inline: 0.85rem;
     letter-spacing: 0.08em;
+  }
+}
+
+@media (max-width: 360px) {
+  .emailLink {
+    font-size: 0.82rem;
   }
 }

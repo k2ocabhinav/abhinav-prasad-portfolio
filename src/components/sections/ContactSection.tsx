@@ -122,13 +122,13 @@ export default function ContactSection({
                     </div>
                   </div>
 
-                  <div className={styles.contactActions}>
+                  <div className={styles.contactActions} data-contact-actions="true">
                     {linkedinHref ? (
                       <MagneticButton
                         href={linkedinHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        variant="glow"
+                        variant="outline"
                         className={cn(
                           styles.contactAction,
                           styles.linkedinAction
@@ -149,7 +149,9 @@ export default function ContactSection({
                 </div>
 
                 <div className={styles.footerTagline}>
-                  <p className={styles.taglineText}>{personal.footerTagline}</p>
+                  <p className={styles.taglineText} data-contact-tagline="true">
+                    {personal.footerTagline}
+                  </p>
                 </div>
               </div>
             </m.div>

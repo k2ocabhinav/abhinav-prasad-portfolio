@@ -83,6 +83,18 @@
   text-transform: uppercase;
 }
 
+@media (max-width: 900px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 1.25rem;
+  }
+
+  .iconStrip {
+    width: 100%;
+  }
+}
+
 @media (max-width: 767px) {
   .header {
     grid-template-columns: minmax(0, 1fr);

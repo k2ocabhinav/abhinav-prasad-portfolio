@@ -74,7 +74,7 @@
 }
 
 .employerLabel {
-  padding: clamp(1.15rem, 2.5vw, 1.8rem) clamp(1.2rem, 3vw, 2.4rem);
+  padding: clamp(0.9rem, 2.5vw, 1.5rem) clamp(1.2rem, 3vw, 2.4rem);
   border-bottom: 1px solid rgba(37, 68, 123, 0.25);
   background: var(--paper-glacier, #D7EFFF);
 }
@@ -113,7 +113,16 @@
 }
 
 .roleSummary {
-  padding: clamp(0.8rem, 1.5vw, 1.1rem) clamp(1.2rem, 3vw, 2.4rem);
+  padding: clamp(0.6rem, 1.5vw, 1rem) clamp(1.2rem, 3vw, 2.4rem);
+}
+
+.roleHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  margin-bottom: 0.6rem;
 }
 
 .roleTitle {
@@ -123,6 +132,17 @@
   font-size: clamp(1.45rem, 2.5vw, 1.9rem);
   font-weight: 570;
   line-height: 1.2;
+}
+
+.roleDate {
+  margin: 0;
+  color: var(--cassette-cobalt-deep);
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .employmentNote {
@@ -151,11 +171,11 @@
 }
 
 .pointList {
-  margin-top: 0.6rem;
+  margin-top: 0.4rem;
 }
 
 .pointList li {
-  padding: 0.4rem 0;
+  padding: 0.3rem 0;
   border-top: 1px solid var(--color-hairline);
   color: var(--cassette-ink);
   font-size: 1rem;
@@ -324,8 +344,19 @@
   line-height: 1.4;
 }
 
+@media (min-width: 768px) and (max-width: 900px) {
+  .experienceSection {
+    --section-padding-y: clamp(4rem, 6vw, 5rem);
+  }
+}
+
 @media (max-width: 767px) {
+  .experienceSection {
+    --section-padding-y: clamp(2.75rem, 10vw, 3.5rem);
+  }
+
   .sectionHeader {
+    margin-bottom: 0.75rem;
     align-items: flex-start;
   }
 
@@ -340,6 +371,7 @@
   }
 
   .companyContext {
+    margin-top: 0.45rem;
     font-size: 0.92rem;
   }
 
@@ -347,8 +379,13 @@
     font-size: 0.7rem;
   }
 
+  .roleDate {
+    font-size: 12px;
+  }
+
   .pointList li {
-    font-size: 0.96rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
   }
 
   .workstreamGrid,
