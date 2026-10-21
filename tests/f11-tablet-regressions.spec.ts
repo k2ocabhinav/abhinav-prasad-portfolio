@@ -91,31 +91,33 @@ test.describe("F11 tablet and tall viewport regressions", () => {
     }
   });
 
-  test("portrait tablet layouts release the pinned work stages", async ({ page }, testInfo) => {
+  test("tablet project cards keep the editorial image and copy columns", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop-chromium", "Geometry checks in one engine");
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
-    await page.waitForFunction(() => document.documentElement.hasAttribute("data-js"));
 
-    for (const viewport of [
-      { width: 1024, height: 768, pinned: true },
-      { width: 1024, height: 1366, pinned: false },
-    ]) {
+    for (const viewport of [{ width: 1024, height: 768 }, { width: 1024, height: 1366 }]) {
       await page.setViewportSize(viewport);
-      const positions = await page.evaluate(() => {
-        const veloStage = document.querySelector<HTMLElement>("[data-work-project='velo'] [class*='projectStage']");
-        const methodStage = document.querySelector<HTMLElement>("[data-work-method-stage='true']");
-        if (!veloStage || !methodStage) throw new Error("Work stages are missing");
+      const geometry = await page.locator("#work [data-work-card='true']").first().evaluate((card) => {
+        const media = card.querySelector<HTMLElement>("[data-work-media='true']");
+        const copy = card.querySelector<HTMLElement>("[data-work-copy='true']");
+        if (!media || !copy) throw new Error("Project card columns are missing");
+        const mediaBox = media.getBoundingClientRect();
+        const copyBox = copy.getBoundingClientRect();
         return {
-          velo: getComputedStyle(veloStage).position,
-          method: getComputedStyle(methodStage).position,
+          mediaPosition: getComputedStyle(media).position,
+          separated: mediaBox.right <= copyBox.left || copyBox.right <= mediaBox.left,
+          documentWidth: document.documentElement.scrollWidth,
+          viewportWidth: window.innerWidth,
         };
       });
-      expect(positions.velo).toBe(viewport.pinned ? "sticky" : "relative");
-      expect(positions.method).toBe(viewport.pinned ? "sticky" : "relative");
+      expect(geometry.mediaPosition).not.toBe("sticky");
+      expect(geometry.separated).toBe(true);
+      expect(geometry.documentWidth).toBe(geometry.viewportWidth);
     }
   });
 
-  test("Experience workstream index advances through all four sections at tablet widths", async ({ page }, testInfo) => {
+  test("Experience disclosure opens all four workstreams at tablet widths", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop-chromium", "Geometry checks in one engine");
     await page.emulateMedia({ reducedMotion: "reduce" });
 
@@ -123,22 +125,20 @@ test.describe("F11 tablet and tall viewport regressions", () => {
       await page.setViewportSize(viewport);
       await page.goto("/");
       await page.locator("#experience").scrollIntoViewIfNeeded();
-      await page.getByRole("button", { name: /Read full experience/ }).click();
+      await page.getByRole("button", { name: /FULL EXPERIENCE/ }).click();
 
       const sections = page.locator("#experience-full [data-workstream]");
       await expect(sections).toHaveCount(4);
-      for (const section of await sections.all()) {
-        const id = await section.getAttribute("id");
-        const title = (await section.locator("h4").innerText()).trim();
-        if (!id) throw new Error("Workstream is missing its id");
-        await section.evaluate((element) => element.scrollIntoView({ block: "start", behavior: "instant" }));
-        await expect(page.getByRole("navigation", { name: /Workstreams/ }).getByRole("link", { name: title }))
-          .toHaveAttribute("aria-current", "location");
-      }
+      for (const section of await sections.all()) await expect(section).toBeVisible();
+      const widths = await page.evaluate(() => ({
+        document: document.documentElement.scrollWidth,
+        viewport: window.innerWidth,
+      }));
+      expect(widths.document).toBe(widths.viewport);
     }
   });
 
-  test("work method labels align to the four route stations in the pinned stage", async ({ page }, testInfo) => {
+  test("work method keeps the four current steps in distinct columns", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop-chromium", "Geometry checks in one engine");
     for (const viewport of [
       { width: 1024, height: 768 },
@@ -147,54 +147,34 @@ test.describe("F11 tablet and tall viewport regressions", () => {
     ]) {
       await page.setViewportSize(viewport);
       await page.goto("/");
-      const method = page.locator("[data-work-method='true']");
+      const method = page.locator("#work aside[aria-labelledby='work-method-title']");
       await method.evaluate((element) => element.scrollIntoView({ block: "start", behavior: "instant" }));
       const metrics = await method.evaluate((element) => {
-        const stage = element.querySelector<HTMLElement>("[data-work-method-stage='true']");
-        const route = element.querySelector<SVGSVGElement>("svg[viewBox='0 0 1000 200']");
         const labels = Array.from(element.querySelectorAll<HTMLElement>("ol > li h4"));
-        if (!stage || !route) throw new Error("Pinned method elements are missing");
-        const stageRect = stage.getBoundingClientRect();
-        const anchors = Array.from(route.querySelectorAll<SVGCircleElement>("circle"));
-        const labelPositions = labels.map((label) => label.getBoundingClientRect().left);
-        const stationPositions = anchors.map((anchor) => {
-          const rect = anchor.getBoundingClientRect();
-          return rect.left + rect.width / 2;
-        });
-        const lastParagraph = element.querySelector<HTMLElement>("ol > li:last-child p");
-        const header = element.querySelector<HTMLElement>("header");
-        if (!lastParagraph || !header) throw new Error("Method copy is missing");
+        const list = element.querySelector<HTMLOListElement>("ol");
+        if (!list) throw new Error("Method steps are missing");
+        const bounds = list.getBoundingClientRect();
+        const stepBounds = labels.map((label) => label.getBoundingClientRect());
         return {
-          labelPositions,
-          stationPositions,
-          contentCenter: (header.getBoundingClientRect().top + lastParagraph.getBoundingClientRect().bottom) / 2,
-          stageCenter: stageRect.top + stageRect.height / 2,
-          routeWidth: route.getBoundingClientRect().width,
+          listColumns: getComputedStyle(list).gridTemplateColumns.trim().split(/\s+/).length,
+          labels: labels.map((label) => label.textContent?.trim()),
+          contained: stepBounds.every((box) => box.left >= bounds.left && box.right <= bounds.right),
         };
       });
-      expect(metrics.routeWidth).toBeGreaterThan(0);
-      expect(metrics.labelPositions).toHaveLength(4);
-      expect(metrics.stationPositions).toHaveLength(4);
-      metrics.labelPositions.forEach((x, index) => expect(Math.abs(x - metrics.stationPositions[index])).toBeLessThanOrEqual(3));
-      expect(Math.abs(metrics.contentCenter - metrics.stageCenter)).toBeLessThanOrEqual(70);
+      expect(metrics.listColumns).toBe(4);
+      expect(metrics.labels).toEqual(["Scope", "Assign", "Review", "Verify"]);
+      expect(metrics.contained).toBe(true);
     }
   });
 
-  test("work method route draws once and stays complete with reduced motion", async ({ page }, testInfo) => {
+  test("work method plate remains visible with reduced motion", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop-chromium", "Motion check in one engine");
-    await page.goto("/");
-    const route = page.locator("[data-work-method='true'] [data-route-reveal='true']");
-    await expect(route).toHaveCSS("clip-path", "inset(0px 100% 0px 0px)");
-    await expect(page.locator("[data-work-method='true'] ol > li h4")).toHaveCount(4);
-
-    await page.locator("[data-work-method='true']").scrollIntoViewIfNeeded();
-    await page.waitForTimeout(150);
-    await expect(route).not.toHaveCSS("clip-path", "inset(0px 100% 0px 0px)");
-    await expect(route).toHaveCSS("clip-path", "inset(0px)", { timeout: 2_000 });
-
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.reload();
-    await expect(page.locator("[data-work-method='true'] [data-route-reveal='true']")).toHaveCSS("clip-path", "none");
+    await page.goto("/");
+    const method = page.locator("#work aside[aria-labelledby='work-method-title']");
+    await method.scrollIntoViewIfNeeded();
+    await expect(method.locator("svg[viewBox='0 0 420 500']")).toBeVisible();
+    await expect(method.locator("ol > li h4")).toHaveText(["Scope", "Assign", "Review", "Verify"]);
   });
 
   test("the marquee switches rail ink as it crosses the full rail height", async ({ page }, testInfo) => {

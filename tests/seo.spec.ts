@@ -81,9 +81,10 @@ test("keeps local and preview surfaces out of search indexes", async ({ page, re
   expect(robots).not.toContain("Sitemap:");
 });
 
-test("keeps each home section readable without JavaScript", async ({ page }) => {
-  await page.route("**/_next/static/**/*.js", (route) => route.abort());
-  await page.goto("/");
+test("keeps each home section readable without JavaScript", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto(baseURL ?? "http://127.0.0.1:3000/");
 
   await expect(page.locator('[data-home-hero-heading="true"]')).toHaveAttribute("aria-label", "Abhinav");
   await expect(page.locator('[data-hero-identity="true"]')).toHaveText("Full-stack engineer");
@@ -142,11 +143,16 @@ test("keeps each home section readable without JavaScript", async ({ page }) => 
     checkedSections += 1;
   }
 
-  const aboutStatement = page.locator("#about [data-scrub]");
-  await expect(aboutStatement.locator("p")).toHaveCount(4);
-  await expect(aboutStatement).toContainText("I design backends first");
-  await expect(aboutStatement).toContainText("Open to full-time roles, contract work and scoped projects.");
+  const about = page.locator("#about");
+  await expect(about.getByRole("heading", { name: "What I do", exact: true })).toBeVisible();
+  await expect(about.locator("[data-service-id]")).toHaveCount(3);
+  const aboutSpec = page.locator("#about-spec");
+  await expect(aboutSpec.locator(".spec-sheet p")).toContainText("I design backends first");
+  await expect(
+    aboutSpec.getByText("Open to full-time roles, contract work and scoped projects.", { exact: true })
+  ).toBeVisible();
   expect(checkedSections).toBeGreaterThan(0);
+  await context.close();
 });
 
 test("keeps Beyond photo wall cards readable without JavaScript", async ({ page }) => {
