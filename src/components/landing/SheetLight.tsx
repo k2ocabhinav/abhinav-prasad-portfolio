@@ -6,7 +6,6 @@ import {
   useReducedMotion,
   useScroll,
   useSpring,
-  useTransform,
 } from "motion/react";
 import { useEffect, useRef, type ReactNode } from "react";
 import styles from "./SheetLight.module.css";
@@ -36,9 +35,15 @@ const clamp = (value: number, min: number, max: number) =>
 
 const format = (value: number) => value.toFixed(4);
 
+// --sx/--sy are inherited by the whole hero, so each write restyles every
+// descendant. They are written with 2 decimals (a 0.01 step is about 0.03px of ink
+// offset): still smooth, but the restyle only happens on frames where it moved.
+
 export default function SheetLight({ children }: SheetLightProps) {
   const heroRef = useRef<HTMLElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const sheenRef = useRef<HTMLDivElement>(null);
+  const pressShadeRef = useRef<HTMLDivElement>(null);
   const fibreRef = useRef<HTMLCanvasElement>(null);
   const reducedMotion = useReducedMotion();
   const lightX = useMotionValue(0);
@@ -53,11 +58,6 @@ export default function SheetLight({ children }: SheetLightProps) {
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const tilt = useTransform(scrollYProgress, [0, 1], [0, 16]);
-  const lift = useTransform(scrollYProgress, [0, 1], [0, -6]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
-  const shade = useTransform(scrollYProgress, [0, 1], [0, 0.14]);
   const scrollValues = useRef<ScrollValues>({
     progress: 0,
     tilt: 0,
@@ -66,20 +66,16 @@ export default function SheetLight({ children }: SheetLightProps) {
     shade: 0,
   });
 
-  useMotionValueEvent(progress, "change", (value) => {
-    scrollValues.current.progress = value;
-  });
-  useMotionValueEvent(tilt, "change", (value) => {
-    scrollValues.current.tilt = value;
-  });
-  useMotionValueEvent(lift, "change", (value) => {
-    scrollValues.current.lift = value;
-  });
-  useMotionValueEvent(scale, "change", (value) => {
-    scrollValues.current.scale = value;
-  });
-  useMotionValueEvent(shade, "change", (value) => {
-    scrollValues.current.shade = value;
+  // One subscription maps the exit progress onto every exit value (the same
+  // linear ranges as five separate transforms, without five motion values and
+  // five listeners running on every scroll tick).
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    const values = scrollValues.current;
+    values.progress = value;
+    values.tilt = value * 16;
+    values.lift = value * -6;
+    values.scale = 1 - value * 0.05;
+    values.shade = value * 0.14;
   });
 
   useEffect(() => {
@@ -142,7 +138,9 @@ export default function SheetLight({ children }: SheetLightProps) {
   useEffect(() => {
     const hero = heroRef.current;
     const sheet = sheetRef.current;
-    if (!hero || !sheet || reducedMotion !== false) {
+    const sheen = sheenRef.current;
+    const pressShade = pressShadeRef.current;
+    if (!hero || !sheet || !sheen || !pressShade || reducedMotion !== false) {
       return;
     }
 
@@ -157,7 +155,6 @@ export default function SheetLight({ children }: SheetLightProps) {
       radius: 1,
       near: 1,
     }));
-    const cachedProperties = new Map<string, string>();
     const sheetBounds = { left: 0, top: 0, width: 0, height: 0 };
     const pointer = { x: 0, y: 0, active: false };
     let viewportWidth = window.innerWidth;
@@ -170,27 +167,47 @@ export default function SheetLight({ children }: SheetLightProps) {
     let frameId = 0;
     let loadReadyTimeout = 0;
     let lastFrameTime = 0;
+    // Exit progress at the last letter-box read. While the sheet bends, the
+    // letter offsets drift smoothly with progress, so they are re-read when it
+    // has moved 0.015 (about 14px of scroll) rather than on every frame.
+    let lastLetterReadProgress = 0;
 
-    const setSheetProperty = (name: string, value: string) => {
-      if (cachedProperties.get(name) === value) {
-        return;
-      }
-      cachedProperties.set(name, value);
-      sheet.style.setProperty(name, value);
-    };
+    // --exit-depth scales the ink shadows as the sheet leaves. Only the wordmark
+    // layers and the CTA group read it, so it is written there, not on the sheet.
+    const depthTargets = Array.from(
+      hero.querySelectorAll<HTMLElement>(
+        "[data-hero-print-layer],[data-hero-ctas]"
+      )
+    );
 
-    const cacheLayout = () => {
+    // `full` re-reads every letter box and font size (resize, font swap). A plain
+    // scroll only moves the sheet through the viewport, so the letters' offsets
+    // inside it stay valid unless the exit transform is bending the sheet.
+    const cacheLayout = (full = true) => {
       const bounds = sheet.getBoundingClientRect();
       sheetBounds.left = bounds.left;
       sheetBounds.top = bounds.top;
       sheetBounds.width = bounds.width;
       sheetBounds.height = bounds.height;
 
-      for (const point of points) {
-        const rect = point.element.getBoundingClientRect();
-        point.x = rect.left - bounds.left + rect.width / 2;
-        point.y = rect.top - bounds.top + rect.height / 2;
-        point.radius = Math.max(1, parseFloat(getComputedStyle(point.element).fontSize) * 0.6);
+      // Back at rest after an exit: one more read settles the letters exactly.
+      const exitProgress = scrollValues.current.progress;
+      if (
+        full ||
+        Math.abs(exitProgress - lastLetterReadProgress) >= (exitProgress ? 0.015 : 1e-9)
+      ) {
+        lastLetterReadProgress = exitProgress;
+        for (const point of points) {
+          const rect = point.element.getBoundingClientRect();
+          point.x = rect.left - bounds.left + rect.width / 2;
+          point.y = rect.top - bounds.top + rect.height / 2;
+          if (full) {
+            point.radius = Math.max(
+              1,
+              parseFloat(getComputedStyle(point.element).fontSize) * 0.6
+            );
+          }
+        }
       }
 
       if (
@@ -210,7 +227,7 @@ export default function SheetLight({ children }: SheetLightProps) {
       layoutReady = true;
     };
 
-    const resizeObserver = new ResizeObserver(cacheLayout);
+    const resizeObserver = new ResizeObserver(() => cacheLayout());
     resizeObserver.observe(sheet);
     const content = hero.querySelector<HTMLElement>("[data-hero-content]");
     if (content) {
@@ -227,15 +244,23 @@ export default function SheetLight({ children }: SheetLightProps) {
       pointer.active = true;
       lastPointerMove = performance.now();
     };
-    const onScrollOrResize = () => {
+    const onResize = () => {
       viewportWidth = window.innerWidth;
       cacheLayout();
+    };
+    // Scrolling only invalidates the cached sheet position while the hero is on
+    // screen. Off screen there is nothing to read; the IntersectionObserver
+    // refreshes the cache when the hero returns.
+    const onScroll = () => {
+      if (heroVisible) {
+        cacheLayout(false);
+      }
     };
     if (finePointer) {
       window.addEventListener("pointermove", onPointerMove, { passive: true });
     }
-    window.addEventListener("scroll", onScrollOrResize, { passive: true });
-    window.addEventListener("resize", onScrollOrResize, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
 
     const enableLight = () => {
       if (lightReady) {
@@ -270,13 +295,19 @@ export default function SheetLight({ children }: SheetLightProps) {
         const nearSmoothing = 1 - Math.exp(-frameDuration / 90);
         const scroll = scrollValues.current;
 
-        setSheetProperty("--p", format(scroll.progress));
-        setSheetProperty("--exit-tilt", `${format(scroll.tilt)}deg`);
-        setSheetProperty("--exit-lift", `${format(scroll.lift)}%`);
-        setSheetProperty("--exit-scale", format(scroll.scale));
-        setSheetProperty("--shade", format(scroll.shade));
-        setSheetProperty(
-          "--exit-will-change",
+        // The exit transform is written on the sheet itself (the same function
+        // list as the CSS rest state), so no inherited variable restyles the hero.
+        sheet.style.setProperty(
+          "transform",
+          `rotateX(${format(scroll.tilt)}deg) translateY(${format(scroll.lift)}%) scale(${format(scroll.scale)})`
+        );
+        const depth = (1 - scroll.progress * 0.5).toFixed(2);
+        for (const target of depthTargets) {
+          target.style.setProperty("--exit-depth", depth);
+        }
+        pressShade.style.setProperty("--shade", format(scroll.shade));
+        sheet.style.setProperty(
+          "will-change",
           scroll.progress > 0 && scroll.progress < 1 ? "transform" : "auto"
         );
 
@@ -316,10 +347,10 @@ export default function SheetLight({ children }: SheetLightProps) {
           const smoothedShadowX = springShadowX.get();
           const smoothedShadowY = springShadowY.get();
 
-          setSheetProperty("--sx", format(smoothedShadowX));
-          setSheetProperty("--sy", format(smoothedShadowY));
-          setSheetProperty("--lx", `${format(lightPositionX)}px`);
-          setSheetProperty("--ly", `${format(lightPositionY)}px`);
+          sheet.style.setProperty("--sx", smoothedShadowX.toFixed(2));
+          sheet.style.setProperty("--sy", smoothedShadowY.toFixed(2));
+          sheen.style.setProperty("--lx", `${format(lightPositionX)}px`);
+          sheen.style.setProperty("--ly", `${format(lightPositionY)}px`);
 
           const updateNear = (point: CachedPoint) => {
             const distance = Math.hypot(point.x - lightPositionX, point.y - lightPositionY);
@@ -352,6 +383,8 @@ export default function SheetLight({ children }: SheetLightProps) {
         frameId = 0;
       }
       lastFrameTime = 0;
+      // Nothing animates while the loop is stopped: release the sheet's layer.
+      sheet.style.setProperty("will-change", "auto");
       springX.stop();
       springY.stop();
       springShadowX.stop();
@@ -361,6 +394,7 @@ export default function SheetLight({ children }: SheetLightProps) {
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       heroVisible = entry.isIntersecting;
       if (heroVisible) {
+        cacheLayout(false);
         start();
       } else {
         stop();
@@ -384,8 +418,8 @@ export default function SheetLight({ children }: SheetLightProps) {
       document.removeEventListener("visibilitychange", onVisibilityChange);
       sheet.removeEventListener("animationend", onAnimationEnd);
       window.clearTimeout(loadReadyTimeout);
-      window.removeEventListener("scroll", onScrollOrResize);
-      window.removeEventListener("resize", onScrollOrResize);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("pointermove", onPointerMove);
     };
   }, [
@@ -420,12 +454,12 @@ export default function SheetLight({ children }: SheetLightProps) {
           <div ref={sheetRef} className={styles.sheet} data-hero-sheet="true">
             <div className={styles.paper} aria-hidden="true">
               <canvas ref={fibreRef} className={styles.fibre} />
-              <div className={styles.sheen} />
+              <div ref={sheenRef} className={styles.sheen} />
             </div>
             <div className={styles.content} data-hero-content="true">
               <div className={styles.layout}>{children}</div>
             </div>
-            <div className={styles.pressShade} aria-hidden="true" />
+            <div ref={pressShadeRef} className={styles.pressShade} aria-hidden="true" />
           </div>
         </div>
       </section>
