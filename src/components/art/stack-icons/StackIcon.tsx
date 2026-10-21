@@ -1,7 +1,7 @@
 import { STACK_ICONS, type StackIconName } from "./icons";
 
 // =============================================================================
-// StackIcon — a single monochrome tech glyph on the shared 24×24 grid.
+// StackIcon — a single monochrome glyph on the shared 24×24 grid.
 // Purely presentational: decorative (aria-hidden) unless a title is supplied.
 // =============================================================================
 

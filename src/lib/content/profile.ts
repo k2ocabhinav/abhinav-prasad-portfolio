@@ -88,12 +88,10 @@ function readProfile(): PortfolioProfile {
   const profileIntro: ProfileIntroContent = {
     headline: stringValue(profileIntroData, "headline", filePath),
     proofLines: nonEmptyStringArray(profileIntroData, "proofLines", filePath),
-    stackItems: nonEmptyStringArray(profileIntroData, "stackItems", filePath),
   };
   if (profileIntro.proofLines.length !== expectedContentCounts.profileProofLines) {
     fail(filePath, `"profileIntro.proofLines" must contain ${expectedContentCounts.profileProofLines} proof lines`);
   }
-  ensureUnique(profileIntro.stackItems, "profile intro stack item");
   const orchestration: OrchestrationContent = {
     intro: stringValue(orchestrationData, "intro", filePath),
     steps: objectArray(orchestrationData, "steps", filePath).map((step) => ({

@@ -2,6 +2,8 @@
 // Portfolio — Shared Type Definitions
 // =============================================================================
 
+import type { stackIconNames, stackToneValues } from "@/lib/portfolioSchema.mjs";
+
 /** Scroll navigation section definition */
 export interface NavSection {
   kind: "section";
@@ -173,7 +175,6 @@ export interface HomeContent {
 export interface ProfileIntroContent {
   headline: string;
   proofLines: string[];
-  stackItems: string[];
 }
 
 export interface OrchestrationStep {
@@ -207,13 +208,23 @@ export interface ChronicleEntry {
   workstreams: ExperienceWorkstream[];
 }
 
+export interface StackSkill {
+  label: string;
+  icon: StackIconName;
+}
+
 export interface StackGroup {
   id: string;
   status: PortfolioStatus;
   order?: number;
   label: string;
   context: StackContext;
-  highlighted: boolean;
+  tone: StackTone;
+  /** The featured group renders as a wide card. Exactly one group sets it. */
+  featured: boolean;
+  /** One optional line under the group name, used by the featured card. */
+  summary?: string;
+  skills: StackSkill[];
 }
 
 export interface ServiceEntry extends Service {
@@ -319,6 +330,8 @@ export interface ProjectDetail {
   storyboard?: ProjectDetailStory;
 }
 
+export type StackTone = (typeof stackToneValues)[number];
+export type StackIconName = (typeof stackIconNames)[number];
 export type StackContext = "Used at work" | "Part of my workflow" | "Built in projects";
 
 /** Presence map node */

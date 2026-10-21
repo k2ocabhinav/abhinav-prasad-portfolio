@@ -1,5 +1,9 @@
+/* Stack: one coloured print card per group, the AI-assisted card featured.
+   Each tone pairs a printed fill with an AA-safe ink; chips inherit the card
+   ink so every glyph stays a single colour. */
+
 .stackSection {
-  background: var(--paper-bone);
+  --section-bg: var(--paper-linen);
   --plate-ink: var(--color-black-cherry);
   --plate-accent: var(--color-lovebird);
   --plate-second: var(--color-cornflower);
@@ -11,9 +15,10 @@
 
 .header {
   display: grid;
-  grid-template-columns: minmax(12rem, 0.32fr) minmax(0, 0.68fr);
-  align-items: center;
-  gap: clamp(1.5rem, 4vw, 3.5rem);
+  grid-template-columns: auto minmax(0, 34rem);
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem clamp(2rem, 6vw, 5rem);
   margin-bottom: clamp(1.8rem, 3.5vw, 2.8rem);
 }
 
@@ -27,106 +32,240 @@
   line-height: 0.98;
 }
 
-.callout {
-  max-width: 22rem;
-  margin: 0.8rem 0 0;
-  color: var(--color-lovebird-deep);
-  font-family: var(--font-label);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+.intro {
+  margin: 0 0 0.35rem;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  font-weight: 450;
   line-height: 1.5;
-  text-transform: uppercase;
+  text-wrap: balance;
 }
 
-.iconStrip {
-  justify-content: flex-start;
-}
-
-.focusList {
+.grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 1.8vw, 1.5rem);
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid var(--color-hairline);
   list-style: none;
 }
 
-.focusList li {
+.item {
+  display: flex;
+  min-width: 0;
+}
+
+/* Motion renders the entrance's hidden state in server markup. Keep that
+   state visible until hydration confirms the reveal can run; this also covers
+   disabled JavaScript and a failed client bundle. */
+:global(html:not([data-hydrated="1"])) .item {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.card {
+  --card-bg: var(--color-lovebird);
+  --card-ink: var(--color-black-cherry);
+  --card-context: var(--color-black-cherry);
+  --chip-bg: rgba(255, 255, 255, 0.52);
+  --chip-border: rgba(var(--color-black-cherry-rgb), 0.34);
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 1.35rem;
+  padding: clamp(1.25rem, 2.2vw, 1.75rem);
+  border: 1px solid rgba(var(--color-black-cherry-rgb), 0.5);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--card-ink);
+  box-shadow: var(--print-offset-md, 6px 6px 0 rgba(53, 30, 40, 0.16));
+  transition:
+    transform var(--motion-duration-short, 200ms) var(--motion-ease-out, ease-out),
+    box-shadow var(--motion-duration-short, 200ms) var(--motion-ease-out, ease-out);
+}
+
+.card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 rgba(var(--color-black-cherry-rgb), 0.2);
+}
+
+.card[data-tone="lovebird"] {
+  --card-bg: var(--color-lovebird);
+  --card-ink: var(--color-black-cherry);
+  --card-context: var(--color-black-cherry);
+}
+
+.card[data-tone="petrol"] {
+  --card-bg: var(--color-petrol);
+  --card-ink: var(--color-glacier);
+  --card-context: var(--color-glacier);
+  --chip-bg: rgba(var(--color-glacier-rgb), 0.14);
+  --chip-border: rgba(var(--color-glacier-rgb), 0.5);
+}
+
+.card[data-tone="burgundy"] {
+  --card-bg: var(--color-burgundy);
+  --card-ink: var(--color-glacier);
+  --card-context: var(--color-pink);
+  --chip-bg: rgba(var(--color-glacier-rgb), 0.14);
+  --chip-border: rgba(var(--color-glacier-rgb), 0.5);
+}
+
+.card[data-tone="cornflower"] {
+  --card-bg: var(--color-cornflower);
+  --card-ink: var(--color-black-cherry);
+  --card-context: var(--color-black-cherry);
+  --chip-bg: rgba(255, 255, 255, 0.46);
+}
+
+.card[data-tone="glacier"] {
+  --card-bg: var(--color-glacier);
+  --card-ink: var(--color-black-cherry);
+  --card-context: var(--color-cornflower-deep);
+  --chip-bg: rgba(255, 255, 255, 0.7);
+  --chip-border: rgba(var(--color-black-cherry-rgb), 0.28);
+}
+
+.cardHead {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.9rem 1rem 0.9rem 0;
-  border-top: 1px solid var(--color-hairline);
-}
-
-.focusList li + li {
-  padding-left: 1rem;
-  border-left: 1px solid var(--color-hairline);
-}
-
-.groupLabel {
-  color: var(--color-black-cherry);
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 1.6vw, 1.3rem);
-  font-weight: 570;
-  line-height: 1.25;
+  gap: 0.55rem;
 }
 
 .context {
-  color: var(--color-lovebird-deep);
+  margin: 0;
+  color: var(--card-context);
   font-family: var(--font-label);
-  font-size: 0.62rem;
-  letter-spacing: 0.1em;
-  line-height: 1.45;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
   text-transform: uppercase;
 }
 
-@media (max-width: 900px) {
-  .header {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: 1.25rem;
+.groupName {
+  margin: 0;
+  color: var(--card-ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.1vw, 1.75rem);
+  font-weight: 620;
+  letter-spacing: -0.012em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.summary {
+  max-width: 26rem;
+  margin: 0.25rem 0 0;
+  color: var(--card-ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  font-weight: 450;
+  line-height: 1.5;
+}
+
+.chips {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.85rem 0.55rem 0.7rem;
+  border: 1px solid var(--chip-border);
+  border-radius: 3px;
+  background: var(--chip-bg);
+  color: var(--card-ink);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 560;
+  letter-spacing: 0.005em;
+  line-height: 1.25;
+}
+
+.icon {
+  flex: 0 0 auto;
+  color: inherit;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .iconStrip {
-    width: 100%;
+  .item[data-featured="true"] {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 900px) {
+  .item[data-featured="true"] .card {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: start;
+    gap: clamp(1.5rem, 3vw, 2.75rem);
+  }
+
+  .item[data-featured="true"] .groupName {
+    font-size: clamp(2rem, 3.3vw, 2.75rem);
+  }
+
+  .item[data-featured="true"] .chips {
+    gap: 0.75rem;
+  }
+
+  .item[data-featured="true"] .chip {
+    gap: 0.65rem;
+    padding: 0.8rem 1.05rem 0.8rem 0.9rem;
+    font-size: 1.0625rem;
+  }
+
+  .item[data-featured="true"] .icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .item[data-featured="true"] {
+    grid-column: span 2;
   }
 }
 
 @media (max-width: 767px) {
   .header {
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.25rem;
+    align-items: start;
   }
 
-  .callout {
-    font-size: 12px;
+  .intro {
+    margin-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
   }
 
-  .focusList {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .focusList li,
-  .focusList li + li {
-    flex-direction: row;
-    align-items: baseline;
-    padding: 0.75rem 0;
-    border-left: 0;
-  }
-
-  .groupLabel {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: 1.05rem;
-  }
-
-  .context {
-    flex: 0 0 8rem;
-    max-width: 8rem;
-    text-align: right;
-    font-size: 12px;
+  .card:hover {
+    transform: none;
   }
 }
