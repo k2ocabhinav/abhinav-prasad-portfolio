@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import sharp from "sharp";
 
 // =============================================================================
@@ -9,9 +10,9 @@ import sharp from "sharp";
 //   src/app/favicon.ico       16 / 32 / 48 PNG entries in a hand-written container
 //   src/app/apple-icon.png    180×180, opaque
 //   public/icon-192.png       install icon, opaque
-//   public/icon-512.png       install icon, opaque, maskable-safe
-// Optional masters: master-16.svg tunes the 16 px favicon entry; master-tile.svg
-// is a full-bleed square for the install icons (the OS rounds those itself).
+//   public/icon-512.png       install icon, opaque (full-bleed scene, so not maskable)
+// Optional phase masters in assets/icon/phases/ provide time-of-day favicons;
+// master-16.svg and master-tile.svg remain supported for the legacy pipeline.
 // Master replacement: cp new.svg assets/icon/master.svg && npm run icons:build
 // =============================================================================
 
@@ -19,21 +20,28 @@ const root = process.cwd();
 const masterPath = path.join(root, "assets", "icon", "master.svg");
 const smallMasterPath = path.join(root, "assets", "icon", "master-16.svg");
 const tileMasterPath = path.join(root, "assets", "icon", "master-tile.svg");
+const phasesDir = path.join(root, "assets", "icon", "phases");
 const appDir = path.join(root, "src", "app");
 const publicDir = path.join(root, "public");
+const publicIconsDir = path.join(publicDir, "icons");
+const generatedSkyIconsPath = path.join(root, "src", "lib", "skyIcons.generated.ts");
+const PHASES = ["night", "dawn", "day", "golden", "sunset", "dusk"];
+const SKY_BOUNDARIES = [
+  { phase: "night", start: 1260, end: 300 },
+  { phase: "dawn", start: 300, end: 420 },
+  { phase: "day", start: 420, end: 960 },
+  { phase: "golden", start: 960, end: 1080 },
+  { phase: "sunset", start: 1080, end: 1170 },
+  { phase: "dusk", start: 1170, end: 1260 },
+];
 
 const PAPER = { r: 0xfc, g: 0xf8, b: 0xf2 };
 const PAPER_HEX = "#FCF8F2";
 // Fraction of the canvas left empty on each side when the master has a
 // transparent background, so the artwork survives iOS and maskable cropping.
 const PADDING = 0.12;
-// Maskable icons must keep their artwork inside the central 80% of the canvas.
-const SAFE_ZONE = 0.1;
 // Rasterise the SVG well above every requested size, then downsample once.
 const SUPERSAMPLE = 2048;
-// A pixel is artwork when its luma differs this much from the corner pixel,
-// which is the icon's background (paper, or a full-bleed tile colour).
-const INK_LUMA_DELTA = 40;
 
 const PNG_OPTIONS = { compressionLevel: 9, adaptiveFiltering: true };
 const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
@@ -132,49 +140,6 @@ async function renderSquare(svg, size, padding) {
   return stripPngMetadata(png);
 }
 
-async function inkBounds(png) {
-  const { data, info } = await sharp(png)
-    .removeAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-
-  const lumaAt = (offset) =>
-    data[offset] * 0.2126 + data[offset + 1] * 0.7152 + data[offset + 2] * 0.0722;
-  const background = lumaAt(0);
-  let left = info.width;
-  let top = info.height;
-  let right = -1;
-  let bottom = -1;
-
-  for (let y = 0; y < info.height; y += 1) {
-    for (let x = 0; x < info.width; x += 1) {
-      const offset = (y * info.width + x) * info.channels;
-      if (Math.abs(lumaAt(offset) - background) < INK_LUMA_DELTA) continue;
-      if (x < left) left = x;
-      if (x > right) right = x;
-      if (y < top) top = y;
-      if (y > bottom) bottom = y;
-    }
-  }
-
-  if (right < 0) throw new Error("The master renders no visible artwork");
-  return { left, top, right, bottom };
-}
-
-async function assertMaskableSafe(png, size) {
-  const bounds = await inkBounds(png);
-  const limit = Math.floor(size * SAFE_ZONE);
-  const safe = Math.ceil(size * (1 - SAFE_ZONE));
-  const failures = [];
-  if (bounds.left < limit) failures.push(`left ${bounds.left} < ${limit}`);
-  if (bounds.top < limit) failures.push(`top ${bounds.top} < ${limit}`);
-  if (bounds.right >= safe) failures.push(`right ${bounds.right} >= ${safe}`);
-  if (bounds.bottom >= safe) failures.push(`bottom ${bounds.bottom} >= ${safe}`);
-  if (failures.length > 0) {
-    throw new Error(`512px icon leaves the maskable safe zone: ${failures.join(", ")}`);
-  }
-}
-
 function createIco(entries) {
   const header = Buffer.alloc(6);
   header.writeUInt16LE(0, 0);
@@ -209,9 +174,61 @@ function write(file, contents) {
   console.log(`  ${path.relative(root, file)} (${size} bytes)`);
 }
 
+function removeStalePhaseIcons(activeFiles) {
+  if (!fs.existsSync(publicIconsDir)) return;
+
+  for (const entry of fs.readdirSync(publicIconsDir, { withFileTypes: true })) {
+    if (!entry.isFile() || !/^sky-.*\.svg$/.test(entry.name)) continue;
+    const file = path.join(publicIconsDir, entry.name);
+    if (activeFiles.has(entry.name)) continue;
+    fs.unlinkSync(file);
+    console.log(`  removed stale ${path.relative(root, file)}`);
+  }
+}
+
+function generatedSkyMap(iconUrls) {
+  const phaseEntries = PHASES.map(
+    (phase) => `  ${phase}: ${JSON.stringify(iconUrls[phase])},`
+  ).join("\n");
+  const boundaries = SKY_BOUNDARIES.map(
+    ({ phase, start, end }) => `  { phase: "${phase}", start: ${start}, end: ${end} },`
+  ).join("\n");
+
+  return `// Generated by scripts/build-icons.mjs. Do not edit by hand.\nexport type Phase = ${PHASES.map((phase) => JSON.stringify(phase)).join(" | ")};\n\nexport const SKY_ICONS: Record<Phase, string> = {\n${phaseEntries}\n};\n\nexport const SKY_PHASES: ReadonlyArray<{ phase: Phase; start: number; end: number }> = [\n${boundaries}\n];\n`;
+}
+
+function buildPhaseIcons() {
+  if (!fs.existsSync(phasesDir)) {
+    removeStalePhaseIcons(new Set());
+    const legacyMap = Object.fromEntries(PHASES.map((phase) => [phase, "/icon.svg"]));
+    write(generatedSkyIconsPath, generatedSkyMap(legacyMap));
+    console.log("  phases/ not found; retaining legacy single-master behavior");
+    return;
+  }
+
+  const iconUrls = {};
+  const activeFiles = new Set();
+
+  for (const phase of PHASES) {
+    const optimized = optimiseSvg(readMaster(path.join(phasesDir, `${phase}.svg`)).toString("utf8"));
+    const digest = createHash("sha256").update(optimized).digest("hex").slice(0, 8);
+    const filename = `sky-${phase}.${digest}.svg`;
+    const url = `/icons/${filename}`;
+    write(path.join(publicIconsDir, filename), optimized);
+    activeFiles.add(filename);
+    iconUrls[phase] = url;
+  }
+
+  removeStalePhaseIcons(activeFiles);
+  write(generatedSkyIconsPath, generatedSkyMap(iconUrls));
+}
+
 async function main() {
-  const master = readMaster(masterPath);
+  const phaseMasterPath = path.join(phasesDir, "day.svg");
+  const usePhases = fs.existsSync(phasesDir);
+  const master = readMaster(usePhases ? phaseMasterPath : masterPath);
   const smallMaster = fs.existsSync(smallMasterPath)
+    && !usePhases
     ? readMaster(smallMasterPath)
     : master;
 
@@ -228,8 +245,11 @@ async function main() {
   })));
   write(path.join(appDir, "favicon.ico"), createIco(faviconEntries));
 
-  const installMaster = fs.existsSync(tileMasterPath)
-    ? readMaster(tileMasterPath)
+  const phaseTileMasterPath = path.join(phasesDir, "day-tile.svg");
+  const installMaster = usePhases
+    ? readMaster(phaseTileMasterPath)
+    : fs.existsSync(tileMasterPath)
+      ? readMaster(tileMasterPath)
     : master;
   const transparent = await hasTransparentBackground(installMaster);
   const padding = transparent ? PADDING : 0;
@@ -241,10 +261,11 @@ async function main() {
   write(path.join(publicDir, "icon-192.png"), await renderSquare(installMaster, 192, padding));
 
   const icon512 = await renderSquare(installMaster, 512, padding);
-  await assertMaskableSafe(icon512, 512);
   write(path.join(publicDir, "icon-512.png"), icon512);
 
-  console.log(`Paper ${PAPER_HEX}. Swap the master and rerun npm run icons:build.`);
+  buildPhaseIcons();
+
+  console.log(`Paper ${PAPER_HEX}. Replace phase art and rerun npm run icons:build.`);
 }
 
 await main();

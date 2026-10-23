@@ -34,6 +34,14 @@ export default defineConfig({
       },
     },
     {
+      name: "desktop-webkit-sky-favicon",
+      testMatch: /sky-favicon\.spec\.ts/,
+      use: {
+        ...devices["Desktop Safari"],
+        viewport: { width: 1440, height: 1024 },
+      },
+    },
+    {
       name: "mobile-webkit-narrow",
       testMatch: responsiveSpec,
       use: {

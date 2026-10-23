@@ -82,6 +82,11 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: IMMUTABLE_CACHE }],
       },
       {
+        // Sky phase icons have content hashes in their filenames.
+        source: "/icons/:asset(sky-[a-z]+\\.[a-f0-9]{8}\\.svg)",
+        headers: [{ key: "Cache-Control", value: IMMUTABLE_CACHE }],
+      },
+      {
         // Every file in this directory is emitted by the content-hashed
         // portfolio capture script.
         source: "/projects/portfolio-platform/:asset",

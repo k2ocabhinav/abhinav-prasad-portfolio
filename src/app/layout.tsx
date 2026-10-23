@@ -8,6 +8,7 @@ import {
 } from "next/font/google";
 import localFont from "next/font/local";
 import HydrationMarker from "@/components/providers/HydrationMarker";
+import SkyFavicon from "@/components/SkyFavicon";
 import { getProfileContent } from "@/lib/portfolioContent";
 import { absoluteUrl, siteConfig } from "@/lib/siteConfig";
 import "./globals.css";
@@ -188,6 +189,7 @@ export default function RootLayout({
       </head>
       <body>
         <HydrationMarker />
+        <SkyFavicon />
         {children}
         {process.env.VERCEL === "1" ? <SpeedInsights /> : null}
       </body>
