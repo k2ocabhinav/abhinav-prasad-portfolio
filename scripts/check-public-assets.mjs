@@ -219,6 +219,11 @@ const publicFiles = new Set(
     .filter((file) => path.basename(file) !== ".gitkeep")
     .map((file) => path.relative(publicRoot, file).split(path.sep).join("/"))
 );
+const appRouteAssets = new Set(
+  walk(path.join(root, "src", "app"))
+    .filter((file) => path.basename(file) === "icon.svg")
+    .map((file) => path.relative(path.join(root, "src", "app"), file).split(path.sep).join("/"))
+);
 
 const sourceFiles = sourceRoots
   .flatMap((directory) => walk(path.join(root, directory)))
@@ -237,7 +242,7 @@ for (const file of sourceFiles) {
       if (pattern === absoluteAssetPattern && !publicFiles.has(assetPath)) continue;
 
       references.add(assetPath);
-      if (!publicFiles.has(assetPath)) {
+      if (!publicFiles.has(assetPath) && !appRouteAssets.has(assetPath)) {
         const locations = missing.get(assetPath) ?? [];
         locations.push(path.relative(root, file));
         missing.set(assetPath, locations);
