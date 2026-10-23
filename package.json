@@ -54,7 +54,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "knip": "6.26.0",
-    "typescript": "^5"
+    "typescript": "^7"
   },
   "overrides": {
     "basic-ftp": "^6.2.3",
